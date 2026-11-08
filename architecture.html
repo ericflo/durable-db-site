@@ -1,31 +1,69 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Architecture · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a aria-current="page" href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="roadmap.html">roadmap</a></aside><article><h1>Architecture</h1>
 <h2>Authority and transaction boundary</h2>
-<p>One database is one transaction boundary. Each database has a small manifest at <code>heads/&lt;database&gt;.json</code>. It lists immutable sorted pages, logical usage, quotas, recent request receipts, a collection cursor, a user revision, and a fresh fence identifier. Pages live under <code>blocks/&lt;database&gt;.&lt;uuid&gt;</code>; the delimiter cannot occur in a database identifier.</p>
-<p>Reads always fetch the authoritative manifest. They load only the pages needed for exact keys or ordered scans. Immutable page bytes can come from an optional disk cache or bounded memory cache and are verified with SHA-256. A fresh empty cache produces the same result. No full database hydration occurs at server startup.</p>
-<p>The initial index is a bounded flat manifest of page ranges. It is intentionally simple to audit. A persistent multilevel index is a future format, not a claimed capability of this release.</p>
+<p>One database is one transaction boundary. Each database has a logical head named <code>heads/&lt;database&gt;.json</code>. In cluster mode, a shared immutable B+tree directory maps that head to an immutable <code>manifests/&lt;database&gt;.&lt;uuid&gt;</code> file. It lists immutable sorted pages, logical usage, quotas, recent request receipts, a collection cursor, a user revision, and a fresh fence identifier. Pages live under <code>blocks/&lt;database&gt;.&lt;uuid&gt;</code>; the delimiter cannot occur in a database identifier.</p>
+<p>Reads validate the authoritative directory through a conditional read barrier, then fetch the selected immutable manifest. They load only the pages needed for exact keys or ordered scans. Immutable page bytes can come from an optional disk cache or bounded memory cache and are verified with SHA-256. A fresh empty cache produces the same result. No full database hydration occurs at server startup.</p>
+<p>The database directory is a multilevel B+tree. Within each individual database, the data-page index remains a bounded flat manifest of page ranges; lifting that per-database size limit is separate future work.</p>
 <h2>Commit protocol</h2>
 <ol>
-<li>Fetch the manifest and its opaque provider version/ETag.</li>
+<li>Validate the directory, fetch the manifest, and retain its unique identity.</li>
 <li>Resolve an existing identical request receipt before checking the expected user revision.</li>
 <li>Check the revision, predicates, request bounds, and resulting logical quotas. Read and copy only touched pages; split them near 128 KiB.</li>
 <li>Upload replacement pages under globally fresh names. Finish every upload before publication.</li>
-<li>Replace the manifest with <code>If-Match</code> against the version read in step 1. Increment the user revision and include the request receipt in that same write.</li>
+<li>Recheck the database head identity, upload a fresh immutable manifest, copy the affected directory path, and conditionally publish its new root. The manifest contains the incremented user revision and request receipt.</li>
 <li>Acknowledge only after the conditional write succeeds.</li>
 </ol>
-<p>The conditional manifest replacement is the commit’s linearization point. A definite precondition failure is a conflict. A timeout or broken connection may have committed: do not delete candidate pages and do not invent a rollback. The client retries the identical request. Recent receipts recover the original result; an evicted receipt still cannot cause an identical request to reapply because its old expected revision fails. Request IDs must never be recycled for new work.</p>
-<p>Two transactions based on the same manifest cannot both publish. Reads linearize at their manifest fetch. Together with expected-revision writes this gives database-scoped optimistic serializable transactions, provided clients recompute after conflicts and use one revision throughout a read/modify/write operation.</p>
+<p>The conditional directory publication is the commit’s linearization point. After a definite precondition failure, the publisher may reuse its uploaded path only when the root identity and collection-fence identity are both unchanged. This allows bounded retries across read barriers and startup probes. A changed root or collector fence abandons the attempt; it cannot reuse those uploads. A timeout or broken connection may have committed: do not delete candidate pages and do not invent a rollback. The client retries the identical request. Recent receipts recover the original result; an evicted receipt still cannot cause an identical request to reapply because its old expected revision fails. Request IDs must never be recycled for new work.</p>
+<p>Two transactions based on the same manifest cannot both publish. Cluster reads linearize at the directory read barrier. Together with expected-revision writes this gives database-scoped optimistic serializable transactions, provided clients recompute after conflicts and use one revision throughout a read/modify/write operation.</p>
 <h2>Collection without leases or clock assumptions</h2>
 <p>Each server periodically lists a bounded page of databases. For each database it performs bounded compaction and collection. Concurrent collectors are allowed; they may duplicate work but cannot gain authority through their pod identities.</p>
 <p>The collector finishes listing candidate objects <strong>before</strong> fetching the manifest. It then conditionally replaces that manifest with the same logical state and a new fence. Only after that succeeds does it delete candidates absent from the protected manifest.</p>
 <p>Why a fence is necessary: a paused writer might have uploaded an object that is not yet referenced. Without the fence, a collector could delete it just before the writer publishes it. The fence invalidates every writer based on the prior manifest. A later writer can carry forward only currently referenced pages or newly named uploads that were not in the completed candidate listing. Retries must allocate fresh object names; content-addressed name reuse would invalidate this argument.</p>
 <p>Collectors can stop at any instruction. A failed deletion leaves garbage for a later sweep. The collection cursor is stored with the fence and wraps after the end of the range. Objects created after a listing are collected in a later sweep. Successful writes never rely on a collector running.</p>
 <p>A reader that loses a page of an old snapshot restarts the <strong>entire</strong> read from a fresh manifest. It returns a conflict if an explicit expected revision has moved. No partial scan or missing value is returned as a successful substitute.</p>
+<p>A page-collection pass with no deletions and no cursor change does not publish a manifest; it needs no deletion fence. This avoids rewriting idle databases merely to examine them.</p>
 <p>Compaction replaces one adjacent pair of small pages without changing the logical revision. Its publication uses the same conditional-write discipline. Neither clocks nor Kubernetes termination hooks participate in data safety.</p>
-<h2>Provider contract</h2>
-<p>Cluster mode requires fresh, strongly consistent GET, atomic conditional create and replace, immutable-object PUT, bounded paginated listing, and idempotent DELETE. General-purpose S3 buckets provide the required conditional-write primitives. Directory/Express buckets and providers with unordered listings are not supported by the initial collector.</p>
-<p>The startup probe checks create-if-absent, a successful conditional update, rejection of a stale ETag, and fresh reads. A probe cannot prove a provider’s behavior under every failure; the documented provider contract remains an assumption.</p>
-<p>B2 uses a different authority primitive: native <code>b2_update_bucket</code> with <code>ifRevisionIs</code>, publishing pointers to immutable manifests through bucket metadata. This required backend is being implemented and modeled separately; see <a href="b2.md">B2 design</a>. It must not emulate CAS with a pod-local mutex. <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html">S3 conditional writes</a>.</p>
-<p>Use a dedicated unversioned bucket, or configure expiration of noncurrent versions and delete markers. Ordinary DELETE on a versioned bucket does not reclaim all billed bytes. Object lock and external retention rules can also prevent reclamation. The service must not share a prefix with unrelated writers.</p>
+<h2>One publication implementation, small provider bindings</h2>
+<p>Both B2 and S3 run <code>publication::Published</code>. It owns directory initialization and limits, the read barrier, immutable manifest publication, manifest collection, and retry rules. The engine above it owns page transactions and page collection. No provider selects a separate database algorithm.</p>
+<table>
+<thead>
+<tr>
+<th>Shared operation</th>
+<th>B2 binding</th>
+<th>S3 binding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observe directory</td>
+<td>Native bucket info and revision</td>
+<td><code>authority.json</code> GET and opaque object version</td>
+</tr>
+<tr>
+<td>Compare-and-publish</td>
+<td><code>b2_update_bucket(ifRevisionIs)</code></td>
+<td><code>PutObject</code> with <code>If-Match</code> / <code>If-None-Match</code></td>
+</tr>
+<tr>
+<td>Immutable bytes</td>
+<td>S3-compatible GET/PUT/list</td>
+<td>S3 GET/PUT/list</td>
+</tr>
+<tr>
+<td>Physical reclamation</td>
+<td>Native list/delete file versions</td>
+<td>S3 list/delete object versions</td>
+</tr>
+</tbody>
+</table>
+<p>Bucket metadata stores one <code>durable-db-root</code> reference. Database entries live in immutable <code>indexes/&lt;witness-database&gt;.&lt;uuid&gt;</code> objects, with at most 64 entries/children and 64 KiB per page. A branch records each child’s range, height, count, unique object name, and checksum. Insertion copies one path, splitting full pages. Lookup and update cost O(log N) index pages; listing is paginated without loading every database. Index and data pages share the configured cache budget. The metadata budget remains 9,000 bytes, including reserved root/cursor/fence space, independent of database count.</p>
+<p>There is no fixed database-count admission ceiling. Counts use checked 64-bit arithmetic, and a height guard bounds corrupt input traversal; these are format bounds, not a tested capacity claim. The current stress qualification covers 10,005 databases. Publication format <strong>3</strong> rejects earlier experimental formats rather than silently interpreting them; there is no in-place migration yet.</p>
+<p>Directory collection lists at most 128 manifest candidates and 128 index candidates before conditionally fencing the root. Manifest filenames identify their database, so one lookup determines whether a manifest is current. Each index filename embeds its original first database key as a <strong>witness</strong>. A still-reachable immutable subtree still contains that key; looking it up from the protected root must visit that subtree. This makes each candidate’s reachability check logarithmic, including when old nodes are reused under new parents. Missing index pages cause an error/restart, never a conclusion that a candidate is garbage. Concurrent collection can remove an old reader’s path, so reads and listings restart as a whole.</p>
+<p><code>Directory.tla</code> checks the witness reachability lemma over bounded immutable trees, including subtree reuse. <code>Bucket.tla</code> checks conditional publication and collection fencing at the abstract reference-set layer. Their composition into the tree implementation remains an explicit proof obligation.</p>
+<p>A raw directory observation may be stale. The common read barrier conditionally publishes the unchanged root pointer with a new unique fence. Only success permits a read to use that snapshot. This avoids relying on fresh bucket listings and deliberately adds a metadata write to every manifest read. It also means metadata contention limits a bucket’s performance. No read-lease optimization is claimed.</p>
+<p>Manifest collection lists candidates, then conditionally fences the directory root before deleting unreferenced manifests. The proof structure is the same as page collection, at the directory layer. S3 additionally retires obsolete physical versions of its control-register object using a list-before-barrier sequence. B2 manages bucket-metadata history internally.</p>
+<p>Providers must implement atomic conditional publication and durable immutable uploads. The startup probe attempts a genuinely different stale update. Real B2 accepts an identical-metadata no-op with a stale revision; it rejects a conflicting replacement. Every protocol publication has fresh identities/fences, and no-op replay cannot introduce a different state.</p>
+<p>General-purpose S3 is supported; unordered directory/Express listing semantics are not. S3 credentials need version-listing and version-deletion permissions even when the bucket is unversioned. Both versioned and unversioned MinIO buckets passed the same protocol tests. Real AWS qualification remains separate. See <a href="b2.md">B2 evidence and setup</a>.</p>
+<p>Object lock and external retention rules can prevent reclamation. No external lifecycle rule or unrelated writer may delete live database files or alter the directory.</p>
 <h2>Local mode</h2>
 <p>A lifetime OS lock admits one process per directory. Writes use a temporary file, file fsync, atomic rename, and directory fsync. The compare-and-replace lock remains held inside the blocking filesystem task even if its async waiter is cancelled. Crash-left temporary files are removed after acquiring the lifetime lock on reopen. Local mode is not supported on shared/network filesystems or across multiple servers.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

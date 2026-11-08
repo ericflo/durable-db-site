@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Verification results · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a aria-current="page" href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="roadmap.html">roadmap</a></aside><article><h1>Verification results</h1>
-<p>Results are for the initial development checkout on 2026-11-08. Exact final commit IDs and updated model counts are added after the final gate. Commands and bounds are in <a href="verification.html">verification</a>.</p>
+<p>The v0.1.0 binary was built from <code>f431d88c072cc924634126e4b2ba8f1ec30697b0</code> by Woodpecker on 2026-11-08. The build gate passed Rust checks, all five bounded models and their negative controls, and Pi conformance. Commands and bounds are in <a href="verification.html">verification</a>.</p>
 <table>
 <thead>
 <tr>
@@ -17,30 +17,96 @@
 <td>36,252,536 distinct states; 208,784,241 generated; depth 32; no invariant violations</td>
 </tr>
 <tr>
-<td>B2 bucket publication model</td>
-<td>6,175,624 distinct states; 44,596,725 generated; depth 28; no invariant violations</td>
+<td>Shared directory publication model</td>
+<td>8,246,048 distinct states; 61,692,865 generated; depth 21; no invariant violations</td>
 </tr>
 <tr>
 <td>B2 missing-fence negative control</td>
 <td>Missing-manifest counterexample at depth 8</td>
 </tr>
 <tr>
-<td>B2 adapter fault tests</td>
-<td>Five tests passed, including both collectors, metadata preservation, slot admission, and lost response recovery</td>
+<td>Shared publication fault tests</td>
+<td>Ten tests cover publication/collection races, concurrent database creation through splits, metadata admission, missing-index refusal, read-only barrier retries, idle collection, and lost response recovery</td>
 </tr>
 <tr>
 <td>Unsafe collector negative control</td>
 <td>Counterexample found: publish then delete a formerly unreferenced object</td>
 </tr>
 <tr>
-<td>Rust engine/HTTP initial suite</td>
-<td>10 tests passed, including 24 randomized reference-map cases</td>
+<td>Full Rust suite</td>
+<td>23 tests passed, including 24 randomized reference-map cases; cloud tests run separately</td>
+</tr>
+<tr>
+<td>pi-durable 1.5.0 reference adapter</td>
+<td>All 32 upstream storage conformance tests passed over HTTP (65 seconds)</td>
+</tr>
+<tr>
+<td>Documentation site</td>
+<td>Desktop/mobile rendering, no mobile overflow, 0→6 pod illustration controls passed</td>
+</tr>
+<tr>
+<td>Independent HTTP processes</td>
+<td>1→3→1 servers, SIGKILL, all processes removed and reopened without caches; all 36 writes verified against both real B2 and versioned MinIO; format-3 B2 rerun passed with over 70 databases and concurrent maintenance after the retry fix</td>
 </tr>
 <tr>
 <td>Real S3-compatible endpoint</td>
-<td>Disposable MinIO: conditional writes, retry receipts, collection, and cache-free reopen passed</td>
+<td>Format 3 on versioned and unversioned MinIO: commits, receipts, three collection layers, 71 databases across leaf splits, pagination, and uncached reopen passed</td>
+</tr>
+<tr>
+<td>Real B2 endpoint</td>
+<td>Format 3, dedicated bucket/scoped key: five commits, receipts, physical reclamation; 70 additional databases across leaf splits, pagination and uncached reopen; both tests passed in 92 seconds</td>
+</tr>
+<tr>
+<td>Persistent directory stress</td>
+<td>10,005 databases, three-level tree, ordered pagination, update, full index collection sweep, and every database reopened without caches; passed in 106 seconds in a debug build</td>
+</tr>
+<tr>
+<td>Directory witness model</td>
+<td>145,037 distinct/generated states, depth 6; wrong-witness negative control finds a counterexample</td>
+</tr>
+<tr>
+<td>Publication retry model</td>
+<td>44,354 distinct states; 117,886 generated; depth 21; crossing a collector fence triggers the negative-control counterexample</td>
+</tr>
+<tr>
+<td>Read barrier model</td>
+<td>39,332 distinct states; 276,019 generated; depth 13; negative control detects stale reads</td>
+</tr>
+<tr>
+<td>Native HTTP wire test</td>
+<td>Stale observation rejected by read barrier; exact version deletion verified</td>
 </tr>
 </tbody>
 </table>
-<p>The real B2 cloud test, compaction tests, client conformance, process scaling test, formatting/lint gate, and build artifact checks are tracked during development. No cloud latency numbers or Kubernetes production qualification are claimed from local tests.</p>
+<p>The static Linux x86_64 artifact passed checksum verification and standalone local create/commit/read with an empty environment and no Rust toolchain on PATH. Kubernetes HPA bounds 1→3→1 and forced last-pod deletion passed on real B2: all 36 keys and revision 36 were recovered. The phases reached revisions 12, 24, and 36 at 23:01:09, 23:02:13, and 23:02:50 UTC. The cluster lacked resource metrics, so this is not CPU-load-triggered autoscaling qualification. No cloud latency or Kubernetes production-readiness claim follows from these tests.</p>
+<h2>Initial local latency baseline</h2>
+<p>One release-build run on an AMD Ryzen AI Max+ 395 laptop, local filesystem with fsync, 1 KiB values, sequential operations. Other development work was active. This is an initial microbenchmark, not cloud performance or a throughput claim.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Samples</th>
+<th>p50</th>
+<th>p95</th>
+<th>p99</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Durable local write</td>
+<td>200</td>
+<td>13.962 ms</td>
+<td>22.998 ms</td>
+<td>25.913 ms</td>
+</tr>
+<tr>
+<td>Cached local key read</td>
+<td>2,000</td>
+<td>0.313 ms</td>
+<td>0.346 ms</td>
+<td>0.486 ms</td>
+</tr>
+</tbody>
+</table>
+<p>Reproduce with <code>cargo run --locked --release --example bench</code> using the pinned kache wrapper. The results expose an optimization target: synchronous publication and page rewriting currently dominate small writes. No B2/S3 latency numbers have been measured yet.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
