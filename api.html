@@ -1,0 +1,149 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>HTTP API · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a aria-current="page" href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="roadmap.html">roadmap</a></aside><article><h1>HTTP API</h1>
+<p>Every data endpoint requires <code>Authorization: Bearer &lt;token&gt;</code>. JSON uses UTF-8. Keys are ordered by their UTF-8 bytes, independent of locale. Values are standard base64. <code>null</code> means absent in a read/check and delete in a write; an empty string is a present zero-byte value.</p>
+<h2>Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>Method and path</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /v1/databases/{db}</code></td>
+<td>Admin: create with <code>max_bytes</code> and <code>max_keys</code> quotas</td>
+</tr>
+<tr>
+<td><code>GET /v1/databases/{db}</code></td>
+<td>Revision, logical usage, pages, and limits</td>
+</tr>
+<tr>
+<td><code>POST /v1/databases/{db}/read</code></td>
+<td>Atomic read of keys and/or ordered scans</td>
+</tr>
+<tr>
+<td><code>POST /v1/databases/{db}/commit</code></td>
+<td>Revision-checked atomic writes and optional value checks</td>
+</tr>
+<tr>
+<td><code>POST /v1/databases/{db}/gc</code></td>
+<td>Admin: one bounded maintenance sweep</td>
+</tr>
+<tr>
+<td><code>POST /v1/tokens</code></td>
+<td>Admin: mint a database-scoped token</td>
+</tr>
+<tr>
+<td><code>GET /metrics</code></td>
+<td>Admin: Prometheus request, rejection, and cache metrics</td>
+</tr>
+<tr>
+<td><code>GET /health/live</code></td>
+<td>Process is serving HTTP</td>
+</tr>
+<tr>
+<td><code>GET /health/ready</code></td>
+<td>Startup completed and server is not draining</td>
+</tr>
+</tbody>
+</table>
+<p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
+<h2>Read a snapshot</h2>
+<pre><code class="language-json">{
+  &quot;expected_revision&quot;: 12,
+  &quot;keys&quot;: [&quot;settings/theme&quot;],
+  &quot;scans&quot;: [{
+    &quot;prefix&quot;: &quot;entries/&quot;,
+    &quot;start&quot;: &quot;entries/000010&quot;,
+    &quot;end&quot;: &quot;entries/000100&quot;,
+    &quot;after&quot;: &quot;entries/000020&quot;,
+    &quot;reverse&quot;: false,
+    &quot;limit&quot;: 50
+  }]
+}
+</code></pre>
+<p><code>expected_revision</code> is optional for the first read. All keys and scans in one request observe the same manifest. Subsequent requests in the same transaction must send the returned revision. A revision change is a 409; restart the whole transaction. This is optimistic snapshot validation, not a pinned long-running historical snapshot.</p>
+<p><code>start</code> is inclusive, <code>end</code> exclusive. <code>after</code> is exclusive in the chosen direction. Prefix and bounds are conjunctive. A scan returns <code>{items: [{key, value}], next}</code>; <code>next</code> is the last returned key when another matching item exists. Repeat the query with that cursor and revision. Zero-length prefixes are allowed.</p>
+<h2>Commit</h2>
+<pre><code class="language-json">{
+  &quot;expected_revision&quot;: 12,
+  &quot;request_id&quot;: &quot;d338624a-86b4-4128-85fb-2a31a86b4e60&quot;,
+  &quot;checks&quot;: [{&quot;key&quot;:&quot;settings/theme&quot;,&quot;value&quot;:&quot;ZGFyaw==&quot;}],
+  &quot;writes&quot;: [
+    {&quot;key&quot;:&quot;settings/theme&quot;,&quot;value&quot;:&quot;bGlnaHQ=&quot;},
+    {&quot;key&quot;:&quot;obsolete&quot;,&quot;value&quot;:null}
+  ]
+}
+</code></pre>
+<p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
+<p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
+<h2>Errors and bounds</h2>
+<p>Errors use <code>{error,message}</code>: 400 invalid request, 401 invalid/mismatched credentials, 404 missing database, 409 conflict, 413 resource limit, 429 admission limit, 503 provider failure or deadline. Axum’s malformed-JSON/body-extraction errors may use plain text. Provider error details, object names, secrets, and values are not returned to callers.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Initial bound</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Database name</td>
+<td>1–64 lowercase ASCII letters, digits, <code>_</code> or <code>-</code></td>
+</tr>
+<tr>
+<td>Key</td>
+<td>1–1,024 UTF-8 bytes; no NUL</td>
+</tr>
+<tr>
+<td>Value</td>
+<td>64 KiB decoded</td>
+</tr>
+<tr>
+<td>Request body</td>
+<td>1 MiB</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>128 checks+writes, or keys+scans</td>
+</tr>
+<tr>
+<td>Scan page</td>
+<td>1–1,000 entries</td>
+</tr>
+<tr>
+<td>Read result data</td>
+<td>1 MiB across all values and scan keys</td>
+</tr>
+<tr>
+<td>Immutable data loaded/rewritten per operation</td>
+<td>8 MiB each</td>
+</tr>
+<tr>
+<td>Manifest</td>
+<td>512 KiB; at most 2,048 pages</td>
+</tr>
+<tr>
+<td>Database logical quota</td>
+<td>Configurable up to 256 MiB and 1,000,000 keys</td>
+</tr>
+<tr>
+<td>Default cache</td>
+<td>64 MiB accounted encoded bytes; at most 4,096 entries</td>
+</tr>
+<tr>
+<td>Default concurrent admitted requests</td>
+<td>8 per pod</td>
+</tr>
+<tr>
+<td>Per-database admission</td>
+<td>20 tokens/sec, burst 40 per pod; commit costs 5, other requests 1</td>
+</tr>
+<tr>
+<td>Request deadline</td>
+<td>30 seconds</td>
+</tr>
+</tbody>
+</table>
+<p>Quota accounting includes user key and value bytes. Physical object bytes, receipts, manifests, and transient orphan uploads are additional. Limits reject before publishing; they never silently truncate. Use bounded scans and values, and choose an ingress spend/rate budget for an Internet-facing deployment.</p>
+</article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

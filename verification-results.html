@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Verification results · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a aria-current="page" href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="roadmap.html">roadmap</a></aside><article><h1>Verification results</h1>
+<p>Results are for the initial development checkout on 2026-11-08. Exact final commit IDs and updated model counts are added after the final gate. Commands and bounds are in <a href="verification.html">verification</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial singleton-root cluster model</td>
+<td>8,575,596 distinct states; no invariant violations</td>
+</tr>
+<tr>
+<td>Shared-page cluster model</td>
+<td>36,252,536 distinct states; 208,784,241 generated; depth 32; no invariant violations</td>
+</tr>
+<tr>
+<td>B2 bucket publication model</td>
+<td>6,175,624 distinct states; 44,596,725 generated; depth 28; no invariant violations</td>
+</tr>
+<tr>
+<td>B2 missing-fence negative control</td>
+<td>Missing-manifest counterexample at depth 8</td>
+</tr>
+<tr>
+<td>B2 adapter fault tests</td>
+<td>Five tests passed, including both collectors, metadata preservation, slot admission, and lost response recovery</td>
+</tr>
+<tr>
+<td>Unsafe collector negative control</td>
+<td>Counterexample found: publish then delete a formerly unreferenced object</td>
+</tr>
+<tr>
+<td>Rust engine/HTTP initial suite</td>
+<td>10 tests passed, including 24 randomized reference-map cases</td>
+</tr>
+<tr>
+<td>Real S3-compatible endpoint</td>
+<td>Disposable MinIO: conditional writes, retry receipts, collection, and cache-free reopen passed</td>
+</tr>
+</tbody>
+</table>
+<p>The real B2 cloud test, compaction tests, client conformance, process scaling test, formatting/lint gate, and build artifact checks are tracked during development. No cloud latency numbers or Kubernetes production qualification are claimed from local tests.</p>
+</article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
