@@ -64,6 +64,13 @@
     ".tools/control-session-all-tests.log": "9c75ddd40ae4194fc342a5799af795aac90f9b88f59bff975bbbf914c9c29fb1"
   },
   "qualification": {
-    "status": "Complete local Rust checks passed; Woodpecker and publication pending"
+    "source_commit": "88078351b0867bf9c2d241565256e86a33630ff6",
+    "woodpecker": {
+      "pipeline": 54,
+      "status": "success",
+      "build_log_sha256": "98e3ca7a551299bf1738e2b5793b7edc31a96d1e9e61e27d45e8444ad324e038"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "f0cf5bff610baf9900751bddd80b239b6aa62e98c3324cce5a64b1caa4fad2c0"
   }
 }
