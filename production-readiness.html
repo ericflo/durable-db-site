@@ -18,7 +18,7 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Sixteen finite TLA+ models plus an unbounded abstract page-reachability proof cover logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Seventeen finite TLA+ models plus an unbounded abstract page-reachability proof cover pinned-owner takeover, logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; extend the unbounded proof to complete protocol composition and mechanize implementation refinement; independently review the protocol</td>
 </tr>
 <tr>
@@ -43,8 +43,8 @@
 </tr>
 <tr>
 <td>Pi integration</td>
-<td>All 32 upstream cases pass for both adapters locally and the indexed adapter on B2; local competing-owner/receipt-eviction/bounds tests and B2 cold takeover pass</td>
-<td>Full Pi Harness integration and cancellation workflows; long-running workloads and competing owners on a multi-replica B2 deployment</td>
+<td>All 32 upstream cases pass for both adapters locally and the indexed adapter on B2; eight actual Harness cases pass on three cache-free B2 and MinIO API processes, including cancellation, live-owner takeover, model/tool SIGKILL, and complete API replacement</td>
+<td>Long-running workflows, host-side scheduling and external-effect fencing, and Harness qualification across physical hosts</td>
 </tr>
 <tr>
 <td>Autoscaling and maintenance</td>
