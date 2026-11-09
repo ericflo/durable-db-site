@@ -177,5 +177,10 @@
     "Provider checks use existing conditional publication as a selection fixture",
     "Not a serving prototype, transaction throughput benchmark or AWS qualification",
     "The current API engine still requires shared remote authority operations"
-  ]
+  ],
+  "source_commit": "2ccab7c23c623ebe762dc6256ba5c9e056535086",
+  "woodpecker": {
+    "pipeline": 38,
+    "status": "success"
+  }
 }

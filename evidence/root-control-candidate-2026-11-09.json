@@ -146,5 +146,10 @@
     ".tools/candidates/RootControl/model-root-control-skipdrain.log": "07769dbb75d649c8e81d9993bbafc910bb8ae5d9dc4105bd1d995d405b4e2c98",
     ".tools/candidates/RootControl/model-root-control-stalerenewal.log": "02d200db5cf6c7eb2ab8dfe090929a6bbdee28cdc30e18c32c038f32073dce3e",
     ".tools/candidates/RootControl/model-root-control.log": "49b7356711137577ab699e01235f0f60c8c7d54d45e0e226839a9cd783776fc9"
+  },
+  "source_commit": "ecf205beda01c054b6ea81fad9cc55fe2bd2b3e0",
+  "woodpecker": {
+    "pipeline": 39,
+    "status": "success"
   }
 }
