@@ -48,8 +48,8 @@
 </tr>
 <tr>
 <td>Autoscaling and maintenance</td>
-<td>HPA-bound transitions 1→3→1 and last-pod replacement pass</td>
-<td>Actual load-triggered scaling, 1→3→8→1→0→1, node drains, SIGKILL/OOM, network partitions, provider throttling/outages, and bounded cleanup progress; verify operation histories throughout</td>
+<td>CPU-driven 1→3→8→1, node drain, SIGKILL, confirmed kernel OOM, provider egress partition, and 0→1 cold recovery pass on kind/versioned MinIO; extended run verifies 468 acknowledged writes</td>
+<td>Repeat on B2 and independent nodes; sustained memory bounds, broader partitions/provider throttling, and bounded cleanup progress; verify operation histories throughout</td>
 </tr>
 <tr>
 <td>Operations</td>
