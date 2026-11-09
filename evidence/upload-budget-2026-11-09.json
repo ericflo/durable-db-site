@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "complete": true,
+  "recorded_at": "2026-11-09T05:03:12.151898+00:00",
+  "source_base_commit": "c2672106cc119db6bfe817b5419142fcae3ad5a0",
+  "source_paths": [
+    "Cargo.lock",
+    "Cargo.toml",
+    "spec/UploadCredits.cfg",
+    "spec/UploadCredits.tla",
+    "src/api.rs",
+    "src/auth.rs",
+    "src/cache.rs",
+    "src/directory/batch.rs",
+    "src/directory.rs",
+    "src/engine/access.rs",
+    "src/engine/creation.rs",
+    "src/engine.rs",
+    "src/lib.rs",
+    "src/main.rs",
+    "src/measured.rs",
+    "src/metrics.rs",
+    "src/observation.rs",
+    "src/providers/b2/retry.rs",
+    "src/providers/b2.rs",
+    "src/providers/mod.rs",
+    "src/providers/s3.rs",
+    "src/providers/transport.rs",
+    "src/publication/control.rs",
+    "src/publication/proposal.rs",
+    "src/publication.rs",
+    "src/storage.rs",
+    "src/upload_budget.rs",
+    "tests/authorization.rs",
+    "tests/b2_cloud.rs",
+    "tests/engine.rs",
+    "tests/http.rs",
+    "tests/keyring_cli.rs",
+    "tests/publication.rs",
+    "tests/s3.rs",
+    "tests/signing_rotation.rs",
+    "tests/upload_budget.rs",
+    "tests/upload_budget_cloud.rs"
+  ],
+  "source_tree_sha256": "8cb16f82b07d64886815dca17ea74a295d3146ae47b96523821b61e6664e1669",
+  "source_note": "Includes uncommitted source subsequently committed with this report; paths/hash pin exact tested source.",
+  "rust_regular_passed": 75,
+  "directory_stress": {
+    "databases": 10005,
+    "passed": true,
+    "seconds": 40.86
+  },
+  "model": {
+    "states": 8690,
+    "generated": 32261,
+    "depth": 16,
+    "negative_controls_passed": 4
+  },
+  "cloud_cases": [
+    {
+      "provider": "minio-unversioned",
+      "passed": true,
+      "seconds": 0.41
+    },
+    {
+      "provider": "minio-versioned",
+      "passed": true,
+      "seconds": 0.44
+    },
+    {
+      "provider": "b2",
+      "passed": true,
+      "seconds": 11.87
+    }
+  ],
+  "cloud_assertions": [
+    "initialize fresh format 4",
+    "create and commit a database",
+    "exhaust eight immutable upload attempts",
+    "remove and recreate all backend instances without caches or startup budget flags",
+    "verify acknowledged data and persistent allocation",
+    "reject another write",
+    "collect orphan metadata while exhausted",
+    "increase absolute limits without resetting allocation",
+    "replay identical administrative intent",
+    "commit after refill and reopen again"
+  ],
+  "format_guard": {
+    "schema": 1,
+    "complete": true,
+    "started_at": "2026-11-09T05:01:58.232837+00:00",
+    "old_binary_sha256": "0812198383509c7321cfdd885ae13b162e993ec893ea48c96f0df5816efa6d64",
+    "new_binary_sha256": "209613429f2a40beb6cf011e6ebecfd8c6d0a0896749ff83b861d065167628ba",
+    "cases": [
+      {
+        "provider": "b2",
+        "old_startup_refused": true,
+        "new_reopens_after_old_probe": true,
+        "budget_and_database_unchanged": true,
+        "upload_budget": {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 2097152,
+            "attempts": 64
+          },
+          "allocated": {
+            "bytes": 2097152,
+            "attempts": 40
+          }
+        },
+        "database_revision": 2
+      },
+      {
+        "provider": "minio",
+        "old_startup_refused": true,
+        "new_reopens_after_old_probe": true,
+        "budget_and_database_unchanged": true,
+        "upload_budget": {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 2097152,
+            "attempts": 64
+          },
+          "allocated": {
+            "bytes": 2097152,
+            "attempts": 40
+          }
+        },
+        "database_revision": 2
+      }
+    ],
+    "limits": "Fresh format-4 namespace guard only; no format-3 migration or downgrade support.",
+    "finished_at": "2026-11-09T05:02:04.434619+00:00"
+  },
+  "earlier_failures": [
+    {
+      "provider": "b2",
+      "result": "failed",
+      "phase": "metadata collection",
+      "reason": "unpacked format-4 ledger raised bucketInfo to eleven entries; B2 rejected the fence with HTTP 400",
+      "correction": "shared packed control encoding, reserved entry/byte budget, malformed-envelope and old-probe tests",
+      "cleanup": "Removed task-owned test bucket, 6 physical versions, and revoked its workload key: durable-db-test-3fb958a63b84"
+    },
+    {
+      "fixture": "old-version guard",
+      "result": "harness assertion failed",
+      "reason": "harness assumed refill allocated every attempt; grants are capped at 32 and actual cumulative allocation was 40 of 64",
+      "correction": "compare authoritative before/after snapshots; both B2 and MinIO passed unchanged"
+    }
+  ],
+  "cleanup": "Removed task-owned test bucket, 6 physical versions, and revoked its workload key: durable-db-test-5cedb11b37cc",
+  "raw_log_sha256": {
+    "upload-budget-final-tests.log": "55b074d586d67674a9f58f560ce6098f0731c8a94a88940ce46cec817728fb59",
+    "upload-budget-final-clippy.log": "ba63e49af6b2f15e30c219b15204436a37946753cbb1bb4155fcde96901b8786",
+    "upload-budget-packed-minio.log": "45ea30f1270d855c89f500686b8c38546d83bba7b11e04960f1559304cba939e",
+    "upload-budget-packed-versioned.log": "c6917fef45af3010f941c02b3c46cc4f18ebcf18556e18793e4290d688d559d3",
+    "upload-budget-b2.log": "009e159bcfbc27225f5b6721d72d5610c1d82a065ee7f8d22a3482ff6a1441f9",
+    "upload-budget-b2-first-failed.log": "340c89693b3da770a28597680a6f6e634569ab2fdda3dfaf8a9e14f6f655bcc5",
+    "upload-budget-stress.log": "9beea1a2009628ea63df8e21c131feec3e3d63fe49e8f27bbeef6c2ecfd30f46",
+    "upload-credits-refill-checks.log": "9a5559c147f83318313e4f8d329e5403c0f3e84ea3bb6aae2d5dbfa29365df3c"
+  },
+  "limitations": [
+    "No per-tenant physical fairness or complete provider-spend guarantee.",
+    "Control requests, reads, egress, and provider billing overhead are outside this ceiling.",
+    "Page GC and compaction still need upload credits; metadata collection continues.",
+    "Finite model, implementation tests, and short cloud fixtures do not constitute an unbounded proof or production capacity/soak qualification.",
+    "No in-place format-3 activation or downgrade support; fresh namespaces only."
+  ]
+}
