@@ -11,6 +11,7 @@ const operation = {
 await db.commit(operation);
 // On an unknown transport outcome, retry operation unchanged.
 </code></pre>
+<p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
 <h2 id="pi-150-reference-adapter">Pi 1.5.0 reference adapter</h2>
 <pre><code class="language-js">import { openReferencePiStorage } from './pi-reference.mjs';
 const storage = await openReferencePiStorage(db);

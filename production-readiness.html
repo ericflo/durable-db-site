@@ -18,7 +18,7 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Eight finite TLA+ models cover publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Ten finite TLA+ models cover protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; mechanize the inductive safety argument and implementation refinement obligations; independently review the protocol</td>
 </tr>
 <tr>
@@ -33,8 +33,8 @@
 </tr>
 <tr>
 <td>Credentials and lifecycle</td>
-<td>Expiring tokens; replacement signing key invalidates existing tokens</td>
-<td>Individual token revocation, overlapping key rotation, tenant export/deletion/retention, and durable audit delivery, exercised during rolling deploys and partitions</td>
+<td>Expiring tokens; durable individual revocation and generations; idempotent protected creation; old engines refuse protected databases</td>
+<td>Overlapping signing-key rotation, tenant export/deletion/retention, and durable audit delivery, exercised during rolling deploys and partitions</td>
 </tr>
 <tr>
 <td>Recovery</td>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 <td>Upgrades</td>
-<td>One old/new format-3 pair passes mixed writes, SIGKILL, and cold rollback/reopen on versioned MinIO; broader upgrade campaign open</td>
+<td>One old/new format-3 pair passes mixed writes, SIGKILL, and cold rollback/reopen on versioned MinIO and B2; broader upgrade campaign open</td>
 <td>Mixed-version readers/writers/collectors, migration interruption, downgrade refusal where required, rollback and restore procedure, and compatibility fixtures from every supported release</td>
 </tr>
 <tr>

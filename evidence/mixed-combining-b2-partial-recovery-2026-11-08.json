@@ -1,0 +1,10 @@
+{
+  "databases_checked": 70,
+  "mismatches": 0,
+  "uncertain_write_observed": 0,
+  "uncertain_write_not_observed": 1,
+  "acknowledged_writes": 97,
+  "fresh_process": true,
+  "memory_cache_mib": 0,
+  "source_report": "mixed-combining-b2-admin-limit-2026-11-08.json"
+}

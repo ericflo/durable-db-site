@@ -1,4 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>HTTP API · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a aria-current="page" href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="http-api">HTTP API</h1>
+<p>This page describes current source builds. The original v0.1.0 release predates protected creation, durable revocation, and metrics-only credentials.</p>
 <p>Every data endpoint requires <code>Authorization: Bearer &lt;token&gt;</code>. JSON uses UTF-8. Keys are ordered by their UTF-8 bytes, independent of locale. Values are standard base64. <code>null</code> means absent in a read/check and delete in a write; an empty string is a present zero-byte value.</p>
 <h2 id="endpoints">Endpoints</h2>
 <table>
@@ -10,8 +11,12 @@
 </thead>
 <tbody>
 <tr>
+<td><code>PUT /v1/databases/{db}</code></td>
+<td>Admin: idempotent protected creation with a permanent request identity</td>
+</tr>
+<tr>
 <td><code>POST /v1/databases/{db}</code></td>
-<td>Admin: create with <code>max_bytes</code> and <code>max_keys</code> quotas</td>
+<td>Admin: legacy format-1 creation with <code>max_bytes</code> and <code>max_keys</code> quotas</td>
 </tr>
 <tr>
 <td><code>GET /v1/databases/{db}</code></td>
@@ -28,6 +33,10 @@
 <tr>
 <td><code>POST /v1/databases/{db}/gc</code></td>
 <td>Admin: one bounded maintenance sweep</td>
+</tr>
+<tr>
+<td><code>POST /v1/databases/{db}/access</code></td>
+<td>Admin: enable durable authorization, revoke a token ID, or rotate its generation</td>
 </tr>
 <tr>
 <td><code>POST /v1/tokens</code></td>
@@ -48,6 +57,16 @@
 </tbody>
 </table>
 <p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
+<h2 id="create-a-protected-database">Create a protected database</h2>
+<p>Use <code>PUT /v1/databases/{db}</code> with an administrator credential:</p>
+<pre><code class="language-json">{
+  &quot;request_id&quot;: &quot;persist-this-unique-provisioning-id&quot;,
+  &quot;limits&quot;: {&quot;max_bytes&quot;: 67108864, &quot;max_keys&quot;: 100000}
+}
+</code></pre>
+<p>The operation atomically creates a format-2 database with revocable tokens enabled from the start. The response is <code>{info, replayed}</code>; initial <code>info.policy</code> has a fresh incarnation, generation zero, policy revision one, and no revocations. Legacy application tokens cannot access it. Mint scoped tokens through <code>POST /v1/tokens</code> after creation.</p>
+<p>Persist the exact creation request in your provisioning system before sending it. A retry with the same ID and limits returns the original initial info even after later data writes, policy changes, and collection. Its receipt lasts for the database lifetime, independently of the bounded transaction/policy receipt windows. A different creation ID returns 409; reusing the original ID with different limits returns 400. An existing legacy database cannot be claimed by this operation. PUT never replaces an existing database. On a transport failure or 503, retry the identical creation request; observing only that the name exists is insufficient evidence that your creation succeeded.</p>
+<p><code>POST /v1/databases/{db}</code> retains the original legacy behavior for compatibility. It accepts only <code>{max_bytes,max_keys}</code>, has no creation receipt, and starts without durable revocation. New provisioning should use PUT. All servers must support format 2 before serving protected databases.</p>
 <h2 id="read-a-snapshot">Read a snapshot</h2>
 <pre><code class="language-json">{
   &quot;expected_revision&quot;: 12,
@@ -77,6 +96,19 @@
 </code></pre>
 <p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
 <p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
+<h2 id="durable-token-revocation">Durable token revocation</h2>
+<p>PUT creation starts protected. For an existing legacy database, upgrade all servers, then enable its database policy with an administrator request:</p>
+<pre><code class="language-json">{
+  &quot;request_id&quot;: &quot;a-unique-policy-operation-id&quot;,
+  &quot;expected_policy_revision&quot;: 0,
+  &quot;change&quot;: {&quot;action&quot;: &quot;enable&quot;}
+}
+</code></pre>
+<p>Send this to <code>POST /v1/databases/{db}/access</code>. The response is <code>{policy: {incarnation, generation, revision, revoked_tokens}, replayed}</code>. Activation moves this database to manifest format 2 and invalidates all legacy database tokens at the policy publication. Old binaries refuse the database after activation, including administrator reads and collection. This migration has no downgrade operation. Complete the binary rollout first and retain a suitable recovery plan. Other databases may remain in legacy format during migration.</p>
+<p><code>POST /v1/tokens</code> accepts <code>{database, write, ttl_seconds}</code>. For an enabled policy it returns <code>{token, token_id}</code> bound to the current incarnation and generation. For a legacy database it returns the legacy <code>{token}</code> envelope. Issuance racing a generation change may return a token that is already invalid; request another token after observing the current policy. For offline issuance, supply both <code>--incarnation</code> and <code>--generation</code> from fresh administrator info to <code>durable-db token</code>. Omitting both produces a legacy token, which protected databases refuse.</p>
+<p>To revoke one token, submit a new policy request ID and the current <strong>policy</strong> revision, with <code>&quot;change&quot;: {&quot;action&quot;: &quot;revoke&quot;, &quot;token_id&quot;: &quot;&lt;issued UUID&gt;&quot;}</code>. To invalidate all tokens and clear the revocation set, use <code>&quot;change&quot;: {&quot;action&quot;: &quot;rotate&quot;}</code>. This advances the database credential generation; it does not rotate the shared signing key. At most 128 token IDs can be revoked per generation. Rotation is required before adding another ID when that set is full. Revocations never expire based on a server’s clock. Repeating <code>enable</code> cannot reset a policy.</p>
+<p>Policy changes leave the <strong>data</strong> revision unchanged and advance the separate policy revision. They retain the last 32 policy receipts, independent of data-write receipts. After an unknown outcome, retry the identical request ID, expected policy revision, and body. A retained receipt returns its original policy result, which may precede the current policy; use administrator info for the latest state. Beyond the receipt window, the old expected revision prevents reapplication and returns 409. Reusing a retained request ID with different content returns 400. A conflict requires inspecting fresh policy state before deciding on a new administrative operation.</p>
+<p>Info, reads, writes, and write-receipt replay authorize against the same validated manifest they use. A read already in flight may finish from its earlier authorized snapshot; an operation invoked after an acknowledged revocation cannot use that old policy. A write prepared before a policy change loses the exact manifest comparison if the policy publishes first. Administrator operations remain privileged. <a href="security.html">Security boundaries</a> and <a href="verification.html#durable-authorization-lifecycle">verification limits</a> still apply.</p>
 <h2 id="errors-and-bounds">Errors and bounds</h2>
 <p>Errors use <code>{error,message}</code>: 400 invalid request, 401 invalid/mismatched credentials, 404 missing database, 409 conflict, 413 resource limit, 429 admission limit, 503 provider failure or deadline. Axum’s malformed-JSON/body-extraction errors may use plain text. Provider error details, object names, secrets, and values are not returned to callers.</p>
 <table>
