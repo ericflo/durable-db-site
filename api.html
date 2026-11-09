@@ -1,6 +1,6 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>HTTP API · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a aria-current="page" href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1>HTTP API</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>HTTP API · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a aria-current="page" href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="http-api">HTTP API</h1>
 <p>Every data endpoint requires <code>Authorization: Bearer &lt;token&gt;</code>. JSON uses UTF-8. Keys are ordered by their UTF-8 bytes, independent of locale. Values are standard base64. <code>null</code> means absent in a read/check and delete in a write; an empty string is a present zero-byte value.</p>
-<h2>Endpoints</h2>
+<h2 id="endpoints">Endpoints</h2>
 <table>
 <thead>
 <tr>
@@ -48,7 +48,7 @@
 </tbody>
 </table>
 <p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
-<h2>Read a snapshot</h2>
+<h2 id="read-a-snapshot">Read a snapshot</h2>
 <pre><code class="language-json">{
   &quot;expected_revision&quot;: 12,
   &quot;keys&quot;: [&quot;settings/theme&quot;],
@@ -64,7 +64,7 @@
 </code></pre>
 <p><code>expected_revision</code> is optional for the first read. All keys and scans in one request observe the same manifest. Subsequent requests in the same transaction must send the returned revision. A revision change is a 409; restart the whole transaction. This is optimistic snapshot validation, not a pinned long-running historical snapshot.</p>
 <p><code>start</code> is inclusive, <code>end</code> exclusive. <code>after</code> is exclusive in the chosen direction. Prefix and bounds are conjunctive. A scan returns <code>{items: [{key, value}], next}</code>; <code>next</code> is the last returned key when another matching item exists. Repeat the query with that cursor and revision. Zero-length prefixes are allowed.</p>
-<h2>Commit</h2>
+<h2 id="commit">Commit</h2>
 <pre><code class="language-json">{
   &quot;expected_revision&quot;: 12,
   &quot;request_id&quot;: &quot;d338624a-86b4-4128-85fb-2a31a86b4e60&quot;,
@@ -77,7 +77,7 @@
 </code></pre>
 <p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
 <p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
-<h2>Errors and bounds</h2>
+<h2 id="errors-and-bounds">Errors and bounds</h2>
 <p>Errors use <code>{error,message}</code>: 400 invalid request, 401 invalid/mismatched credentials, 404 missing database, 409 conflict, 413 resource limit, 429 admission limit, 503 provider failure or deadline. Axum’s malformed-JSON/body-extraction errors may use plain text. Provider error details, object names, secrets, and values are not returned to callers.</p>
 <table>
 <thead>

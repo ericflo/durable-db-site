@@ -1,0 +1,505 @@
+{
+  "schema": 1,
+  "started_at": "2026-11-08T23:43:13.998Z",
+  "context": "Real B2 us-west-002; three local release processes on Ryzen AI Max+ 395; 64 MiB cache and concurrency 8 per process; maintenance delayed for 24 hours to isolate publication contention; 74 total databases (4 active synthetic databases in this run); client and servers on laptop over residential Internet.",
+  "binary_sha256": "f3f4e7bf6e1701b7a0177ee9f0f26703a04e039c19a15eae4d8a3ae04083a1bc",
+  "configuration": {
+    "databases": 4,
+    "workers": [
+      4
+    ],
+    "operations_per_worker": 10,
+    "value_bytes": 1024,
+    "endpoints": 3,
+    "max_attempts": 12,
+    "operation_deadline_seconds": 120,
+    "load_model": "closed-loop"
+  },
+  "limitations": [
+    "Small samples are descriptive, not an SLO guarantee.",
+    "Closed-loop load does not measure queue growth at a fixed arrival rate.",
+    "Provider request counts, billed storage, and cost are not measured.",
+    "Setup is excluded; retries, backoff, and failed operations are included in each measured phase."
+  ],
+  "setup": {
+    "databases_created": 4,
+    "attempt_statuses": {
+      "200": 12
+    }
+  },
+  "phases": [
+    {
+      "mode": "write",
+      "workers": 4,
+      "planned": 40,
+      "started": 40,
+      "succeeded": 40,
+      "failed": 0,
+      "attempt_statuses": {
+        "200": 40,
+        "409": 59,
+        "503": 1
+      },
+      "failure_reasons": {},
+      "samples": [
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 1130.602
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 3760.199
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 5842.842
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 1551.114
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 1242.143
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 1514.335
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 13493.91
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 2204.898
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 2486.007
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 1741.815
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 963.613
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 967.166
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 22442.604
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 22216.973
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 916.528
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 20249.851
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 1121.543
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 6461.929
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 13130.527
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 2258.526
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 15083.047
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 1349.602
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 2236.058
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 11148.347
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 9144.174
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 2658.692
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 8287.578
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 1523.581
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 22533.736
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 995.256
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 4283.809
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 14181.897
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 1497.24
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 1102.185
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 2168.457
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 10284.81
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 553.471
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 5159.247
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 15227.95
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 2077.67
+        }
+      ],
+      "elapsed_seconds": 73.643865,
+      "not_started": 0,
+      "successful_operations_per_second": 0.543,
+      "all_started_latency": {
+        "samples": 40,
+        "p50_ms": 2258.526,
+        "p95_ms": 22216.973,
+        "p99_ms": 22533.736,
+        "max_ms": 22533.736
+      },
+      "successful_latency": {
+        "samples": 40,
+        "p50_ms": 2258.526,
+        "p95_ms": 22216.973,
+        "p99_ms": 22533.736,
+        "max_ms": 22533.736
+      }
+    },
+    {
+      "mode": "read",
+      "workers": 4,
+      "planned": 40,
+      "started": 40,
+      "succeeded": 40,
+      "failed": 0,
+      "attempt_statuses": {
+        "200": 40
+      },
+      "failure_reasons": {},
+      "samples": [
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 94.578
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 243.425
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 202.715
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 299.171
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 138.821
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 111.388
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 97.832
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 114.737
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 89.634
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 1172.259
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 93.476
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 164.844
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 128.516
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 85.391
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 1333.697
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 109.849
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 126.097
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 100.639
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 102.9
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 104.857
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 92.073
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 87.204
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 2294.496
+        },
+        {
+          "worker": 2,
+          "ok": true,
+          "elapsed_ms": 109.852
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 124.485
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 141.199
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 98.061
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 91.877
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 1161.364
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 100.32
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 114.032
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 145.1
+        },
+        {
+          "worker": 1,
+          "ok": true,
+          "elapsed_ms": 184.248
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 2409.909
+        },
+        {
+          "worker": 3,
+          "ok": true,
+          "elapsed_ms": 116.438
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 1222.146
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 86.432
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 90.909
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 106.924
+        },
+        {
+          "worker": 0,
+          "ok": true,
+          "elapsed_ms": 95.876
+        }
+      ],
+      "elapsed_seconds": 4.352542,
+      "not_started": 0,
+      "successful_operations_per_second": 9.19,
+      "all_started_latency": {
+        "samples": 40,
+        "p50_ms": 111.388,
+        "p95_ms": 1333.697,
+        "p99_ms": 2409.909,
+        "max_ms": 2409.909
+      },
+      "successful_latency": {
+        "samples": 40,
+        "p50_ms": 111.388,
+        "p95_ms": 1333.697,
+        "p99_ms": 2409.909,
+        "max_ms": 2409.909
+      }
+    }
+  ],
+  "verification": {
+    "checked": 4,
+    "failed": 0,
+    "uncertain_write_observed": 0,
+    "uncertain_write_not_observed": 0
+  },
+  "complete": true,
+  "finished_at": "2026-11-08T23:44:41.335Z",
+  "source_note": "dbc0401 plus sanitized native-status/read-barrier logging and benchmark final verification; no publication algorithm change."
+}

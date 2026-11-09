@@ -1,0 +1,10 @@
+{
+  "databases_checked": 70,
+  "mismatches": 0,
+  "uncertain_write_observed": 0,
+  "uncertain_write_not_observed": 3,
+  "acknowledged_measured_writes": 56,
+  "fresh_process": true,
+  "memory_cache_mib": 0,
+  "method": "Fresh process and empty cache after stopping all benchmark servers. For every original database, compare final value and revision against seed plus acknowledged writes; allow one additional revision only for a worker with an uncertain write. This is final-state recovery evidence, not full history checking."
+}

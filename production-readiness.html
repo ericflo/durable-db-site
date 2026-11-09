@@ -1,12 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Production readiness · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a aria-current="page" href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1>Production readiness</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Production readiness · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a aria-current="page" href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="production-readiness">Production readiness</h1>
 <p><strong>Release decision: not ready for production.</strong> v0.1.0 is an experimental release. The passing models, cloud tests, and 10,005-database directory test establish a useful foundation. They do not establish safe public multitenancy, an operating envelope, disaster recovery, or a proof of the implementation.</p>
 <p>This document tracks the gates for the first production release. A gate closes only with reproducible evidence tied to a commit and configuration. A design, a passing happy-path test, or a successful deployment is not sufficient. The <a href="verification-results.html">verification record</a> separates completed experiments from planned qualification.</p>
-<h2>Contract to qualify</h2>
+<h2 id="contract-to-qualify">Contract to qualify</h2>
 <p>The initial contract is atomic, revision-checked transactions and ordered scans within one database. Acknowledged writes must survive the loss of every API process and cache. Uncertain writes require identical retries; the recent receipt window is bounded. Cross-database transactions are outside this contract.</p>
 <p>Current per-database limits are 256 MiB, 1,000,000 keys, and 2,048 pages, with smaller request and rewrite budgets. Large database counts and high active throughput are different requirements. The directory has been tested at 10,005 databases; the first production capacity campaign should extend that to 100,000 and include concurrent creation, pagination, and collection. This is a test target, not a capacity guarantee.</p>
 <p>Total databases, active databases, peak read/write arrival rates, value sizes, contention, and p99 latency targets must be recorded before choosing a production topology. Measure B2 first, then AWS S3, using the same implementation and workload. Include physical object versions, provider calls, and bandwidth when estimating cost. A laptop-to-cloud measurement is not a regional Kubernetes SLO.</p>
 <p>Backup retention and recovery objectives are not yet selected. A proposed starting point is 30-day point-in-time recovery with at most five minutes of backup lag. Recovery time must be measured against a declared database size and number of simultaneous restores. Neither this policy nor its cost is currently implemented or promised.</p>
-<h2>Release gates</h2>
+<h2 id="release-gates">Release gates</h2>
 <table>
 <thead>
 <tr>
@@ -23,8 +23,8 @@
 </tr>
 <tr>
 <td>Cloud performance</td>
-<td>Shared bucket publication serializes reads and writes; directory capacity is separate from throughput</td>
-<td>Publish B2 and AWS p50/p95/p99, failed operations, retries, sustained throughput, physical amplification, and cost at the selected workload; model group commit or partitioning if the current design misses targets</td>
+<td><strong>Failed:</strong> four-writer B2 baseline exhausted retries and fell to 0.341 successful ops/s; isolation without maintenance still had heavy conflicts</td>
+<td>Model and implement publication progress/batching; publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
 </tr>
 <tr>
 <td>Public multitenancy</td>
@@ -73,7 +73,7 @@
 </tr>
 </tbody>
 </table>
-<h2>Implementation order</h2>
+<h2 id="implementation-order">Implementation order</h2>
 <ol>
 <li>Close immediate admission and integrity gaps; enforce fresh dependency audits; measure the existing B2 protocol under contention. Keep latency distributions and failures in the same report.</li>
 <li>Decide the publication throughput design from those measurements. Start any batching/partitioning change in TLA+ and retain one shared B2/S3 implementation. Do not remove the conditional read barrier to improve a benchmark.</li>
@@ -82,7 +82,7 @@
 <li>Complete the indexed Pi adapter and operational API against the resulting lifecycle and quota contracts.</li>
 <li>Qualify mixed versions, provider failures, Kubernetes autoscaling, sustained load, recovery, and release artifacts. Publish evidence and resolve the independent review findings before changing the production status.</li>
 </ol>
-<h2>Reproducible load baseline</h2>
+<h2 id="reproducible-load-baseline">Reproducible load baseline</h2>
 <p><code>scripts/benchmark-http.mjs</code> creates synthetic databases on a <strong>disposable test deployment</strong>. It seeds one value per database, measures writes and reads with a configured number of workers, then verifies all seeded databases. The caller owns cleanup. Use scoped test-bucket credentials on the servers; the benchmark takes an administrator token from a file and does not print it.</p>
 <pre><code class="language-sh">node scripts/benchmark-http.mjs \
   --urls http://127.0.0.1:7654 \
@@ -92,5 +92,6 @@
   --context 'Describe provider region, server placement, caches, concurrency, and maintenance'
 </code></pre>
 <p>Each worker owns one database so publication conflicts can retry the same request without recomputing application state. Ambiguous retries retain the exact ID, revision, and body. Reports include attempted/failed/not-started operations, HTTP statuses, full operation latency including backoff, successful latency separately, elapsed throughput, verification, and binary hash. A failed worker stops instead of issuing a new write ID after an unresolved outcome. The harness writes partial results and exits unsuccessfully on any failed phase or verification.</p>
-<p>This is a closed-loop baseline: each worker waits for its preceding operation. It does not measure queue growth under a fixed arrival rate, establish a p99 SLO from a small sample, measure provider billing, or replace an open-loop overload test and soak campaign.</p>
+<p>After a failed measured phase, the harness still checks final state, allowing an uncertain write to be either visible or absent at that read. This does not turn the timed-out operation into a success or establish that a delayed write can never arrive later. A lost-acknowledgement fixture checks failure accounting and identical retry bodies.</p>
+<p>This is a closed-loop baseline: each worker waits for its preceding operation. It does not measure queue growth under a fixed arrival rate, establish a p99 SLO from a small sample, measure provider billing, or replace an open-loop overload test and soak campaign. The first B2 run <a href="verification-results.html#b2-contention-baseline-release-gate-failed">failed its progress gate</a>; publication contention is the next implementation priority.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
