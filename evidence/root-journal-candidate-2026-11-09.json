@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "recorded_at": "2026-11-09T14:53:14.150193+00:00",
+  "recorded_at": "2026-11-09T19:13:38.084525+00:00",
   "base_commit": "442ae2ba30643b411d832310edbe9f24bdf5b17d",
   "status": "Unbounded abstract root/journal composition under explicit contracts; no runtime adoption",
   "standard_checker_passed": true,
@@ -151,7 +151,7 @@
     "spec/candidates/RootJournal.checks": "378d231b2cac7ddb615e4889c7c879d1ff856e14f50b46794928c2afa0d3d9d3",
     "spec/candidates/RootJournal.tla": "952ef6c8c841b04e66628db1698a84c61211916f36c209d26fe60dbe2fae368b",
     "spec/candidates/RootJournalCoverage.cfg": "b3002f50a47dc28fe678d96c3bb72ca2ba6f0e44a83f045bb365199e8a05ae1a",
-    "spec/candidates/RootJournalProof.tla": "fe06a06df4e27f54583e21f6ad573a3a44210a243d7a523827048eb1c656f1e8",
+    "spec/candidates/RootJournalProof.tla": "2d57e2a5605ed1aa821825b5d6b40ff86ec2563b380ea0b0caf739aace462f39",
     "spec/candidates/RootJournalRepeated.cfg": "8bfd8e4d5e8702d182b39bd59e9e55c19a206c4ad13be19808ffa13b793af521",
     "spec/candidates/RootJournalUnsafeEarly.cfg": "048e8f578dd58c410151957660231078c99b737f202f4c7eec2a9f34ba53c071",
     "spec/candidates/RootJournalUnsafeGap.cfg": "6943efad5a51aa03d438e94f638651535b15d89e964f5f08034f1e7069e7aa3a",
@@ -170,7 +170,7 @@
   "proof": {
     "checker_version": "c8ddc44",
     "theorem": "RepeatedHistorySafety",
-    "strict_obligations": 1047,
+    "strict_obligations": 1061,
     "scope": "Arbitrary finite epoch counts, unbounded log lengths and execution lengths under the abstract root timing and storage contracts",
     "induction_invariant": "CompositeStrong: root permission bounds plus data ordering, recovery bounds and immutable complete history",
     "dependency": {
@@ -184,18 +184,18 @@
       "failed_obligations": 1,
       "checked_obligations": 97
     },
-    "positive_seconds": 136.8069,
+    "positive_seconds": 126.652794,
     "standard_checker_passed": true,
     "finite_regression": "Both positive configurations also check CompositeStrong; state counts unchanged",
     "runtime_adopted": false,
     "builder_diagnostic": {
-      "recorded_at": "2026-11-09T15:59:57.702887+00:00",
+      "recorded_at": "2026-11-09T19:13:38.084525+00:00",
       "status": "success",
-      "strict_obligations": 1047,
-      "positive_seconds": 272.444093,
+      "strict_obligations": 1061,
+      "positive_seconds": 247.933125,
       "required_negative_control_passed": true,
       "scope": "Targeted proof stage on the Woodpecker BuildKit builder; not a complete Woodpecker qualification or publication",
-      "log_sha256": "6de17611e5c526797438980c78f1a8dc3ace3b4466bec888045696823ad0d2d9"
+      "log_sha256": "3349ac784065b4d8a36075f2005917c03c79ed578e59dcc5c38b27be2befa086"
     }
   },
   "invariant_deduplication": {
@@ -223,6 +223,13 @@
       "source_commit": "f0e3855ab3c6ed938d52055ed7196197dde3ed8a",
       "status": "failure",
       "detail": "Finite checks passed. The proof stage exited 10. A targeted replay on the same BuildKit builder identified three unproved type/recovery obligations out of 1,020. They pass locally but were decomposed into smaller lemmas to remove sensitivity to large solver queries; no protocol property or solver limit changed."
+    },
+    {
+      "pipeline": 51,
+      "source_commit": "ab85ee1e41ffb84f83227f9ff4a68f3d3d36dba2",
+      "status": "failure",
+      "detail": "Five of 1,047 root/journal proof obligations did not discharge on the CI builder: DeliverFenceKeepsActive, StartRenewKeepsActive, ApplyRenewKeepsActive, DeliverRenewKeepsActive and SelectPrefixPreserves. Narrower phase-preservation queries and explicit authority-record typing now pass locally and on the builder. No protocol, invariant or solver-limit change.",
+      "log_sha256": "13ee3b56f05d4bb40d668e270d179c4cec0eb10cfadb5ccb145bff02b63d9d5d"
     }
   ],
   "previous_local_proof": {
@@ -259,13 +266,57 @@
     ".tools/candidates/RootJournal/model-root-journal-repeated.log": "cd7583034f224726c7e8230a4ae405cbe4eec0e4e7d08ee51bae353a4ad19856",
     ".tools/candidates/RootJournal/model-root-journal-reseal.log": "b004d98d1d2c5718e6e6f64a0c2fc6c1abaa949b6d84bc8628ae47d93cd5156b",
     ".tools/candidates/RootJournal/model-root-journal.log": "225b7ae77d3f67462831ff7ffb9038beac2b52fac53673ab1ed671c42aef9b21",
-    ".tools/proof-negative-root-journal-permission.log": "2022d1493263d7bb0fa01ff128430f3317042f0ea88c5fe8b92dcdfd3acc5f57",
+    ".tools/proof-negative-root-journal-permission.log": "4c63090d733d295ffce1c4d367037826ff8414d002a3b2e3ce2f09d336a97e9c",
     ".tools/proof-negative-root-renewal.log": "6f3e9f3d6d10a42ac9b364e92b9953595bf25706aa4097d0a879f35cb607a009",
     ".tools/proof-root-control.log": "660d5c3cf427e6dd0e5cf5694974b628a1f6f1dc1c77e7c77053a7ad23b3860f",
-    ".tools/proof-root-journal.log": "033677a3a82158b9b2459397503c96b25b452e0dc6c7a9dbf4012ebb98be60c0",
+    ".tools/proof-root-journal.log": "2f97c08f6557c953aff3924a609ac5149cc36eeb1285b970d2684541dd77b1d5",
     ".tools/root-journal-builder-decomposed.log": "6de17611e5c526797438980c78f1a8dc3ace3b4466bec888045696823ad0d2d9",
     ".tools/root-journal-builder-diagnostic.log": "866d32ea3176c2fd8722724791054093c7bd76e722554a025b5a588f0eccfef3",
     ".tools/root-journal-deduplicated-check.log": "95b0ca1e9a2b6b30632cc4475a29f4d49ee35dc575cea0ec43258d040528adf8",
-    ".tools/root-journal-proof-decomposed.log": "62f4362671c6e2014d0107bff9d60d6ad4d63a4d2e4b22e34320432899513cdf"
+    ".tools/root-journal-proof-decomposed.log": "62f4362671c6e2014d0107bff9d60d6ad4d63a4d2e4b22e34320432899513cdf",
+    ".tools/root-journal-proof-split.log": "e92ee2ba223366236914b56ccec865496da6f946d19d4671279086e9de95d593",
+    ".tools/root-journal-proof-split-builder.log": "3349ac784065b4d8a36075f2005917c03c79ed578e59dcc5c38b27be2befa086"
+  },
+  "previous_qualification": {
+    "source_commit": "e3b89aac376eab63f4319a19775a4432d4515abb",
+    "woodpecker": {
+      "pipeline": 46,
+      "status": "success"
+    },
+    "public_pages_evidence_matches_commit": true
+  },
+  "previous_proof": {
+    "checker_version": "c8ddc44",
+    "theorem": "RepeatedHistorySafety",
+    "strict_obligations": 1047,
+    "scope": "Arbitrary finite epoch counts, unbounded log lengths and execution lengths under the abstract root timing and storage contracts",
+    "induction_invariant": "CompositeStrong: root permission bounds plus data ordering, recovery bounds and immutable complete history",
+    "dependency": {
+      "module": "RootControlProof",
+      "strict_obligations": 153,
+      "positive_and_negative_checked": true
+    },
+    "negative_control": {
+      "mutation": "Remove acknowledgement permission",
+      "theorem": "AcknowledgeBatchPreserves",
+      "failed_obligations": 1,
+      "checked_obligations": 97
+    },
+    "positive_seconds": 136.8069,
+    "standard_checker_passed": true,
+    "finite_regression": "Both positive configurations also check CompositeStrong; state counts unchanged",
+    "runtime_adopted": false,
+    "builder_diagnostic": {
+      "recorded_at": "2026-11-09T15:59:57.702887+00:00",
+      "status": "success",
+      "strict_obligations": 1047,
+      "positive_seconds": 272.444093,
+      "required_negative_control_passed": true,
+      "scope": "Targeted proof stage on the Woodpecker BuildKit builder; not a complete Woodpecker qualification or publication",
+      "log_sha256": "6de17611e5c526797438980c78f1a8dc3ace3b4466bec888045696823ad0d2d9"
+    }
+  },
+  "qualification": {
+    "status": "Full Woodpecker run and publication pending after the proof-query repair"
   }
 }

@@ -214,5 +214,13 @@
     ".tools/provider-register-cloud.json": "0e0f652b3e4023ddb8d46133c5055ca1105a0e2061fd5a78276b1f4f43569083"
   },
   "private_fixture_launcher_sha256": "6878e91c94af30fbcbed17f4a1068d189967a25793d49ef221ec834c1354f0b3",
-  "source_commit": "3e04707be3c38fedd55448f7fcf6b6a2bb6346f6"
+  "source_commit": "3e04707be3c38fedd55448f7fcf6b6a2bb6346f6",
+  "qualification": {
+    "source_commit": "e3b89aac376eab63f4319a19775a4432d4515abb",
+    "woodpecker": {
+      "pipeline": 46,
+      "status": "success"
+    },
+    "public_pages_evidence_matches_commit": true
+  }
 }

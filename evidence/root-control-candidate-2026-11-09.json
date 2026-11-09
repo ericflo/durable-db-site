@@ -187,6 +187,13 @@
     "strict_equivalence_obligations": 4,
     "checker_version": "c8ddc44",
     "log_sha256": "f7ae5e3fdf6f0833eb9c861ed087ba404af9a900edf7c2491b807e37e8deabc1",
-    "all_existing_negative_and_coverage_controls_passed": true
+    "all_existing_negative_and_coverage_controls_passed": true,
+    "qualification": {
+      "source_commit": "e3b89aac376eab63f4319a19775a4432d4515abb",
+      "woodpecker": {
+        "pipeline": 46,
+        "status": "success"
+      }
+    }
   }
 }

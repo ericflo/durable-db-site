@@ -2,7 +2,7 @@
   "schema": 1,
   "recorded_at": "2026-11-09T09:19:39.136096+00:00",
   "base_commit": "58312107a3e908eeddbfe1e45e3ac6845f706812",
-  "status": "Research candidate only; not adopted or implemented",
+  "status": "Historical experiment, superseded by OwnedWal; not adopted or implemented",
   "question": "Conditional bounded-clock serving authority for local reads across takeover and restart",
   "positive": {
     "states": 4884220,
@@ -63,5 +63,10 @@
     "The clock assumption is not permitted by the current runtime architecture rule; no runtime change is made.",
     "Commit is abstract atomic authority-checked publication, not a validated immutable-WAL protocol.",
     "No claim of full composition, Rust refinement, unbounded proof, independent partition throughput, provider freshness, physical clock behavior or liveness."
-  ]
+  ],
+  "source_commit": "b0acc9851bc6803e70a28a294d10c99b53de4b44",
+  "successor": {
+    "module": "spec/candidates/OwnedWal.tla",
+    "scope": "Maintains pause, drain and delayed-grant controls while composing permission with immutable upload and acknowledgement"
+  }
 }
