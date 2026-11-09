@@ -1,0 +1,86 @@
+rule_files: [alerts.yml]
+evaluation_interval: 1m
+tests:
+  - name: unavailable-target-and-missing-discovery
+    interval: 1m
+    input_series: []
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: DurableDbUnavailable
+        exp_alerts: []
+      - eval_time: 3m
+        alertname: DurableDbUnavailable
+        exp_alerts:
+          - exp_labels: {job: durable-db, severity: critical}
+            exp_annotations:
+              summary: No durable-db target can be scraped
+              runbook_url: https://ericflo.github.io/durable-db-site/observability.html#unavailable
+  - name: provider-errors-fire-and-recover
+    interval: 1m
+    input_series:
+      - series: 'up{job="durable-db",instance="one"}'
+        values: '1x25'
+      - series: 'durable_db_operations_total{job="durable-db",operation="object_put",outcome="ok"}'
+        values: '0+90x25'
+      - series: 'durable_db_operations_total{job="durable-db",operation="object_put",outcome="error"}'
+        values: '0+10x10 100+0x15'
+    alert_rule_test:
+      - eval_time: 9m
+        alertname: DurableDbProviderErrors
+        exp_alerts:
+          - exp_labels: {job: durable-db, severity: warning}
+            exp_annotations:
+              summary: Provider operation errors exceed five percent
+              runbook_url: https://ericflo.github.io/durable-db-site/observability.html#provider-errors
+      - eval_time: 18m
+        alertname: DurableDbProviderErrors
+        exp_alerts: []
+  - name: publication-conflicts-are-not-provider-errors
+    interval: 1m
+    input_series:
+      - series: 'durable_db_operations_total{job="durable-db",operation="authority_replace",outcome="conflict"}'
+        values: '0+24x20'
+      - series: 'durable_db_operations_total{job="durable-db",operation="authority_replace",outcome="ok"}'
+        values: '0+36x20'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: DurableDbPublicationContention
+        exp_alerts:
+          - exp_labels: {job: durable-db, severity: warning}
+            exp_annotations:
+              summary: Publication register conflicts exceed twenty-five percent
+              runbook_url: https://ericflo.github.io/durable-db-site/observability.html#publication-contention
+      - eval_time: 12m
+        alertname: DurableDbProviderErrors
+        exp_alerts: []
+  - name: saturated-observation-admission
+    interval: 1m
+    input_series:
+      - series: 'durable_db_events_total{job="durable-db",event="observation_queue_rejected"}'
+        values: '0+1x7 7+0x15'
+    alert_rule_test:
+      - eval_time: 7m
+        alertname: DurableDbObservationQueueFull
+        exp_alerts:
+          - exp_labels: {job: durable-db, severity: warning}
+            exp_annotations:
+              summary: Read observation admission is repeatedly saturated
+              runbook_url: https://ericflo.github.io/durable-db-site/observability.html#observation-admission
+      - eval_time: 18m
+        alertname: DurableDbObservationQueueFull
+        exp_alerts: []
+  - name: sustained-maintenance-errors
+    interval: 1m
+    input_series:
+      - series: 'durable_db_operations_total{job="durable-db",operation="database_maintenance",outcome="error"}'
+        values: '0+6x20'
+      - series: 'durable_db_operations_total{job="durable-db",operation="database_maintenance",outcome="ok"}'
+        values: '0+14x20'
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: DurableDbMaintenanceErrors
+        exp_alerts:
+          - exp_labels: {job: durable-db, severity: warning}
+            exp_annotations:
+              summary: Maintenance errors exceed twenty-five percent
+              runbook_url: https://ericflo.github.io/durable-db-site/observability.html#maintenance

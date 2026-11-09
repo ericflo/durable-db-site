@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Verification results · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a aria-current="page" href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="verification-results">Verification results</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Verification results · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a aria-current="page" href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="verification-results">Verification results</h1>
 <p>The v0.1.0 binary was built from <code>f431d88c072cc924634126e4b2ba8f1ec30697b0</code> by Woodpecker on 2026-11-08. The build gate passed Rust checks, all five bounded models and their negative controls, and Pi conformance. Commands and bounds are in <a href="verification.html">verification</a>.</p>
 <table>
 <thead>
@@ -150,4 +150,48 @@
 <p>The concurrent write phase received 68 HTTP <code>409</code> responses and 25 HTTP <code>503</code> responses. Three workers exhausted their 12-attempt budget. The harness stopped the remaining phases and exited unsuccessfully; the four-reader phase was not run. The initial harness did not perform its final verification after a failed phase. A separate fresh process with zero memory cache subsequently read all 70 databases: contents and revisions matched the 56 acknowledged measured writes plus seeds, with no mismatches; the three unacknowledged writes were not present at those reads. This checks the final observed state, not a complete linearizability history. The <a href="evidence/b2-recovery-2026-11-08.json">recovery report</a> retains those counts. The harness now performs final-state verification after a failed measured phase, including whether an uncertain write became visible; a simulated lost-acknowledgement test checks that failed operations remain failures in its latency and throughput report.</p>
 <p>A diagnostic rerun delayed maintenance for 24 hours, retained the existing directory population, added four databases, and ran four workers for ten writes each. All 40 writes completed, but required 59 conflicts and one service-unavailable response. Successful throughput was 0.543 operations/second; write p50/p95/max were 2,259/22,217/22,534 ms. All 40 reads completed at 9.190 operations/second, and the four active databases verified afterward. Sanitized server logging identified one native B2 HTTP <code>503</code>; it does not retrospectively identify every <code>503</code> in the first run. See the <a href="evidence/b2-isolation-2026-11-08.json">isolation-run JSON</a>. Delaying maintenance is a diagnostic control, not a deployment recommendation.</p>
 <p>These runs establish a publication-progress/performance blocker. They do not isolate every source of latency or constitute a controlled attribution of all failures to maintenance. Three API processes did not achieve acceptable concurrent write performance in this workload; process count stayed fixed while writer concurrency changed. The next design must address competing publications, repeated uploads, and maintenance interference together, with a model before implementation. Increasing retry limits or removing the read barrier would not close this gate.</p>
+<h2 id="b2-rebase-diagnostic">B2 rebase diagnostic</h2>
+<p>A rebase-only candidate was tested with the same 70-database, three-process workload and 60-second maintenance interval in a new dedicated B2 <code>us-west-002</code> bucket on 2026-11-08. This candidate predates the grouped observations, immutable-manifest cache, and reduced idle-maintenance work. The <a href="evidence/b2-rebase-2026-11-08.json">raw report</a> records its binary hash and source base. All measured operations completed and all 70 databases verified afterward, but latency and throughput remain unsuitable for a production performance claim.</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Successful / planned</th>
+<th>Successful ops/s</th>
+<th>p50 / p95 / max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One writer</td>
+<td>20 / 20</td>
+<td>0.256</td>
+<td>3,607 / 7,989 / 9,575 ms</td>
+</tr>
+<tr>
+<td>One reader</td>
+<td>20 / 20</td>
+<td>1.508</td>
+<td>298 / 2,201 / 2,257 ms</td>
+</tr>
+<tr>
+<td>Four writers</td>
+<td>80 / 80</td>
+<td>0.526</td>
+<td>4,984 / 14,510 / 31,250 ms</td>
+</tr>
+<tr>
+<td>Four readers</td>
+<td>80 / 80</td>
+<td>4.992</td>
+<td>219 / 2,451 / 6,394 ms</td>
+</tr>
+</tbody>
+</table>
+<p>The four-writer phase required 11 HTTP <code>409</code> and four HTTP <code>503</code> retries. This is improved completion in one short experiment, not a controlled demonstration of its cause, a statistical latency comparison, or closure of the performance gate. Sanitized logs again show native B2 <code>503</code> responses; their cause was not established. The task-owned bucket’s 380 remaining physical versions were removed and its scoped workload key revoked after the run.</p>
+<h2 id="grouped-reads-and-publication-profiling">Grouped reads and publication profiling</h2>
+<p>Commit <code>b12d2ae</code> adds sealed observation groups, immutable-manifest caching, and shared idle-maintenance observations to the rebase change. The same three-process, 70-database workload completed in a fresh B2 bucket with maintenance every 60 seconds. All 100 measured writes and 100 measured reads completed, and all 70 databases verified. The four-writer phase reached 0.724 successful operations/second, with p50/p95/max 3,462/12,320/30,927 ms and ten HTTP <code>409</code> retries. Four readers reached 3.624 operations/second, with two HTTP <code>503</code> retries. These short runs do not demonstrate a stable production envelope. The <a href="evidence/b2-grouped-2026-11-08.json">complete report</a> includes every sample and the single-worker phases.</p>
+<p>Commit <code>d889213</code> adds fixed-cardinality operational metrics. A diagnostic run delayed maintenance for 24 hours, added four databases to the same directory (74 total), and used four workers for ten writes and ten reads each. All operations and final-state checks passed, but writes still achieved only 0.687 operations/second and reads 4.074. There was one HTTP <code>409</code> retry. See the <a href="evidence/b2-profile-isolation-2026-11-08.json">workload report</a> and <a href="evidence/b2-profile-metrics-2026-11-08.json">per-process metric snapshots</a>.</p>
+<p>Those snapshots cover each process’s lifetime, including startup, setup, and final verification, rather than only the measured phases. Aggregated across the three processes, 322 immutable PUT calls averaged 362 ms; 208 authority replacements averaged 484 ms, including 81 definite conflicts. There were 65 path rebases. Sealed read groups served 93 members through 76 barriers. SDK-internal retries are included in a call’s latency but are not individually counted. These measurements motivate combining pending publications and reducing repeated path uploads; they do not establish that maintenance is the only bottleneck.</p>
+<p>All 35 local Rust tests pass after the metrics changes, including cancellation accounting, HTTP label privacy, and the 10,005-database stress test. Versioned and unversioned MinIO qualification passes again. The five initial Prometheus alert rules pass synthetic firing/recovery tests with pinned <code>promtool</code> 3.16.0; this does not test real notification delivery or a production recovery drill.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

@@ -1,0 +1,47 @@
+# Initial diagnostic thresholds, not a qualified service-level objective.
+# Set the scrape job to durable-db; deploy one instance of these rules per cluster.
+groups:
+  - name: durable-db
+    rules:
+      - alert: DurableDbUnavailable
+        expr: (sum by (job) (up{job="durable-db"}) == 0) or absent(up{job="durable-db"})
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: No durable-db target can be scraped
+          runbook_url: https://ericflo.github.io/durable-db-site/observability.html#unavailable
+      - alert: DurableDbProviderErrors
+        expr: >-
+          sum by (job) (rate(durable_db_operations_total{job="durable-db",operation=~"authority_read|authority_replace|object_get|object_put|object_list|physical_delete",outcome=~"error|unavailable"}[5m]))
+          / clamp_min(sum by (job) (rate(durable_db_operations_total{job="durable-db",operation=~"authority_read|authority_replace|object_get|object_put|object_list|physical_delete"}[5m])), 0.001) > 0.05
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: Provider operation errors exceed five percent
+          runbook_url: https://ericflo.github.io/durable-db-site/observability.html#provider-errors
+      - alert: DurableDbPublicationContention
+        expr: >-
+          sum by (job) (rate(durable_db_operations_total{job="durable-db",operation="authority_replace",outcome="conflict"}[5m]))
+          / clamp_min(sum by (job) (rate(durable_db_operations_total{job="durable-db",operation="authority_replace"}[5m])), 0.001) > 0.25
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: Publication register conflicts exceed twenty-five percent
+          runbook_url: https://ericflo.github.io/durable-db-site/observability.html#publication-contention
+      - alert: DurableDbObservationQueueFull
+        expr: sum by (job) (increase(durable_db_events_total{job="durable-db",event="observation_queue_rejected"}[5m])) > 0
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: Read observation admission is repeatedly saturated
+          runbook_url: https://ericflo.github.io/durable-db-site/observability.html#observation-admission
+      - alert: DurableDbMaintenanceErrors
+        expr: >-
+          (sum by (job) (rate(durable_db_operations_total{job="durable-db",operation=~"storage_maintenance|database_maintenance",outcome="error"}[5m]))
+          / clamp_min(sum by (job) (rate(durable_db_operations_total{job="durable-db",operation=~"storage_maintenance|database_maintenance"}[5m])), 0.001) > 0.25)
+          and sum by (job) (increase(durable_db_operations_total{job="durable-db",operation=~"storage_maintenance|database_maintenance"}[5m])) > 10
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: Maintenance errors exceed twenty-five percent
+          runbook_url: https://ericflo.github.io/durable-db-site/observability.html#maintenance
