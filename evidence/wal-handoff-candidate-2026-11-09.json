@@ -73,5 +73,7 @@
     "No implementation of Drain, clock assumptions, delegation hierarchy, writer renewal, general membership, transaction semantics or request deduplication.",
     "No index, checkpoint, retention, compaction, garbage-collection, admission or liveness proof."
   ],
-  "standard_checker_passed": true
+  "standard_checker_passed": true,
+  "source_commit": "5710608116f6d9bfe1acad45161b2c775498272d",
+  "superseded_by": "spec/Journal.tla and spec/JournalProof.tla"
 }
