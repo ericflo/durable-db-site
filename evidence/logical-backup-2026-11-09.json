@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "complete": true,
+  "started_at": "2026-11-09T05:50:41.621083+00:00",
+  "binary_sha256": "62424797c85ca200e4ad5b2e00b855d9b9a6a1460eb2b3218cc58eccdb1a560b",
+  "harness_sha256": "ee57bab205c71136acb7e66e8fc95ac68eec5332d2dca24cfe129fbde9b0084b",
+  "source_base_commit": "d655c3c44ad92f2021d71d84f78053c0f2027317",
+  "source": "B2 us-west-002, fresh format 5, zero caches",
+  "destination": "versioned MinIO, fresh format 5, zero caches",
+  "cases": [
+    "B2 scoped-read consistent export and offline inspection",
+    "Restore after complete B2 bucket removal, with no source server or workload credential",
+    "SIGKILL destination and cache-free restart; identical restore re-verifies without new revisions",
+    "Independent value comparison for every binary/Unicode/empty record",
+    "Old source capability rejected despite the same signing key and database name"
+  ],
+  "limitations": [
+    "Short synthetic fixture, not PITR, retained snapshots, independent-region disaster recovery or a production RTO.",
+    "Private test launcher is pinned by digest; CLI and adversarial recovery tests are in the repository."
+  ],
+  "archive": {
+    "restore_chunks": 4,
+    "sha256": "32d0e5833339a9c27d9c733b12e23f00e392e9a2e45c426bf99a3301749130a4",
+    "snapshot": {
+      "bytes": 724134,
+      "database": "sample",
+      "format": 1,
+      "incarnation": "c163a7d6-b4c3-415a-847a-c1001966fe1f",
+      "keys": 274,
+      "limits": {
+        "max_bytes": 4194304,
+        "max_keys": 10000
+      },
+      "revision": 7
+    }
+  },
+  "archive_file_bytes": 975303,
+  "source_cleanup_before_restore": "Removed task-owned test bucket, 20 physical versions, and revoked its workload key: durable-db-test-bfef39d186c0",
+  "restore": {
+    "archive_sha256": "32d0e5833339a9c27d9c733b12e23f00e392e9a2e45c426bf99a3301749130a4",
+    "destination": {
+      "bytes": 724134,
+      "keys": 274,
+      "limits": {
+        "max_bytes": 4194304,
+        "max_keys": 10000
+      },
+      "pages": 6,
+      "policy": {
+        "generation": 0,
+        "incarnation": "fafd08de-f1ab-4d59-9164-2cb70b91303c",
+        "revision": 1,
+        "revoked_tokens": 0
+      },
+      "revision": 4
+    },
+    "source_revision": 7,
+    "verified_keys": 274
+  },
+  "finished_at": "2026-11-09T05:51:23.932267+00:00",
+  "earlier_seed_attempt": {
+    "schema": 1,
+    "complete": false,
+    "started_at": "2026-11-09T05:47:36.868016+00:00",
+    "binary_sha256": "413204e81d69055546c662a146e570b99004159c2f7455d9558648094ba355c2",
+    "harness_sha256": "266d04369ad814372c3ef9f43ac05ebd1308a74bc457014f19a7a7817bdaf505",
+    "source_base_commit": "d655c3c44ad92f2021d71d84f78053c0f2027317",
+    "source": "B2 us-west-002, fresh format 5, zero caches",
+    "destination": "versioned MinIO, fresh format 5, zero caches",
+    "cases": [],
+    "limitations": [
+      "Short synthetic fixture, not PITR, retained snapshots, independent-region disaster recovery or a production RTO.",
+      "Private test launcher is pinned by digest; CLI and adversarial recovery tests are in the repository."
+    ],
+    "failure": {
+      "type": "RuntimeError",
+      "reason": "unexpected HTTP status 409"
+    },
+    "finished_at": "2026-11-09T05:47:50.277473+00:00",
+    "cleanup": "Removed task-owned test bucket, 18 physical versions, and revoked its workload key: durable-db-test-3c3400369aec",
+    "correction": "Fixture now retries identical commit requests on maintenance-fence 409. Restore also gained bounded identical commit-conflict retries; creation and source snapshot conflicts still stop."
+  },
+  "tested_source_sha256": {
+    "Cargo.toml": "e9dfc53a64070a1c770c6b1872e9a66edba0ec10b8dd7c8ebf437ac58f9bc1aa",
+    "Cargo.lock": "865599bf0e433b41f93c47eb480aefffcc726599fa2d1ae3af34ef0d9daba4ce",
+    "src/main.rs": "07bf79a4b8af5d5e435f92386db92e396ad1f5cb8a2b3de8d42cc198f0237aad",
+    "src/lib.rs": "b3dec796781a7c3a2d837b0e912b2c5131fad6270bc6d4339610a90f896722c7",
+    "src/backup/archive.rs": "e0bf86474b85ed6e979764d7285aaa99e0b06e514c40d9ddf3266eaa0498a7aa",
+    "src/backup/http.rs": "328c10f30ddba9f98e5df5545d7a77cc2b1fd8ac4af68a0a8b2b36063a4c2010",
+    "src/backup/mod.rs": "fec63f1acec92c0eec200d5ba9fea68df97fa5df14b534bf81bafe386242329a",
+    "tests/backup.rs": "a5cd51b9f5a09f3dfef578fde2072319f16f4acd87d61e651a54a77d6a018ada",
+    "spec/LogicalBackup.tla": "37374dca41add548572084eb4a75ed346b20c8c2a2ba79eebb39dd2eb125b2d3"
+  },
+  "source_note": "Uncommitted recovery source subsequently committed with this report; server/CLI binary was frozen before the passing cloud run.",
+  "rust_regular_passed": 94,
+  "recovery_tests": {
+    "passed": 8,
+    "rerun_after_final_changes": true
+  },
+  "model": {
+    "states": 6888,
+    "generated": 40064,
+    "depth": 16,
+    "negative_controls_passed": 4
+  },
+  "raw_log_sha256": {
+    "logical-backup-all-tests.log": "709ae4b413030a5ee66c739763899569a848816e04de2e2ab7587a3991843093",
+    "logical-backup-final-tests.log": "7794b8cc11c94eebf545f09c21e2ea38242a8cf51a2d96a35413ccc7dd4e99fe",
+    "logical-backup-final-clippy.log": "009263b11cf42385f57aef3dd88b69b9aba02f9546caa751960b93d83f0e14b0",
+    "logical-backup-model.log": "75142e46afb1c7c1d95b3ff7b49c4543e8444795b2c802f8d6310a5bbf6acd8c",
+    "logical-backup-cloud-run.log": "af8ed097f9f198ca57e734077bdd3891e166ae6e6c6d1645075f748491571dc2"
+  }
+}
