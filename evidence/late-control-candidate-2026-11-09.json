@@ -142,7 +142,16 @@
     "permission_obligations": 687,
     "journal_obligations": 785,
     "negative_controls": 9,
-    "full_woodpecker_qualification": "Pending; exact-source combined builder proof stage passed",
+    "full_woodpecker_qualification": {
+      "source_commit": "d7409567efedeaf29159a3726c9851e7d078a583",
+      "woodpecker": {
+        "pipeline": 52,
+        "status": "success",
+        "build_log_sha256": "fa9dd94219ddefc5bc617c0e1b50858cfd5089f0837fe987a7cd9f5265ce4637"
+      },
+      "public_pages_evidence_matches_commit": true,
+      "pages_verification_sha256": "d362c76701ce649c072e5aad6188aec12edb5240229737e489eea615f304f46d"
+    },
     "proof_steps_changed_since_base_commit": true,
     "protocol_actions_changed_since_base_commit": false,
     "local_commands": [
@@ -160,5 +169,15 @@
     "scope": "Proof queries did not discharge on the CI builder; the local full proof passed",
     "log_sha256": "f3869957185aa57f8020aff422814a6fd86eed797c09bdd69aafb23b44483b72",
     "repair": "Split record typing, root-progress fields and preservation clauses into explicit typed steps. No action, invariant, solver limit or required control changes."
+  },
+  "qualification": {
+    "source_commit": "d7409567efedeaf29159a3726c9851e7d078a583",
+    "woodpecker": {
+      "pipeline": 52,
+      "status": "success",
+      "build_log_sha256": "fa9dd94219ddefc5bc617c0e1b50858cfd5089f0837fe987a7cd9f5265ce4637"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "d362c76701ce649c072e5aad6188aec12edb5240229737e489eea615f304f46d"
   }
 }

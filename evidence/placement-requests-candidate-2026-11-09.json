@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T19:18:09.050704+00:00",
+  "base_commit": "d7409567efedeaf29159a3726c9851e7d078a583",
+  "status": "Finite one-coordinator placement request model; no runtime adoption",
+  "standard_checker_passed": true,
+  "checks": [
+    {
+      "kind": "safe",
+      "config": "PlacementRequests.cfg",
+      "expected_invariant": null,
+      "generated": 1900065,
+      "states": 359761,
+      "depth": 23,
+      "log_sha256": "64031d0a73b0ceaf694abdd29b24f6372d2a676d9e642831a03ede834dd953de"
+    },
+    {
+      "kind": "unsafe",
+      "config": "PlacementRequestsUnsafeCompare.cfg",
+      "expected_invariant": "GenerationOrder",
+      "generated": 1644,
+      "states": 863,
+      "depth": 10,
+      "log_sha256": "1b9eae74c4732d89897aee4f86979a52718cc87020585e41078a41b651a1b7af"
+    },
+    {
+      "kind": "unsafe",
+      "config": "PlacementRequestsUnsafeTimeout.cfg",
+      "expected_invariant": "ViewSafe",
+      "generated": 297,
+      "states": 177,
+      "depth": 8,
+      "log_sha256": "7ad206f7c7a6213a037c22180f687f51454b7e03b9137c79a2d5082299fc0634"
+    },
+    {
+      "kind": "unsafe",
+      "config": "PlacementRequestsUnsafeReply.cfg",
+      "expected_invariant": "ViewSafe",
+      "generated": 10699,
+      "states": 5420,
+      "depth": 12,
+      "log_sha256": "21cce070a5be11e2a7847959f84c3870ea78b433806dbcde312cfe4198775772"
+    },
+    {
+      "kind": "unsafe",
+      "config": "PlacementRequestsUnsafeDrain.cfg",
+      "expected_invariant": "Exclusive",
+      "generated": 18850,
+      "states": 8512,
+      "depth": 13,
+      "log_sha256": "bb3ba77355a6df8439477bfcf09e203282b9b2ec12db44deb3c4aff1ba1e7bd7"
+    },
+    {
+      "kind": "coverage",
+      "config": "PlacementRequestsLateFreeze.cfg",
+      "expected_invariant": "NotLateFreeze",
+      "generated": 782,
+      "states": 433,
+      "depth": 9,
+      "log_sha256": "3be8756e725419da3b943454dc4af1e8268c31cf5b6378b332eba818626d1054"
+    },
+    {
+      "kind": "coverage",
+      "config": "PlacementRequestsLateReply.cfg",
+      "expected_invariant": "NotLateReply",
+      "generated": 36780,
+      "states": 15602,
+      "depth": 14,
+      "log_sha256": "671d7a02325ce36aae14068b49b046aaffafe879dc5934354597d99307016929"
+    },
+    {
+      "kind": "coverage",
+      "config": "PlacementRequestsStaleCompare.cfg",
+      "expected_invariant": "NotStaleCompare",
+      "generated": 109,
+      "states": 68,
+      "depth": 7,
+      "log_sha256": "1e5c2cc1adff8da292ea56080265a970316f315c8dddf04ed415d32e4ed5b1c5"
+    },
+    {
+      "kind": "coverage",
+      "config": "PlacementRequestsResumed.cfg",
+      "expected_invariant": "NotResumed",
+      "generated": 593965,
+      "states": 176882,
+      "depth": 18,
+      "log_sha256": "352aca807f740ee5fa8c3d4a8aaf595dfcca9bb220e857c564be698b291f41b5"
+    }
+  ],
+  "bounds": {
+    "continuing_coordinators": 1,
+    "partitions": 1,
+    "attempts": 4,
+    "generations": 2,
+    "grant_lifetime": 1,
+    "time_advances": 2
+  },
+  "assumptions": [
+    "Exact conditional register with never-reused revisions, including otherwise identical replacements",
+    "Never-reused invocation IDs; one caller-active request while earlier timed-out operations may remain in flight",
+    "One continuing coordinator; grants obey the abstract Lease upper bound",
+    "Raw observations may be any historical register version"
+  ],
+  "properties": [
+    "A validated open local view matches the durable placement generation and phase",
+    "Live grants cannot belong to different generations",
+    "Durable generations never decrease"
+  ],
+  "coverage": [
+    "Timed-out freeze actually applies after old-generation permission was issued",
+    "A successful timed-out response is delivered after a newer generation is locally confirmed",
+    "Validation rejects an observation that was already stale when its request began",
+    "Replacement generation issues permission after a successful timed-out freeze for that same generation and old-generation issuance"
+  ],
+  "limitations": [
+    "No root acquisition, renewal, replacement or competing coordinators",
+    "No process restart, incarnation persistence, clock conversion or platform timing guarantee",
+    "No journal prefixes, transaction semantics, request receipts, resource admission, garbage collection or liveness",
+    "No unbounded proof, refinement mapping to PartitionControl, or implementation refinement",
+    "The serving engine still performs conditional read barriers"
+  ],
+  "source_sha256": {
+    "Dockerfile": "519206009522dab135c60862c9a86e9bf109e40d0a36cb1c5d63f40e63418ec4",
+    "scripts/check-candidate.sh": "9a3c784ce408759aa9cec5b09755fca3e2bfcc4e8b284b6e1bdd19603b1acdaa",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
+    "spec/candidates/PlacementRequests.cfg": "dccabbfce2bf3fcc689cf58227bc90e59a2c47d0f6b95ab6023fa17c3b1b1910",
+    "spec/candidates/PlacementRequests.checks": "00f9b1bf991ba9e4874f2c78dcd5dcc862ea0b62a2b39ba0a7c13feeff0375f1",
+    "spec/candidates/PlacementRequests.tla": "c4e0c919b5af8c53cac8503f5f32a3e52b671ec4bd03f832796a974f533bcc20",
+    "spec/candidates/PlacementRequestsLateFreeze.cfg": "14195d0bd975a52efdef17e418e7cadb116e95544011e6ac3a06012c2f992a1c",
+    "spec/candidates/PlacementRequestsLateReply.cfg": "9d19041f3ca8d4fb10015b94eab5e3c30e4e104e546d0475161ce359d6ddc6fc",
+    "spec/candidates/PlacementRequestsResumed.cfg": "afc5ee2088ca5606d875390cfb327e82855d7a8758a650751d3c1bac2e358df1",
+    "spec/candidates/PlacementRequestsStaleCompare.cfg": "837df86d8f09976885d2e5480d44f1e270aa4dc507b8b74c2097344a035ad05f",
+    "spec/candidates/PlacementRequestsUnsafeCompare.cfg": "4aacac62bfcff96f4e88ef90e0a0884b9e9edaabadcfd5103156376c29f70c52",
+    "spec/candidates/PlacementRequestsUnsafeDrain.cfg": "9326393595ae7661e6a770ef6482f0f531e8fbef5e6b49960147439826e7d210",
+    "spec/candidates/PlacementRequestsUnsafeReply.cfg": "825229651c2410718888a04b91cbdc929c8bd3f5ecf1a588ec5763a6c43a7491",
+    "spec/candidates/PlacementRequestsUnsafeTimeout.cfg": "e1081fb7ab46cf56b4eeead0e5cc132fc3a4affe4fa6baf3e4c5db2c827b18dc"
+  },
+  "local_log_sha256": {
+    ".tools/placement-requests-maintained.log": "b0e22b619b2d60c7fe94de0dd647ea849ca7f553326b0ba1856154ed77962a60"
+  },
+  "qualification": {
+    "status": "Local standard checker passed; full Woodpecker qualification and publication pending"
+  }
+}

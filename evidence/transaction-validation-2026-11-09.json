@@ -187,5 +187,24 @@
     "jar_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
     "workers": 2
   },
-  "woodpecker_qualification": "Pending for this source change"
+  "woodpecker_qualification": {
+    "source_commit": "d7409567efedeaf29159a3726c9851e7d078a583",
+    "woodpecker": {
+      "pipeline": 52,
+      "status": "success",
+      "build_log_sha256": "fa9dd94219ddefc5bc617c0e1b50858cfd5089f0837fe987a7cd9f5265ce4637"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "d362c76701ce649c072e5aad6188aec12edb5240229737e489eea615f304f46d"
+  },
+  "qualification": {
+    "source_commit": "d7409567efedeaf29159a3726c9851e7d078a583",
+    "woodpecker": {
+      "pipeline": 52,
+      "status": "success",
+      "build_log_sha256": "fa9dd94219ddefc5bc617c0e1b50858cfd5089f0837fe987a7cd9f5265ce4637"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "d362c76701ce649c072e5aad6188aec12edb5240229737e489eea615f304f46d"
+  }
 }
