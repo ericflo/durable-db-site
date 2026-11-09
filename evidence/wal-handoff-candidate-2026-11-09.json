@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T10:14:36.636659+00:00",
+  "base_commit": "f424dc11c9e1c3c5b3470b88522eb2c1c0201f5a",
+  "status": "Candidate only; not runtime code or a composed serving protocol",
+  "positive": {
+    "states": 1214,
+    "generated": 3720,
+    "depth": 21,
+    "old_log_positions": 3,
+    "old_incarnations": 1,
+    "successor_controller": 1
+  },
+  "runs": [
+    {
+      "configuration": "WalHandoff",
+      "exit_code": 0,
+      "elapsed_seconds": 0.937
+    },
+    {
+      "configuration": "UnsafeAckGap",
+      "exit_code": 12,
+      "elapsed_seconds": 0.917
+    },
+    {
+      "configuration": "UnsafeEarlySnapshot",
+      "exit_code": 12,
+      "elapsed_seconds": 0.898
+    },
+    {
+      "configuration": "UnsafeStaleSnapshot",
+      "exit_code": 12,
+      "elapsed_seconds": 0.898
+    },
+    {
+      "configuration": "UnsafeLateAck",
+      "exit_code": 12,
+      "elapsed_seconds": 0.894
+    },
+    {
+      "configuration": "UnsafeReopenSeal",
+      "exit_code": 12,
+      "elapsed_seconds": 0.896
+    }
+  ],
+  "source_sha256": {
+    "spec/candidates/WalHandoff.tla": "45a3f50e2bd4e0d6a6f0a712ac4459e1f0596f78abe141b0f23ac9e284cb77ec",
+    "spec/candidates/WalHandoff.cfg": "c0bc1a65bed45e92489f46c4843efd81d7f82778603da184514983b38e8bb713",
+    "spec/candidates/UnsafeAckGap.cfg": "985da661cae9fd769d56adb5fd96106d2743ca461f1259e8aea17b6396029295",
+    "spec/candidates/UnsafeEarlySnapshot.cfg": "72ed3c96cf7a9b06ef932ba6f47e99f8411339578d7fb4970f3c076ae8329217",
+    "spec/candidates/UnsafeStaleSnapshot.cfg": "6b3e483b5723fbc32533699d0f49022c34b7b20d860ab91728cac29fc67c1b6c",
+    "spec/candidates/UnsafeLateAck.cfg": "5e3052246b4908b3945949e59584faf16e8be465fcf85339ce9456e33ec8c8f9",
+    "spec/candidates/UnsafeReopenSeal.cfg": "4d8748c56d829b62526604d02e46cccb3d223e52f8d6182c6d51a5f0e23b49fb",
+    "spec/candidates/WalHandoff.checks": "96847bee36b6fd966afc2c1e7af88715d7d1972783ef448f20be7c77a498b4e0"
+  },
+  "log_sha256": {
+    "wal-handoff-UnsafeAckGap.log": "143c645cadfa9b389b0a6d2f7e6ec1514bc6af543ae56e097f673c37fb609a5c",
+    "wal-handoff-UnsafeReopenSeal.log": "8a96c0f9c0b155f51671d25b7726bb3e95be4d2cd8a9de8b3f617676ee377d3a",
+    "wal-handoff-UnsafeStaleSnapshot.log": "6e577ae97d01ab16b5f54608cf8e710697e0b8377c5fe065815fc39964e09e62",
+    "wal-handoff-UnsafeEarlySnapshot.log": "31c37a0e2bdf8647e0754ad8a555487df30c57f52cf949105fd77b45f790f789",
+    "wal-handoff-UnsafeLateAck.log": "c31ebc9d4c6445b165dae5c10ca9510c510eceb8f6470539e9c38205e86161a5",
+    "wal-handoff-WalHandoff.log": "4f252a73078ecb1f8b6ba6dbdee95f40ce868afddaddf93c67eecc740015e16c",
+    "wal-handoff-standard-check.log": "a1d118b6ca64f50bc6e1d56ef0bdb3d32a1d6fd085bde8e59bf924635861f661"
+  },
+  "assumptions": [
+    "Atomic durable object visibility and fresh negative point reads",
+    "A valid external serving-authority boundary prevents every old acknowledgement after Drain",
+    "One immutable value/identity per old sequence position",
+    "The successor seal is atomically durable and recovered unchanged after crashes"
+  ],
+  "limitations": [
+    "Three-position finite checking is not an unbounded proof, implementation refinement or full protocol composition.",
+    "No implementation of Drain, clock assumptions, delegation hierarchy, writer renewal, general membership, transaction semantics or request deduplication.",
+    "No index, checkpoint, retention, compaction, garbage-collection, admission or liveness proof."
+  ],
+  "standard_checker_passed": true
+}

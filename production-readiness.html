@@ -18,13 +18,13 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Seventeen finite TLA+ models plus an unbounded abstract page-reachability proof cover pinned-owner takeover, logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Eighteen finite TLA+ models plus an unbounded abstract page-reachability proof cover pinned-owner takeover, logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; extend the unbounded proof to complete protocol composition and mechanize implementation refinement; independently review the protocol</td>
 </tr>
 <tr>
 <td>Cloud performance</td>
 <td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; native read retries now recover bounded transient observations, with a separate B2 rerun passing</td>
-<td>Qualify the implemented publication combiner; publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
+<td>Replace the shared per-request authority path, compose ownership and durable-log recovery, then publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
 </tr>
 <tr>
 <td>Public multitenancy</td>
@@ -76,12 +76,12 @@
 <h2 id="implementation-order">Implementation order</h2>
 <p><strong>Current priority: <a href="architecture-reassessment.html">reassess the serving and durability architecture</a>.</strong> The existing read barrier and shared publication path have not met the performance brief. Establish a safe ownership/read protocol and a measured batched durability path before expanding release or sustained-load qualification of a replacement.</p>
 <ol>
-<li>Close immediate admission and integrity gaps; enforce fresh dependency audits; measure the existing B2 protocol under contention. Keep latency distributions and failures in the same report.</li>
-<li>Decide the publication throughput design from those measurements. Start any batching/partitioning change in TLA+ and retain one shared B2/S3 implementation. Do not remove the conditional read barrier to improve a benchmark.</li>
-<li>Model and implement durable resource admission and authorization lifecycle. A physical reservation must account for uploads arriving after a worker pauses or dies. Refunding an expired reservation before proving that its uploads cannot arrive is unsafe. Logical bytes, current physical bytes, and cumulative provider spend need separate accounting.</li>
-<li>Add retention-aware snapshots and recovery before exposing the service to important data. Collection must honor retained roots, and restore must not depend on the original pods, caches, or mutable root still existing.</li>
-<li>Complete the indexed Pi adapter and operational API against the resulting lifecycle and quota contracts.</li>
-<li>Qualify mixed versions, provider failures, Kubernetes autoscaling, sustained load, recovery, and release artifacts. Publish evidence and resolve the independent review findings before changing the production status.</li>
+<li>Compose a safe serving-authority protocol with immutable log batches and handoff seals. State the provider, timing and membership assumptions; retain one B2/S3 storage algorithm.</li>
+<li>Implement a small vertical prototype and measure warm reads, batched durable writes and independent active databases. Include stale-owner fencing and total-compute-loss recovery in that same experiment. Compare end-to-end cost with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>.</li>
+<li>Integrate per-tenant physical admission, fair request/egress budgets, authorization and lifecycle. Do not refund rights that could still produce delayed uploads.</li>
+<li>Add multilevel indexes, bounded compaction, retention-aware snapshots and recovery. Reclamation must honor retained roots, and restore must work without the original compute or caches.</li>
+<li>Run Pi and general application workloads against the resulting protocol, including request uncertainty, host ownership and the typed SDK.</li>
+<li>Qualify mixed versions, provider failures, Kubernetes autoscaling, sustained load, disaster recovery and release artifacts. Resolve independent review findings before changing the production status.</li>
 </ol>
 <h2 id="reproducible-load-baseline">Reproducible load baseline</h2>
 <p><code>scripts/benchmark-http.mjs</code> creates synthetic databases on a <strong>disposable test deployment</strong>. It seeds one value per database, measures writes and reads with a configured number of workers, then verifies all seeded databases. The caller owns cleanup. Use scoped test-bucket credentials on the servers; the benchmark takes an administrator token from a file and does not print it.</p>
