@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "recorded_at": "2026-11-09T12:14:36.447014+00:00",
-  "base_commit": "2ccab7c23c623ebe762dc6256ba5c9e056535086",
+  "recorded_at": "2026-11-09T13:20:39.910340+00:00",
+  "base_commit": "e72f894d645e0993d3fe3853cb24c69c692c7189",
   "status": "Research component; abstract time bound assumed; no runtime adoption",
   "checks": [
     {
@@ -110,7 +110,7 @@
   ],
   "limitations": [
     "Separate finite instances do not establish every combination of three epochs and repeated delegation",
-    "No unbounded proof or clock conversion/refinement proof",
+    "Unbounded permission proof assumes abstract time bounds; no clock conversion/refinement proof",
     "No complete election among arbitrary concurrent candidates",
     "No assignment movement, RPC implementation, uncertain-outcome resolution or clock platform contract",
     "No composition with log history, transactions, admission, retention, reclamation or liveness",
@@ -121,14 +121,16 @@
     "A request-count-only coverage predicate was replaced by actual deadline-extension predicates before acceptance"
   ],
   "source_sha256": {
-    "Dockerfile": "7dee46ddc941c91cac62f1e067974f176c80bc9337a7a30d9bef1fafb362888c",
+    "Dockerfile": "4467e9f5dd388b06d27114a127b100cec201c182306a7b9bebeca2a709d99f61",
     "scripts/check-candidate.sh": "819cb50854f6ecce6ba343507c2e4b995785cd7d88703c16b818e28f626054ba",
     "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
-    "spec/candidates/RootControl.cfg": "bcd28862d93b7c5fb1d3f094dd6c8851f99231d5d05a075e66355d95ccfc52e4",
+    "scripts/check-proof.sh": "78e9725592698730e3414595b57d76f8f6b306ce4a08949968b2c859fb1fe83d",
+    "spec/candidates/RootControl.cfg": "319b58f020dfa7b09859c7536308d1f2935a30018ceb79dc9400e69056a007ca",
     "spec/candidates/RootControl.checks": "405abb9a6b8df46925e38b851c2aff67e4c3cb737799b90af96c4b34b8ade32e",
-    "spec/candidates/RootControl.tla": "44db6f9c450ba406c93cd6e69037b3968c39d1856d710987645026d580bcf775",
+    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592",
     "spec/candidates/RootControlCoverage.cfg": "2716034f6c5a82e105dd625d3c63c90347d25679e656c0876cf724dc19662244",
-    "spec/candidates/RootControlRenewal.cfg": "0b69ce84f773dbe207ecf5e524dc2492c4bc5b90d5d4e2083ae8abae8032901e",
+    "spec/candidates/RootControlProof.tla": "6a7f711cf316f7452641ab5c7b81c037cad7e725e2e62b677743e6fe40b13f50",
+    "spec/candidates/RootControlRenewal.cfg": "a12ccb7588bbdc7829232cd449ac670719769a07861fe09e36777a52f030e805",
     "spec/candidates/RootControlRenewalCoverage.cfg": "4395371db02cea10c1e5935628bbb7ab0dcfae5ace62269052bff42fa7f14398",
     "spec/candidates/RootControlUnsafeLateChild.cfg": "a15495e601afcea4005b14f68401f4583a64215711af1bbcb472745875a61996",
     "spec/candidates/RootControlUnsafeLateRoot.cfg": "5d39cd1039b1ef927dd5fa8ef9a1325155b3e45f727a45f55fbae6511d541eda",
@@ -137,19 +139,34 @@
     "spec/candidates/RootControlUnsafeStaleRenewal.cfg": "df2be60195cf1e45e8e2290722f6b6856e77f5346eb569f6b1c73eefe19cf1da"
   },
   "local_log_sha256": {
-    ".tools/candidates/RootControl/model-root-control-coverage.log": "8159253d445c9e329b8e9a022608ba109c7763181e78bbbed04d70a923d55b7b",
-    ".tools/candidates/RootControl/model-root-control-latechild.log": "831a3d623a9d947f6f593cb4823c396d4ec193fd2ad3c8a399529ec9a2e4d491",
-    ".tools/candidates/RootControl/model-root-control-lateroot.log": "cbd58076683fc923761ab0fd0b70dfce47a3c8a67c56a51a826f73d3b1aaade8",
-    ".tools/candidates/RootControl/model-root-control-longchild.log": "10d1d0fbef52ce56072c79d3edff1fea2d996f576aaf3e6c346426afbb70e8bd",
-    ".tools/candidates/RootControl/model-root-control-renewal-coverage.log": "ea0dc6cea5834bacfe6388e835d7c8230d4d191ba170b63f932406ad9d1791bd",
-    ".tools/candidates/RootControl/model-root-control-renewal.log": "273fd2e48a8dada1c87468c9b9670191e834809fc5c2466c47d88d9486561ba2",
-    ".tools/candidates/RootControl/model-root-control-skipdrain.log": "07769dbb75d649c8e81d9993bbafc910bb8ae5d9dc4105bd1d995d405b4e2c98",
-    ".tools/candidates/RootControl/model-root-control-stalerenewal.log": "02d200db5cf6c7eb2ab8dfe090929a6bbdee28cdc30e18c32c038f32073dce3e",
-    ".tools/candidates/RootControl/model-root-control.log": "49b7356711137577ab699e01235f0f60c8c7d54d45e0e226839a9cd783776fc9"
+    ".tools/candidates/RootControl/model-root-control-coverage.log": "370f1ba3e6613674f60a2e5733013a2aff9080efc29e5bea995898ddb5315d7e",
+    ".tools/candidates/RootControl/model-root-control-latechild.log": "73092e297fa06d88e5fbe34348b7cc4647636955502e4c005d85c080863da244",
+    ".tools/candidates/RootControl/model-root-control-lateroot.log": "dbe085afe6e4bd2be412862cd3c7177d487dead7c7f00a931bf9fd175405ca85",
+    ".tools/candidates/RootControl/model-root-control-longchild.log": "cbc845de94f0fbb249547e5e7d4b6ece317d7f6d88b71b35b1bc703c1a7678f7",
+    ".tools/candidates/RootControl/model-root-control-renewal-coverage.log": "12bb7a71d253760a429e0ff529afea773ff29e7db5ae41276fefb423f2d0e4db",
+    ".tools/candidates/RootControl/model-root-control-renewal.log": "4e9c58c2005393a763ec7cb0d4c2af4e99ce3bb604b7003f43cb58c252e59b21",
+    ".tools/candidates/RootControl/model-root-control-skipdrain.log": "b896d0977ca74a8992b4d1b96133efc3b3af9f520bd748996c3542150000754b",
+    ".tools/candidates/RootControl/model-root-control-stalerenewal.log": "d3c62a7cc3db5be51f0141a9a90f4bf3450f538aa50cb65f3ae9073209ffbf86",
+    ".tools/candidates/RootControl/model-root-control.log": "31953687c2245b8959263a7cfcea5c9c8db530a3a8c40cc9786cb47d08a2d7fd",
+    ".tools/proof-negative-root-renewal.log": "b3d00ab8f0a0c122d5ac5be13ddf306cce7672db55631e8403c37ef39a2d32bf",
+    ".tools/proof-root-control.log": "4cb0009abf5c0964d92aeb6b8b91e6bbc8563bfa5b591f3b94569fe8397aabf0",
+    ".tools/root-control-induction-check.log": "01790338738dda54aa61f1e509dd2c4feb9257a1fac619ce995dd1200ff92862",
+    ".tools/root-control-proof-standard.log": "a45fbf61080410823c1903fc3dc7d7e14a0bbc7c590879e6b703dfebd86abf6c"
   },
-  "source_commit": "ecf205beda01c054b6ea81fad9cc55fe2bd2b3e0",
-  "woodpecker": {
-    "pipeline": 39,
-    "status": "success"
+  "previous_finite_qualification": {
+    "source_commit": "ecf205beda01c054b6ea81fad9cc55fe2bd2b3e0",
+    "woodpecker": {
+      "pipeline": 39,
+      "status": "success"
+    }
+  },
+  "proof": {
+    "checker_version": "c8ddc44",
+    "strict_obligations": 153,
+    "scope": "Root exclusion, child containment and child exclusion for arbitrary finite epoch counts, execution lengths and renewal counts",
+    "induction_invariant": "Strong: types, clock order, root state, older-epoch fence bounds and child state",
+    "negative_control": "Ignoring current-owner comparison in ApplyRenew fails the required obligation",
+    "finite_regression": "Both positive configurations also check Strong; state counts unchanged",
+    "runtime_adopted": false
   }
 }
