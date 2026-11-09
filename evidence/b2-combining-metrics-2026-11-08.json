@@ -1,5 +1,5 @@
 {
-  "source_commit": "working candidate based on b5cb59fb20f9ea9a3effbc18e12d23bb67198043",
+  "source_commit": "aa1257ee6c254847bd3c86721f8e771f9f15c2f5",
   "scope": "Whole process lifetime, including startup, setup, measured operations, and final verification. SDK-internal retries are not individually counted.",
   "instances": [
     {

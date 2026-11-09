@@ -1165,5 +1165,6 @@
     "uncertain_write_not_observed": 0
   },
   "complete": true,
-  "finished_at": "2026-11-09T01:54:18.538Z"
+  "finished_at": "2026-11-09T01:54:18.538Z",
+  "source_commit": "aa1257ee6c254847bd3c86721f8e771f9f15c2f5"
 }

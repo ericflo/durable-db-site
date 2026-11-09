@@ -1,5 +1,19 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Observability and incident response · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="deployment.html">deployment</a><a aria-current="page" href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="observability-and-incident-response">Observability and incident response</h1>
-<p>The administrator-only <code>GET /metrics</code> endpoint exports Prometheus text metrics. Scrape each process separately, use <code>job=&quot;durable-db&quot;</code>, and attach cluster/instance labels in the monitoring configuration. Protect the administrator credential and keep the endpoint behind the deployment’s TLS and network controls. A separate metrics-only credential is not yet implemented.</p>
+<p><code>GET /metrics</code> exports Prometheus text metrics. Scrape each process separately, use <code>job=&quot;durable-db&quot;</code>, and attach cluster/instance labels in the monitoring configuration. Issue a metrics-only credential on the server side:</p>
+<pre><code class="language-sh">umask 077
+durable-db token --key-file /run/secrets/admin.key --metrics \
+  --ttl-seconds 2592000 &gt; /secure/path/metrics.token
+</code></pre>
+<p>Mount only the resulting token into the scraper. It expires after the requested lifetime (at most 30 days); renew it before expiration. It can access only <code>GET /metrics</code>, and cannot read data, write, run collection, or mint credentials. Its HMAC domain is separate from database capabilities and it does not contain the signing key. Administrator tokens remain accepted for compatibility. Keep both the endpoint and credential behind TLS and network controls.</p>
+<p>For example, the Prometheus scrape configuration can use:</p>
+<pre><code class="language-yaml">scrape_configs:
+  - job_name: durable-db
+    authorization:
+      credentials_file: /run/secrets/durable-db-metrics-token
+    static_configs:
+      - targets: [durable-db.internal:7654]
+</code></pre>
+<p>Configure the deployment’s actual service discovery and TLS endpoint; the example alone does not install monitoring. Metrics credentials share a distinct bounded admission allowance. Filling the tenant admission table does not prevent the fixed administrator and metrics principals from creating their entries. Global request capacity remains shared, so this is not a guarantee of metrics availability under every overload.</p>
 <p>Metrics use fixed operation, outcome, and event names. They contain no database names, object paths, keys, values, tokens, or provider response messages. All series have bounded cardinality. Counters reset when the process restarts; aggregate <code>rate</code> or <code>increase</code> across replicas rather than subtracting counters across restarts.</p>
 <h2 id="measurements">Measurements</h2>
 <table>
@@ -40,7 +54,7 @@
 </tr>
 </tbody>
 </table>
-<p>HTTP operations include body decoding, admission, and handler execution. Health probes are excluded. Publication timing includes retries and path rebuilding. Provider-boundary operations cover authority reads/replacements, immutable object GET/PUT/list, and physical version reclamation. B2 native operations additionally expose each native API attempt; a refreshed authorization retry appears as another attempt. Startup bucket discovery is not included in native listing counters.</p>
+<p>HTTP operations include body decoding, admission, and handler execution. Health probes are excluded. Publication timing includes retries and path rebuilding. Provider-boundary operations cover authority reads/replacements, immutable object GET/PUT/list, and physical version reclamation. B2 native operations additionally expose each native API attempt; a refreshed authorization retry appears as another attempt. Startup bucket discovery is included in native listing counters after the bounded-read-retry change. Earlier profiling reports predate that instrumentation. Read-only native retries have three attempts and a ten-second deadline; each actual native request appears in the counters. Conditional publication errors are never retried as if their outcome were known.</p>
 <p>These are operational measurements, <strong>not a provider billing meter</strong>. Object-store SDK retries can occur inside a measured call. A successful physical-deletion call can remove several versions, and a failed response can hide a successful deletion. Candidate counts are scan activity, not an estimate of the whole garbage backlog. A cancelled publication may have committed; metrics cannot resolve its transaction outcome.</p>
 <p>For example, inspect the publication-register conflict fraction:</p>
 <pre><code class="language-promql">sum(rate(durable_db_operations_total{job=&quot;durable-db&quot;,operation=&quot;authority_replace&quot;,outcome=&quot;conflict&quot;}[5m]))

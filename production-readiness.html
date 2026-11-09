@@ -23,7 +23,7 @@
 </tr>
 <tr>
 <td>Cloud performance</td>
-<td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; a separate integration test exposed an unhandled native metadata 503</td>
+<td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; native read retries now recover bounded transient observations, with a separate B2 rerun passing</td>
 <td>Qualify the implemented publication combiner; publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
 </tr>
 <tr>
@@ -53,8 +53,8 @@
 </tr>
 <tr>
 <td>Operations</td>
-<td>Fixed-label request/provider latency and outcome metrics, cache/collection activity, cancellation accounting, synthetic alert tests, and initial runbooks</td>
-<td>Measured cleanup backlog, end-to-end alert delivery and recovery drills, metrics-only credentials, qualified latency/error budgets, and production dashboard review</td>
+<td>Fixed-label request/provider latency and outcome metrics, cache/collection activity, cancellation accounting, synthetic alert tests, expiring metrics-only credentials, and initial runbooks</td>
+<td>Measured cleanup backlog, end-to-end alert delivery and recovery drills, qualified latency/error budgets, and production dashboard review</td>
 </tr>
 <tr>
 <td>Upgrades</td>

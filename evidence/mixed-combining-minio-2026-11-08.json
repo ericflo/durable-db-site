@@ -37,5 +37,6 @@
   "all_processes_removed": true,
   "old_binary_cold_reopen_verified": 70,
   "new_binary_cold_reopen_verified": 70,
-  "total_successful_writes": 109
+  "total_successful_writes": 109,
+  "source_commit": "aa1257ee6c254847bd3c86721f8e771f9f15c2f5"
 }
