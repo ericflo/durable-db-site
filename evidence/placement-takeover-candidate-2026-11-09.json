@@ -110,7 +110,7 @@
     "safety_invariants_enabled": true,
     "liveness_proved": false,
     "guided_action_constraint": "RecoveryActions; removes schedules from WireSpec without adding transitions. The positive instance remains unrestricted.",
-    "local_seconds_less_than": 1
+    "tlc_reported_elapsed_seconds": 0
   },
   "limitations": [
     "One replacement from a reachable active-root seed; no arbitrary repeated takeover or competing acquisition candidates",
@@ -139,17 +139,13 @@
     ".tools/placement-takeover-maintained-guided.log": "878ba9aea6cb315b1d2df58bd600403184f84637c08f3b6d41420bf7dfba443d"
   },
   "qualification": {
-    "status": "Local standard checker passed; full Woodpecker qualification and publication pending"
-  },
-  "previous_unguided_coverage": {
-    "kind": "coverage",
-    "config": "PlacementTakeoverRecovery.cfg",
-    "expected_invariant": "NotRecovered",
-    "generated": 27977938,
-    "states": 3022627,
-    "depth": 27,
-    "log_sha256": "1ebcd09a5e720f836c835a3c45ad710f0b9f2eda51a1a8caa89fc2f802ada2f1",
-    "seconds": 186,
-    "scope": "Same recovery event and same safety properties, before adding the action constraint to the coverage configuration"
+    "source_commit": "2e46fdeda5d2c9617bbbbfcf41be4fe123bb84bd",
+    "woodpecker": {
+      "pipeline": 53,
+      "status": "success",
+      "build_log_sha256": "dfccbe4fabd213199846060d9acc6bffcbf55b17e4c6d894f02aac2f0569ceaa"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "26d3eae0c21a9c65ca06f2b47f63620678ee5585d140a597582e04f06e9c8038"
   }
 }

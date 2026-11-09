@@ -6,10 +6,12 @@ export KACHE_CONFIG=&quot;$PWD/.kache.toml&quot;
 
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
-cargo test --locked --all-targets
+cargo test --locked --all-targets -- --skip ten_thousand_databases_split_page_recover_and_collect
+cargo test --locked --release --test publication ten_thousand_databases_split_page_recover_and_collect
 scripts/check-model.sh
 scripts/check-proof.sh
 </code></pre>
+<p>The two Rust test commands match Woodpecker: run the capacity regression in release mode instead of paying for its large directory sweep in debug mode. Both commands are required for the complete suite.</p>
 <p>The model command checks every current-engine model and its required controls. The proof command above checks abstract publication safety; journal and research proofs have separate commands below. These checks do not establish that the Rust implementation refines the models. See <a href="verification.html">verification</a> for each theorem’s assumptions and scope.</p>
 <h2 id="work-on-one-component">Work on one component</h2>
 <p>Run the checks affected by a change while iterating. Woodpecker retains the complete required suite.</p>
@@ -32,6 +34,10 @@ scripts/check-proof.sh
 <tr>
 <td>Common provider register</td>
 <td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-model.sh ProviderRegister</code></td>
+</tr>
+<tr>
+<td>Control request session</td>
+<td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh PlacementRequests</code></td>
 </tr>
 <tr>
 <td>An implemented protocol model</td>
@@ -62,7 +68,7 @@ scripts/check-proof.sh PartitionControl
 scripts/check-candidate.sh PartitionJournal
 scripts/check-proof.sh PartitionJournal
 </code></pre>
-<p>The candidate checker also supports <code>OwnedWal</code>, <code>DelegatedGrant</code>, <code>RootControl</code>, <code>RootJournal</code> and <code>LateControlCoverage</code>. The proof checker supports <code>PublicationSafety</code> (the default), <code>Journal</code>, <code>GrantBounds</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>PartitionControl</code> and <code>PartitionJournal</code>. Imported proofs are checked before their dependents. See the <a href="https://github.com/ericflo/durable-db/tree/main/spec/candidates">candidate catalog</a> and <a href="design-owned-partitions.html">owned-partition design</a> for the purpose of each component.</p>
+<p>The candidate checker also supports <code>OwnedWal</code>, <code>DelegatedGrant</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>LateControlCoverage</code>, <code>PlacementRequests</code> and <code>PlacementTakeover</code>. The proof checker supports <code>PublicationSafety</code> (the default), <code>Journal</code>, <code>GrantBounds</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>PartitionControl</code> and <code>PartitionJournal</code>. Imported proofs are checked before their dependents. See the <a href="https://github.com/ericflo/durable-db/tree/main/spec/candidates">candidate catalog</a> and <a href="design-owned-partitions.html">owned-partition design</a> for the purpose of each component.</p>
 <h2 id="formal-check-inputs">Formal check inputs</h2>
 <p>Each model’s <code>.checks</code> descriptor declares every positive configuration, unsafe variant and reachability control. An unsafe variant must violate its named invariant. A reachability control forbids a desired scenario and must produce a counterexample reaching it; this is coverage, not a liveness proof. The candidate wrapper copies the maintained dependencies into a temporary directory and removes it on exit. Logs remain under <code>.tools/candidates/</code>.</p>
 <p>Each proof’s <code>.proof</code> descriptor declares:</p>

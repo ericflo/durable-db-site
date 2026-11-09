@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T20:32:26.657272+00:00",
+  "base_commit": "2e46fdeda5d2c9617bbbbfcf41be4fe123bb84bd",
+  "status": "Implemented bounded control-request sessions; no serving controller or runtime adoption",
+  "model_basis": [
+    "PlacementRequests request lifecycle",
+    "PlacementTakeover delayed-placement composition; not full Rust refinement"
+  ],
+  "behavior": [
+    "One current invocation per session; prepared request owns its comparison and payload and executes one register call",
+    "Raw observations never establish confirmation; beginning or abandoning a request clears confirmation",
+    "Only the current session/invocation can install a successful response; ignored completions preserve newer local state",
+    "Abandoned calls can still apply; conflicts do not resolve earlier uncertainty; no retry after uncertain result",
+    "Every conditional call uses the shared B2/S3 fresh mutation identity, including logically unchanged revalidation",
+    "A confirmed observation records a historical successful comparison, not continuing serving permission"
+  ],
+  "limits": {
+    "metadata_fields": 64,
+    "encoded_metadata_bytes": 8192,
+    "reserved_mutation_bytes": 128,
+    "invocation_sequence_bits": 64,
+    "sequence_exhaustion": "Reject without changing session",
+    "process_memory_bound": false,
+    "retained_observations_and_prepared_requests": "Caller must bound separately"
+  },
+  "tests": {
+    "component_tests": 7,
+    "http_cancellation_tests": 1,
+    "http_schedules": [
+      "Abandoned provider operation applies before exact revalidation",
+      "Exact revalidation advances version before abandoned provider operation applies"
+    ],
+    "fixture": "Native B2 HTTP adapter, detached provider operation survives caller disconnect, identical-payload no-op retained",
+    "all_targets": {
+      "passed": 132,
+      "failed": 0,
+      "ignored_opt_in_tests": 9,
+      "includes_ten_thousand_database_regression": true
+    },
+    "fmt_passed": true,
+    "clippy_all_targets_warnings_denied_passed": true,
+    "compiler_wrapper": "kache"
+  },
+  "limitations": [
+    "No root acquisition, renewal intervals, placement interpretation, drains, scheduler or ownership controller",
+    "No platform clock contract, data reads/writes, journal selection or runtime engine adoption",
+    "No bounded global outstanding work, tenant admission, queue fairness or whole-process RSS qualification",
+    "Tests and preceding finite models do not prove Rust refinement or production readiness"
+  ],
+  "source_sha256": {
+    "src/providers/control.rs": "25eef9ac6f813b2fea398b94cfc41b1939a77f5400980ccd6fc5062c22314b83",
+    "src/providers/control/tests.rs": "b651923a2ab19274051fdf824b3318f3185d331b8fb9a1ca60461919cefa08f0",
+    "src/providers/mod.rs": "e2a446bfa20f9adbd606c285d31914edee14def3b86bb50fcbf257832c29790e",
+    "src/providers/register.rs": "6cd6cd7d9fd88f895daf2f38bab8bab449f6a999704946c742968ec888ee83e0",
+    "src/providers/b2.rs": "dac6e46a32d56c634187fd7d777c92a6bd8c7b2f9eb0b981ea96f827ac75798c",
+    "src/providers/s3.rs": "853abdb4601acd1c03db845e17f1c2a7b615e6122a237a1edc3bc53b59a15edf",
+    "spec/candidates/PlacementRequests.tla": "c4e0c919b5af8c53cac8503f5f32a3e52b671ec4bd03f832796a974f533bcc20",
+    "spec/candidates/PlacementTakeover.tla": "8f3238549cd65eb92806c54dfd5142ebafe6dd829532a58a566182bbc6ed3836"
+  },
+  "local_log_sha256": {
+    ".tools/control-session-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".tools/control-session-clippy.log": "364bc54c0a6966246fc4f54248a3f95a2f0d793f94ae04eded536ef29f208cec",
+    ".tools/control-session-all-tests.log": "9c75ddd40ae4194fc342a5799af795aac90f9b88f59bff975bbbf914c9c29fb1"
+  },
+  "qualification": {
+    "status": "Complete local Rust checks passed; Woodpecker and publication pending"
+  }
+}

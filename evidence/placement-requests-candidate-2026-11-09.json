@@ -139,6 +139,13 @@
     ".tools/placement-requests-maintained.log": "b0e22b619b2d60c7fe94de0dd647ea849ca7f553326b0ba1856154ed77962a60"
   },
   "qualification": {
-    "status": "Local standard checker passed; full Woodpecker qualification and publication pending"
+    "source_commit": "2e46fdeda5d2c9617bbbbfcf41be4fe123bb84bd",
+    "woodpecker": {
+      "pipeline": 53,
+      "status": "success",
+      "build_log_sha256": "dfccbe4fabd213199846060d9acc6bffcbf55b17e4c6d894f02aac2f0569ceaa"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "26d3eae0c21a9c65ca06f2b47f63620678ee5585d140a597582e04f06e9c8038"
   }
 }
