@@ -7,7 +7,7 @@
 <li>Complete full Pi Harness integration and sustained-load qualification of the indexed adapter; all 32 upstream cases pass on B2, and cache-free crash/takeover recovery passes.</li>
 <li>Add durable cluster-wide physical allocation/spend admission, request and bandwidth budgets, and abuse tests across replicas.</li>
 <li>Add tenant export, deletion/retention, and durable audit delivery. Overlapping signing keys, expiring administrator capabilities, durable token revocation, and idempotent protected provisioning are implemented in current source builds; complete their broader deployment qualification.</li>
-<li>Extend the passing kind/MinIO CPU-HPA, drain, SIGKILL, kernel OOM, provider-partition, and complete-pod-loss campaigns to B2 and independent nodes; add sustained memory bounds and longer fault histories.</li>
+<li>Extend the passing kind/B2 and kind/MinIO CPU-HPA, drain, SIGKILL, kernel OOM, provider-partition, and complete-pod-loss campaigns to independent physical nodes; add sustained memory bounds and longer fault histories.</li>
 <li>Remove the single bucket publication throughput bottleneck through a modeled group-commit/partitioning design before claiming high throughput across many active sites.</li>
 <li>Run performance and soak tests against AWS with published latency distributions, cost/transaction, cache hit rates, and per-database contention. Optimize only from those measurements.</li>
 <li>Mechanize the unbounded safety argument and record the abstraction/refinement obligations.</li>
