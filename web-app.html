@@ -1,29 +1,28 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>General web application storage · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="architecture-reassessment.html">architecture reassessment</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="recovery.html">recovery</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a aria-current="page" href="web-app.html">web app</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="general-web-application-storage">General web application storage</h1>
-<p>The repository includes a <a href="https://github.com/ericflo/durable-db/tree/main/examples/web-app">TypeScript web application example</a> with a local HTTP API and real-database integration tests. Repository access is required while the source is private. Its storage layer demonstrates settings, a task board, explicit indexes and pagination; it uses Node.js 24 without a TypeScript build step.</p>
-<pre><code class="language-ts">import { DurableDb } from '../../clients/javascript/client.mjs';
-import { TaskStore } from './storage.ts';
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Web application storage · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="architecture-reassessment.html">architecture reassessment</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="recovery.html">recovery</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a aria-current="page" href="web-app.html">web app</a><a  href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="web-application-storage">Web application storage</h1>
+<p>Use the JSON SDK for ordinary application data:</p>
+<pre><code class="language-ts">import { Database } from '@durable-db/client';
 
-const database = new DurableDb({
-  url: 'http://127.0.0.1:7654',
-  database: 'my-application',
-  token: scopedApplicationToken,
-});
-const tasks = new TaskStore(database);
-
-// Retain this identity once per user intent, across HTTP retries.
-const requestId = crypto.randomUUID();
-const created = await tasks.createTask(requestId, 'Draft the release notes');
-const page = await tasks.listOpen(undefined, 20);
+const db = new Database({ url, database: 'my-app', token });
+await db.set('settings', { theme: 'dark' });
+const settings = await db.get&lt;{ theme: string }&gt;('settings');
+const tasks = await db.list&lt;Task&gt;({ prefix: 'tasks/', limit: 20 });
 </code></pre>
-<p>The example keeps database credentials on the application server. A scoped token permits access to its database; application authentication and per-user authorization remain the web application’s responsibility.</p>
-<h2 id="records-and-atomic-changes">Records and atomic changes</h2>
-<p>Creating a task writes its record, its open-task index entry and an application receipt in one transaction. Completing it changes the record and removes the index entry atomically. This illustrates application-maintained indexes and related-record changes without cross-database transactions.</p>
-<p>An application receipt binds an intent ID to its input fingerprint and original result. A retry reads that receipt first. If it is absent, the transaction checks the same revision and writes the receipt with the business effect. Competing or delayed attempts cannot both publish an absent-receipt transition. Reusing an intent ID with different input fails.</p>
-<p>These receipts consume the database’s quota. Their retention must cover the application’s accepted retry lifetime; deleting a receipt prematurely can make a delayed retry apply again. The pattern protects database changes, not external payments or messages. The example injects a lost successful commit response and checks that replay changes the database exactly once.</p>
-<h2 id="edits-and-pagination">Edits and pagination</h2>
-<p>Settings demonstrate optimistic editing: read a value and revision, prepare one request with an operation ID, then commit against that revision. A conflicting edit returns 409 so the UI can reload and reconcile. An uncertain response requires the same saved request. The database’s recent HTTP receipt window is bounded, so late unresolved edits can require application reconciliation.</p>
-<p>Open tasks use a prefix scan and record lookups at the same revision. The cursor contains the last key and revision. A write between pages invalidates the snapshot and returns 409; restart the listing. This provides explicit consistency without pretending cursors are retained historical snapshots.</p>
-<h2 id="development-checks">Development checks</h2>
-<p>The example’s setup command saves its protected-provisioning intent before contacting the database and writes a one-hour application token to a private file. Its localhost server accepts JSON requests and keeps credentials out of responses. The example README provides complete startup and curl commands.</p>
-<p>Public client declarations and examples are checked with TypeScript. Four HTTP integration cases cover lost responses and duplicate intents, concurrent creation and atomic index removal, stale pagination, and settings conflicts. See <a href="clients.html">clients</a> for the lower-level API and Pi adapter, and <a href="architecture-reassessment.html">the architecture reassessment</a> for the open performance gate. This example demonstrates semantics; it is not evidence that current cloud latency meets a production web application’s needs.</p>
+<p>The private source repository includes <code>examples/web-app/</code>: a short typed storage module, Hono routes, Zod validation, local setup and HTTP integration tests. Its README has complete startup and curl commands. The client package is linked locally while the project remains private.</p>
+<h2 id="related-changes">Related changes</h2>
+<p>Completing a task and incrementing a counter takes one transaction:</p>
+<pre><code class="language-ts">await db.transaction(async (tx) =&gt; {
+  const task = await tx.get&lt;Task&gt;(`tasks/${id}`);
+  if (!task || task.completed) return;
+
+  const count = (await tx.get&lt;number&gt;('stats/completed')) ?? 0;
+  tx.set(`tasks/${id}`, { ...task, completed: true });
+  tx.set('stats/completed', count + 1);
+});
+</code></pre>
+<p>Concurrent completions preserve both updates. Repeating completion does not increment the counter again. Task creation uses a stable task ID, so retrying the same creation returns the existing task. Settings use a simple last-write-wins replacement.</p>
+<p>The SDK handles JSON encoding, snapshot revisions and safe transport retries. Definite conflicts can rerun the callback; keep external side effects outside it. Lost commit responses retry the original request. An unresolved outcome raises <code>UncertainCommitError</code> rather than silently rerunning an operation that may already have committed. See <a href="clients.html">clients</a> for limits and recovery behavior.</p>
+<h2 id="pagination-and-deployment">Pagination and deployment</h2>
+<p>Lists return <code>{ items, cursor }</code> in UTF-8 byte order. Pass the opaque cursor back with the same prefix. Any database write between pages invalidates the cursor; a 409 means restart the listing. Cursors do not retain historical snapshots.</p>
+<p>Setup creates a protected database and writes a one-hour scoped credential privately. The application keeps that credential on its server. This localhost demonstration has no user login; a deployed application supplies authentication and per-user authorization. A database token grants access to its entire database.</p>
+<p>The tests exercise actual HTTP storage, including concurrent task completion and duplicate requests. SDK tests separately inject lost responses, definite conflicts and receipt eviction. They establish behavior within their checked cases; the <a href="architecture-reassessment.html">architecture reassessment</a> still gates cloud latency and production suitability.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
