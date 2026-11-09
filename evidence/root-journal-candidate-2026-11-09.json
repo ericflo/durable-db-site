@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T13:46:13.771307+00:00",
+  "base_commit": "808b73a4c5937294dd13484676a1ae4b22317a69",
+  "status": "Bounded root/journal composition; no runtime adoption",
+  "standard_checker_passed": true,
+  "checks": [
+    {
+      "kind": "safe",
+      "config": "RootJournal.cfg",
+      "expected_invariant": null,
+      "states": 12474,
+      "generated": 81914,
+      "depth": 46
+    },
+    {
+      "kind": "safe",
+      "config": "RootJournalRepeated.cfg",
+      "expected_invariant": null,
+      "states": 2230369,
+      "generated": 18114865,
+      "depth": 57
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafePermission.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 11205,
+      "generated": 71640,
+      "depth": 31
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafeGap.cfg",
+      "expected_invariant": "DurableKnowledge",
+      "states": 4230,
+      "generated": 20640,
+      "depth": 18
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafeEarly.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 20654,
+      "generated": 143381,
+      "depth": 31
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafeMissing.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 11258,
+      "generated": 70895,
+      "depth": 31
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafeReseal.cfg",
+      "expected_invariant": "ImmutableSelection",
+      "states": 39517,
+      "generated": 265554,
+      "depth": 32
+    },
+    {
+      "kind": "unsafe",
+      "config": "RootJournalUnsafeReady.cfg",
+      "expected_invariant": "CompleteHistory",
+      "states": 3249,
+      "generated": 15136,
+      "depth": 15
+    },
+    {
+      "kind": "coverage",
+      "config": "RootJournalCoverage.cfg",
+      "expected_invariant": "NotRepeatedHistory",
+      "states": 2230364,
+      "generated": 18114813,
+      "depth": 56
+    }
+  ],
+  "bounds": {
+    "RootJournal.cfg": {
+      "epochs": 2,
+      "batches_per_epoch": 2,
+      "time_advances": 2,
+      "lease_bound": 1,
+      "authority_revisions": 8,
+      "renewals_per_epoch": 1,
+      "child_requests": 0
+    },
+    "RootJournalRepeated.cfg": {
+      "epochs": 3,
+      "batches_per_epoch": 1,
+      "time_advances": 3,
+      "lease_bound": 1,
+      "authority_revisions": 12,
+      "renewals_per_epoch": 1,
+      "child_requests": 0
+    }
+  },
+  "assumptions": [
+    "Abstract elapsed-time upper bound with request-start expiry and fence-observation drain",
+    "Durable immutable log identities and fresh per-key positive/negative observations",
+    "Atomic durable prefix selection conditioned on current owner and absent prior selection; exact validated selection reads",
+    "Never-reused epochs; acquisitions ordered by epoch; one outstanding root request per incarnation"
+  ],
+  "coverage": {
+    "third_owner_ready": true,
+    "acknowledged_prefixes": [
+      1,
+      1,
+      0
+    ],
+    "selected_prefixes": [
+      1,
+      1,
+      null
+    ],
+    "third_owner_inherited_prefixes": [
+      1,
+      1,
+      null
+    ],
+    "root_expirations": [
+      2,
+      3,
+      4
+    ],
+    "abstract_time": 3,
+    "liveness_proved": false
+  },
+  "limitations": [
+    "Separate finite instances do not establish arbitrary epochs, longer histories or every combination of their bounds",
+    "Root itself owns one journal; no delegated partition movement or arbitrary competing-candidate election",
+    "No platform clock contract or conversion refinement",
+    "Atomic control selection and exact selection reads abstract the wire protocol and response uncertainty",
+    "Pauses/loss delay or omit actions; replacement is a fresh epoch; scan loss cannot erase durable selections",
+    "No transactions, request receipts, resource admission, retention, reclamation or liveness",
+    "Separate unbounded component proofs do not automatically prove the composition",
+    "No Rust controller or runtime clock dependency adopted"
+  ],
+  "source_sha256": {
+    "spec/candidates/RootJournal.cfg": "298d81ca6e1371cbf643a23ab35f9e7c5b02170dd686513474e4322763a75903",
+    "spec/candidates/RootJournal.checks": "378d231b2cac7ddb615e4889c7c879d1ff856e14f50b46794928c2afa0d3d9d3",
+    "spec/candidates/RootJournal.tla": "e808715a68000225f37291cecb8933c12590257ac57767454ea3b1dba32726c5",
+    "spec/candidates/RootJournalCoverage.cfg": "b3002f50a47dc28fe678d96c3bb72ca2ba6f0e44a83f045bb365199e8a05ae1a",
+    "spec/candidates/RootJournalRepeated.cfg": "ce1325b9bb1791edd6573d66eef937d6cf1ea0b8677a613ed8cc0def14525820",
+    "spec/candidates/RootJournalUnsafeEarly.cfg": "048e8f578dd58c410151957660231078c99b737f202f4c7eec2a9f34ba53c071",
+    "spec/candidates/RootJournalUnsafeGap.cfg": "6943efad5a51aa03d438e94f638651535b15d89e964f5f08034f1e7069e7aa3a",
+    "spec/candidates/RootJournalUnsafeMissing.cfg": "144f27db7cc03406e5292c59cac968434960b8640751344b07600620784c1fda",
+    "spec/candidates/RootJournalUnsafePermission.cfg": "68960e49feb7c46dbf0aa6cc00cfddb4289367df96627993328e487ceec226da",
+    "spec/candidates/RootJournalUnsafeReady.cfg": "4971089f3daa62ac2af775315f9f961749a2fc6882236c00f10da5e58cad25cf",
+    "spec/candidates/RootJournalUnsafeReseal.cfg": "612c9cfe2e1786835c22b02c90a810ac2c6e3525f3cfaf2ac59e53a9ce702599",
+    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592",
+    "scripts/check-candidate.sh": "25739a7a046c99bd605f7ebd05ae69c2413f8cb40938ecc781eaa110f45be828",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
+    "Dockerfile": "52e7b1496808dd19d981d019331e96d88faba658b29cc08bae62ba7531313970"
+  },
+  "local_log_sha256": {
+    ".tools/candidates/RootJournal/model-root-journal.log": "dbf54802d662562a24de78b0422c121791b34b8df3a68aa91c9435ac5bb048e4",
+    ".tools/candidates/RootJournal/model-root-journal-repeated.log": "6107c6626aa0ed9e822e89ff7af7c33169501c979fffb094bcd51af9e878a6c8",
+    ".tools/candidates/RootJournal/model-root-journal-permission.log": "c7a8877bfc3a3d5a89740aef51eb221de7e3a7775ca2bfc8789b4bf4fae7da43",
+    ".tools/candidates/RootJournal/model-root-journal-gap.log": "e66b88ceb1ab1f47aceca253fefb44e0499709ad32e48c6b6d0bc978d82c76e1",
+    ".tools/candidates/RootJournal/model-root-journal-early.log": "f03b07cff53ef03a58a2aeb049481896bc279f1800018addf4e184d4a9bdc7f3",
+    ".tools/candidates/RootJournal/model-root-journal-missing.log": "af994a5580b69e0cfbc9cfffca58c140e2f436344652ab573e34c2924589feb2",
+    ".tools/candidates/RootJournal/model-root-journal-reseal.log": "f3a66a347511f5b1edcd0ec112858b09241f65885af54b351d23c7fc74d8f175",
+    ".tools/candidates/RootJournal/model-root-journal-ready.log": "c9ac70bb53f1917d28dc0e8c7c3acf15d874f75d1a198b5773a17808312bb8fe",
+    ".tools/candidates/RootJournal/model-root-journal-coverage.log": "68f186aa82ceba47f92003ad1b2a4b5844c423100b6c534752df31d72fca223e"
+  }
+}
