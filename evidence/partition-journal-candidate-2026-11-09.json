@@ -1,0 +1,299 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T16:08:25.951897+00:00",
+  "base_commit": "e3b89aac376eab63f4319a19775a4432d4515abb",
+  "status": "Bounded delegated partition/journal composition; no runtime adoption",
+  "standard_checker_passed": true,
+  "checks": [
+    {
+      "kind": "safe",
+      "config": "PartitionJournal.cfg",
+      "expected_invariant": null,
+      "states": 6329,
+      "generated": 39281,
+      "depth": 48,
+      "optimistic_fingerprint_collision_estimate": 1.1e-11
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionJournalRecovery.cfg",
+      "expected_invariant": null,
+      "states": 177371,
+      "generated": 1256451,
+      "depth": 47,
+      "optimistic_fingerprint_collision_estimate": 1e-08
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionJournalIndependent.cfg",
+      "expected_invariant": null,
+      "states": 328091,
+      "generated": 2679857,
+      "depth": 63,
+      "optimistic_fingerprint_collision_estimate": 4.2e-08
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionJournalRepeated.cfg",
+      "expected_invariant": null,
+      "states": 108304,
+      "generated": 698399,
+      "depth": 58,
+      "optimistic_fingerprint_collision_estimate": 3.5e-09
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionJournalResume.cfg",
+      "expected_invariant": null,
+      "states": 93201,
+      "generated": 612986,
+      "depth": 38,
+      "optimistic_fingerprint_collision_estimate": 2.6e-09
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafePermission.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 5129,
+      "generated": 29571,
+      "depth": 33,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeGap.cfg",
+      "expected_invariant": "DurableHistory",
+      "states": 2214,
+      "generated": 8784,
+      "depth": 21,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeEarly.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 17165,
+      "generated": 121726,
+      "depth": 34,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeMissing.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 5180,
+      "generated": 29206,
+      "depth": 33,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeReseal.cfg",
+      "expected_invariant": "ImmutableHistory",
+      "states": 5891,
+      "generated": 33543,
+      "depth": 33,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeReady.cfg",
+      "expected_invariant": "CompleteHistory",
+      "states": 2592,
+      "generated": 11089,
+      "depth": 22,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionJournalUnsafeDrain.cfg",
+      "expected_invariant": "SelectedHistory",
+      "states": 23205,
+      "generated": 125879,
+      "depth": 28,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionJournalCoverage.cfg",
+      "expected_invariant": "NotMovedHistory",
+      "states": 5355,
+      "generated": 30443,
+      "depth": 35,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionJournalRecoveryCoverage.cfg",
+      "expected_invariant": "NotRecoveredHistory",
+      "states": 176999,
+      "generated": 1251652,
+      "depth": 41,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionJournalIndependentCoverage.cfg",
+      "expected_invariant": "NotIndependentHistory",
+      "states": 304604,
+      "generated": 2378893,
+      "depth": 43,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionJournalRepeatedCoverage.cfg",
+      "expected_invariant": "NotRepeatedHistory",
+      "states": 108299,
+      "generated": 698353,
+      "depth": 57,
+      "optimistic_fingerprint_collision_estimate": null
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionJournalResumeCoverage.cfg",
+      "expected_invariant": "NotResumedHistory",
+      "states": 93201,
+      "generated": 612978,
+      "depth": 38,
+      "optimistic_fingerprint_collision_estimate": null
+    }
+  ],
+  "bounds": {
+    "PartitionJournal.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 2,
+      "MaxRevision": 8,
+      "MaxRenewals": 2,
+      "MaxChildRequests": 0,
+      "Partitions": "{a}",
+      "Generations": 2,
+      "MaxOwnerRequests": 1,
+      "LogLength": 2
+    },
+    "PartitionJournalRecovery.cfg": {
+      "Epochs": 2,
+      "Lease": 1,
+      "MaxTime": 2,
+      "MaxRevision": 10,
+      "MaxRenewals": 1,
+      "MaxChildRequests": 0,
+      "Partitions": "{a}",
+      "Generations": 2,
+      "MaxOwnerRequests": 1,
+      "LogLength": 1
+    },
+    "PartitionJournalIndependent.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 2,
+      "MaxRevision": 10,
+      "MaxRenewals": 2,
+      "MaxChildRequests": 0,
+      "Partitions": "{a, b}",
+      "Generations": 2,
+      "MaxOwnerRequests": 1,
+      "LogLength": 1
+    },
+    "PartitionJournalRepeated.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 3,
+      "MaxRevision": 12,
+      "MaxRenewals": 3,
+      "MaxChildRequests": 0,
+      "Partitions": "{a}",
+      "Generations": 3,
+      "MaxOwnerRequests": 1,
+      "LogLength": 1
+    },
+    "PartitionJournalResume.cfg": {
+      "Epochs": 2,
+      "Lease": 1,
+      "MaxTime": 2,
+      "MaxRevision": 8,
+      "MaxRenewals": 1,
+      "MaxChildRequests": 0,
+      "Partitions": "{a}",
+      "Generations": 1,
+      "MaxOwnerRequests": 1,
+      "LogLength": 2
+    }
+  },
+  "assumptions": [
+    "Abstract root elapsed-time upper bound and conservative request-start permission",
+    "Atomic durable placement updates with synchronized issuer assignment view",
+    "Never-reused writer generations, independent of coordinator epochs; replacement writers cannot reuse a generation",
+    "Durable immutable object identities and fresh per-key positive and negative observations",
+    "Atomic immutable prefix selection conditioned on current coordinator authority; exact validated reads of selected prefixes"
+  ],
+  "coverage": {
+    "movement": "Second generation serves the acknowledged prefix of its predecessor",
+    "interrupted_movement": "A replacement root actually finishes the frozen move; the successor inherits the old acknowledgement",
+    "independent_partitions": "Moved partition generation two and untouched partition generation one simultaneously serve their respective acknowledged histories",
+    "repeated_movement": "Third generation inherits one acknowledged batch from each predecessor",
+    "surviving_writer": "One generation acknowledges batch one under root one and batch two under root two; acknowledgingRoots = {1, 2}",
+    "liveness_proved": false
+  },
+  "limitations": [
+    "Five separate finite instances do not establish arbitrary sizes or their Cartesian product",
+    "Root/journal unbounded theorem does not prove this delegated composition",
+    "Atomic selection and synchronized freeze abstract wire uncertainty; no controller implementation",
+    "No platform timing or clock-conversion refinement",
+    "No transaction evaluation, receipts, admission, retention, reclamation or liveness",
+    "Objects are never reclaimed; collection needs separate composition",
+    "No runtime clock dependency or replacement serving engine adopted"
+  ],
+  "source_sha256": {
+    "Dockerfile": "8a5636eba7d8d8b5ab62da5a05f87518cf8fda0615894165858c202b4751c2ba",
+    "scripts/check-candidate.sh": "32171890813c066698858115be54ff809f9f6ceeb71501ad2193b3fa6ac3b963",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
+    "spec/candidates/PartitionControl.tla": "c7d630252518865cba81fb0c7cbc0ead2ab9ac27f8634e94c0363c340f0cf0ba",
+    "spec/candidates/PartitionJournal.cfg": "a1a430618d640f136092eb9a0c214ffbb09d950fcd557951974e87232bc47957",
+    "spec/candidates/PartitionJournal.checks": "ed7433c113fdd51c9c51f36d3b4972496c346ca95077bed219b77e0247084b7e",
+    "spec/candidates/PartitionJournal.tla": "a8b82b440bcf47a05eb9544d2700d38f5a0757494689addcfdf370fc3d722342",
+    "spec/candidates/PartitionJournalCoverage.cfg": "061969156cb3de1beb2625deafa8071316082c892cb36c932a503aa093b52f72",
+    "spec/candidates/PartitionJournalIndependent.cfg": "0581445ca226d125aadaf4e563c4d47621808fbee9f8bf71bbae973db32f694c",
+    "spec/candidates/PartitionJournalIndependentCoverage.cfg": "55bf65c453cb399574829728f2b885db33d4deacfe5ea1d442f5c866d4e3b4ef",
+    "spec/candidates/PartitionJournalRecovery.cfg": "8345cd31ac83d9ce507d69400e116b782f04dbd543d7c5f664a408fe80651936",
+    "spec/candidates/PartitionJournalRecoveryCoverage.cfg": "6bb175e48e12d3540029a49a6b0bd41d1dd0e2035372616c4cfbecafa4c49a8b",
+    "spec/candidates/PartitionJournalRepeated.cfg": "0ef09583b4fa82fbeb2df2074d4aeeec572c4e657594ba5eb15954680af82184",
+    "spec/candidates/PartitionJournalRepeatedCoverage.cfg": "44c654ea719fb44d57ecb51e0acd90093166259e314db4eaa9b88329d89e8334",
+    "spec/candidates/PartitionJournalResume.cfg": "422c80ccc1d40f73ca788b9d3844bcf88e1bd94afb3f21889d8c5d46bcae55a6",
+    "spec/candidates/PartitionJournalResumeCoverage.cfg": "244e761128d80b64802462d8e3dbc03abfad7730fe4f6b19b78b4745ce25a17f",
+    "spec/candidates/PartitionJournalUnsafeDrain.cfg": "ba64a3946677a111833f8c8414b555ce3dbe7dff09ee4cef4ffeb2e9dd48acbb",
+    "spec/candidates/PartitionJournalUnsafeEarly.cfg": "1d7064a2be40bd1052c897edd31946a098160412485b044677a65117e78f730e",
+    "spec/candidates/PartitionJournalUnsafeGap.cfg": "c07cef3873cd78ee8c5e983568a38d41542952a125011fedfca6d45141cbc699",
+    "spec/candidates/PartitionJournalUnsafeMissing.cfg": "78d1e817438ee5ce3aec3a374b783e84543f6881c9d103433373700295562d23",
+    "spec/candidates/PartitionJournalUnsafePermission.cfg": "a5cd3bb083a76b33cb94962f028497a53f6df7de2a7f93cec8b0898dec2828ff",
+    "spec/candidates/PartitionJournalUnsafeReady.cfg": "f775a3a3540b3f98778683eeb57a82293ead3e65f54ffcfa5ebcc21bcdb0ce47",
+    "spec/candidates/PartitionJournalUnsafeReseal.cfg": "49ee092836f61c3e7a9d3a7c20f4043d0dfcc9d4847c8f9375ba8178c36205d4",
+    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592"
+  },
+  "local_log_sha256": {
+    ".tools/candidates/PartitionJournal/model-partition-journal-coverage.log": "dfcd35357d2419f5f7bddab3bd61f2ebcc3be0c8ff76f6bb07f0cde18c255aa2",
+    ".tools/candidates/PartitionJournal/model-partition-journal-independent.log": "5ab26aafa39c376e99b7d482720e409c78c27693d72d6bad93d1be37ffaab67c",
+    ".tools/candidates/PartitionJournal/model-partition-journal-independentcoverage.log": "8a44f21d7e58b6d8632e19a972ed3ea0d2ef690feddddf616aaa63cae2575a1e",
+    ".tools/candidates/PartitionJournal/model-partition-journal-recovery.log": "e72bf36367e057a40f39b4c11982886b5d3a0658b5e9925d0073f9e37f39909b",
+    ".tools/candidates/PartitionJournal/model-partition-journal-recoverycoverage.log": "8d72d27cee80550a9e00a1045b85ded60c6cc3049a9279f2fb378701033b9535",
+    ".tools/candidates/PartitionJournal/model-partition-journal-repeated.log": "99368408e9761cdf9c1bf79a7d2ab00cc93ade2dd74ccef7e868aaa102f14f77",
+    ".tools/candidates/PartitionJournal/model-partition-journal-repeatedcoverage.log": "7e4641717f431b94e87c8335f5fd64dc06b978b4f3ee4221a046f7ed27351752",
+    ".tools/candidates/PartitionJournal/model-partition-journal-resume.log": "aeeb45ab851c8a3d5419f3d66d452868d82c0cce6886fbda76e754d31f06787f",
+    ".tools/candidates/PartitionJournal/model-partition-journal-resumecoverage.log": "30ecb8461c95dc0615d1fc67a9b5386c916d207a47864b2b6cc2c06fcd116331",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafedrain.log": "23072f0922ca2a96515b1a80d106b92b299ea2698648497815956711796206ef",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafeearly.log": "3a32af54132976e1e6c25b5a040c15a443c5e2ea21989a3c890043c2295d4ac3",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafegap.log": "ccbf6feb80c87b0d92c5f2999329468230f997b6af8ac9f06fad1bb3fe59b7a0",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafemissing.log": "14a786b43864e61a9ac15b09643ce9fff01872c7da57443a154b42da0626e3ae",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafepermission.log": "c3fa8669c4c9b03379d6890f0ca447532ad2d27e4845aca3ce9646165881c2ea",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafeready.log": "39db2f9ea3d5e5a8aba93a996f3717c440bedde193f7e77f17828e3303df902e",
+    ".tools/candidates/PartitionJournal/model-partition-journal-unsafereseal.log": "7971949890cf8ae9774b84b53bfc021b6912fdc04f403a317ede5990a9098ce1",
+    ".tools/candidates/PartitionJournal/model-partition-journal.log": "ccaffcc243a9dde4b3c52230b09bfe4fa2a4fbd38667b7c309174c8cc7140f4f",
+    ".tools/partition-journal-standard-final.log": "f93fa58a3e6b5ca423b142529fe545c019a7ad452cb25027ce40797e4be91b59"
+  },
+  "checker": {
+    "version": "TLC 1.7.4",
+    "jar_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+    "workers": 2
+  }
+}

@@ -213,6 +213,47 @@
 <p>The renewal instance permits two owner requests per root/partition/generation; the others permit one. All disable the root component’s separate child requests. They generate 3,093,949, 697,614, 1,014,980 and 5,556,328 states, at depths 32, 33, 34 and 32. Optimistic fingerprint collision estimates are 6.9e-8, 4.1e-9, 9.2e-9 and 2.2e-7. A configured generation denotes a never-reused owner incarnation; initial placement is fixed. These are separate finite instances, not a proof of their Cartesian product or arbitrary cluster sizes.</p>
 <p>Three unsafe controls must fail: issuing grants for frozen/superseded assignments, skipping a partition drain, and starting owner expiry at reply delivery. Four reachability controls require a moved partition and an untouched partition to hold permission under the original coordinator, two successive moves reaching a third generation, an owner deadline actually extending before its replacement gets permission, and a later coordinator actually executing completion of an interrupted move. The last two use explicit history flags; merely observing an old completed move under a newer root is insufficient. Run <code>scripts/check-candidate.sh PartitionControl</code>; Woodpecker requires every check in a separate cached stage. <a href="evidence/partition-control-candidate-2026-11-09.json">Evidence</a> records exact inputs and traces.</p>
 <p>This establishes bounded permission composition under the root timing abstraction. It assumes atomic durable placement updates and an issuer whose assignment view is synchronized with freeze decisions. The wire protocol must freeze issuance before an uncertain update and recover exact placement after root replacement; that refinement is not implemented here. Platform clocks, journal selection/data history, graceful early release, placement policy, routing, transactions, resource admission, collection and liveness remain open. The root/journal theorem does not automatically prove this delegated composition. No runtime clock dependency or replacement serving engine is adopted.</p>
+<h2 id="candidate-delegated-journal-recovery">Candidate delegated journal recovery</h2>
+<p><code>PartitionJournal</code> runs the actual <code>PartitionControl</code> and <code>RootControl</code> transitions together with immutable journal uploads, permission-checked acknowledgements, recovery and conditional prefix selection. A journal belongs to a partition’s writer generation, not to a coordinator epoch. A surviving writer can receive permission from a replacement coordinator and continue its existing journal. Replacing the writer itself must allocate a new generation; it cannot reopen the old generation for writing.</p>
+<table>
+<thead>
+<tr>
+<th>Instance</th>
+<th>Bounds</th>
+<th style="text-align:right">Distinct states</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One movement</td>
+<td>One root, one partition, two generations, two batches per generation, two time advances</td>
+<td style="text-align:right">6,329</td>
+</tr>
+<tr>
+<td>Interrupted movement</td>
+<td>Two roots, one partition, two generations, one batch per generation, two time advances</td>
+<td style="text-align:right">177,371</td>
+</tr>
+<tr>
+<td>Independent histories</td>
+<td>One root, two partitions, two generations, one batch per generation, two time advances</td>
+<td style="text-align:right">328,091</td>
+</tr>
+<tr>
+<td>Repeated movement</td>
+<td>One root, one partition, three generations, one batch per generation, three time advances</td>
+<td style="text-align:right">108,304</td>
+</tr>
+<tr>
+<td>Surviving writer</td>
+<td>Two roots, one partition, one generation, two batches, two time advances</td>
+<td style="text-align:right">93,201</td>
+</tr>
+</tbody>
+</table>
+<p>Seven required unsafe controls detect acknowledgement without permission, consumption across gaps, recovery before permission, stale negative reads, reselection, premature serving and a skipped partition drain. Five reachability controls require inherited acknowledged history after movement, interrupted movement completed by a replacement root, simultaneous serving histories on moved and untouched partitions, two successive moves retaining both predecessor histories, and new acknowledgements by the same writer under two different roots. The last uses a ghost set recording the root authorizing each actual acknowledgement; a coordinator change alone does not satisfy it. These controls establish reachable scenarios, not liveness.</p>
+<p>Run <code>scripts/check-candidate.sh PartitionJournal</code>. Woodpecker requires every instance and control in a separately cached stage. The <a href="evidence/partition-journal-candidate-2026-11-09.json">evidence</a> records all configuration bounds, generated states, depths and fingerprint estimates. These finite instances do not establish arbitrary partitions, generations, histories or all combinations of their bounds. The existing unbounded root/journal theorem does not prove this delegated composition.</p>
+<p>The model assumes the root elapsed-time contract, atomic durable placement changes with synchronized issuance, fresh immutable object observations, conditional immutable prefix selection and exact validated reads of selected prefixes. A selected prefix survives losing a scan or coordinator. Delayed uploads remain possible after movement. Pauses and process loss delay or omit actions; a replacement writer is a fresh generation. Transaction evaluation, request receipts, admission, reclamation, runtime/platform refinement and liveness remain open. No clock-based serving code is adopted by this result.</p>
 <h2 id="candidate-clock-error-margins">Candidate clock error margins</h2>
 <p><code>spec/candidates/GrantBoundsProof.tla</code> proves four arithmetic lemmas with <strong>19 strict TLAPS obligations</strong>: an upper bound on root permission, exclusion after a successor drain, the rounded child-duration bound, and containment of a delivered child’s permission within its parent. There is no finite bound on the nonnegative integer durations or error allowance in these lemmas. This is an arithmetic proof under a clock contract, not an unbounded proof of the ownership protocol.</p>
 <p>The contract normalizes clock rates so a reading over <code>t</code> reference units lies in <code>[t - E, 2t + E]</code>; readings are nondecreasing. The additive <code>E</code> bounds the error of the whole interval measurement, including sampling and quantization. A root’s expiry starts at its request; a successor’s drain starts after observing its fence. Waiting <code>2L + 3E</code> on the successor’s clock excludes an old root whose grant length is at most <code>L</code>. A child’s duration is <code>floor(max(0, R - 3E) / 2)</code> from its own request start, where <code>R</code> is the parent’s remaining interval observed when issuing the reply. Delivery delay cannot extend permission; a zero-duration child cannot serve.</p>
