@@ -76,10 +76,50 @@
 <p>Idle page collection now skips publication when it has neither deletions nor a cursor change. That is a stuttering step in the existing collection model; no object is removed without a successful fence.</p>
 <h2 id="publication-rebase-across-unrelated-writes">Publication rebase across unrelated writes</h2>
 <p><code>PublicationRebase.tla</code> extends the retry argument to changes in other databases. It models a staged publisher, a competing write to its target, unrelated database updates, stale raw observations, read barriers, list/read/fence/delete collection, and abandoned attempts. With four revision advances it checks 195,642 distinct states (827,904 generated, depth 24). A rebase must compare the target pointer and original collection fence and preserve every unrelated entry from the root used for its next conditional write. Three negative configurations independently omit these checks: they expose a deleted published manifest, an overwritten target write, and a lost unrelated write.</p>
-<p>The implementation retains its eight-attempt bound. <code>Published::cas</code> rebuilds a directory path only after definite precondition failure; errors remain uncertain outcomes handled through receipts. Deterministic tests pause before each of two publication attempts, interleave multiple unrelated writes or collection, and recover a lost acknowledgement through a fresh uncached engine. They also assert that rebasing does not upload another copy of the staged manifest. The model abstracts index allocation into the root transition; composition with the directory reachability model, arbitrary-count safety, progress/fairness, and Rust refinement remain obligations. This result does not establish a throughput target.</p>
+<p>The original implementation retained an eight-attempt bound and rebuilt paths after definite precondition failure. Its tests covered competing target writes, unrelated writes, collection, and receipt recovery. The publication combiner below now owns this retry boundary and extends it to durable proposals and uncertain outcomes. The rebase model remains a useful independent check of the target/fence/merge rules. It abstracts index allocation into the root transition; composition, arbitrary-count safety, progress/fairness, and Rust refinement remain obligations.</p>
 <h2 id="sealed-observation-groups-and-immutable-caching">Sealed observation groups and immutable caching</h2>
 <p><code>ObservationBatch.tla</code> was checked before implementing grouped read barriers. It models three readers, two unique write versions, one batch, stale observations, delayed responses after successful validation, cancellation, and abandoned work. All 25,194 distinct states (71,381 generated, depth 13) satisfy <code>ObservationWithinInvocation</code>: each returned snapshot’s version falls within that reader’s own invocation/response interval. The negative control admits readers after sealing and returns a pre-invocation snapshot. One batch suffices to expose this bug; arbitrary batches, a composition/refinement proof, and liveness remain separate obligations.</p>
 <p><code>observation::Observations</code> seals at most 64 members before calling the existing <code>Authority::read_fresh</code>. Another 64 observations may queue. A deterministic test delays a successful barrier’s acknowledgement, acknowledges a competing write, then starts another reader: only a second validation may serve that reader. Another test fills the queue, cancels members, injects a failed barrier, and verifies subsequent recovery. No result is shared with a request admitted after sealing.</p>
 <p>Remote immutable manifest bytes now share the existing bounded cache. Their unique object name and expected digest come from the freshly validated directory. Memory and disk tests cache a 300 KiB manifest, enforce a smaller caller read bound on a cache hit, replace and remotely collect that manifest, and verify a later request reads the replacement despite the stale bytes remaining cached. Directory cache hits avoid rewriting the same disk file. These cache changes add no authority transition; missing old bytes still restart the complete read, and mutable local heads remain uncached.</p>
 <p>Automatic maintenance also shares its initial manifest between compaction and no-op collection. The initial snapshot may justify only a stuttering step: no deletion, cursor update, or publication. A race test pauses after listing, commits a new value, resumes the no-op pass, then verifies the next pass collects only the obsolete object. A publication test checks that empty and one-page idle databases perform exactly one barrier and no directory rewrite. Actual deletion retains the modeled list/read/fence/delete sequence unchanged.</p>
+<h2 id="cross-replica-publication-combining">Cross-replica publication combining</h2>
+<p><code>PublicationCombining.tla</code> was checked before implementing durable proposals. It models two fresh jobs, two database targets, two helpers, and three authority revision advances. Jobs can use genuine stale observations, upload, submit, disappear with an unknown outcome, receive success, or be definitely aborted before submission. Helpers select independent targets and race a conditional group publication. Original unbatched publishers, read barriers, collection candidate snapshots, fence publication, manifest/proposal deletion, and abandonment are included. A committed proposal may be cleaned up without advancing the fence; already loaded proposals remain subject to the original target comparison.</p>
+<p>All 13,049,720 symmetry-reduced states (84,918,974 generated, depth 29) satisfy the seven checked invariants: types, referenced-manifest existence, original target comparison, unrelated-write preservation, no duplicate publication, acknowledged history, and no commit after a definite abort. Symmetry renames only jobs among jobs and helpers among helpers. A separate run without symmetry also passed: 42,716,288 states, 279,275,713 generated, depth 29. Reproduce that larger run with <code>PublicationCombiningNoSymmetry.cfg</code>. TLC uses probabilistic state fingerprints; these runs are finite model-checking evidence, not a mechanized proof. Four intentionally unsafe configurations omit the collection fence, expected target, current-root merge, or post-submission uncertainty rule.</p>
+<table>
+<thead>
+<tr>
+<th>Model boundary</th>
+<th>Rust boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Upload / Submit</td>
+<td><code>publication::proposal::Published::publish</code> uploads a fresh manifest, then a bounded immutable proposal</td>
+</tr>
+<tr>
+<td>Select</td>
+<td>Bounded listing, strict proposal namespace/schema checks, target/fence comparison, and manifest existence/digest checks</td>
+</tr>
+<tr>
+<td>Publish</td>
+<td><code>Directory::insert_many</code> completes all final reachable uploads, then <code>Authority::replace</code> compares the observed authority version</td>
+</tr>
+<tr>
+<td>Ack / Unknown</td>
+<td>Success requires the selected unique identity or an acknowledged group CAS; every other outcome after proposal submission remains uncertain</td>
+</tr>
+<tr>
+<td>List / Fence / Delete</td>
+<td><code>Published::collect_manifests</code> lists all three namespaces before fencing and deletes only authorized candidates</td>
+</tr>
+<tr>
+<td>DeleteProposal after commit</td>
+<td>Bounded optional cleanup queue; failure leaves work for the durable collector</td>
+</tr>
+</tbody>
+</table>
+<p>Deterministic tests abandon an originating task, let another replica publish it, lose a proposal-upload response, lose a whole group’s CAS acknowledgement, race a same-target writer, and collect an entire prepared selection before its CAS. Recovery preserves the original request body and receipts. Malformed proposals cannot authorize a write. A 65-proposal test verifies the 64-target group bound and cursor wrap for deferred work. Three separate replica instances race both collectors. These tests do not depend on sharing one helper semaphore.</p>
+<p>The bulk directory implementation reuses the single-entry tree algorithm in a bounded staging overlay. Tests show that a 64-entry leaf batch uploads one final page, malformed batches reject before I/O, and 64 mixed updates/inserts across a 4,096-entry three-level tree preserve the original root, ordering, pagination, witness reachability, and cache-free reads after reclamation. Intermediate paths are never uploaded or inserted into the cache. One helper per process limits staging to 64 MiB and 1,600 pages; remote fetches, final uploads, and optional proposal deletions each have concurrency eight. These are implementation bounds, not an allocator/RSS proof.</p>
+<p>The model abstracts B+tree allocation, data-page collection, and API request identities. Composing those layers, proving arbitrary-count safety/liveness, and refining Rust and provider behavior remain open. The unchanged format number additionally requires mixed-version qualification; a model of an abstract old publisher alone does not qualify an old binary.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

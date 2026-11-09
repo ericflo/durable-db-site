@@ -18,13 +18,13 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Seven finite TLA+ models cover publication, collection, directory reachability, retries, rebasing, and sealed read groups; negative controls and race tests</td>
+<td>Eight finite TLA+ models cover publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; mechanize the inductive safety argument and implementation refinement obligations; independently review the protocol</td>
 </tr>
 <tr>
 <td>Cloud performance</td>
-<td>Initial B2 baseline failed at 0.341 successful ops/s; rebasing/read-group changes completed the short workload at 0.724 ops/s, with poor tail latency; profiling still shows costly repeated uploads and register conflicts</td>
-<td>Model and implement combined publications; publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
+<td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; a separate integration test exposed an unhandled native metadata 503</td>
+<td>Qualify the implemented publication combiner; publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
 </tr>
 <tr>
 <td>Public multitenancy</td>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 <td>Upgrades</td>
-<td>Versioned formats reject unsupported state; no upgrade campaign</td>
+<td>One old/new format-3 pair passes mixed writes, SIGKILL, and cold rollback/reopen on versioned MinIO; broader upgrade campaign open</td>
 <td>Mixed-version readers/writers/collectors, migration interruption, downgrade refusal where required, rollback and restore procedure, and compatibility fixtures from every supported release</td>
 </tr>
 <tr>

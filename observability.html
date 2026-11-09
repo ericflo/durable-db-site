@@ -24,7 +24,7 @@
 </tr>
 <tr>
 <td><code>durable_db_events_total{event}</code></td>
-<td>Sealed read groups and their members, queue rejection, publication rebases, cache hits/misses, collection candidates, and acknowledged object deletions</td>
+<td>Sealed read groups and their members, queue rejection, submitted proposals, publication groups/members/rebases, rejected proposals, cache hits/misses, collection candidates, and acknowledged object deletions</td>
 </tr>
 <tr>
 <td><code>durable_db_requests_total</code></td>
@@ -54,7 +54,7 @@ clamp_min(sum(rate(durable_db_operations_total{job=&quot;durable-db&quot;,operat
   )
 )
 </code></pre>
-<p>The ratio of <code>read_group_members</code> to <code>read_groups</code> measures barrier sharing. Compare <code>cache_hit</code> and <code>cache_miss</code>, but remember that cache misses include checksum mismatches and cache-disabled configurations. High cache hit rates do not eliminate the authoritative read barrier.</p>
+<p>The ratio of <code>read_group_members</code> to <code>read_groups</code> measures barrier sharing. <code>publication_group_members / publication_groups</code> measures the selected group size for acknowledged helper CAS calls; an unknown CAS response can make those counters undercount successful publication. <code>proposal_submitted</code> counts acknowledged uploads, while <code>proposal_candidates</code>, <code>proposal_rejected</code>, and <code>proposal_delete_ack</code> expose proposal scan, validation, and cleanup activity. These counters do not measure the pending queue or establish that every submitted proposal eventually committed. Compare <code>cache_hit</code> and <code>cache_miss</code>, but remember that cache misses include checksum mismatches and cache-disabled configurations. High cache hit rates do not eliminate the authoritative read barrier.</p>
 <h2 id="alert-rules-and-qualification">Alert rules and qualification</h2>
 <p>The repository provides <a href="prometheus/alerts.yml">initial alert rules</a> and <a href="prometheus/alerts.test.yml">synthetic rule tests</a>. Woodpecker runs those tests with pinned Prometheus 3.16.0 <code>promtool</code>. They cover missing discovery, delayed firing, error recovery, distinguishing conflicts from provider errors, saturated observation admission, and persistent maintenance failures. Thresholds are provisional diagnostic thresholds, not a qualified SLO. Adapt the scrape job and grouping to the deployment before installing them.</p>
 <pre><code class="language-sh">cd deploy/prometheus

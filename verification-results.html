@@ -195,4 +195,46 @@
 <p>Those snapshots cover each process’s lifetime, including startup, setup, and final verification, rather than only the measured phases. Aggregated across the three processes, 322 immutable PUT calls averaged 362 ms; 208 authority replacements averaged 484 ms, including 81 definite conflicts. There were 65 path rebases. Sealed read groups served 93 members through 76 barriers. SDK-internal retries are included in a call’s latency but are not individually counted. These measurements motivate combining pending publications and reducing repeated path uploads; they do not establish that maintenance is the only bottleneck.</p>
 <p>All 35 local Rust tests pass after the metrics changes, including cancellation accounting, HTTP label privacy, and the 10,005-database stress test. Versioned and unversioned MinIO qualification passes again. The five initial Prometheus alert rules pass synthetic firing/recovery tests with pinned <code>promtool</code> 3.16.0; this does not test real notification delivery or a production recovery drill.</p>
 <p>The real HTTP metrics endpoint also passes <code>promtool check metrics</code>. Both B2 integration tests pass again (124 seconds) after correcting two assumptions in the shared-bucket test harness: creates may receive a definite conflict from another test’s collector, and another collector may have already removed the manifests whose deletions a test expected to count. The initial two runs failed those assertions. Creates now retry only definite conflicts within a fixed budget; reclamation checks the resulting object namespace over bounded collection passes rather than attributing work to a particular collector. Unknown outcomes still fail these integration tests visibly. After qualification, all 348 remaining physical versions in the task-owned bucket were deleted, the bucket removed, and its scoped workload key revoked.</p>
+<h2 id="publication-combining-qualification">Publication combining qualification</h2>
+<p>The format-3 combiner submits durable proposals that another replica can publish, bulk-copies directory paths, and reclaims proposals through bounded optional cleanup plus the fenced collector. All 41 Rust tests pass, including the 10,005-database regression (285 seconds in this debug run), 65 abandoned proposals across bounded groups, lost proposal and group responses, competing targets, and collection invalidating a loaded selection. All eight bounded models and thirteen negative configurations pass. The new model covers 13,049,720 states with role-preserving symmetry and 42,716,288 without symmetry; <a href="verification.html#cross-replica-publication-combining">bounds and remaining obligations</a> are explicit. All 32 upstream Pi cases and the benchmark recovery-accounting fixture pass.</p>
+<p>Versioned and unversioned MinIO qualification passes. The first attempt exposed a missed S3 physical-deletion namespace check for proposals; it was corrected before the passing runs. A separate <a href="evidence/mixed-combining-minio-2026-11-08.json">mixed-version experiment</a> runs the previous Woodpecker static binary from <code>058e2c3</code> alongside the new candidate, with no caches and maintenance every five seconds. It completes 109 writes through old-only, mixed, and new-only phases, recovers an unknown request after SIGKILL with an identical receipt, removes all processes, and verifies all 70 databases through both old and new cold reopen. The report retains 235 admission rejections, one conflict, and one transport error. This qualifies that tested pair on versioned MinIO; it is not AWS, B2 mixed-version, HPA, or arbitrary-upgrade qualification.</p>
+<p>The same candidate binary (<code>09e190e145b72a6fa9f3b9f287c6788c1be043eeaf195608a2aaaf04dc88be65</code>) was measured against a fresh B2 <code>us-west-002</code> bucket with the existing three-process, 70-database laptop workload, 64 MiB cache per process, and maintenance every 60 seconds. All 100 writes, 100 reads, and 70 final database checks passed. The <a href="evidence/b2-combining-2026-11-08.json">workload report</a> retains every sample.</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Successful / planned</th>
+<th>Successful ops/s</th>
+<th>p50 / p95 / max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One writer</td>
+<td>20 / 20</td>
+<td>0.235</td>
+<td>2,169 / 4,352 / 40,313 ms</td>
+</tr>
+<tr>
+<td>One reader</td>
+<td>20 / 20</td>
+<td>4.572</td>
+<td>79 / 1,085 / 1,269 ms</td>
+</tr>
+<tr>
+<td>Four writers</td>
+<td>80 / 80</td>
+<td>1.051</td>
+<td>2,946 / 6,284 / 9,033 ms</td>
+</tr>
+<tr>
+<td>Four readers</td>
+<td>80 / 80</td>
+<td>2.854</td>
+<td>1,141 / 3,351 / 3,566 ms</td>
+</tr>
+</tbody>
+</table>
+<p>The write phases required four and ten HTTP <code>503</code> retries respectively; the four-reader phase required three. Whole-lifetime <a href="evidence/b2-combining-metrics-2026-11-08.json">metric snapshots</a>, including setup, maintenance, and verification, show 275 acknowledged proposal uploads, 208 acknowledged group publications with 249 selected members (1.20 members/group), and 76 failed-CAS rebuilds. There were 1,146 immutable PUT calls averaging 328 ms and 1,566 authority replacements averaging 286 ms, including 221 conflicts. Fifteen native authority reads failed. These totals cover a different workload/window from the earlier isolation profile and must not be treated as a controlled per-transaction comparison.</p>
+<p>The short concurrent throughput result improves on earlier measurements, but <strong>the production performance gate remains open</strong>. Single-writer latency, provider retries, tail latency, and amplification are still substantial. A separate real-B2 integration run then passed receipt/reclamation/reopen checks but failed the directory-creation test on a native metadata HTTP <code>503</code>. That failure is retained in the qualification record; bounded read-only provider recovery is the next correction. No soak, regional SLO, billing, or independent proof claim follows from this campaign.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
