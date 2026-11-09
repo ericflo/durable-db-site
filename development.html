@@ -40,8 +40,12 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh PlacementRequests</code></td>
 </tr>
 <tr>
+<td>Ownership intervals</td>
+<td><code>cargo test --locked --lib ownership::timing</code> and <code>scripts/check-proof.sh GrantBounds</code></td>
+</tr>
+<tr>
 <td>Candidate root request lifecycle</td>
-<td><code>scripts/check-candidate.sh RootRequests</code></td>
+<td><code>scripts/check-candidate.sh RootRequests</code> and <code>scripts/check-proof.sh RootRequests</code></td>
 </tr>
 <tr>
 <td>An implemented protocol model</td>
@@ -72,7 +76,7 @@ scripts/check-proof.sh PartitionControl
 scripts/check-candidate.sh PartitionJournal
 scripts/check-proof.sh PartitionJournal
 </code></pre>
-<p>The candidate checker also supports <code>OwnedWal</code>, <code>DelegatedGrant</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>LateControlCoverage</code>, <code>PlacementRequests</code>, <code>PlacementTakeover</code> and <code>RootRequests</code>. The proof checker supports <code>PublicationSafety</code> (the default), <code>Journal</code>, <code>GrantBounds</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>PartitionControl</code> and <code>PartitionJournal</code>. Imported proofs are checked before their dependents. See the <a href="https://github.com/ericflo/durable-db/tree/main/spec/candidates">candidate catalog</a> and <a href="design-owned-partitions.html">owned-partition design</a> for the purpose of each component.</p>
+<p>The candidate checker also supports <code>OwnedWal</code>, <code>DelegatedGrant</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>LateControlCoverage</code>, <code>PlacementRequests</code>, <code>PlacementTakeover</code> and <code>RootRequests</code>. The proof checker supports <code>PublicationSafety</code> (the default), <code>Journal</code>, <code>GrantBounds</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>RootRequests</code>, <code>PartitionControl</code> and <code>PartitionJournal</code>. Imported proofs are checked before their dependents. See the <a href="https://github.com/ericflo/durable-db/tree/main/spec/candidates">candidate catalog</a> and <a href="design-owned-partitions.html">owned-partition design</a> for the purpose of each component.</p>
 <h2 id="formal-check-inputs">Formal check inputs</h2>
 <p>Each model’s <code>.checks</code> descriptor declares every positive configuration, unsafe variant and reachability control. An unsafe variant must violate its named invariant. A reachability control forbids a desired scenario and must produce a counterexample reaching it; this is coverage, not a liveness proof. The candidate wrapper copies the maintained dependencies into a temporary directory and removes it on exit. Logs remain under <code>.tools/candidates/</code>.</p>
 <p>Each proof’s <code>.proof</code> descriptor declares:</p>

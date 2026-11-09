@@ -185,6 +185,13 @@
     "positive_actual_collision_estimate": 3.8e-07
   },
   "qualification": {
-    "status": "All ten local standard checks passed; full Woodpecker and publication pending"
+    "source_commit": "79aff076eca2f80f2a7e958bb485bcb70e96cd8a",
+    "woodpecker": {
+      "pipeline": 55,
+      "status": "success",
+      "build_log_sha256": "195064fdc7146a1339cd2930b2e00869bb1a94e045629a8d20b3797240089aca"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "c08ec050271348b17c19ef72dbd1713cfe0136b644c39897c6c1642d951dabb9"
   }
 }
