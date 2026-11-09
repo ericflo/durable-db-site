@@ -1,0 +1,197 @@
+{
+  "schema": 1,
+  "complete": true,
+  "provider": "b2",
+  "source_commit": "4101076a8f90c591ac6b458a91854d1185610b9c",
+  "server_binary_sha256": "0812198383509c7321cfdd885ae13b162e993ec893ea48c96f0df5816efa6d64",
+  "started_at": "2026-11-09T03:29:29.819403+00:00",
+  "context": "Real B2 us-west-002; one laptop process; zero caches; 60-second maintenance; disposable bucket; protected databases and scoped Pi credentials. Not a performance or autoscaling claim.",
+  "conformance": {
+    "numTotalTests": 64,
+    "numPassedTests": 32,
+    "numFailedTests": 0,
+    "numPendingTests": 32,
+    "success": true
+  },
+  "cases": [
+    {
+      "name": "reserves ID 1 for the immutable root conversation",
+      "status": "passed",
+      "duration_ms": 8584.769854
+    },
+    {
+      "name": "receives a durable commit once before resolving, and never a refused one",
+      "status": "passed",
+      "duration_ms": 18785.626157
+    },
+    {
+      "name": "commits mixed table writes atomically and rolls all of them back on failure",
+      "status": "passed",
+      "duration_ms": 19235.154985999998
+    },
+    {
+      "name": "detaches retained writes and every returned record",
+      "status": "passed",
+      "duration_ms": 30194.000856000006
+    },
+    {
+      "name": "detaches prototype-like JSON keys without changing object prototypes",
+      "status": "passed",
+      "duration_ms": 21587.811742000005
+    },
+    {
+      "name": "indexes entries committed out of ID order",
+      "status": "passed",
+      "duration_ms": 23481.272754999998
+    },
+    {
+      "name": "continues an entry cursor below its last item after a newer commit",
+      "status": "passed",
+      "duration_ms": 23809.74292599999
+    },
+    {
+      "name": "paginates conversations by opaque cursor in ascending ID order",
+      "status": "passed",
+      "duration_ms": 20088.75757299998
+    },
+    {
+      "name": "filters and pages conversations by durable owner edges",
+      "status": "passed",
+      "duration_ms": 29506.18305600001
+    },
+    {
+      "name": "scans deep fork history newest-first through every ancestor cap",
+      "status": "passed",
+      "duration_ms": 97096.86939099999
+    },
+    {
+      "name": "scans tables in either ID order and continues a cursor in its order",
+      "status": "passed",
+      "duration_ms": 46052.292669999995
+    },
+    {
+      "name": "replaces complete task records and pages filtered task scans",
+      "status": "passed",
+      "duration_ms": 24057.251657999994
+    },
+    {
+      "name": "stores owners and scans waiting and completing tasks by status",
+      "status": "passed",
+      "duration_ms": 18942.486416
+    },
+    {
+      "name": "stores and scans sleeping tasks by status",
+      "status": "passed",
+      "duration_ms": 38537.37416399998
+    },
+    {
+      "name": "indexes request IDs per conversation and replaces complete submission records",
+      "status": "passed",
+      "duration_ms": 38995.98484599998
+    },
+    {
+      "name": "stores passive write submissions without input-only lifecycle states",
+      "status": "passed",
+      "duration_ms": 15931.864406000008
+    },
+    {
+      "name": "stores continue submissions, which have no entry and are never queued",
+      "status": "passed",
+      "duration_ms": 29084.16418100003
+    },
+    {
+      "name": "reconstructs rewindable documents and preserves half-open incarnations",
+      "status": "passed",
+      "duration_ms": 67105.85454700002
+    },
+    {
+      "name": "streams long document tails across root replacement deltas",
+      "status": "passed",
+      "duration_ms": 252150.97984199994
+    },
+    {
+      "name": "copies stored document bases independently and rejects ambiguous sources",
+      "status": "passed",
+      "duration_ms": 79982.10746800003
+    },
+    {
+      "name": "uses bases for version transitions and rejects historical reads of current-only documents",
+      "status": "passed",
+      "duration_ms": 29760.557457000017
+    },
+    {
+      "name": "indexes logical addresses and exact-scope scans independently",
+      "status": "passed",
+      "duration_ms": 25124.365741999936
+    },
+    {
+      "name": "keeps document lifecycle failures atomic and gives create-plus-retire an empty lifetime",
+      "status": "passed",
+      "duration_ms": 25594.832525000093
+    },
+    {
+      "name": "refuses a creation and a change of one document in one commit, in either order",
+      "status": "passed",
+      "duration_ms": 14365.502813
+    },
+    {
+      "name": "rolls back record tables and secondary indexes when a document command fails",
+      "status": "passed",
+      "duration_ms": 50236.76077100006
+    },
+    {
+      "name": "keeps indexed string identities lossless",
+      "status": "passed",
+      "duration_ms": 31414.932155000046
+    },
+    {
+      "name": "keeps one global record ID namespace and rejects exhausted ID minting",
+      "status": "passed",
+      "duration_ms": 28965.19311000011
+    },
+    {
+      "name": "commits batches in order, each with its seq, checked against the earlier ones",
+      "status": "passed",
+      "duration_ms": 20588.30614
+    },
+    {
+      "name": "stores the batches before the first one refused, and none after it",
+      "status": "passed",
+      "duration_ms": 18125.48183299997
+    },
+    {
+      "name": "refuses a later batch its own malformed actions fail, keeping the batches before it",
+      "status": "passed",
+      "duration_ms": 18138.50971699995
+    },
+    {
+      "name": "resolves a batched copy against the state the earlier batches left",
+      "status": "passed",
+      "duration_ms": 31397.331070999848
+    },
+    {
+      "name": "rejects every operation after close",
+      "status": "passed",
+      "duration_ms": 11292.45355700003
+    }
+  ],
+  "seed": {
+    "phase": "seed",
+    "complete": true,
+    "owner_left_claimed": true
+  },
+  "all_server_processes_removed": true,
+  "recovery": {
+    "phase": "verify",
+    "complete": true,
+    "checks": 8,
+    "explicit_takeover": true
+  },
+  "finished_at": "2026-11-09T03:50:13.686632+00:00",
+  "fixture_sha256": "3f0c72cfe434f08f0ee597c87c8c7d9cefbd8b71ef6c83681066874f7afa448c",
+  "cleanup": {
+    "bucket_deleted": true,
+    "scoped_key_revoked": true,
+    "physical_versions_removed": 124
+  }
+}

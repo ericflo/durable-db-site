@@ -18,7 +18,7 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Ten finite TLA+ models cover protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Twelve finite TLA+ models cover signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; mechanize the inductive safety argument and implementation refinement obligations; independently review the protocol</td>
 </tr>
 <tr>
@@ -33,8 +33,8 @@
 </tr>
 <tr>
 <td>Credentials and lifecycle</td>
-<td>Expiring tokens; durable individual revocation and generations; idempotent protected creation; old engines refuse protected databases</td>
-<td>Overlapping signing-key rotation, tenant export/deletion/retention, and durable audit delivery, exercised during rolling deploys and partitions</td>
+<td>Expiring administrator/metrics/tenant capabilities; bounded overlapping signing keys; durable individual revocation and generations; idempotent protected creation</td>
+<td>Qualify key rollout in the deployment and offline issuers; tenant export/deletion/retention and durable audit delivery, exercised during rolling deploys and partitions</td>
 </tr>
 <tr>
 <td>Recovery</td>
@@ -43,8 +43,8 @@
 </tr>
 <tr>
 <td>Pi integration</td>
-<td>All 32 upstream tests pass for the bounded reference replay adapter</td>
-<td>Indexed adapter with bounded recovery work, full upstream conformance, competing owners, crash/reopen, cancellation, and long-history tests on B2</td>
+<td>All 32 upstream cases pass for both adapters locally and the indexed adapter on B2; local competing-owner/receipt-eviction/bounds tests and B2 cold takeover pass</td>
+<td>Full Pi Harness integration and cancellation workflows; long-running workloads and competing owners on a multi-replica B2 deployment</td>
 </tr>
 <tr>
 <td>Autoscaling and maintenance</td>

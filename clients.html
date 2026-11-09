@@ -12,6 +12,52 @@ await db.commit(operation);
 // On an unknown transport outcome, retry operation unchanged.
 </code></pre>
 <p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
+<h2 id="pi-150-indexed-adapter">Pi 1.5.0 indexed adapter</h2>
+<p>Current source builds include <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
+<pre><code class="language-js">import { openIndexedPiStorage } from './pi-indexed.mjs';
+const storage = await openIndexedPiStorage(db);
+// Pass storage to Harness.open(storage, options, context).
+// Close it after the Harness stops issuing operations.
+</code></pre>
+<p>Use a protected database and a scoped application token. The default prefix is <code>pi-indexed/</code>; choose another ASCII prefix explicitly when sharing a database among trusted applications. Only the adapter may write within its prefix. Database credentials authorize the entire database, so an untrusted application needs a separate database, not merely a separate prefix.</p>
+<p>Conversations, entries, tasks, submissions, and documents have direct records and ordered indexes. Opening reads one metadata value and claims a fresh owner; it does not reconstruct a journal. Reads validate current ownership and use one database revision across all lookups. Fork-aware entry scans clip ancestor segments at their fork points. Document lookups use live-address and historical-incarnation indexes; rewindable content finds a base and applies its following deltas. Latest-only content is stored separately from document metadata, so scanning records does not read large values.</p>
+<p>One Session owns each prefix. After a crashed host, <code>openIndexedPiStorage(db, {takeover: true})</code> explicitly replaces it. Old owners cannot publish, serve fresh reads, or release the new owner’s claim. API pods remain interchangeable; this owner belongs to the Harness Session. Host scheduling and external tool effects still need their own fencing protocol. Normal close drains admitted operations before releasing ownership.</p>
+<p>A commit stages the valid prefix of the supplied batches and atomically writes its records, indexes, document content, and metadata. Receipts follow durable publication. Unknown responses retry the identical request; the adapter’s last-commit nonce can resolve publication after the database’s 128-receipt window rolls over. An unresolved provider or ownership error fails the adapter until reopen. A semantic refusal changes none of the refused batch while retaining earlier valid batches in that call. A callback throwing after publication does not undo the durable data.</p>
+<table>
+<thead>
+<tr>
+<th>Bound</th>
+<th>Default / behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Serialized record or content</td>
+<td>512 KiB; large values use at most sixteen chunks in the same transaction</td>
+</tr>
+<tr>
+<td>Commit</td>
+<td>Database’s 1 MiB JSON and 128 operations, including indexes, chunk deletions, metadata, and checks; oversized staging rejects before publication</td>
+</tr>
+<tr>
+<td>Snapshot read work</td>
+<td>8 MiB accounted encoded payload, 4,096 keys/scan results, and 256 logical HTTP reads; each transient retry is separately bounded</td>
+</tr>
+<tr>
+<td>Fork ancestry</td>
+<td>256 conversations; cycles reject</td>
+</tr>
+<tr>
+<td>Rewindable document replay</td>
+<td>At most 1,024 deltas and 2 MiB serialized base-plus-delta content; another delta requires a checkpoint before exceeding the bound</td>
+</tr>
+<tr>
+<td>Scan results</td>
+<td>1–1,000 entries; sparse residual filters may exhaust the scan budget and require a narrower query</td>
+</tr>
+</tbody>
+</table>
+<p>The read, ancestry, scan, and delta bounds can be reduced with <code>maxReadBytes</code>, <code>maxRequests</code>, <code>maxScanned</code>, <code>maxAncestry</code>, and <code>maxDeltas</code>. These bound encoded work, not exact JavaScript heap/RSS. Rewindable history remains stored for as-of reads and consumes the database quota. Latest-only replacement and retirement remove obsolete content chunks atomically. There is no automatic conversion from the reference journal; use a fresh prefix/database for the indexed adapter. The adapter and schema are experimental, pinned to Pi 1.5.0, and still subject to cloud/upgrade qualification and independent review.</p>
 <h2 id="pi-150-reference-adapter">Pi 1.5.0 reference adapter</h2>
 <pre><code class="language-js">import { openReferencePiStorage } from './pi-reference.mjs';
 const storage = await openReferencePiStorage(db);
@@ -19,5 +65,5 @@ const storage = await openReferencePiStorage(db);
 </code></pre>
 <p>This adapter verifies end-to-end storage semantics using Pi’s <code>MemoryStorage</code> as an execution reference and durable-db as authority. Commit batches are chunked into bounded KV values and atomically written with their metadata. Pi receives durability receipts only after the database commits. A storage owner token fences old Sessions; normal open refuses an existing owner. After a crashed owner, explicitly pass <code>takeover: true</code>; the old owner can no longer persist changes.</p>
 <p>The adapter replays a log into memory and stages a detached reference state before publication. Its default log budget is 8 MiB. It is suitable for conformance, small examples, and validating crash/reopen behavior. It is <strong>not</strong> the final production storage adapter: open/staging work grows with history, and the log budget eventually stops writes. The database engine itself does not use this full-history design.</p>
-<p>The production adapter will map conversations, entries, tasks, submissions, documents, document revisions, and secondary indexes directly to ordered keys. It must pass the same Pi conformance suite, implement fork-aware entry reads and document materialization, and use a single database-scoped commit for each valid group prefix. Its Session ownership fence must remain independent of API-pod membership.</p>
+<p>The indexed adapter above implements direct ordered records and indexes. Keep the reference adapter for semantic comparison and fixtures; it remains unsuitable for histories that exceed its bounded replay budget.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

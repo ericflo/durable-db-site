@@ -4,9 +4,9 @@
 <p>One shared publication implementation on B2 and S3, with a persistent B+tree database directory, modeled conditional publication and version-aware reclamation. Working single-node local service; S3 CAS backend with compatibility probe; ordered pages and atomic revision-checked writes; bounded caches; signed scoped credentials; logical quotas and admission limits; automatic fenced collection and incremental compaction; a checked TLA+ model with a negative control; Woodpecker CI; a public documentation site; and a bounded Pi reference adapter.</p>
 <h2 id="before-a-hosted-preview">Before a hosted preview</h2>
 <ul>
-<li>Finish the indexed Pi storage adapter and run its full conformance/recovery suite.</li>
+<li>Complete full Pi Harness integration and sustained-load qualification of the indexed adapter; all 32 upstream cases pass on B2, and cache-free crash/takeover recovery passes.</li>
 <li>Add durable cluster-wide physical allocation/spend admission, request and bandwidth budgets, and abuse tests across replicas.</li>
-<li>Add tenant export, deletion/retention, overlapping signing-key rotation, and durable audit delivery. Durable token revocation and idempotent protected provisioning are implemented in current source builds; complete their broader rollout qualification.</li>
+<li>Add tenant export, deletion/retention, and durable audit delivery. Overlapping signing keys, expiring administrator capabilities, durable token revocation, and idempotent protected provisioning are implemented in current source builds; complete their broader deployment qualification.</li>
 <li>Extend the passing Kubernetes HPA-bound and pod-replacement tests with CPU-load triggers, node drains, network partitions, and provider errors. Report timelines, not only final success.</li>
 <li>Remove the single bucket publication throughput bottleneck through a modeled group-commit/partitioning design before claiming high throughput across many active sites.</li>
 <li>Run performance and soak tests against AWS with published latency distributions, cost/transaction, cache hit rates, and per-database contention. Optimize only from those measurements.</li>
