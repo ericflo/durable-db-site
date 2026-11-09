@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "complete": true,
+  "recorded_at": "2026-11-09T08:39:15.060192+00:00",
+  "base_commit": "0b602ac0a8d6d49c1c4b73ba8fafb067db48f565",
+  "scope": "Client readability, exported TypeScript contracts and a runnable localhost web-application storage example. No change to the database storage protocol.",
+  "javascript_http_suite": {
+    "passed": 88,
+    "skipped": 1,
+    "skip": "All-API cold replacement remains covered by the separate cloud Harness qualification."
+  },
+  "web_application_tests": {
+    "passed": 4,
+    "cases": [
+      "Lost commit response and repeated application intent create one task/receipt",
+      "Concurrent independent task creation and atomic completion/index removal",
+      "Revision-pinned pagination refuses to mix snapshots",
+      "Settings replay and stale optimistic edit"
+    ]
+  },
+  "typescript_and_format_checks": true,
+  "dependency_audit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "localhost_api_smoke": {
+    "complete": true,
+    "protected_setup_replay": true,
+    "private_scoped_token": true,
+    "api_create_replay_list_complete_settings": true,
+    "cross_origin_rejected": true
+  },
+  "source_sha256": {
+    "examples/web-app/server.ts": "e557a24772c4bc1e18291f521b731941c7dbae9e5648a13683f046a480d8cfed",
+    "examples/web-app/setup.ts": "b1abdc7d584209078374ddb2a03679598943bd054ce890a23c476f775b4a3c97",
+    "examples/web-app/storage.ts": "9b528329d1ef93c64e9139afad19a9791a4424b9162dd5f9e223d6f0d1201f7a",
+    "examples/web-app/storage.test.ts": "e0b2672e7ffbb6c9cbd5156caefdd710c89bd1d0f209e8c03c50b0b6a5746f3b",
+    "clients/javascript/client.d.mts": "f241c8e3973036a8d15a6524a0aa32bbb8c4d13dd0a9e6e7a20db8547089f10d",
+    "clients/javascript/pi-indexed.d.mts": "a071fde1e407125067544a5b1593e770bfb2e2ab20ecb76e85ca8e8bbc0049c3",
+    "clients/javascript/pi-reference.d.mts": "ab5d4155221908c9a6f0c06c392844e996addf41c53a500ff22638fd96f41aec",
+    "clients/javascript/client.mjs": "434ea3b52ac899cb10fb6a5817bb66ed828cd50157628600086d249a1ad2eca9",
+    "scripts/test-client.sh": "d27e8597833a9357e5f082adfdde3290222a8e51cae1867db94ed3de81615ace"
+  },
+  "log_sha256": {
+    "client-presentable.log": "fd6f63610f2fcbf58ab9c269a49285f895692ec43afc65c43506d37bfd90b4e6",
+    "web-example-smoke.log": "c40eaac6ba43e83c38ba8a7d7cc9b21897c5f2f05aa3a75f95ad50c0727bc96c",
+    "client-presentable-audit.json": "24a25d776536ee93aed572787fffc753b4ba5647b4298551a818c7bac0042d09"
+  },
+  "limitations": [
+    "TypeScript declarations describe the HTTP contract; they are not runtime validation of arbitrary server responses.",
+    "The example API binds localhost and requires application authentication/authorization before public hosting.",
+    "Application receipts are retained and consume quota; their lifecycle must preserve the permitted retry lifetime. External side effects are outside the database transaction.",
+    "The current cloud performance gate remains open."
+  ]
+}
