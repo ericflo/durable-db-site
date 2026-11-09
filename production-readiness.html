@@ -18,7 +18,7 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Thirteen finite TLA+ models cover the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Fourteen finite TLA+ models cover global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
 <td>Compose the models; document storage/network assumptions; mechanize the inductive safety argument and implementation refinement obligations; independently review the protocol</td>
 </tr>
 <tr>
@@ -28,8 +28,8 @@
 </tr>
 <tr>
 <td>Public multitenancy</td>
-<td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-4 namespaces</td>
-<td>Per-tenant physical admission, full cleanup under exhaustion, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
+<td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-5 namespaces</td>
+<td>Per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
 </tr>
 <tr>
 <td>Credentials and lifecycle</td>
