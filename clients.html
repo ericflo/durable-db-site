@@ -21,14 +21,17 @@ await db.transaction(async (tx) =&gt; {
 <p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
 <h2 id="pi-150-indexed-adapter">Pi 1.5.0 indexed adapter</h2>
 <p>Current source builds include <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
-<pre><code class="language-js">import { openIndexedPiStorage } from './pi-indexed.mjs';
-const storage = await openIndexedPiStorage(db);
+<pre><code class="language-js">import { DurableDb } from '@durable-db/client';
+import { openIndexedPiStorage } from '@durable-db/client/pi-indexed';
+
+const piDatabase = new DurableDb({ url, database: 'pi-app', token: scopedApplicationToken });
+const storage = await openIndexedPiStorage(piDatabase);
 // Pass storage to Harness.open(storage, options, context).
 // Close it after the Harness stops issuing operations.
 </code></pre>
 <p>Use a protected database and a scoped application token. The default prefix is <code>pi-indexed/</code>; choose another ASCII prefix explicitly when sharing a database among trusted applications. Only the adapter may write within its prefix. Database credentials authorize the entire database, so an untrusted application needs a separate database, not merely a separate prefix.</p>
 <p>Conversations, entries, tasks, submissions, and documents have direct records and ordered indexes. Opening reads one metadata value and claims a fresh owner; it does not reconstruct a journal. Reads validate current ownership and use one database revision across all lookups. Fork-aware entry scans clip ancestor segments at their fork points. Document lookups use live-address and historical-incarnation indexes; rewindable content finds a base and applies its following deltas. Latest-only content is stored separately from document metadata, so scanning records does not read large values.</p>
-<p>One Session owns each prefix. After a crashed host, <code>openIndexedPiStorage(db, {takeover: true})</code> explicitly replaces it. Takeover pins the first observed owner: it can retry a definite fence conflict or that owner’s ongoing writes, but refuses a different owner appearing during retry/backoff. Old owners cannot publish, serve fresh reads, or release the new owner’s claim. API pods remain interchangeable; this owner belongs to the Harness Session. Host scheduling and external tool effects still need their own fencing protocol. Normal close drains admitted operations before releasing ownership.</p>
+<p>One Session owns each prefix. After a crashed host, <code>openIndexedPiStorage(piDatabase, {takeover: true})</code> explicitly replaces it. Takeover pins the first observed owner: it can retry a definite fence conflict or that owner’s ongoing writes, but refuses a different owner appearing during retry/backoff. Old owners cannot publish, serve fresh reads, or release the new owner’s claim. API pods remain interchangeable; this owner belongs to the Harness Session. Host scheduling and external tool effects still need their own fencing protocol. Normal close drains admitted operations before releasing ownership.</p>
 <p>A commit stages the valid prefix of the supplied batches and atomically writes its records, indexes, document content, and metadata. Receipts follow durable publication. Unknown responses retry the identical request; the adapter’s last-commit nonce can resolve publication after the database’s 128-receipt window rolls over. An unresolved provider or ownership error fails the adapter until reopen. A semantic refusal changes none of the refused batch while retaining earlier valid batches in that call. A callback throwing after publication does not undo the durable data.</p>
 <table>
 <thead>
@@ -70,7 +73,7 @@ const storage = await openIndexedPiStorage(db);
 <pre><code class="language-js">import { BACKGROUND_CONTEXT } from '@earendil-works/chord/context';
 import { Harness } from '@earendil-works/pi-durable';
 const context = BACKGROUND_CONTEXT;
-const storage = await openIndexedPiStorage(db);
+const storage = await openIndexedPiStorage(piDatabase);
 const harness = await Harness.open(storage, { models, registry }, context);
 const root = await harness.root(context, { agent: { model: selectedModel } });
 // Persist requestId in the host's admission record before submitting or retrying.
@@ -83,8 +86,8 @@ await harness.close(context);
 <p>Pi records a tool’s intent before executing it. After a crash, <code>replay: 'safe'</code> permits re-execution; an unsafe tool instead produces an interruption result. Declaring replay safe is an application responsibility. Database fencing prevents a stale host from storing its result, but cannot undo a payment, message, or other external side effect that the tool already performed. Such tools need an idempotency key or a fence enforced by that external service.</p>
 <p><code>harness.test.mjs</code> runs the actual Pi 1.5.0 Harness with its deterministic faux model, including lost commit acknowledgements, request deduplication after reopen, wait cancellation, queued withdrawal, durable abort, competing live owners, and SIGKILL during model requests and both replay-safe and unsafe tools. <code>scripts/qualify-pi-harness.py</code> runs those cases through three cache-free API processes and adds complete API-process removal and cold replacement while a tool waits. It requires an explicitly disposable provider bucket and private credential file; the caller removes that bucket after the campaign. Neither fixture sends requests to a paid model provider or claims exactly-once external tool execution.</p>
 <h2 id="pi-150-reference-adapter">Pi 1.5.0 reference adapter</h2>
-<pre><code class="language-js">import { openReferencePiStorage } from './pi-reference.mjs';
-const storage = await openReferencePiStorage(db);
+<pre><code class="language-js">import { openReferencePiStorage } from '@durable-db/client/pi-reference';
+const storage = await openReferencePiStorage(piDatabase);
 // Pass storage to Harness.open(storage, options, context).
 </code></pre>
 <p>This adapter verifies end-to-end storage semantics using Pi’s <code>MemoryStorage</code> as an execution reference and durable-db as authority. Commit batches are chunked into bounded KV values and atomically written with their metadata. Pi receives durability receipts only after the database commits. A storage owner token fences old Sessions; normal open refuses an existing owner. After a crashed owner, explicitly pass <code>takeover: true</code>; the old owner can no longer persist changes.</p>
