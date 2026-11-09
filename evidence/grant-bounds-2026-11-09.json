@@ -58,5 +58,12 @@
     ".tools/grant-bounds-standard.log": "0d71b2d1c4b71687adc19b2789dae525e02fb1050ce0a526e8ce72ca38b3509e",
     ".tools/grant-checker-publication-regression.log": "0c77cb43a8f6d16a694a8c78f56c7fc638feec821badd783ec46a936be999aa2",
     ".tools/grant-checker-journal-regression.log": "c0754102b1eb032860b148e3bf96dcbf2ba83bba17744a2789da630a100abc95"
+  },
+  "qualification": {
+    "source_commit": "5a2bda816be29a492b218687c1e1d11b6d3faa5e",
+    "woodpecker": {
+      "pipeline": 41,
+      "status": "success"
+    }
   }
 }

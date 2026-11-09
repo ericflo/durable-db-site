@@ -168,5 +168,25 @@
     "negative_control": "Ignoring current-owner comparison in ApplyRenew fails the required obligation",
     "finite_regression": "Both positive configurations also check Strong; state counts unchanged",
     "runtime_adopted": false
+  },
+  "qualification": {
+    "source_commit": "735393a9298e737447f7445d33d65af9571591cd",
+    "woodpecker": {
+      "pipeline": 42,
+      "status": "success"
+    }
+  },
+  "invariant_deduplication": {
+    "recorded_at": "2026-11-09T15:33:18.313313+00:00",
+    "scope": "Same conjunction of properties and same state bounds, with shared clauses checked once",
+    "configuration_sha256": {
+      "RootControl.cfg": "dfc28e9d3203efb218eed25be9919179115c2039671a7a99ae169daf83a60455",
+      "RootControlRenewal.cfg": "e24c827c0739f66465ead13f62aa60194f18c20e6f3bb83dfe22a86a4ab73a37"
+    },
+    "equivalence_proof_source": "------------------------------ MODULE Check ------------------------------\nEXTENDS RootJournal, TLAPS\nTHEOREM RootChecksEquivalent ==\n  (Invariant /\\ Strong) <=> (Strong /\\ RootExclusive /\\ ChildWithinRoot /\\ ChildExclusive)\n  BY SMT DEF Invariant, Strong\nTHEOREM JournalChecksEquivalent ==\n  (CombinedInvariant /\\ CompositeStrong) <=>\n    (CompositeStrong /\\ ServingHistory /\\ RootExclusive /\\ ChildWithinRoot /\\ ChildExclusive)\n  BY SMT DEF CombinedInvariant, CompositeStrong, DataStrong, Invariant, Strong\n=============================================================================\n",
+    "strict_equivalence_obligations": 4,
+    "checker_version": "c8ddc44",
+    "log_sha256": "f7ae5e3fdf6f0833eb9c861ed087ba404af9a900edf7c2491b807e37e8deabc1",
+    "all_existing_negative_and_coverage_controls_passed": true
   }
 }

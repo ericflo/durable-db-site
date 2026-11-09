@@ -1,0 +1,197 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T15:33:18.309814+00:00",
+  "base_commit": "3e04707be3c38fedd55448f7fcf6b6a2bb6346f6",
+  "status": "Bounded root and partition permission composition; no runtime adoption",
+  "standard_checker_passed": true,
+  "checks": [
+    {
+      "kind": "safe",
+      "config": "PartitionControl.cfg",
+      "expected_violation": null,
+      "states": 488465,
+      "generated": 3093949,
+      "depth": 32
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionControlRepeated.cfg",
+      "expected_violation": null,
+      "states": 134007,
+      "generated": 697614,
+      "depth": 33
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionControlRenewal.cfg",
+      "expected_violation": null,
+      "states": 212562,
+      "generated": 1014980,
+      "depth": 34
+    },
+    {
+      "kind": "safe",
+      "config": "PartitionControlRecovery.cfg",
+      "expected_violation": null,
+      "states": 844280,
+      "generated": 5556328,
+      "depth": 32
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionControlUnsafeAssignment.cfg",
+      "expected_violation": "PartitionExclusive",
+      "states": 30597,
+      "generated": 91005,
+      "depth": 19
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionControlUnsafeDrain.cfg",
+      "expected_violation": "PartitionExclusive",
+      "states": 76661,
+      "generated": 219332,
+      "depth": 20
+    },
+    {
+      "kind": "unsafe",
+      "config": "PartitionControlUnsafeReply.cfg",
+      "expected_violation": "OwnerWithinRoot",
+      "states": 7653,
+      "generated": 23460,
+      "depth": 16
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionControlCoverage.cfg",
+      "expected_violation": "NotIndependentMove",
+      "states": 248050,
+      "generated": 1118887,
+      "depth": 23
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionControlRecoveryCoverage.cfg",
+      "expected_violation": "NotRecoveredMove",
+      "states": 631559,
+      "generated": 3451586,
+      "depth": 24
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionControlRepeatedCoverage.cfg",
+      "expected_violation": "NotRepeatedMove",
+      "states": 92407,
+      "generated": 367967,
+      "depth": 27
+    },
+    {
+      "kind": "coverage",
+      "config": "PartitionControlRenewalCoverage.cfg",
+      "expected_violation": "NotRenewedOwnerMove",
+      "states": 114412,
+      "generated": 426635,
+      "depth": 27
+    }
+  ],
+  "bounds": {
+    "PartitionControl.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 3,
+      "MaxRevision": 8,
+      "MaxRenewals": 2,
+      "MaxChildRequests": 0,
+      "Generations": 2,
+      "MaxOwnerRequests": 1,
+      "partitions": 2
+    },
+    "PartitionControlRepeated.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 4,
+      "MaxRevision": 9,
+      "MaxRenewals": 3,
+      "MaxChildRequests": 0,
+      "Generations": 3,
+      "MaxOwnerRequests": 1,
+      "partitions": 1
+    },
+    "PartitionControlRenewal.cfg": {
+      "Epochs": 1,
+      "Lease": 1,
+      "MaxTime": 4,
+      "MaxRevision": 9,
+      "MaxRenewals": 3,
+      "MaxChildRequests": 0,
+      "Generations": 2,
+      "MaxOwnerRequests": 2,
+      "partitions": 1
+    },
+    "PartitionControlRecovery.cfg": {
+      "Epochs": 2,
+      "Lease": 1,
+      "MaxTime": 3,
+      "MaxRevision": 8,
+      "MaxRenewals": 1,
+      "MaxChildRequests": 0,
+      "Generations": 2,
+      "MaxOwnerRequests": 1,
+      "partitions": 1
+    }
+  },
+  "assumptions": [
+    "Abstract elapsed-time contract and exact root conditional register from RootControl",
+    "Atomic durable placement freeze/activation coordinated with the issuer assignment view",
+    "Fresh never-reused owner generations; fixed initial placement",
+    "Owner reply expiry anchored to the request start and contained by its parent root grant"
+  ],
+  "coverage": [
+    "Moved and untouched partitions hold permission under the original coordinator",
+    "Two successive moves reach a valid third owner generation",
+    "An owner deadline actually extends before its replacement receives permission",
+    "A later coordinator actually finishes a move frozen by its predecessor; explicit history flag"
+  ],
+  "limitations": [
+    "Separate bounded instances do not prove their Cartesian product or arbitrary cluster sizes",
+    "No platform clock guarantee or implementation of grant/drain conversion",
+    "Atomic placement changes abstract local freeze before uncertain wire updates and exact state recovery",
+    "No journal selection, data history, transactions, receipts, routing, placement policy, early release, admission, collection or liveness",
+    "Existing root/journal theorem does not automatically prove this delegated composition",
+    "No Rust controller or runtime clock dependency adopted"
+  ],
+  "source_sha256": {
+    "spec/candidates/PartitionControl.cfg": "33ac3097782e42ae2bf302fcfda4d50a1f64ce02e1e2be9ee2023fc5173ca842",
+    "spec/candidates/PartitionControl.checks": "87b9f14ee85b29db659a2f776cc413c21f56b41d84b21282a9accae293cd2702",
+    "spec/candidates/PartitionControl.tla": "c7d630252518865cba81fb0c7cbc0ead2ab9ac27f8634e94c0363c340f0cf0ba",
+    "spec/candidates/PartitionControlCoverage.cfg": "4e16749c73896ed732f9a88f76306b343e76e3b5bac25b5d8d64825d084eda57",
+    "spec/candidates/PartitionControlRecovery.cfg": "fd6ec40bece62388e1329c6cc9511e4f25bae547dc9f7ebf3007a90e971ba65c",
+    "spec/candidates/PartitionControlRecoveryCoverage.cfg": "74b5295d9db956c8c773bc076780a87b4a2fe91d42228f1bed7c4cbf05a7fd7d",
+    "spec/candidates/PartitionControlRenewal.cfg": "6268f3a6ae48d65fea6ffc7b52885826543351151738f126b4aa3027c8201161",
+    "spec/candidates/PartitionControlRenewalCoverage.cfg": "cf90c52c41f8bae6c27a10d568776eeec8c6d19481bcb2e737b6eafc94a59359",
+    "spec/candidates/PartitionControlRepeated.cfg": "9d00cdb9611f11eabf1105103da1b44a94df9304e7f3cfb806c5ca00df0e87e9",
+    "spec/candidates/PartitionControlRepeatedCoverage.cfg": "003ddb0d833f34dc21acf4cf44f26b37e0ecce4b30c83fb832a500d9b01d7ccc",
+    "spec/candidates/PartitionControlUnsafeAssignment.cfg": "36c9bb8a7330549e385d190cf29a701e26558f3c5cd5416739f94f3dcc8e98db",
+    "spec/candidates/PartitionControlUnsafeDrain.cfg": "6d828927da0f1d095d7cd00e37f59a69b433accd0a590a01da4c3ed2c1262201",
+    "spec/candidates/PartitionControlUnsafeReply.cfg": "c0f25906afcfb020d9c1c1916112f302b6f5f521a9054ad746ead76a17c8cd28",
+    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
+    "scripts/check-candidate.sh": "8e555cb3bff52bd9b3aa1940156f5226db04c1ecfef387295cb679edea5f6330",
+    "Dockerfile": "c7f1933c1498a62b6da316f156afd62a2c3f28be132dee89a78ad040753e60af"
+  },
+  "local_log_sha256": {
+    ".tools/candidates/PartitionControl/model-partition-control-assignment.log": "8c76b1174ad6bfc4e0cee3e0a709c258cc4537e9e5740f18ab9be637309f42f2",
+    ".tools/candidates/PartitionControl/model-partition-control-coverage.log": "77cd6ddbaf8fa2b9741eae072281ca2aba1bb81187e24d4d688fde811efd53a5",
+    ".tools/candidates/PartitionControl/model-partition-control-drain.log": "23b872520ef13d7ced7e98ccf46e026a1bf6dc24092ff3eea036830d0a3627ae",
+    ".tools/candidates/PartitionControl/model-partition-control-recovery-coverage.log": "a7f048a9d1df4d9d7155d09322188a6cf9426d18f2a5cfd0a3993dcc09be1d6d",
+    ".tools/candidates/PartitionControl/model-partition-control-recovery.log": "713f9d5b99e2ffc51c4feffa30177acfefb1a767f57de52f6e60487e538c40ed",
+    ".tools/candidates/PartitionControl/model-partition-control-renewal-coverage.log": "7c39ca1c9b9acef62ae7633e1517147ed548ba309a1c7f05db7627ebfe4d0f0b",
+    ".tools/candidates/PartitionControl/model-partition-control-renewal.log": "5c6538334b21537fdf7372cca79ff05c83d6967321fac8184bd00f9016114a20",
+    ".tools/candidates/PartitionControl/model-partition-control-repeated-coverage.log": "ea3c22017c1a06d0d23c978d365c675093989d7670441bf03060ab4e9a447f09",
+    ".tools/candidates/PartitionControl/model-partition-control-repeated.log": "3adec64cd3408d67fe133dbc8eca8a311fb7be381416e481ca12ebb63817394f",
+    ".tools/candidates/PartitionControl/model-partition-control-reply.log": "dfa0e8de887c75630fc128f331a12f962ac9b18714e231e0e01efa05ea3cb4ad",
+    ".tools/candidates/PartitionControl/model-partition-control.log": "524450bb0fa378f87b327d6f93d44880893e30b294dd2765517663a965370d18",
+    ".tools/partition-control-standard-final.log": "b9e7a880ab3de5be1d49456afe169e1c74cf26965a702008a27ddd29b91804ca"
+  },
+  "source_commit": "bcdb388ab6b6de96aa2c85b4dd802c7425a7c07e"
+}

@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "recorded_at": "2026-11-09T13:46:13.771307+00:00",
-  "base_commit": "808b73a4c5937294dd13484676a1ae4b22317a69",
-  "status": "Bounded root/journal composition; no runtime adoption",
+  "recorded_at": "2026-11-09T14:53:14.150193+00:00",
+  "base_commit": "442ae2ba30643b411d832310edbe9f24bdf5b17d",
+  "status": "Unbounded abstract root/journal composition under explicit contracts; no runtime adoption",
   "standard_checker_passed": true,
   "checks": [
     {
@@ -25,48 +25,48 @@
       "kind": "unsafe",
       "config": "RootJournalUnsafePermission.cfg",
       "expected_invariant": "SelectedHistory",
-      "states": 11205,
-      "generated": 71640,
+      "states": 11194,
+      "generated": 71423,
       "depth": 31
     },
     {
       "kind": "unsafe",
       "config": "RootJournalUnsafeGap.cfg",
       "expected_invariant": "DurableKnowledge",
-      "states": 4230,
-      "generated": 20640,
+      "states": 4240,
+      "generated": 20701,
       "depth": 18
     },
     {
       "kind": "unsafe",
       "config": "RootJournalUnsafeEarly.cfg",
       "expected_invariant": "SelectedHistory",
-      "states": 20654,
-      "generated": 143381,
+      "states": 20658,
+      "generated": 143399,
       "depth": 31
     },
     {
       "kind": "unsafe",
       "config": "RootJournalUnsafeMissing.cfg",
       "expected_invariant": "SelectedHistory",
-      "states": 11258,
-      "generated": 70895,
+      "states": 11259,
+      "generated": 70879,
       "depth": 31
     },
     {
       "kind": "unsafe",
       "config": "RootJournalUnsafeReseal.cfg",
       "expected_invariant": "ImmutableSelection",
-      "states": 39517,
-      "generated": 265554,
-      "depth": 32
+      "states": 38312,
+      "generated": 255156,
+      "depth": 31
     },
     {
       "kind": "unsafe",
       "config": "RootJournalUnsafeReady.cfg",
       "expected_invariant": "CompleteHistory",
-      "states": 3249,
-      "generated": 15136,
+      "states": 3171,
+      "generated": 14510,
       "depth": 15
     },
     {
@@ -136,35 +136,136 @@
     "Atomic control selection and exact selection reads abstract the wire protocol and response uncertainty",
     "Pauses/loss delay or omit actions; replacement is a fresh epoch; scan loss cannot erase durable selections",
     "No transactions, request receipts, resource admission, retention, reclamation or liveness",
-    "Separate unbounded component proofs do not automatically prove the composition",
+    "Objects are never reclaimed; collection must be composed separately",
     "No Rust controller or runtime clock dependency adopted"
   ],
   "source_sha256": {
-    "spec/candidates/RootJournal.cfg": "298d81ca6e1371cbf643a23ab35f9e7c5b02170dd686513474e4322763a75903",
+    "Dockerfile": "3899c6396598c9e5630a0b3db1f1d03e4d12f73455d6247c1019572fd399cc6f",
+    "scripts/check-candidate.sh": "8e555cb3bff52bd9b3aa1940156f5226db04c1ecfef387295cb679edea5f6330",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
+    "scripts/check-proof.sh": "e27f2ac428ada48b811a1dad83906c2875d3007d6f43ff21e940a5dc46d28491",
+    "scripts/install-tlaps.sh": "cb8d111a2d246c8cc9597d9e8a4a206b33f769c6b724d855a14c7c436d96df30",
+    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592",
+    "spec/candidates/RootControlProof.tla": "6a7f711cf316f7452641ab5c7b81c037cad7e725e2e62b677743e6fe40b13f50",
+    "spec/candidates/RootJournal.cfg": "e5139654111fd27abe864fcf7a2653dee18f0a86a6ae67abda8dfd801c415275",
     "spec/candidates/RootJournal.checks": "378d231b2cac7ddb615e4889c7c879d1ff856e14f50b46794928c2afa0d3d9d3",
-    "spec/candidates/RootJournal.tla": "e808715a68000225f37291cecb8933c12590257ac57767454ea3b1dba32726c5",
+    "spec/candidates/RootJournal.tla": "952ef6c8c841b04e66628db1698a84c61211916f36c209d26fe60dbe2fae368b",
     "spec/candidates/RootJournalCoverage.cfg": "b3002f50a47dc28fe678d96c3bb72ca2ba6f0e44a83f045bb365199e8a05ae1a",
-    "spec/candidates/RootJournalRepeated.cfg": "ce1325b9bb1791edd6573d66eef937d6cf1ea0b8677a613ed8cc0def14525820",
+    "spec/candidates/RootJournalProof.tla": "fe06a06df4e27f54583e21f6ad573a3a44210a243d7a523827048eb1c656f1e8",
+    "spec/candidates/RootJournalRepeated.cfg": "8bfd8e4d5e8702d182b39bd59e9e55c19a206c4ad13be19808ffa13b793af521",
     "spec/candidates/RootJournalUnsafeEarly.cfg": "048e8f578dd58c410151957660231078c99b737f202f4c7eec2a9f34ba53c071",
     "spec/candidates/RootJournalUnsafeGap.cfg": "6943efad5a51aa03d438e94f638651535b15d89e964f5f08034f1e7069e7aa3a",
     "spec/candidates/RootJournalUnsafeMissing.cfg": "144f27db7cc03406e5292c59cac968434960b8640751344b07600620784c1fda",
     "spec/candidates/RootJournalUnsafePermission.cfg": "68960e49feb7c46dbf0aa6cc00cfddb4289367df96627993328e487ceec226da",
     "spec/candidates/RootJournalUnsafeReady.cfg": "4971089f3daa62ac2af775315f9f961749a2fc6882236c00f10da5e58cad25cf",
-    "spec/candidates/RootJournalUnsafeReseal.cfg": "612c9cfe2e1786835c22b02c90a810ac2c6e3525f3cfaf2ac59e53a9ce702599",
-    "spec/candidates/RootControl.tla": "012ffa88990278c79ed4bd479a805e798410e3ca2b8ed6f487b9dd7729809592",
-    "scripts/check-candidate.sh": "25739a7a046c99bd605f7ebd05ae69c2413f8cb40938ecc781eaa110f45be828",
-    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640",
-    "Dockerfile": "52e7b1496808dd19d981d019331e96d88faba658b29cc08bae62ba7531313970"
+    "spec/candidates/RootJournalUnsafeReseal.cfg": "612c9cfe2e1786835c22b02c90a810ac2c6e3525f3cfaf2ac59e53a9ce702599"
+  },
+  "previous_bounded_qualification": {
+    "source_commit": "442ae2ba30643b411d832310edbe9f24bdf5b17d",
+    "woodpecker": {
+      "pipeline": 44,
+      "status": "success"
+    }
+  },
+  "proof": {
+    "checker_version": "c8ddc44",
+    "theorem": "RepeatedHistorySafety",
+    "strict_obligations": 1047,
+    "scope": "Arbitrary finite epoch counts, unbounded log lengths and execution lengths under the abstract root timing and storage contracts",
+    "induction_invariant": "CompositeStrong: root permission bounds plus data ordering, recovery bounds and immutable complete history",
+    "dependency": {
+      "module": "RootControlProof",
+      "strict_obligations": 153,
+      "positive_and_negative_checked": true
+    },
+    "negative_control": {
+      "mutation": "Remove acknowledgement permission",
+      "theorem": "AcknowledgeBatchPreserves",
+      "failed_obligations": 1,
+      "checked_obligations": 97
+    },
+    "positive_seconds": 136.8069,
+    "standard_checker_passed": true,
+    "finite_regression": "Both positive configurations also check CompositeStrong; state counts unchanged",
+    "runtime_adopted": false,
+    "builder_diagnostic": {
+      "recorded_at": "2026-11-09T15:59:57.702887+00:00",
+      "status": "success",
+      "strict_obligations": 1047,
+      "positive_seconds": 272.444093,
+      "required_negative_control_passed": true,
+      "scope": "Targeted proof stage on the Woodpecker BuildKit builder; not a complete Woodpecker qualification or publication",
+      "log_sha256": "6de17611e5c526797438980c78f1a8dc3ace3b4466bec888045696823ad0d2d9"
+    }
+  },
+  "invariant_deduplication": {
+    "recorded_at": "2026-11-09T15:33:18.312846+00:00",
+    "scope": "Same conjunction of properties and same state bounds, with shared clauses checked once",
+    "configuration_sha256": {
+      "RootJournal.cfg": "e5139654111fd27abe864fcf7a2653dee18f0a86a6ae67abda8dfd801c415275",
+      "RootJournalRepeated.cfg": "8bfd8e4d5e8702d182b39bd59e9e55c19a206c4ad13be19808ffa13b793af521"
+    },
+    "equivalence_proof_source": "------------------------------ MODULE Check ------------------------------\nEXTENDS RootJournal, TLAPS\nTHEOREM RootChecksEquivalent ==\n  (Invariant /\\ Strong) <=> (Strong /\\ RootExclusive /\\ ChildWithinRoot /\\ ChildExclusive)\n  BY SMT DEF Invariant, Strong\nTHEOREM JournalChecksEquivalent ==\n  (CombinedInvariant /\\ CompositeStrong) <=>\n    (CompositeStrong /\\ ServingHistory /\\ RootExclusive /\\ ChildWithinRoot /\\ ChildExclusive)\n  BY SMT DEF CombinedInvariant, CompositeStrong, DataStrong, Invariant, Strong\n=============================================================================\n",
+    "strict_equivalence_obligations": 4,
+    "checker_version": "c8ddc44",
+    "log_sha256": "95b0ca1e9a2b6b30632cc4475a29f4d49ee35dc575cea0ec43258d040528adf8",
+    "all_existing_negative_and_coverage_controls_passed": true,
+    "single_local_repeated_instance_seconds": {
+      "before": 220,
+      "after": 149,
+      "state_count": 2230369,
+      "scope": "One development-host run; not a CI latency guarantee"
+    }
+  },
+  "ci_attempts": [
+    {
+      "pipeline": 45,
+      "source_commit": "f0e3855ab3c6ed938d52055ed7196197dde3ed8a",
+      "status": "failure",
+      "detail": "Finite checks passed. The proof stage exited 10. A targeted replay on the same BuildKit builder identified three unproved type/recovery obligations out of 1,020. They pass locally but were decomposed into smaller lemmas to remove sensitivity to large solver queries; no protocol property or solver limit changed."
+    }
+  ],
+  "previous_local_proof": {
+    "source_commit": "f0e3855ab3c6ed938d52055ed7196197dde3ed8a",
+    "strict_obligations": 1020,
+    "positive_seconds": 138.70855,
+    "status": "Passed locally; full Woodpecker pipeline 45 failed the proof stage",
+    "proof_sha256": "a7c4b76d84a5afd5ba7e6761a99fe2aeda7b899e6c566013fbf535ea1e69a233"
+  },
+  "previous_local_log_sha256": {
+    ".tools/candidates/RootJournal/model-root-journal-coverage.log": "2b1e43748b55999f1f850a1f0de3a88e75b7e22132b4b8ab71f4523833ab8669",
+    ".tools/candidates/RootJournal/model-root-journal-early.log": "1e185ecd7aafb47bd29a427adb9449339306ba081b5716c18a9a3599bb9a9890",
+    ".tools/candidates/RootJournal/model-root-journal-gap.log": "fe34042ad898b84334de90cc5ccf9613dcfb58c9a80382b67b45f9fbfe7b8f53",
+    ".tools/candidates/RootJournal/model-root-journal-missing.log": "71565a845ca827bda1e6fb87a6beb42771309f9c9de1cc35627a49e32ade07ed",
+    ".tools/candidates/RootJournal/model-root-journal-permission.log": "964947a14140142c42318b025c90ffbdb7fb8657c0d1627e6f9b62bb8289467e",
+    ".tools/candidates/RootJournal/model-root-journal-ready.log": "2e9efda2c4824d1dad3c66ac1258b5e845d9e81616b5185b58eeb17348f6f3b9",
+    ".tools/candidates/RootJournal/model-root-journal-repeated.log": "8583010b641ce471e2903b70497c8d6ece3f6010c20aad30de802905c7269f49",
+    ".tools/candidates/RootJournal/model-root-journal-reseal.log": "b73c33d966ca2af6a507aebfd692eecf9bed086f6d55363593467dcbc64f39c2",
+    ".tools/candidates/RootJournal/model-root-journal.log": "3b52b63bc3a13723d91dddd5d7504c450b4db0ec063de2d42f22f5626e602a72",
+    ".tools/proof-negative-root-journal-permission.log": "c0c4a3aa5e7378d5d2e43a7d97a0ddce28adacc3fa0e7e2b7082100030840e29",
+    ".tools/proof-negative-root-renewal.log": "546935c3c24fc14545bfd4d4a37a01f7d58a04044727a42043d529cc942b1632",
+    ".tools/proof-root-control.log": "a94029e655e1b1a5358f9bf9c1af09ce9eeaebdd08b67d90483b67ce9e9228d2",
+    ".tools/proof-root-journal.log": "3013842e9975a137390ec702f769de6ba549e7abef90f3050cec954c5885392b",
+    ".tools/root-journal-induction-check.log": "e3d73850a0433279fad0ff750954f5883c964f64ca873643ffc6f80973b96335",
+    ".tools/root-journal-proof-standard-final.log": "bbf1bfbb95430a3bcbfc1c0e5171110f133015f085e6e0c7374b50178d4ebfe6"
   },
   "local_log_sha256": {
-    ".tools/candidates/RootJournal/model-root-journal.log": "dbf54802d662562a24de78b0422c121791b34b8df3a68aa91c9435ac5bb048e4",
-    ".tools/candidates/RootJournal/model-root-journal-repeated.log": "6107c6626aa0ed9e822e89ff7af7c33169501c979fffb094bcd51af9e878a6c8",
-    ".tools/candidates/RootJournal/model-root-journal-permission.log": "c7a8877bfc3a3d5a89740aef51eb221de7e3a7775ca2bfc8789b4bf4fae7da43",
-    ".tools/candidates/RootJournal/model-root-journal-gap.log": "e66b88ceb1ab1f47aceca253fefb44e0499709ad32e48c6b6d0bc978d82c76e1",
-    ".tools/candidates/RootJournal/model-root-journal-early.log": "f03b07cff53ef03a58a2aeb049481896bc279f1800018addf4e184d4a9bdc7f3",
-    ".tools/candidates/RootJournal/model-root-journal-missing.log": "af994a5580b69e0cfbc9cfffca58c140e2f436344652ab573e34c2924589feb2",
-    ".tools/candidates/RootJournal/model-root-journal-reseal.log": "f3a66a347511f5b1edcd0ec112858b09241f65885af54b351d23c7fc74d8f175",
-    ".tools/candidates/RootJournal/model-root-journal-ready.log": "c9ac70bb53f1917d28dc0e8c7c3acf15d874f75d1a198b5773a17808312bb8fe",
-    ".tools/candidates/RootJournal/model-root-journal-coverage.log": "68f186aa82ceba47f92003ad1b2a4b5844c423100b6c534752df31d72fca223e"
+    ".tools/candidates/RootJournal/model-root-journal-coverage.log": "dfe04acb1f503f89d3a9d481256fe6f322af2aaf444a9d59b810f93d77ca4fa1",
+    ".tools/candidates/RootJournal/model-root-journal-early.log": "1662fc8adf5f7d859b4283c7233b390822116003b458dff371aefb2087a23495",
+    ".tools/candidates/RootJournal/model-root-journal-gap.log": "fb6d289ecac22d4ec436cce31943dadbe0213512da610b3f749e1174c934cc56",
+    ".tools/candidates/RootJournal/model-root-journal-missing.log": "d59cce685af4058de634fe8cce78a73eb6aeb2130a497d81c4063ccb594fc8d9",
+    ".tools/candidates/RootJournal/model-root-journal-permission.log": "ad2282a8adfa17f034f4b59cf204c21f5578c0a80141824e2a5e97d0b3107c94",
+    ".tools/candidates/RootJournal/model-root-journal-ready.log": "23fb92d3ced707b9d0f32a12c4b69dfc6caaa5127a066c6de4b8882513b4ed69",
+    ".tools/candidates/RootJournal/model-root-journal-repeated.log": "cd7583034f224726c7e8230a4ae405cbe4eec0e4e7d08ee51bae353a4ad19856",
+    ".tools/candidates/RootJournal/model-root-journal-reseal.log": "b004d98d1d2c5718e6e6f64a0c2fc6c1abaa949b6d84bc8628ae47d93cd5156b",
+    ".tools/candidates/RootJournal/model-root-journal.log": "225b7ae77d3f67462831ff7ffb9038beac2b52fac53673ab1ed671c42aef9b21",
+    ".tools/proof-negative-root-journal-permission.log": "2022d1493263d7bb0fa01ff128430f3317042f0ea88c5fe8b92dcdfd3acc5f57",
+    ".tools/proof-negative-root-renewal.log": "6f3e9f3d6d10a42ac9b364e92b9953595bf25706aa4097d0a879f35cb607a009",
+    ".tools/proof-root-control.log": "660d5c3cf427e6dd0e5cf5694974b628a1f6f1dc1c77e7c77053a7ad23b3860f",
+    ".tools/proof-root-journal.log": "033677a3a82158b9b2459397503c96b25b452e0dc6c7a9dbf4012ebb98be60c0",
+    ".tools/root-journal-builder-decomposed.log": "6de17611e5c526797438980c78f1a8dc3ace3b4466bec888045696823ad0d2d9",
+    ".tools/root-journal-builder-diagnostic.log": "866d32ea3176c2fd8722724791054093c7bd76e722554a025b5a588f0eccfef3",
+    ".tools/root-journal-deduplicated-check.log": "95b0ca1e9a2b6b30632cc4475a29f4d49ee35dc575cea0ec43258d040528adf8",
+    ".tools/root-journal-proof-decomposed.log": "62f4362671c6e2014d0107bff9d60d6ad4d63a4d2e4b22e34320432899513cdf"
   }
 }

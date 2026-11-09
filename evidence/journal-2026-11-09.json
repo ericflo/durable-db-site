@@ -270,6 +270,13 @@
       ".tools/connection-journal-b2.log": "b3e3563efe2bcbf2ff6371788d9b2981a443107eb2776fd909eb10d311d1804e",
       ".tools/connection-journal-s3.log": "5b43d627baaac9b519f5fc763b858851b545b50aa282daeff14682bbc726af18",
       ".tools/connection-directory-test.log": "5f9dd3a40f5d57f7c3aed6fc883cd068e9705e36880b9e6cdbcbfe1439890f7f"
+    },
+    "qualification": {
+      "source_commit": "808b73a4c5937294dd13484676a1ae4b22317a69",
+      "woodpecker": {
+        "pipeline": 43,
+        "status": "success"
+      }
     }
   }
 }
