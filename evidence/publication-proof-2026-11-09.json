@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "complete": true,
+  "recorded_at": "2026-11-09T06:56:00.509518+00:00",
+  "property": "Spec => []LiveExists",
+  "scope": "Unbounded abstract page reachability under publication and collection; not a Rust or complete database proof.",
+  "tlaps_commit": "c8ddc44a80b621989f96a9ee2c371301c52b109f",
+  "upstream_asset_id": 721898594,
+  "toolchain_sha256": "fa6d537fb62f8526e7dd0d716c88e3d18931cc5c6b5d9ba1949afdb8096fb758",
+  "z3_version": "4.8.9",
+  "proof_obligations": 35,
+  "strict": true,
+  "fresh_fingerprints": true,
+  "finite_bounds_in_theorem": false,
+  "proof_negative_control": {
+    "change": "Omit collector fence advance",
+    "failed_obligations": 1,
+    "total_obligations": 35,
+    "strict_check_rejected": true
+  },
+  "tlc": {
+    "states": 2346968,
+    "generated": 14032827,
+    "depth": 16,
+    "jobs": 2,
+    "collectors": 2,
+    "page_identities": 3,
+    "max_fence": 2,
+    "negative_controls_passed": 2
+  },
+  "container": {
+    "base": "ubuntu:24.04@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852",
+    "target": "proof",
+    "passed": true
+  },
+  "source_sha256": {
+    "spec/PublicationSafety.tla": "c0f8ee2989817d1d393a8fc69062030a02b809f8976ec07a61a181d31f43346d",
+    "spec/PublicationSafetyProof.tla": "95d1209fd0ab4d28f7d2980bc07aef26ed4100650fcb06d0a66053d1b7035cf7",
+    "spec/PublicationSafety.cfg": "31fbbcfc7aabad941ca97cdd0a096e25bc29476e37e0aaa88919d0a1d13af550",
+    "spec/UnsafeProofOrigin.cfg": "eacdce34d8d3a0c420ba9a8f19448dcd5c29be8e63386d63dfd707ee8a8b272a",
+    "spec/UnsafeProofFence.cfg": "75701358b056bf4940a9c410f1b7b38db99ab4ab8117f5939d614cbe70018925",
+    "scripts/check-proof.sh": "c59e2797c92cba293011a8d38897cbbe6cada3fdb4105e70a43b1d74b4ab5afa",
+    "scripts/install-tlaps.sh": "cb8d111a2d246c8cc9597d9e8a4a206b33f769c6b724d855a14c7c436d96df30"
+  },
+  "log_sha256": {
+    "proof-publication.log": "9aeb8cc034542d756444f758383a4ea8658f25e8c6a641abed11daed184091e4",
+    "proof-negative-fence.log": "9684c0761ef16afdde7fec4e36bd439f2ff5955c78bf5c0c02e2833c1a1820b9",
+    "publication-safety-model.log": "48bdaaab09bc88ce56712e84419aa4be90b43b36e0af4288531853102baa1f19",
+    "proof-container.log": "3edba871913ca4c1aa7898bad29e1a50f2927d40223be4b4794fed245982c117"
+  },
+  "assumptions": [
+    "Fresh immutable object and fence identities, including across process disappearance.",
+    "Serialized authority replacement and fail-closed protected-root interpretation.",
+    "Acknowledged provider objects remain readable until protocol deletion.",
+    "TLAPS, its translation, logical libraries and proof backends are trusted."
+  ],
+  "limitations": [
+    "No implementation refinement or full composition with directory, metadata GC, authorization, credits and retention.",
+    "No liveness, availability, linearizability, billing, corruption/tampering or cryptographic collision proof.",
+    "No independent proof-certificate replay in a second proof assistant."
+  ]
+}

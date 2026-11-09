@@ -1,0 +1,2942 @@
+{
+  "schema": 1,
+  "complete": true,
+  "started_at": "2026-11-09T05:57:59.824180+00:00",
+  "context": "Woodpecker 22 static format-5 image; one-host three-node kind; real B2 us-west-002 dedicated bucket; durable 1 GiB/100000 upload ceiling; emptyDir caches; strict signing ring; CPU 15m; 60-second automatic maintenance.",
+  "source_commit": "50e435c0c44f87b9a25eb896283995ffc758096e",
+  "configuration": {
+    "image": "127.0.0.1:19091/durable-db:d655c3c44ad92f2021d71d84f78053c0f2027317",
+    "cpu_request": "15m",
+    "cpu_limit": "1",
+    "cpu_target_percent": 70,
+    "read_workers": 32,
+    "maintenance_seconds": 60,
+    "memory_cache_mib": 64,
+    "disk_cache_mib": 128,
+    "inject_oom": true,
+    "partition_https": true,
+    "upload_budget": {
+      "bytes": 1073741824,
+      "attempts": 100000
+    },
+    "hpa_down_stabilization_seconds": 30,
+    "hpa_down_period_seconds": 15
+  },
+  "harness_sha256": "47a6fdcc55671d1c02524e38d0704d13feb93a674b447719b2079ed2deebcdb1",
+  "phases": [
+    {
+      "name": "initial-one",
+      "time_utc": "2026-11-09T05:58:10.750583+00:00",
+      "writes_acknowledged": 0,
+      "observed": {
+        "time_utc": "2026-11-09T05:58:10.750211+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 1,
+        "hpa_current": null,
+        "hpa_desired": 0,
+        "current_metrics": null,
+        "conditions": []
+      }
+    },
+    {
+      "name": "cpu-scale-three",
+      "time_utc": "2026-11-09T05:59:35.378920+00:00",
+      "writes_acknowledged": 12,
+      "observed": {
+        "time_utc": "2026-11-09T05:59:35.378286+00:00",
+        "wanted": 3,
+        "requested": 3,
+        "ready": 3,
+        "hpa_current": 1,
+        "hpa_desired": 3,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 566,
+                "averageValue": "85m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededRescale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "True",
+            "reason": "TooManyReplicas"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cpu-scale-eight",
+      "time_utc": "2026-11-09T06:00:06.620280+00:00",
+      "writes_acknowledged": 29,
+      "observed": {
+        "time_utc": "2026-11-09T06:00:06.619607+00:00",
+        "wanted": 8,
+        "requested": 8,
+        "ready": 8,
+        "hpa_current": 7,
+        "hpa_desired": 8,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 373,
+                "averageValue": "56m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededRescale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "True",
+            "reason": "TooManyReplicas"
+          }
+        ]
+      }
+    },
+    {
+      "name": "node-drained",
+      "time_utc": "2026-11-09T06:00:46.501459+00:00",
+      "writes_acknowledged": 38,
+      "node": "durable-db-qualification-worker2",
+      "observed": {
+        "time_utc": "2026-11-09T06:00:46.500702+00:00",
+        "wanted": null,
+        "requested": 8,
+        "ready": 8,
+        "hpa_current": 8,
+        "hpa_desired": 8,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 92,
+                "averageValue": "13m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "ReadyForNewScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "False",
+            "reason": "DesiredWithinRange"
+          }
+        ]
+      }
+    },
+    {
+      "name": "api-process-sigkill",
+      "time_utc": "2026-11-09T06:01:07.090818+00:00",
+      "writes_acknowledged": 43,
+      "node": "durable-db-qualification-worker",
+      "observed": {
+        "time_utc": "2026-11-09T06:01:07.089996+00:00",
+        "wanted": null,
+        "requested": 8,
+        "ready": 8,
+        "hpa_current": 8,
+        "hpa_desired": 8,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 73,
+                "averageValue": "11m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "ReadyForNewScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "False",
+            "reason": "DesiredWithinRange"
+          }
+        ]
+      }
+    },
+    {
+      "name": "api-container-oom",
+      "time_utc": "2026-11-09T06:01:07.678783+00:00",
+      "writes_acknowledged": 43,
+      "node": "durable-db-qualification-worker",
+      "runtime_reason": "OOMKilled",
+      "exit_code": 137,
+      "forced_limit_bytes": 1048576,
+      "observed": {
+        "time_utc": "2026-11-09T06:01:07.678025+00:00",
+        "wanted": null,
+        "requested": 8,
+        "ready": 8,
+        "hpa_current": 8,
+        "hpa_desired": 8,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 73,
+                "averageValue": "11m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "ReadyForNewScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "False",
+            "reason": "DesiredWithinRange"
+          }
+        ]
+      }
+    },
+    {
+      "name": "provider-partition-start",
+      "time_utc": "2026-11-09T06:01:07.737049+00:00",
+      "writes_acknowledged": 43,
+      "node": "durable-db-qualification-worker",
+      "duration_seconds": 40
+    },
+    {
+      "name": "provider-partition-healed",
+      "time_utc": "2026-11-09T06:01:58.353249+00:00",
+      "writes_acknowledged": 45,
+      "observed": {
+        "time_utc": "2026-11-09T06:01:58.352454+00:00",
+        "wanted": null,
+        "requested": 4,
+        "ready": 4,
+        "hpa_current": 8,
+        "hpa_desired": 4,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 17,
+                "averageValue": "2m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededRescale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "False",
+            "reason": "DesiredWithinRange"
+          }
+        ]
+      }
+    },
+    {
+      "name": "cpu-scale-one",
+      "time_utc": "2026-11-09T06:02:46.521619+00:00",
+      "writes_acknowledged": 49,
+      "observed": {
+        "time_utc": "2026-11-09T06:02:46.520737+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 1,
+        "hpa_current": 6,
+        "hpa_desired": 1,
+        "current_metrics": [
+          {
+            "resource": {
+              "current": {
+                "averageUtilization": 6,
+                "averageValue": "1m"
+              },
+              "name": "cpu"
+            },
+            "type": "Resource"
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededRescale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "True",
+            "reason": "ValidMetricFound"
+          },
+          {
+            "type": "ScalingLimited",
+            "status": "False",
+            "reason": "DesiredWithinRange"
+          }
+        ]
+      }
+    },
+    {
+      "name": "zero-api-replicas",
+      "time_utc": "2026-11-09T06:02:57.081717+00:00",
+      "writes_acknowledged": 49,
+      "verified_keys": 49
+    },
+    {
+      "name": "cold-one",
+      "time_utc": "2026-11-09T06:03:07.678892+00:00",
+      "writes_acknowledged": 49,
+      "observed": {
+        "time_utc": "2026-11-09T06:03:07.677978+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 1,
+        "hpa_current": null,
+        "hpa_desired": 0,
+        "current_metrics": null,
+        "conditions": []
+      }
+    }
+  ],
+  "observations": [
+    {
+      "time_utc": "2026-11-09T05:58:00.435888+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 0,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    },
+    {
+      "time_utc": "2026-11-09T05:58:05.596985+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 0,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    },
+    {
+      "time_utc": "2026-11-09T05:58:10.750211+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    },
+    {
+      "time_utc": "2026-11-09T05:58:59.265115+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 33,
+              "averageValue": "5m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:04.423486+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 33,
+              "averageValue": "5m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:09.581028+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 33,
+              "averageValue": "5m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:14.741403+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:19.898464+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:25.051971+00:00",
+      "wanted": 3,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:30.214358+00:00",
+      "wanted": 3,
+      "requested": 3,
+      "ready": 1,
+      "hpa_current": 1,
+      "hpa_desired": 3,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 566,
+              "averageValue": "85m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:35.378286+00:00",
+      "wanted": 3,
+      "requested": 3,
+      "ready": 3,
+      "hpa_current": 1,
+      "hpa_desired": 3,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 566,
+              "averageValue": "85m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:35.602300+00:00",
+      "wanted": 8,
+      "requested": 3,
+      "ready": 3,
+      "hpa_current": 1,
+      "hpa_desired": 3,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 566,
+              "averageValue": "85m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:40.762920+00:00",
+      "wanted": 8,
+      "requested": 3,
+      "ready": 3,
+      "hpa_current": 1,
+      "hpa_desired": 3,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 566,
+              "averageValue": "85m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:45.934529+00:00",
+      "wanted": 8,
+      "requested": 7,
+      "ready": 3,
+      "hpa_current": 3,
+      "hpa_desired": 7,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 660,
+              "averageValue": "99m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "ScaleUpLimit"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:51.102243+00:00",
+      "wanted": 8,
+      "requested": 7,
+      "ready": 7,
+      "hpa_current": 3,
+      "hpa_desired": 7,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 660,
+              "averageValue": "99m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "ScaleUpLimit"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T05:59:56.276916+00:00",
+      "wanted": 8,
+      "requested": 7,
+      "ready": 7,
+      "hpa_current": 3,
+      "hpa_desired": 7,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 660,
+              "averageValue": "99m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "ScaleUpLimit"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:01.444946+00:00",
+      "wanted": 8,
+      "requested": 8,
+      "ready": 7,
+      "hpa_current": 7,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 373,
+              "averageValue": "56m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:06.619607+00:00",
+      "wanted": 8,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 7,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 373,
+              "averageValue": "56m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:10.298186+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 4,
+      "hpa_current": 7,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 373,
+              "averageValue": "56m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:15.472822+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 5,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:20.644351+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 5,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:25.815349+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:30.985335+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:36.156242+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:41.324419+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "type": ""
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededGetScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "False",
+          "reason": "FailedGetResourceMetric"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "True",
+          "reason": "TooManyReplicas"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:00:46.500702+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 92,
+              "averageValue": "13m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:01.922720+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 7,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:07.089996+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:07.678025+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 8,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 73,
+              "averageValue": "11m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ReadyForNewScale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:48.014649+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 7,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 7,
+              "averageValue": "1m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ScaleDownStabilized"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:53.185781+00:00",
+      "wanted": null,
+      "requested": 8,
+      "ready": 7,
+      "hpa_current": 8,
+      "hpa_desired": 8,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 7,
+              "averageValue": "1m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ScaleDownStabilized"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:01:58.352454+00:00",
+      "wanted": null,
+      "requested": 4,
+      "ready": 4,
+      "hpa_current": 8,
+      "hpa_desired": 4,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 17,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:05.177868+00:00",
+      "wanted": 1,
+      "requested": 4,
+      "ready": 4,
+      "hpa_current": 8,
+      "hpa_desired": 4,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 17,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:10.342280+00:00",
+      "wanted": 1,
+      "requested": 4,
+      "ready": 4,
+      "hpa_current": 8,
+      "hpa_desired": 4,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 17,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:15.513287+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 4,
+      "hpa_current": 4,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 95,
+              "averageValue": "14m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:20.688157+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 6,
+      "hpa_current": 4,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 95,
+              "averageValue": "14m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:25.854185+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 6,
+      "hpa_current": 4,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 95,
+              "averageValue": "14m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:31.020685+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 6,
+      "hpa_current": 6,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 16,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ScaleDownStabilized"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:36.187067+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 6,
+      "hpa_current": 6,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 16,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ScaleDownStabilized"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:41.362314+00:00",
+      "wanted": 1,
+      "requested": 6,
+      "ready": 6,
+      "hpa_current": 6,
+      "hpa_desired": 6,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 16,
+              "averageValue": "2m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "ScaleDownStabilized"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:46.520737+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": 6,
+      "hpa_desired": 1,
+      "current_metrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 6,
+              "averageValue": "1m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "AbleToScale",
+          "status": "True",
+          "reason": "SucceededRescale"
+        },
+        {
+          "type": "ScalingActive",
+          "status": "True",
+          "reason": "ValidMetricFound"
+        },
+        {
+          "type": "ScalingLimited",
+          "status": "False",
+          "reason": "DesiredWithinRange"
+        }
+      ]
+    },
+    {
+      "time_utc": "2026-11-09T06:02:57.362218+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 0,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    },
+    {
+      "time_utc": "2026-11-09T06:03:02.516931+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 0,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    },
+    {
+      "time_utc": "2026-11-09T06:03:07.677978+00:00",
+      "wanted": 1,
+      "requested": 1,
+      "ready": 1,
+      "hpa_current": null,
+      "hpa_desired": 0,
+      "current_metrics": null,
+      "conditions": []
+    }
+  ],
+  "http_attempt_statuses": {
+    "200": 2221,
+    "429": 3380,
+    "503": 643,
+    "transport_or_decode_error": 55,
+    "409": 3
+  },
+  "writes_acknowledged": 49,
+  "reads_verified": 2128,
+  "failures": [],
+  "limitations": [
+    "Disposable kind cluster on one physical host, not independent infrastructure failure domains.",
+    "CPU requests and HPA downscale windows are qualification settings, not capacity recommendations.",
+    "Single sequential append writer per database; no cross-client contested-register linearizability claim.",
+    "Short fault campaign; no sustained-load, AWS, or production SLO claim."
+  ],
+  "kubernetes_version": "v1.36.4",
+  "nodes": [
+    "durable-db-qualification-control-plane",
+    "durable-db-qualification-worker",
+    "durable-db-qualification-worker2"
+  ],
+  "upload_budget_observations": [
+    {
+      "stage": "initial-one",
+      "status": {
+        "configuration_revision": 0,
+        "limits": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "allocated": {
+          "bytes": 0,
+          "attempts": 0
+        }
+      }
+    },
+    {
+      "stage": "cpu-scale-eight",
+      "status": {
+        "configuration_revision": 0,
+        "limits": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "allocated": {
+          "bytes": 41943040,
+          "attempts": 320
+        }
+      }
+    },
+    {
+      "stage": "cpu-scale-one",
+      "status": {
+        "configuration_revision": 0,
+        "limits": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "allocated": {
+          "bytes": 83886080,
+          "attempts": 544
+        }
+      }
+    },
+    {
+      "stage": "cold-one",
+      "status": {
+        "configuration_revision": 0,
+        "limits": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "allocated": {
+          "bytes": 83886080,
+          "attempts": 544
+        }
+      }
+    }
+  ],
+  "synthetic_run_id": "decbf9c13db6",
+  "partition_dropped_packets": 1377,
+  "verified_keys": 49,
+  "finished_at": "2026-11-09T06:03:11.359056+00:00",
+  "history_sha256": "b9a692e18ef7dbec9c5216219b537e9be24af461db2c71f2c4d040db3d5f6dcf",
+  "image_digest": "sha256:8c78c0482b1b840c7fe091b8f137c1ee6b5f9f6976f44d15a98776081ac6b5c1",
+  "history_validation": "scripts/check-autoscaling-history.py passed; sequential append fixture only.",
+  "cleanup": "Removed task-owned test bucket, 65 physical versions, and revoked its workload key: durable-db-test-d449c3610c0a",
+  "earlier_fixture_attempt": {
+    "schema": 1,
+    "complete": false,
+    "started_at": "2026-11-09T05:54:25.887162+00:00",
+    "context": "Woodpecker 22 static format-5 image; one-host three-node kind; real B2 us-west-002 dedicated bucket; durable 1 GiB/100000 upload ceiling; emptyDir caches; strict signing ring; CPU 15m; 60-second automatic maintenance.",
+    "source_commit": "d655c3c44ad92f2021d71d84f78053c0f2027317",
+    "configuration": {
+      "image": "127.0.0.1:19091/durable-db:d655c3c44ad92f2021d71d84f78053c0f2027317",
+      "cpu_request": "15m",
+      "cpu_limit": "1",
+      "cpu_target_percent": 70,
+      "read_workers": 32,
+      "maintenance_seconds": 60,
+      "memory_cache_mib": 64,
+      "disk_cache_mib": 128,
+      "inject_oom": true,
+      "partition_https": true,
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "hpa_down_stabilization_seconds": 30,
+      "hpa_down_period_seconds": 15
+    },
+    "harness_sha256": "47a6fdcc55671d1c02524e38d0704d13feb93a674b447719b2079ed2deebcdb1",
+    "phases": [],
+    "observations": [
+      {
+        "time_utc": "2026-11-09T05:54:26.504375+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": null,
+        "hpa_desired": 0,
+        "current_metrics": null,
+        "conditions": []
+      },
+      {
+        "time_utc": "2026-11-09T05:54:31.660243+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": null,
+        "hpa_desired": 0,
+        "current_metrics": null,
+        "conditions": []
+      },
+      {
+        "time_utc": "2026-11-09T05:54:36.817569+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": null,
+        "hpa_desired": 0,
+        "current_metrics": null,
+        "conditions": []
+      },
+      {
+        "time_utc": "2026-11-09T05:54:41.973155+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:54:47.130144+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:54:52.283827+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:54:57.439279+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:02.597196+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:07.757676+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:12.914941+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:18.073575+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:23.228204+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:28.384429+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:33.542381+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:38.697640+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:43.855682+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:49.012600+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:54.169978+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:55:59.324270+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:04.481327+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:09.636619+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:14.793052+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:19.948323+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:25.105063+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:30.262908+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:35.421704+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:40.578872+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:45.734640+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:50.891363+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:56:56.050211+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:01.206365+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:06.363187+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:11.523103+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:16.680690+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:21.837364+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:26.996172+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:32.154050+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:37.310276+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:42.466009+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:47.622004+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:52.778063+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      },
+      {
+        "time_utc": "2026-11-09T05:57:57.935613+00:00",
+        "wanted": 1,
+        "requested": 1,
+        "ready": 0,
+        "hpa_current": 1,
+        "hpa_desired": 0,
+        "current_metrics": [
+          {
+            "type": ""
+          }
+        ],
+        "conditions": [
+          {
+            "type": "AbleToScale",
+            "status": "True",
+            "reason": "SucceededGetScale"
+          },
+          {
+            "type": "ScalingActive",
+            "status": "False",
+            "reason": "FailedGetResourceMetric"
+          }
+        ]
+      }
+    ],
+    "http_attempt_statuses": {},
+    "writes_acknowledged": 0,
+    "reads_verified": 0,
+    "failures": [],
+    "limitations": [
+      "Disposable kind cluster on one physical host, not independent infrastructure failure domains.",
+      "CPU requests and HPA downscale windows are qualification settings, not capacity recommendations.",
+      "Single sequential append writer per database; no cross-client contested-register linearizability claim.",
+      "Short fault campaign; no sustained-load, AWS, or production SLO claim."
+    ],
+    "kubernetes_version": "v1.36.4",
+    "nodes": [
+      "durable-db-qualification-control-plane",
+      "durable-db-qualification-worker",
+      "durable-db-qualification-worker2"
+    ],
+    "controller_failure": {
+      "type": "KeyboardInterrupt",
+      "reason": ""
+    },
+    "finished_at": "2026-11-09T05:57:58.475375+00:00",
+    "history_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fixture_issue": "Switching providers with stringData apply retained old Secret data keys; startup correctly refused simultaneous S3/B2 options. No workload initialized. Replaced the complete task-owned Secret before repeating."
+  }
+}

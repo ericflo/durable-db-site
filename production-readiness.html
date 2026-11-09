@@ -18,8 +18,8 @@
 <tbody>
 <tr>
 <td>Publication safety</td>
-<td>Fifteen finite TLA+ models cover logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
-<td>Compose the models; document storage/network assumptions; mechanize the inductive safety argument and implementation refinement obligations; independently review the protocol</td>
+<td>Sixteen finite TLA+ models plus an unbounded abstract page-reachability proof cover logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
+<td>Compose the models; document storage/network assumptions; extend the unbounded proof to complete protocol composition and mechanize implementation refinement; independently review the protocol</td>
 </tr>
 <tr>
 <td>Cloud performance</td>
@@ -48,8 +48,8 @@
 </tr>
 <tr>
 <td>Autoscaling and maintenance</td>
-<td>CPU-driven 1→3→8→1, drain, SIGKILL, confirmed kernel OOM, provider partition, and 0→1 cold recovery pass on kind with B2 (35 writes), versioned MinIO (468 writes), and format-5 budgeted MinIO (433 writes)</td>
-<td>Repeat on independent physical nodes; sustained memory bounds, broader partitions/provider throttling, and bounded cleanup progress; verify operation histories throughout</td>
+<td>CPU-driven 1→3→8→1, drain, SIGKILL, confirmed kernel OOM, provider partition, and 0→1 cold recovery pass on kind with B2 (35 writes), versioned MinIO (468 writes), and format-5 budgeted MinIO/B2 (433/49 writes); manual scaling, pod loss, rolling replacement, provider egress restriction, and cold recovery pass across three physical hosts (130 writes)</td>
+<td>Qualify whole-host/control-plane loss, independent rack failure domains, sustained memory bounds, broader partitions/provider throttling, and bounded cleanup progress; verify operation histories throughout</td>
 </tr>
 <tr>
 <td>Operations</td>
