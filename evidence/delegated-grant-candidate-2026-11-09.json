@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-09T10:45:24.366955+00:00",
+  "base_commit": "2c01e9b93fef9d8f824f2be6da2e372ff5271337",
+  "status": "Research component only; no runtime adoption or complete hierarchy",
+  "positive": {
+    "states": 1258368,
+    "generated": 6754337,
+    "depth": 15
+  },
+  "bounds": {
+    "children": 2,
+    "root_grants": 1,
+    "requests_per_child": 1,
+    "root_grant_length": 2,
+    "real_time_transitions": 2,
+    "clock_increments": [
+      1,
+      2
+    ]
+  },
+  "standard_checker_passed": true,
+  "negative_controls": 5,
+  "standard_checker_elapsed_seconds": 17.551,
+  "positive_tlc_elapsed_seconds": 7,
+  "optimistic_fingerprint_collision_estimate": 3.7e-07,
+  "source_sha256": {
+    "spec/candidates/DelegatedGrant.cfg": "085ac564d2a3e04878b0c2bcbf9ca771e2359c01e01fdd7cf3d575b932f87f80",
+    "spec/candidates/DelegatedGrant.checks": "e0dff712903319b33a3b691dd3dee9dfb7274bb617d94947b8e6d5abfaa0d853",
+    "spec/candidates/DelegatedGrant.tla": "7e0aee7b3f84c404203fc033f7e11ab8bf2a3ec03d7975701a1c0206009280b6",
+    "spec/candidates/DelegatedGrantUnsafeFullRemaining.cfg": "361b3982113f9a525aee71af18bcbb6de8b3456e334089ec1db31de78b12aeeb",
+    "spec/candidates/DelegatedGrantUnsafeLateReply.cfg": "9987b3cd2eb3dc030f1ad1a4c6668e81e39c58c858b5b721a45a0c549e5413f9",
+    "spec/candidates/DelegatedGrantUnsafePausedChild.cfg": "18701b254cf4c5239060d724214ea959db9c1a1db2c94bfbdc2e9b927f0c6356",
+    "spec/candidates/DelegatedGrantUnsafePausedRoot.cfg": "a9521a00e91cbf1c9c311bfec260ba9703bc4ea8eee02b7e010cf94717621387",
+    "spec/candidates/DelegatedGrantUnsafeSkipDrain.cfg": "0c8b488e99322b1b8e796d985a1de630a94e6327437c6eaa7cb53ea8b2206310"
+  },
+  "log_sha256": {
+    "model-candidate-delegated-grant-fullremaining.log": "716f58f9564900fb46b2891e5cf455b1a84ae5ee6013174350aa84c601acf448",
+    "model-candidate-delegated-grant-latereply.log": "ca4332f64b6e22871a8b56963420a308451b78bbc6d6651853dbb03424fa7a34",
+    "model-candidate-delegated-grant-pausedchild.log": "2c6b3f3ab8e1a901a9090d96e2adbab289e8c6e94402959e8e5c218679c93cee",
+    "model-candidate-delegated-grant-pausedroot.log": "3d4e06e722c8d52aa2b05122f0e2c3a028549fe5c83383f80dc9b1ff288dd887",
+    "model-candidate-delegated-grant-skipdrain.log": "08f5aaf908389c671ec3f90e550739b15e0aa808c85fc49ce15a89b3251550b4",
+    "model-candidate-delegated-grant.log": "ad238d94062073303398b75f4398b5bb045edc9663c8299ac2ab0a4491ac0435",
+    "delegated-grant-standard-check.log": "1453efe7d18e8f4b6bb16bd8dc75198a4a5fec79af7544e4d4216daeed8013ee"
+  },
+  "assumptions": [
+    "Root grant was correctly acquired before the initial state",
+    "Atomic grant-issue and fence transitions",
+    "Clocks have bounded relative rates and advance while a process is paused",
+    "Assignments do not change within a granted interval"
+  ],
+  "included": [
+    "Independent child clocks",
+    "One delayed request/reply per child",
+    "Coordinator and child pause/resume and permanent crash",
+    "Delegation during successor drain",
+    "Successor fences and waits before activation"
+  ],
+  "limitations": [
+    "Finite fingerprinted checking is not an unbounded proof or implementation refinement",
+    "No root acquisition/renewal, repeated child renewal, assignment changes or restart",
+    "No composition with log recovery, request receipts or database transaction semantics",
+    "No bounds on messages, resources or throughput and no liveness proof",
+    "No established platform clock-rate/error contract or runtime timing adoption"
+  ]
+}
