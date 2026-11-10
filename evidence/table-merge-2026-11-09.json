@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T05:48:04.779859+00:00",
+  "base_commit": "76b1cb5283d03d06065d532c44de77c66f3969d0",
+  "status": "Native table snapshot merge component; not a replacement serving engine or production qualification",
+  "model": {
+    "module": "TableMerge",
+    "sources": 2,
+    "keys": 2,
+    "positive_revisions": 2,
+    "initial_assignments": 625,
+    "distinct_states": 11256,
+    "generated_states": 23137,
+    "depth": 10,
+    "negative_controls": [
+      "choose older version",
+      "drop deletion before merge",
+      "treat read failure as empty source"
+    ],
+    "scope": "Complete immutable source set at one common snapshot; excludes retention, ownership and Rust refinement"
+  },
+  "validation": {
+    "rust_tests_passed": 213,
+    "opt_in_ignored": 11,
+    "debug_capacity_filtered": 1,
+    "merge_tests": 7,
+    "randomized_union_cases": 32,
+    "failure_and_cancellation_retry": true,
+    "point_io_concurrency": 8,
+    "max_sources_per_read": 64,
+    "clippy_all_targets_warnings_denied": true,
+    "new_cloud_campaign": false,
+    "dependencies_added": 0
+  },
+  "source_sha256": {
+    "src/index/mod.rs": "d54ca4540921cbc229a65b956f760e46e7edc72d03af2183240ad76bc46952cb",
+    "src/index/merge.rs": "b9fdd6eb8e8d5a10a9fcd606370c177678eaab52b237756144516498e1fc9e49",
+    "src/index/merge/tests.rs": "5907c0a583f039bff5dbc9ac7471807ac84c48adad616b520a1b40342129ba2c",
+    "src/index/table/mod.rs": "0071626c2eca724a7c28c3fba02a4ff5275726975f84ad679573a15ab6fd0de2",
+    "Dockerfile": "30063518b9cec49283cbf308499f1fbba5641d2b56d28ba8a77e37654036673d",
+    "spec/TableMerge.cfg": "9e8ebc0a6c13d785c28f09f59affe1ad3c3eb84be33f17d8a85ebcca370b9eb5",
+    "spec/TableMerge.checks": "e4b07f86612b43cd0795ba9f5f97f480e7a43ea5f400d566eb61d4a10c740d2e",
+    "spec/TableMerge.tla": "809f0c6562b64fc51ae393584968419617af7b6881c4b4e9d36169a0e6a10b4b",
+    "spec/TableMergeUnsafeDropDelete.cfg": "ed31d5fc45ae59fcc86b5c04d9f0ea395c476b162b0600e549059f5852c1d8c1",
+    "spec/TableMergeUnsafeOld.cfg": "8f5bbfb85e85e2e885adf32213b604810ced57838df6efc0dc7e92c6f2463166",
+    "spec/TableMergeUnsafeSkipError.cfg": "e2aba81c9b3c09b7ebc38a10ec20ba5524991e652d53cfa919c9f23ed3d85db9"
+  },
+  "log_sha256": {
+    ".tools/table-merge-suite.log": "5884a85a5d048ff9064bbb5379f8b5b624d49cd3dd9027dbb095d02a5ebffaa1",
+    ".tools/table-merge-clippy.log": "b8a2c40e1732cd6ffee9d44b45c7e4a534f8792cf922f91ce56a3becb4a03be0",
+    ".tools/model-table-merge.log": "1a562508ea7defac0aac8552e04a09e18d2dc77eb647776f80f4d0b3791f3169",
+    ".tools/model-table-merge-unsafeold.log": "89e4d9bfeda77cb93548e345670c6ffa4972ab5b7c0f0f47fd512dc86415ebde",
+    ".tools/model-table-merge-unsafedropdelete.log": "50f8ed4a74b60aefc09cb06144c426dbb44208ca1c0234d1d0362799046778da",
+    ".tools/model-table-merge-unsafeskiperror.log": "32259fdccffcac917c37d45228a11c040398dad222f59eb0ab180d62e4abbc79"
+  },
+  "remaining": [
+    "journal-backed memory view",
+    "manifest and checkpoint publication",
+    "retained snapshot and reference-aware compaction",
+    "aggregate admission",
+    "owned serving integration and physical timing contract",
+    "B2 and AWS end-to-end qualification"
+  ]
+}
