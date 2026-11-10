@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T01:26:48.410660+00:00",
+  "base_commit": "cbbd9c8490cd987057a1f8d2d212b8daf9b2ed30",
+  "status": "Experimental durable coordinator-journal prefix decisions; not a replacement serving engine",
+  "format": "owned-candidate-3",
+  "behavior": [
+    "Claims inherit the catalog from the exact compared predecessor",
+    "Discovery begins only after confirmed activation and drain; scans are opaque and bound to their root and catalog",
+    "A renewal can refresh the comparison during a scan only if the confirmed catalog is unchanged",
+    "All immutable uploads finish before the captured conditional publication; failed uploads send no register mutation",
+    "Lost publication replies recover the canonical decision through exact validation or a successful claim",
+    "Previously selected prefixes never extend to include late journal uploads",
+    "Missing or corrupt referenced objects fail recovery without becoming unselected history"
+  ],
+  "storage": {
+    "index": "Existing immutable B+tree, 64 entries per page, maximum height 12; no small per-bucket entry cap",
+    "catalog_header_max_bytes": 4096,
+    "index_page_max_bytes": 65536,
+    "prefix_bytes": 112,
+    "memory_scope": "Bounded object reads and one live frame per journal reader; callers must admit retained cursors and frames",
+    "recovery_work": "Traverses registration ancestry with indexed prefix lookup; no checkpoint truncation or bounded total recovery time"
+  },
+  "model": {
+    "module": "RootCatalog",
+    "configurations": [
+      {
+        "epochs": 2,
+        "invocations": 3,
+        "frames": 2,
+        "distinct_states": 2816947,
+        "generated_states": 15300275,
+        "depth": 38
+      },
+      {
+        "epochs": 3,
+        "invocations": 3,
+        "frames": 1,
+        "distinct_states": 4196373,
+        "generated_states": 24827651,
+        "depth": 33
+      }
+    ],
+    "negative_controls": [
+      "Missing exact comparison violates ImmutableSelection",
+      "Dropped catalog inheritance violates ImmutableSelection",
+      "Reselection violates ImmutableSelection",
+      "Publication before known durable upload violates DurableCatalog",
+      "Discovery before drain violates SelectedHistory"
+    ],
+    "coverage_controls": [
+      "Selection applies after timeout",
+      "Third epoch inherits a prior selection"
+    ],
+    "symmetry_reduction": false,
+    "guided_constraints": false,
+    "unbounded_proof": false,
+    "rust_refinement_proof": false
+  },
+  "tests": {
+    "additional_catalog_tests": 8,
+    "total_root_component_tests": 22,
+    "catalog_index_split_entries": 130,
+    "faults": [
+      "Lost selection reply followed by late second frame, exact revalidation and complete controller replacement",
+      "Abandoned selection and successor claim in both provider-application orders",
+      "Stale parallel scans cannot replace a chosen prefix",
+      "Discovery before activation, incomplete scans, foreign owner and expired permission",
+      "Missing/corrupt header, page and prefix; checksum-valid invalid header fields; oversized header; cursor preservation",
+      "Lost or delayed upload at each of prefix, index and header stages sends no publication; late orphan arrival",
+      "130 decisions survive B+tree splitting and streaming recovery",
+      "Repeated renewals during a long scan preserve progress while catalog is unchanged"
+    ],
+    "b2_http": "Applied selection response lost; one control attempt; exact validation recovers empty selected journal; file bytes use in-memory fixture",
+    "s3_http": "Real binding uploads/reads journal, registration, index, prefix and header; lost applied selection response; later frame excluded from selected replay",
+    "rust_tests_passed": 170,
+    "opt_in_ignored": 9,
+    "capacity_filtered_from_debug_suite": 1,
+    "capacity_release_passed": true,
+    "capacity_databases": 10005,
+    "capacity_release_seconds": 83.88,
+    "fmt_passed": true,
+    "clippy_all_targets_warnings_denied": true
+  },
+  "development_iteration": {
+    "change": "Only the disposable test-client server uses explicit bounded request budgets of 1000000 units/second and burst units",
+    "receipt_eviction_test_seconds_before": 37.35,
+    "receipt_eviction_test_seconds_after": 2.44,
+    "full_javascript_duration_seconds": 13.24,
+    "javascript_tests_passed": 98,
+    "javascript_tests_skipped": 1,
+    "skip_reason": "Opt-in all-process-kill Harness case requires a control fixture; separate qualification runner",
+    "web_app_tests_passed": 4,
+    "format_and_typecheck_passed": true,
+    "benchmark_accounting_and_local_smoke_passed": true,
+    "assertions_removed": false,
+    "production_defaults_changed": false,
+    "scope": "Single local measurements of avoided admission waits; not transaction throughput or a performance SLO"
+  },
+  "assumptions": [
+    "Ordered winning epochs and discoverable immutable journal registrations",
+    "Drain completion ends all earlier acknowledgement permission; physical timing is abstracted",
+    "Atomic exact register comparison, durable immutable bytes and accurate positive object reads",
+    "Trusted storage/control credentials; no external deletion of live history",
+    "Fresh identities and the separately documented root timing and invocation contract"
+  ],
+  "limitations": [
+    "No theorem composes acquisition, registration, requests, physical clocks, catalog and data into the Rust implementation",
+    "No transaction/receipt/value-view recovery or replacement HTTP serving API",
+    "No system clock adapter, production timing profile, automatic renewal/election driver, placement or routing",
+    "No catalog/registration collection, checkpoint truncation or physical upload admission",
+    "Local and loopback fixtures; no new cloud benchmark or production-readiness claim",
+    "Current HTTP engine retains conditional read barriers"
+  ],
+  "source_sha256": {
+    "src/ownership/root.rs": "c14394aa2c5c1ef33d3937f2db6f4ddb1a90fceeb5ebf7ab6de5485f5a7e10f7",
+    "src/ownership/root/catalog.rs": "6c068e57c648addfa91c01855e567c94a8050559913397b3de52635f49f3cd35",
+    "src/ownership/root/metadata.rs": "7ab87fb54574e3be132e22ab21e2173b225e3bf51b0466c97b8291a4d19f8744",
+    "src/ownership/root/tests.rs": "e8f0f4923c016ec4c256d46dee3faae1b30ff070b0df241c1229679a60b03175",
+    "src/ownership/root/tests/catalog.rs": "f0cb9e739024316a844354833f00b64eff504c5450a2b59a201c0505003687de",
+    "src/ownership/root/tests/registration.rs": "dcc1b43ec84aa0e90f521643028fc4a47a7ff10d6b375fe384cadb4b7d9680cc",
+    "src/journal/frame.rs": "455b41eff680807eecce622c98d58fcf42582d6b1ed501a00347608b605c77d2",
+    "src/directory.rs": "a5bbdc8621e88560118a2c4434808e7b21ff2f1c128604b759cd01532dbfb9d5",
+    "src/directory/batch.rs": "4c9087bdf24a636fbbd6eaebeebe400e7618e2e1dd2aa211da4af9f8449dc134",
+    "src/providers/b2.rs": "8f8f171cad9fcd21e66f937733f3adab6da5093be90d87a06da4c522dafb6bdd",
+    "src/providers/s3.rs": "4944ec2a1b948e746db3940d6c30f69435a1b42a49a52ed8f42433e206f9cf83",
+    "scripts/check-candidate.sh": "d7caed4f9d25207ca0cb8b2d094378ab564240ec80ccebc57cc3e9cf000968a5",
+    "scripts/test-client.sh": "07c5e69357b387c75dfb877e5347652eefe35c5f2dfae6d011c7dff2279ba8f6",
+    "Dockerfile": "5f671017b33c300cd603cd3551b9d484be7d15481727605bf6bdf14034dbf1aa",
+    "spec/candidates/RootCatalog.cfg": "0bb60628ce397aeee416a1c42b090e4b70c63188c6c7fea5284ae81e8f33f096",
+    "spec/candidates/RootCatalog.checks": "21a8ca989e1f6315b8f069d08b855da8431fa0e1a1446cab2923ed8f71948f27",
+    "spec/candidates/RootCatalog.tla": "bb44c8930e8a579b43375f4458a2a1cb23cd6e6716e839ae0c8a5556be8120e2",
+    "spec/candidates/RootCatalogInherited.cfg": "17ec2151d2c601d7fc40d13e14bd13ea2190da5aeec0ab43b8dbdead399b9e4b",
+    "spec/candidates/RootCatalogLate.cfg": "701cde2561c2fec88c7f6a516652c3e6b2a42bbfd819fb6c2335d927be565463",
+    "spec/candidates/RootCatalogThree.cfg": "0c15fa7bb493bf820e80232ea31351687e111d041ce4082e934da5e1f5bc0cad",
+    "spec/candidates/RootCatalogUnsafeCompare.cfg": "86f69ae0eea726fb0c07ab8f79a3ac0ad016fdbecbc7d63f1743ffa214092597",
+    "spec/candidates/RootCatalogUnsafeEarly.cfg": "d88dfa43dae1d58919e0ac84972058ea05ab6430dac5aa4800d941a5b537a9ea",
+    "spec/candidates/RootCatalogUnsafeInherit.cfg": "fbd5195bcf90224ecff218652675f10c632c805ddf4c8e398092fea476c1ae81",
+    "spec/candidates/RootCatalogUnsafeReseal.cfg": "227fd646b80e16746ee1ed45565c4569d33940c5babcc0828290d41c00b959c0",
+    "spec/candidates/RootCatalogUnsafeScan.cfg": "26862ae926f70eb0cec988861283a47abc72230bacda0e25e50386777c8f5f07"
+  },
+  "local_log_sha256": {
+    ".tools/root-catalog-model.log": "ffe16b99dc54f937af27538b883ccf736e97bb4c2219cfdbf02ff3cc09c9fa3a",
+    ".tools/root-catalog-clippy.log": "cc9d9b0224fb6b8d70ca86ffb1b3babef46c7dfaa4d84b53127041266f996cc6",
+    ".tools/root-catalog-suite.log": "7663a966cb52c23f5f554746823a44302be0b7bb11f7a0214925a395c63ccdb5",
+    ".tools/root-catalog-capacity.log": "a8bd695d45a0175d8379e3b8eb0465340410e1789da691ea0f23ae33d1bab47f",
+    ".tools/client-budget-baseline.log": "629f5397d3ad9381c3ec099f338b3912131bc34b0db38fe5d4cf4855a63d94a4",
+    ".tools/client-budget-focused.log": "9281031ae3d2634079b8d74bd02e6a8953093d4c66138642aa23138808727ad2",
+    ".tools/client-budget-suite.log": "4fa653ff7cbd784818524be3de08cc8348dbf1f3adf22e7cb3c61ef5ba73352e",
+    ".tools/candidates/RootCatalog/model-root-catalog-compare.log": "bb421d094b39672182f9ff31bf73199126a5b242621e5f2b43385bdebcb48ab1",
+    ".tools/candidates/RootCatalog/model-root-catalog-early.log": "c63579ed870a5ea81f29bfbae76f78c7ab41077c248abeade1912a8f83e162e3",
+    ".tools/candidates/RootCatalog/model-root-catalog-inherit.log": "9b44d913aa49d1e23eb725192396497a2bcf31307b490f850805cf7b9e5f36c1",
+    ".tools/candidates/RootCatalog/model-root-catalog-inherited.log": "aba3da86ce0c137aea743e5fadf0da32b1286d9ecdebfec00df670261bc63e4d",
+    ".tools/candidates/RootCatalog/model-root-catalog-late.log": "a97e5dd8bfa672d60bef77541f17d5ff71ea8805c85aa8160efdd3e597746e96",
+    ".tools/candidates/RootCatalog/model-root-catalog-reseal.log": "1b8745e45c2629a70f6192eef8b967a0229c78c9f9156c3a54f99430a7ac886f",
+    ".tools/candidates/RootCatalog/model-root-catalog-scan.log": "fb16655c37fcb1f9521a5bdd97d348ab981a07f2231c5e5a093cced1f4e3288a",
+    ".tools/candidates/RootCatalog/model-root-catalog-three.log": "c413e0085478781e4f5816e3dec2f99ebde4f9213024d49bcca244dc872776a1",
+    ".tools/candidates/RootCatalog/model-root-catalog.log": "e35a4cfa53e25b5737f531277ae1c6d92714811390be2a46f59a32c2b19c0bd8"
+  }
+}

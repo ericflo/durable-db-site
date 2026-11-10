@@ -119,5 +119,15 @@
     ".tools/candidates/RootRegistration/model-root-registration-recovered.log": "0f2d4501de3d008f574b997b4a6be82125425ab6206ec89688ee9de68fd19554",
     ".tools/candidates/RootRegistration/model-root-registration-three.log": "eede7993271617e728155c7e7b42ba33a92014f03866009967a3facf5f527e06",
     ".tools/candidates/RootRegistration/model-root-registration.log": "63996b8eeabc230ec464625ca744307b168cec511ce7d471e353d3b1113f795d"
+  },
+  "qualification": {
+    "source_commit": "cbbd9c8490cd987057a1f8d2d212b8daf9b2ed30",
+    "woodpecker": {
+      "pipeline": 61,
+      "status": "success",
+      "build_log_sha256": "80f1208f5d4aca81c354c179f40595680d3a8f2746d12b84e4e4fd0b75391e87"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "9bf8003f18c04939c56bdc568baf5606be1ecf28aa9ce5d69086ccfdbd4cc65a"
   }
 }
