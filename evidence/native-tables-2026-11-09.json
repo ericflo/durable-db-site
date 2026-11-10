@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T05:12:25.952244+00:00",
+  "base_commit": "07f19d30c77c4c5823cb5536e1ab010b1ba08f57",
+  "status": "Native immutable table component; not a serving engine or production qualification",
+  "dependency_change": {
+    "new_dependencies": 0,
+    "rust": "1.90",
+    "build_cache": "kache",
+    "slatedb_dependency": false
+  },
+  "format": {
+    "reference_magic": "DDBSST01",
+    "index_magic": "DDBIDX01",
+    "block_magic": "DDBBLK01",
+    "reference_bytes": 152,
+    "data_limit_bytes": 67108864,
+    "index_limit_bytes": 8388608,
+    "block_target_bytes": 65536,
+    "block_limit_bytes": 131072,
+    "block_row_limit": 4096,
+    "block_count_limit": 1024,
+    "internal_key_limit_bytes": 2048,
+    "value_limit_bytes": 65536,
+    "sort_order": "binary key ascending, revision descending",
+    "tombstones_retained": true,
+    "physical_objects_per_build": 2
+  },
+  "model": {
+    "module": "SortedTable",
+    "source_rows": 6,
+    "source_sets": "all 63 nonempty subsets",
+    "query_keys": 3,
+    "snapshot_revisions": 4,
+    "distinct_states": 16188,
+    "generated_states": 18263,
+    "depth": 10,
+    "negative_controls": [
+      "key-only seek misses visible versions in later blocks",
+      "corrupt block treated as absence"
+    ],
+    "scope": "Sparse point lookup under authenticated metadata and checksum detection; no scan, merge, Rust refinement or cryptographic proof"
+  },
+  "validation": {
+    "rust_tests_passed": 206,
+    "opt_in_tests_ignored": 11,
+    "capacity_filtered_in_debug": 1,
+    "new_native_tests": 7,
+    "randomized_reference_cases": 24,
+    "clippy_all_targets_warnings_denied": true,
+    "local_directory_maximum_row_reopen": true,
+    "disk_cache_corruption_refetched": true,
+    "release_capacity_databases": 10005,
+    "release_capacity_seconds": 83.4
+  },
+  "cloud": {
+    "b2": {
+      "cache_free_reopen": true,
+      "cold_point_ms": 92.15973399999999,
+      "cold_point_range_reads": 1,
+      "keys": 1024,
+      "maximum_block_bytes": 131072,
+      "memory_cache_bytes": 262144,
+      "namespace": "native-table-83657512-eb56-4011-a29d-483e388b9542",
+      "provider": "b2",
+      "reference_bytes": 152,
+      "scan_rows": 1024,
+      "schema": 1,
+      "scope": "Native immutable table; debug build; no serving authority, transactions, compaction or AWS qualification",
+      "shared_register_calls": 0,
+      "snapshot_revision": 2,
+      "stored_versions": 3072,
+      "tombstones": 205,
+      "upload_ms": 1334.055378,
+      "warm_point_additional_object_calls": 0,
+      "warm_point_reads": 2000,
+      "warm_point_total_ms": 120.44990999999999
+    },
+    "versioned_minio": {
+      "cache_free_reopen": true,
+      "cold_point_ms": 7.106574,
+      "cold_point_range_reads": 1,
+      "keys": 1024,
+      "maximum_block_bytes": 131072,
+      "memory_cache_bytes": 262144,
+      "namespace": "native-table-8bc4eef3-049e-4b1b-a15c-05b3c1beabc7",
+      "provider": "s3",
+      "reference_bytes": 152,
+      "scan_rows": 1024,
+      "schema": 1,
+      "scope": "Native immutable table; debug build; no serving authority, transactions, compaction or AWS qualification",
+      "shared_register_calls": 0,
+      "snapshot_revision": 2,
+      "stored_versions": 3072,
+      "tombstones": 205,
+      "upload_ms": 203.49330600000002,
+      "warm_point_additional_object_calls": 0,
+      "warm_point_reads": 2000,
+      "warm_point_total_ms": 174.21088500000002
+    },
+    "placement": {
+      "b2": "Development host over Internet; region not recorded",
+      "minio": "Loopback Docker, 2 CPU/512 MiB; not AWS"
+    }
+  },
+  "cleanup": {
+    "b2_bucket_removed": true,
+    "b2_key_revoked": true,
+    "b2_physical_versions_removed": 2,
+    "minio": {
+      "bucket_removed": true,
+      "physical_versions_deleted": 2
+    }
+  },
+  "limitations": [
+    "The table reference must be published through a validated manifest/checkpoint; that protocol is not implemented",
+    "The reader supplies no ownership or globally retained snapshot permission",
+    "Build buffers, decoded blocks, sparse metadata and concurrent callers require aggregate admission; cache budgets are not whole-process RSS proofs",
+    "No multi-table merge, checkpoint replay boundary, compactor or physical collector yet",
+    "Two successful immutable uploads can still become orphans if publication does not finish; callers retain their physical charges",
+    "Debug samples do not establish sustained throughput, latency percentiles or AWS compatibility"
+  ],
+  "source_sha256": {
+    "Cargo.lock": "865599bf0e433b41f93c47eb480aefffcc726599fa2d1ae3af34ef0d9daba4ce",
+    "Cargo.toml": "6baadf54bf47fafdf51887241aa0ffb13378689f02f9781c0c1285187e8eae5d",
+    "Dockerfile": "344efd62b86b76171da3eb324ff7dd4c7a51be12a313a87b1bedec0af34181a2",
+    "spec/SortedTable.cfg": "9acd18a1db7922eb8f0fc9ad78ab82ddd18d48d518c17dfb0c8dd169adba1395",
+    "spec/SortedTable.checks": "9a8e6744e6e7750e39edd95d474995aec6e2e183aa61356bb2ce3701d3196541",
+    "spec/SortedTable.tla": "ce785ac8087a2a779ae341c85eb18aa11be0e7b1e14cec5ddde26724277d62b7",
+    "spec/SortedTableUnsafeCorrupt.cfg": "8200bd232e7f7c36559710b40ffe564dab9a746ac0bfde7beffba1cb6df9ac47",
+    "spec/SortedTableUnsafeSeek.cfg": "18053f4bc80627243f48dee609bdba8191af08956bbd298a58f78acb9b318235",
+    "src/cache.rs": "a88c68d884cb5a07164d23d3fa1bc641c21d0399def280dcc914335501f7825f",
+    "src/index/mod.rs": "8e9cbec937b57f9a8968d900025100a0820f6487c2d09ab6306b089dfedcf6b2",
+    "src/index/table/codec.rs": "13a959c3e6126bda6ecf7c8b30f9aa35a220fea338e18ca6153e295602a46779",
+    "src/index/table/mod.rs": "7720ec57aead2fe8c0ab08ed490d4955b9f357c69a594dfa68d4fdc08a59b0a4",
+    "src/index/table/tests.rs": "fed0d6db46c8b4bbe544e92c8fb2d66aea8e648e0a2f9e08094ceaf524db47ef",
+    "src/lib.rs": "41b252f5d103eaa83aa34282f8f0778e5dee9a2f4ed7294acb1f2c9f5fcd6e3d",
+    "src/owned_files/mod.rs": "fbb38ce2febd7ffe73da21d0666da4b4ed2d2ba17c8b9c607b346c96a56f2409",
+    "src/owned_files/record.rs": "76bec2a7abb029ba72f42298183db09dfc847071647f1c947693a0eff3c93f82",
+    "src/ownership/root/tests/owned_files.rs": "25ca70855f046e8fd3b449b1083796372b5b959b1fb8d84c63d9d7839f7b43c5",
+    "src/storage.rs": "9d00263bf25dd99401f341cc222718b3a09e49a9e4eede0dfe6bd13dd5ed4af4",
+    "src/storage/immutable.rs": "1291edd4a14e88da9b4edf919ec5c6c7e18664d2d867f0f183ecc7a9d8f42dbc",
+    "tests/native_tables.rs": "d3389b52f2f09ebaeb18d8dd4b95c0aeae9fc07a88224a3bee5361a0a44439b5",
+    "tests/upload_budget.rs": "8c68c83d3b13156ac328ce70ccd7421cfb6901c731af9b090f7473790a31f331"
+  },
+  "local_log_sha256": {
+    ".tools/sorted-table-clippy.log": "13f82cad0eab08e6920627f3730028639779ee70345088c66c9ddafee15e5376",
+    ".tools/sorted-table-suite.log": "9f5e2bb8b856468768af4b59bc2d245e78efb2abf2057fffac7ca325e2fd2014",
+    ".tools/sorted-table-capacity.log": "a8df258c30cb21c8af19b73c981bdd3f34527767a3158d775d7b64127a1ded36",
+    ".tools/sorted-table-model.log": "ed16ebf3da6ff7130cb7a653fedc9cc612000f60cf4ac3cbf429df30281f4c6a",
+    ".tools/model-sorted-table.log": "eb44a56cd06da539ba0b4bca16a2b1745391518479a959c946db074c44f8f722",
+    ".tools/model-sorted-table-seek.log": "3235b5ccfc400e01e242ab1147b3b02d3ea650b398f3c6cbcda91154c32bf65b",
+    ".tools/model-sorted-table-corrupt.log": "d8bb0f2ae23bc90d2701709a867982bb0bc3735e773a313ad0cb59d4247f1177",
+    ".tools/native-table-b2.log": "32b083ac0b33dce8a35be72da5a0dde8f5ddafb548ea690c3c6e2c330471ba15",
+    ".tools/native-table-s3.log": "3ea1645fec0258984545f124e0f4998b462b8915cc2fb2a6b55623d530d20917",
+    ".tools/native-table-b2-cleanup.log": "04e13ce614e1c9e3f534b1ceedb3342134861d5feeaef99dc500e4cb84dc6d66",
+    ".tools/native-table-s3-cleanup.json": "4364a0ab0d2920522f487c55bfd4b7808fd3d38ec3064bbebbd516bf484c1ce5"
+  },
+  "implementation_commit": "d7f63ffa87da2fd72c86dc0c3e84f8f13ab6efbb",
+  "ci_registry_recovery": {
+    "quay_index": "sha256:9764044e09eb2c9e1abdb12d0f0188d4efb7384b0262d3c080f0fc59045c89ba",
+    "docker_hub_index": "sha256:e8b8fb0e336fe0affce6f9ea347b11d24975465fd3ba8119420186679c3efd5f",
+    "identical_linux_amd64_manifest": "sha256:b3e1df0b7003c8222c9f79e679b2ec9c8f993803d36839d7f139eef5cc64119b",
+    "official_mirror_documentation": "https://prometheus.io/docs/prometheus/latest/installation/",
+    "failed_ci_attempts": [
+      {
+        "pipeline": 72,
+        "failure": "Quay HTTP 502 during runtime image resolution; artifact checks passed"
+      },
+      {
+        "pipeline": 73,
+        "failure": "Quay HTTP 504 during initial image resolution"
+      }
+    ],
+    "alert_tests_passed": true,
+    "local_alert_log_sha256": "3b9b586eef2d38a9c2c36bed06cf2ce9ea21584c2f46b56172957a390a03e0a8"
+  }
+}
