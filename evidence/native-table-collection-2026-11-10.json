@@ -210,5 +210,79 @@
     "Raw checkpoint handles do not pin history. Durable reader/backup pins, compaction and registration/catalog-header cleanup remain open.",
     "Physical ownership timing/native CLI cutover and full tenant maintenance accounting remain open.",
     "Logical clocks and stopped old servers; not AWS, sustained load, autoscaling timing or a production-SLO qualification."
-  ]
+  ],
+  "release": {
+    "source_commit": "99db9f241d1b661d93ed575ea600a7bd80861ef3",
+    "woodpecker_pipeline": 121,
+    "artifact_image_digest": "sha256:b0d5aa0d466857ced83651858e25ba3fd1112a96452ddfe091934ea4d28251e9",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.5.0",
+      "archive_sha256": "5b73bf1bd9efc9afcfbc9fa678156da7106464f6354a1a75ffc2d5da29996d71",
+      "binary_sha256": "4d0aee95cd0fa45c016d26d9543296a88f8f8c2426c93dbab5d77af397150d20",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 5687402,
+    "version": "v0.5.0",
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.5.0",
+    "published_at": "2026-11-10T19:16:15Z",
+    "experimental": true,
+    "github_asset_digest_matches": true,
+    "woodpecker": {
+      "pipeline": 121,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/121/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.5.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1,
+      "woodpecker_seconds": 67.11,
+      "local_ci_mode_seconds": 27.0,
+      "deadline_seconds": 90
+    },
+    "scope": "Experimental. CLI retains shared publication engine; physical ownership timing, full tenant maintenance accounting, durable reader/backup retention and large-image cleanup qualification remain open."
+  }
 }
