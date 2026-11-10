@@ -171,7 +171,7 @@
     "scope": "Deterministic in-memory-provider object counts, not a cloud latency benchmark."
   },
   "validation": {
-    "rust_tests_passed": 280,
+    "rust_tests_passed": 281,
     "native_client_tests_passed": 99,
     "native_client_seconds": 28.18,
     "formatting": "passed",
@@ -192,7 +192,8 @@
       "scope": "Finite data/receipt composition and interval reuse, not Rust refinement, physical timing or full protocol composition."
     },
     "focused_rewrite_suite_seconds": 0.68,
-    "followup_scope": "Cloud qualification uses 9e0892c; a later four-line fail-closed check rejects disordered manifest intervals before a resident range lookup. Focused positive/negative malformed-input regressions qualify that follow-up."
+    "followup_scope": "Cloud qualification uses 9e0892c; a later four-line fail-closed check rejects disordered manifest intervals before a resident range lookup. Focused positive/negative malformed-input regressions qualify that follow-up.",
+    "followup_source_commit": "7eae7dea0f29501e381211cab3224f9e2e64df33"
   },
   "limitations": [
     "Tenant maintenance, request and egress accounting remain incomplete; only journal admission has per-name ceilings.",
@@ -205,5 +206,100 @@
     "source_commit": "3c3b13d114a84e635cc659ad82d7f0b1a2aa3365",
     "status": "canceled by maintainer",
     "reason": "Restart qualification with the malformed-manifest fail-closed guard; not a test failure."
+  },
+  "ci_cancellation": {
+    "wrapper_success_and_failure_status_preserved": true,
+    "real_buildkit_signal_forwarding": "SIGTERM sent to the shell reaches buildctl; remote RUN canceled before its 20-second sleep finishes.",
+    "wrapper_exit": 143,
+    "cancellation_seconds": 5.829,
+    "buildctl": "v0.34.2",
+    "temporary_context_removed": true,
+    "preceding_probe_failures": [
+      "Read the remote log before it existed.",
+      "Remote stdin transfer produced an empty Dockerfile. The final probe verifies the transferred bytes before starting."
+    ],
+    "preceding_probe_contexts_removed": true,
+    "preceding_observation": {
+      "woodpecker_pipeline": 124,
+      "woodpecker_canceled_at_unix": 1794339671,
+      "buildkit_completed_at_unix": 1794339968,
+      "delay_seconds": 297,
+      "buildkit_error": "context canceled",
+      "scope": "Observed canceled build completion delay; not a controlled latency comparison with the disposable probe."
+    }
+  },
+  "release": {
+    "source_commit": "7eae7dea0f29501e381211cab3224f9e2e64df33",
+    "woodpecker_pipeline": 125,
+    "artifact_image_digest": "sha256:34f37df1d2f9d591b3c55006764546e334a6568142cd47392b88387bf16a00be",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.5.1",
+      "archive_sha256": "c290d1620782336e9bf2742a9d5fada2b2773946ed8a8463814238ad75c7fd41",
+      "binary_sha256": "2d3717d77106f10ff9c963c2cd29a96d4c2c630d1e954573655863909d6ef296",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 5687559,
+    "version": "v0.5.1",
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.5.1",
+    "published_at": "2026-11-10T20:00:46Z",
+    "experimental": true,
+    "github_asset_digest_matches": true,
+    "woodpecker": {
+      "pipeline": 125,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/125/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.5.1",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1,
+      "woodpecker_seconds": 65.63,
+      "local_ci_mode_seconds": 28.18,
+      "deadline_seconds": 90
+    },
+    "scope": "Experimental. This reduces shared maintenance reads, not complete tenant maintenance accounting. CLI retains shared publication engine; physical timing, durable retention and large-image cleanup qualification remain open. Native format stays owned-candidate-12."
   }
 }
