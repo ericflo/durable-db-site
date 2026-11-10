@@ -1,0 +1,75 @@
+{
+  "date_utc": "2026-11-10",
+  "status": "Local verification complete; provider and release verification pending",
+  "scope": "Conservative admission for existing shared table data and index objects. No additional provider reads. Does not cover new encoding growth, manifests, retries or all maintenance costs.",
+  "native_formats": {
+    "budgeted": "owned-candidate-16",
+    "unbudgeted": "owned-candidate-15",
+    "v0_9_local_directories_compatible": true,
+    "older_budgeted_namespaces_refused_before_mutation": true
+  },
+  "local_checks": {
+    "format": "pass",
+    "clippy_all_targets": "pass",
+    "rust_tests_passed": 288,
+    "rust_command": "cargo test --locked -- --skip ten_thousand_databases_split_page_recover_and_collect",
+    "optimized_capacity_check": "required in Woodpecker",
+    "focused_admission_tests": 7,
+    "focused_admission_seconds": 0.27,
+    "tcp_admission_seconds": 0.1,
+    "large_checkpoint_seconds": 0.69
+  },
+  "pricing": {
+    "charged_base_objects": "data and index pair for each affected base table, once per distinct transaction",
+    "fixture_tables": 183,
+    "manifest_reads": 4,
+    "data_or_index_reads_for_pricing": 0,
+    "rewritten_pairs_charged": 3,
+    "additional_ledger_or_refund_state": false,
+    "net_runtime_rust_lines_added": 13
+  },
+  "model": {
+    "name": "TenantAdmission",
+    "distinct_states": 5776,
+    "generated_states": 24321,
+    "depth": 21,
+    "negative_controls_passed": 3,
+    "expanded_state_space": false,
+    "scope": "Two abstract contribution units; byte sizing, routing and Rust refinement checked separately or still open."
+  },
+  "negative_control": {
+    "mutation": "Restore data-only pricing, omitting the index blob",
+    "result": "Real TCP test fails: underfunded write returns 200 instead of 413",
+    "restored_result": "pass"
+  },
+  "local_compatibility": {
+    "previous_version": "0.9.0",
+    "previous_archive_sha256": "35c3db94145ef7f23895ee4d229addb98fcbad5c0512636ae56de0cbf78e5dca",
+    "candidate_version": "durable-db 0.10.0",
+    "candidate_binary_sha256": "e11ce684304052e34d262e0f1ae8ed03d2ad966260ec3def524aafd25c6583fc",
+    "same_directory_without_export": true,
+    "checkpoint_and_suffix_recovered": true,
+    "exact_receipts_preserved_both_directions": true,
+    "new_write_then_previous_binary_reopen": true,
+    "final_revision": 262,
+    "temporary_directory_removed": true,
+    "scope": "Sequential local processes separated by SIGKILL; no concurrent mixed-version cluster claim."
+  },
+  "previous_failures": [
+    {
+      "check": "full Rust suite",
+      "cause": "B2 unbudgeted fixture expected the budgeted version constant",
+      "resolution": "Fixture explicitly asserts retained unbudgeted format 15; all 288 tests pass"
+    }
+  ],
+  "removed": [
+    "data-only copy-pricing shortcut",
+    "assumption that every accounting change invalidates unbudgeted storage",
+    "data-only fixture accounting and stale format documentation"
+  ],
+  "remaining": [
+    "Physical ownership timing and placement for clustered native serving",
+    "New encoding growth, manifest overhead, maintenance retries and recovery attribution",
+    "Durable reader/backup retention and broader qualification"
+  ]
+}
