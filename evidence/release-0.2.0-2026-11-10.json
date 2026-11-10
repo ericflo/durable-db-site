@@ -1,0 +1,76 @@
+{
+  "date_utc": "2026-11-10",
+  "release": "v0.2.0",
+  "url": "https://github.com/ericflo/durable-db/releases/tag/v0.2.0",
+  "published_at": "2026-11-10T16:31:02Z",
+  "experimental": true,
+  "source_commit": "6ae12e42e1e15f75d2b26f40689b334c6180bd31",
+  "build": {
+    "rust": "1.90.0",
+    "rust_wrapper": "kache",
+    "target": "x86_64-unknown-linux-musl",
+    "static_pie": true,
+    "source_commit": "6ae12e42e1e15f75d2b26f40689b334c6180bd31",
+    "woodpecker_pipeline": 109,
+    "artifact_image_digest": "sha256:f910f29ef977d94241037e31608b5f91803286422925ace6d691abfa544a5eaa",
+    "downloaded_from_checked_ci": true
+  },
+  "woodpecker": {
+    "pipeline": 109,
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/109/1",
+    "status": "success",
+    "steps": [
+      {
+        "name": "clone",
+        "state": "success"
+      },
+      {
+        "name": "dependency-audit",
+        "state": "success"
+      },
+      {
+        "name": "javascript-audit",
+        "state": "success"
+      },
+      {
+        "name": "verify-and-build",
+        "state": "success"
+      },
+      {
+        "name": "publish-docs",
+        "state": "success"
+      }
+    ]
+  },
+  "archive": {
+    "name": "durable-db-linux-amd64.tar.gz",
+    "bytes": 5684732,
+    "sha256": "1cb8d375bbf6b45a35b40ee074f21005a798946ce4b9df83dd23cc4edc946cc3",
+    "contents": [
+      "durable-db",
+      "LICENSE"
+    ],
+    "github_asset_digest_matches": true
+  },
+  "standalone": {
+    "version": "durable-db 0.2.0",
+    "binary_sha256": "240e001900438e0ee5a38a5dd47b7505d0f7f55c27a7d2f1ebd2610c8a37ed70",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true
+  },
+  "installer": {
+    "public_installer_matches_release_source": true,
+    "default_version": "v0.2.0",
+    "downloaded_github_asset": true,
+    "checksum_verified": true,
+    "installed_binary_matches_smoke_test": true,
+    "temporary_installation_removed": true
+  },
+  "native_provider_evidence": "native-catalog-collection-2026-11-10.json",
+  "scope": "Experimental release. The CLI retains the shared publication engine. Native physical ownership timing, full tenant maintenance accounting and journal/checkpoint reclamation remain open. This is a verification record, not implementation refinement or a production qualification."
+}
