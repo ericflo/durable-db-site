@@ -93,6 +93,10 @@ scripts/check-proof.sh
 <td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; expected failure for <code>kvm-clock</code>, see verification)</td>
 </tr>
 <tr>
+<td>Native takeover across VM restore</td>
+<td><code>scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json</code> (same Rust fixture, guard and required unsafe control; about 23 seconds after guest preparation)</td>
+</tr>
+<tr>
 <td>Ownership intervals</td>
 <td><code>cargo test --locked --lib ownership::timing</code> and <code>scripts/check-proof.sh GrantBounds</code></td>
 </tr>

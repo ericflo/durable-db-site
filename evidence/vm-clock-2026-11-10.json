@@ -1,10 +1,11 @@
 {
   "kind": "finite VM clock boundary experiment; not production qualification",
   "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
-  "image_id": "sha256:52b41a23e4dd3a794dd3aee304146a4ddab8c35af856b6bf2a1a2d289cea07bf",
-  "probe_sha256": "cef96d8bf89defda952c54fc0dcdb14a1578abbc514f618f2bc6f4267c957022",
+  "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
+  "test_binary_sha256": "9b4fbf5420a6b9eeed1472f8abe8854a2d37397052f809fe61b4f6912d3a3866",
   "kernel_sha256": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
-  "configuration": "KVM, host CPU, one vCPU, 128 MiB, no network, VMClock device, 3-second gaps; 3/2 clock scaling and 1 ms comparison allowance",
+  "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
+  "mode": "clock-intervals",
   "runs": [
     {
       "guest": "READY 6.18.60-0-virt kvm-clock",
@@ -19,53 +20,53 @@
       "samples": [
         {
           "mode": "baseline",
-          "host_ns": 3006823816,
-          "guest_boottime_ns": 3006973275,
-          "guest_monotonic_ns": 3006973145,
-          "guest_realtime_ns": 3006973145,
+          "host_ns": 3006894886,
+          "guest_boottime_ns": 3006883054,
+          "guest_monotonic_ns": 3006879844,
+          "guest_realtime_ns": 3006879884,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4510459912,
+          "normalized_boottime_ns": 4510324581,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "qmp-stop",
-          "host_ns": 3008078027,
-          "guest_boottime_ns": 7273978,
-          "guest_monotonic_ns": 7273978,
-          "guest_realtime_ns": 7273978,
+          "host_ns": 3008085100,
+          "guest_boottime_ns": 7300088,
+          "guest_monotonic_ns": 7302158,
+          "guest_realtime_ns": 7302278,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 10910967,
+          "normalized_boottime_ns": 10950132,
           "within_candidate_bounds": false,
           "guarded_scenario_passed": false
         },
         {
           "mode": "cgroup-freeze",
-          "host_ns": 3087066319,
-          "guest_boottime_ns": 3087070203,
-          "guest_monotonic_ns": 3087070212,
-          "guest_realtime_ns": 3087070212,
+          "host_ns": 3092068198,
+          "guest_boottime_ns": 3092073749,
+          "guest_monotonic_ns": 3092075869,
+          "guest_realtime_ns": 3092075989,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4630605304,
+          "normalized_boottime_ns": 4638110623,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "snapshot-restore",
-          "host_ns": 3210383397,
-          "guest_boottime_ns": 81401810,
-          "guest_monotonic_ns": 81401800,
-          "guest_realtime_ns": 81401790,
+          "host_ns": 3357170132,
+          "guest_boottime_ns": 145108465,
+          "guest_monotonic_ns": 145125275,
+          "guest_realtime_ns": 145125655,
           "marker_before": 1,
           "marker_after": 2,
           "guard_accepts_timestamp": false,
-          "normalized_boottime_ns": 122102715,
+          "normalized_boottime_ns": 217662697,
           "within_candidate_bounds": false,
           "guarded_scenario_passed": true
         }
@@ -84,72 +85,131 @@
       "samples": [
         {
           "mode": "baseline",
-          "host_ns": 3006951590,
-          "guest_boottime_ns": 3007198020,
-          "guest_monotonic_ns": 3007197990,
-          "guest_realtime_ns": 3007197990,
+          "host_ns": 3006809596,
+          "guest_boottime_ns": 3006841717,
+          "guest_monotonic_ns": 3006837697,
+          "guest_realtime_ns": 3006837697,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4510797030,
+          "normalized_boottime_ns": 4510262575,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "qmp-stop",
-          "host_ns": 3008348987,
-          "guest_boottime_ns": 3008097519,
-          "guest_monotonic_ns": 3008097519,
-          "guest_realtime_ns": 3008097509,
+          "host_ns": 3008049676,
+          "guest_boottime_ns": 3008067268,
+          "guest_monotonic_ns": 3008069128,
+          "guest_realtime_ns": 3008069228,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4512146278,
+          "normalized_boottime_ns": 4512100902,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "cgroup-freeze",
-          "host_ns": 3086753125,
-          "guest_boottime_ns": 3087006651,
-          "guest_monotonic_ns": 3087006651,
-          "guest_realtime_ns": 3087006651,
+          "host_ns": 3092522932,
+          "guest_boottime_ns": 3092494083,
+          "guest_monotonic_ns": 3092495763,
+          "guest_realtime_ns": 3092495893,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4630509976,
+          "normalized_boottime_ns": 4638741124,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "snapshot-restore",
-          "host_ns": 3234056345,
-          "guest_boottime_ns": 8044706,
-          "guest_monotonic_ns": 8044696,
-          "guest_realtime_ns": 8044726,
+          "host_ns": 3315780192,
+          "guest_boottime_ns": 7925134,
+          "guest_monotonic_ns": 7965285,
+          "guest_realtime_ns": 7965635,
           "marker_before": 1,
           "marker_after": 2,
           "guard_accepts_timestamp": false,
-          "normalized_boottime_ns": 12067059,
+          "normalized_boottime_ns": 11887701,
           "within_candidate_bounds": false,
           "guarded_scenario_passed": true
         }
       ]
     }
   ],
+  "owner_restore": [
+    {
+      "guard": true,
+      "applied_acknowledged_served": [
+        false,
+        false,
+        false
+      ],
+      "qemu": {
+        "qemu": {
+          "micro": 5,
+          "minor": 1,
+          "major": 10
+        },
+        "package": ""
+      }
+    },
+    {
+      "guard": false,
+      "applied_acknowledged_served": [
+        true,
+        true,
+        true
+      ],
+      "qemu": {
+        "qemu": {
+          "micro": 5,
+          "minor": 1,
+          "major": 10
+        },
+        "package": ""
+      }
+    }
+  ],
   "date_utc": "2026-11-10",
-  "source_base_commit": "1d7c6a81c4718b7f4ba6bb5cd477ad7a049f2330",
-  "runner_sha256": "c7b4e377b4771bbc447cfa638402d14e464c3e459a22d9a814c2e3aee22f3590",
-  "status": "Unqualified CLOCK_BOOTTIME rejected for general VM serving; TSC plus VMClock marker passes only the four recorded guard scenarios",
-  "expected_exit_code": 1,
-  "reproduce": "scripts/check-vm-clock.py --output /tmp/vm-clock.json (expected exit 1 for kvm-clock); add --clocksource tsc to exercise the passing guarded candidate only",
-  "cleanup": "Disposable VMs/containers, sockets, initramfs and snapshot disks removed. The Docker tool image may remain cached for repeat runs. No host was paused or reconfigured.",
+  "source_base_commit": "c698d32413ed0389ec3ba977fc66d9cf79a04354",
+  "source_sha256": {
+    "scripts/check-vm-clock.py": "4060b3aa1a80685b7c23bd4edfaaa2f1163e58944596069cb091bf5c8d7bc924",
+    "src/providers/s3/tests/timing.rs": "d1c1bbe5c0796472c70971e0e246349777758371cdae993d5de09e4d6ce7dd19",
+    "src/providers/s3/tests/timing/clock.rs": "75b7083bf2ba7eb65b5d43a32aafc0133908242b50952a249438723bc0e70557"
+  },
+  "status": "Plain guest boottime rejected; test-only Rust TSC + VMClock guard passes the recorded intervals and native owner restore/takeover. The required unguarded control serves stale data and acknowledges a late write.",
+  "commands": [
+    {
+      "command": "scripts/check-vm-clock.py --output /tmp/vm-clock.json",
+      "expected_exit_code": 1
+    },
+    {
+      "command": "scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json",
+      "expected_exit_code": 0,
+      "takeover_cases_seconds": 22.68
+    }
+  ],
+  "checks": {
+    "local_rust_suite": {
+      "passed": 259,
+      "failed": 0,
+      "ignored": 16,
+      "large_directory_case": "skipped locally; retained in Woodpecker"
+    },
+    "focused_guard_test_seconds": 0.0,
+    "fmt": "pass",
+    "clippy_all_targets": "pass"
+  },
+  "cleanup": "Disposable VMs, containers, sockets, initramfs and snapshot disks removed. One cached tool image remains for fast reruns. Superseded C probe and its compiler dependency removed. No host was paused or reconfigured.",
   "limits": [
-    "The C probe is test-only, not a Rust production clock adapter or an end-to-end database takeover test.",
-    "The 1 ms comparison allowance is an experimental threshold, not a measured platform-wide error bound. Host/guest sampling includes serial transport overhead.",
-    "A changed VMClock disruption marker refuses the timestamp; it does not repair time, recover data or authorize an existing owner.",
-    "The QEMU device implementation changes its marker on snapshot load; this does not establish every hypervisor or cloning/migration contract.",
-    "Inter-host rate/error bounds, CPU migration, clocksource/frequency changes, hardware suspend and repeated/combined failures remain unqualified.",
-    "No production system clock adapter or CLI native cutover is enabled by this evidence."
+    "BootClock is test-only. The CLI is not switched and no production physical timing profile is selected.",
+    "The 1 ms allowance is an experimental threshold, not an established platform-wide bound. Host/guest interval sampling includes serial transport.",
+    "Owner restore uses the native Rust owner, journal, recovery and provider HTTP binding. The object store fixture and successor run on the host, outside restored guest memory. This does not test a cloud service or the public HTTP router.",
+    "The marker is read through the Linux VMClock device before and after time sampling; missing, short or invalid headers refuse a timestamp. The timeline remains retired after refusal.",
+    "QEMU 10.1.5 marker behavior does not establish every hypervisor or VM cloning/migration contract. kvm-clock fails QMP pause even with the marker guard.",
+    "Cross-host rate/error bounds, live migration, clocksource/frequency changes, hardware suspend, process/VM cloning and repeated combined faults remain unqualified.",
+    "No new protocol theorem or Rust refinement is claimed. The existing conditional timing contract and failure retirement path are unchanged."
   ]
 }
