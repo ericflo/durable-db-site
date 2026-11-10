@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T03:36:45.778044+00:00",
+  "base_commit": "fa1dea3ceaff82e035ba8f2b1b2ebd0882ef04c3",
+  "status": "Conditional logical file component; inline only; no serving-engine adoption",
+  "model": {
+    "module": "OwnedFiles",
+    "names": 2,
+    "non_delete_values": 2,
+    "max_operations": 3,
+    "failed_comparisons": 1,
+    "distinct_states": 804213,
+    "depth": 15,
+    "unsafe_controls": [
+      "pending predecessor omitted",
+      "publication across missing upload",
+      "reused logical version",
+      "definite conflict before predecessor durability"
+    ],
+    "coverage": [
+      "completed selected prefix excludes a late uploaded suffix"
+    ],
+    "unbounded_proof": false
+  },
+  "validation": {
+    "execution": "Local Rust 1.90 through kache; finite TLC; loopback S3-compatible HTTP",
+    "rust_tests_passed": 194,
+    "opt_in_tests_ignored": 9,
+    "capacity_test_filtered_in_debug": 1,
+    "capacity_release_test_passed": true,
+    "capacity_databases": 10005,
+    "capacity_seconds": 83.3,
+    "new_tests": 8,
+    "fmt": true,
+    "clippy_all_targets_warnings_denied": true,
+    "physical_conditional_file_writes": 0,
+    "data_path_register_calls": 0
+  },
+  "limits": {
+    "inline_file_bytes": 524288,
+    "name_bytes": 1024,
+    "default_resident_names": 16384,
+    "default_resident_name_and_payload_bytes": 67108864,
+    "database_count_cap": false
+  },
+  "limitations": [
+    "Assumes ownership and a correctly selected complete history; no composed refinement proof or liveness proof",
+    "Serving callers must wait for conditional-failure dependencies and check current ownership before answering",
+    "No SlateDB ObjectStore adapter or application serving driver in this change",
+    "No out-of-line table references, range-read transport, checkpoints or physical collection",
+    "No per-tenant or aggregate physical admission; per-namespace resource bounds are not whole-process RSS",
+    "No B2 or AWS cloud performance/failure qualification; HTTP fixture exercises the shared S3-compatible file transport"
+  ],
+  "source_sha256": {
+    "Dockerfile": "43598ec4338da066970f0f4d64f650288ee7559a4697cb73a2dc1a506d6f2413",
+    "spec/OwnedFiles.cfg": "3bb4c51d3c3fbaa4452002f31b495dd05cd59362be51d96eba0b1d0d6f06bb7c",
+    "spec/OwnedFiles.checks": "a60f27d9ff2d4c0b45569558a8346153a1628d91a0734baca6e7c825d4cf666b",
+    "spec/OwnedFiles.tla": "a4eb305b3fabe154c34375d367f98bcc3f974221510573f76562ef0b7fcc300f",
+    "spec/OwnedFilesLate.cfg": "cdd4ad60240651001b3d812759fa46145bbf375be893a62485e9a185acd2034e",
+    "spec/OwnedFilesUnsafeGap.cfg": "56f40b157e799c236f83b49bcc0e0b77d05f96e935539473b594979a77724cbc",
+    "spec/OwnedFilesUnsafePending.cfg": "36ff8ffac4b3e405b724c91c19d2f1c91ced09d7f2cf3f113822b82a5111c90d",
+    "spec/OwnedFilesUnsafeReject.cfg": "60d8fa26df2b6c585996f7dde43f20fc1dcf3d349726eaf6959aff1c39bccc9a",
+    "spec/OwnedFilesUnsafeVersion.cfg": "b075f3632a8172b5e52713bbc2cdb27ede556ac5f523c7e9cf4b488eda48aeaf",
+    "src/owned_files/mod.rs": "4c82f6f8ef3832a7499a4249c14602a341594b48c8656764c2fd9323e504d704",
+    "src/owned_files/record.rs": "47f62c2423dbae8d5650d7b15d64ea5e16162b7c43adb5b7d468b44d65c3cfb5",
+    "src/owned_files/tests.rs": "0e029708c90f4c6915954dbb0c6209ae50a582e891ff2bf7162b27d9f6246f94",
+    "src/ownership/root/tests/owned_files.rs": "bf5ccf6b9edc02ee743b2ef6afc1b9912b37004816e040acea764e90e6b5d29d",
+    "src/providers/s3.rs": "f22ad400a469d1d00dbeef274ce8582e569ef02960ef1d086406fced4aa7a506"
+  },
+  "local_log_sha256": {
+    ".tools/owned-files-clippy.log": "bf964a7bb35d746bf6db2f2ac1684ffbb4d7b15777bfb8c2585f302c0b1c7973",
+    ".tools/owned-files-suite.log": "85cafaba36befdfe9e35ec3e98b4fd78191edb83f8a801544889eb0797642b1a",
+    ".tools/owned-files-capacity.log": "45988bee7218b0ae68c12ffbef3ff48ed5d932291daea8a1211a17969588c765",
+    ".tools/owned-files-model.log": "624cac54f63408d254837a4659de14b3dc3b44a8a52eaafc84bf9abcbf27cf95"
+  }
+}
