@@ -20,7 +20,7 @@ await db.transaction(async (tx) =&gt; {
 <p><code>DurableDb</code> is the lower-level binary wire client used by the Pi adapters and provisioning tools. It exposes <code>read</code>, <code>commit</code>, <code>encode</code>, explicit revisions and request IDs. Each call makes one HTTP attempt. Retry uncertain commits unchanged. Redirects are refused; connect directly to the final HTTPS origin.</p>
 <p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
 <h2 id="pi-150-indexed-adapter">Pi 1.5.0 indexed adapter</h2>
-<p>Current source builds include <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
+<p>v0.2.0 includes <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
 <pre><code class="language-js">import { DurableDb } from '@durable-db/client';
 import { openIndexedPiStorage } from '@durable-db/client/pi-indexed';
 
