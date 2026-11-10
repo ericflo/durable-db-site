@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Development · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="recovery.html">recovery</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="web-app.html">web app</a><a aria-current="page" href="development.html">development</a><a  href="production-readiness.html">production readiness</a><a  href="roadmap.html">roadmap</a></aside><article><h1 id="development">Development</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="An experimental Rust transactional database with authoritative B2 or S3 storage and disposable compute."><meta name="color-scheme" content="light"><title>Development · durable-db</title><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head><body><header><a class="wordmark" href="index.html"><span class="mark" aria-hidden="true">▤</span> durable-db</a><nav aria-label="Main"><a href="architecture.html">Architecture</a><a href="api.html">API</a><a href="verification.html">Verification</a><a class="nav-button" href="development.html">Build it ↗</a></nav></header><main class="docs"><aside aria-label="Documentation"><a  href="architecture.html">architecture</a><a  href="b2.html">b2</a><a  href="api.html">api</a><a  href="recovery.html">recovery</a><a  href="deployment.html">deployment</a><a  href="observability.html">observability</a><a  href="security.html">security</a><a  href="verification.html">verification</a><a  href="verification-results.html">verification results</a><a  href="clients.html">clients</a><a  href="web-app.html">web app</a><a aria-current="page" href="development.html">development</a><a  href="production-readiness.html">production readiness</a></aside><article><h1 id="development">Development</h1>
 <p>Use the pinned Rust toolchain in <code>rust-toolchain.toml</code>. All Rust builds use <a href="https://github.com/kunobi-ninja/kache">kache</a>, including local tests. Source builds also need a C toolchain and CMake for AWS-LC; the installed static executable needs neither. Java 11+ runs TLC, and Node 24 runs the client, examples and documentation tools.</p>
 <pre><code class="language-sh">scripts/install-kache.sh
 export PATH=&quot;$PWD/.tools/bin:$PATH&quot;
@@ -49,6 +49,10 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib index::recovery::checkpoint::snapshot</code> and <code>scripts/check-model.sh CheckpointRead</code></td>
 </tr>
 <tr>
+<td>Checkpoint table reuse</td>
+<td><code>cargo test --locked --lib rewrites_reuse</code> and <code>scripts/check-model.sh CheckpointOverlay</code></td>
+</tr>
+<tr>
 <td>Checkpoint/suffix composition</td>
 <td><code>cargo test --locked --lib checkpoint</code> and <code>scripts/check-model.sh CheckpointOverlay</code></td>
 </tr>
@@ -79,6 +83,10 @@ scripts/check-proof.sh
 <tr>
 <td>Control request session</td>
 <td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh PlacementRequests</code></td>
+</tr>
+<tr>
+<td>Physical process pause (Linux)</td>
+<td><code>cargo test --locked --lib physical_owner_pause</code> (about eight seconds, including the frozen-clock control)</td>
 </tr>
 <tr>
 <td>Ownership intervals</td>
@@ -189,4 +197,4 @@ npm --prefix site audit
 <pre><code class="language-sh">cargo test --locked --test checkpoint_cloud -- --ignored --exact native_checkpoints_recover_selected_suffix_across_complete_reopen
 </code></pre>
 <p>This initializes <code>owned-candidate-6</code>, writes 1,024 database generations, checkpoints the first 16 selected frames, removes those covered fixture frames, and reconstructs through a fresh provider connection and controller. It checks nine suffix frames, retained receipts, excluded late old-owner data and zero control calls during reconstruction. Before suffix recovery it also checks lazy checkpoint point reads, ordered scans and receipt resolution, including 1,000 warmed iterations with zero provider calls and all 1,024 databases at their checkpoint revision. It rewrites the combined image and reopens it with every resident limit set to one, checking all 1,024 database generations without resident rows or receipts. Its timing samples use a debug build; they are not serving SLOs. It uses injected clocks and stops writers before takeover; it does not qualify physical lease safety, the serving API, automatic collection or AWS. Delete all physical versions and the dedicated bucket and revoke temporary credentials after either outcome. Checkpoint construction itself performs no cleanup.</p>
-</article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
+</article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="production-readiness.html">Experimental. Follow the work ↗</a></footer></body></html>
