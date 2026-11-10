@@ -2,7 +2,7 @@
   "kind": "finite VM clock boundary experiment; not production qualification",
   "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
   "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
-  "test_binary_sha256": "9b4fbf5420a6b9eeed1472f8abe8854a2d37397052f809fe61b4f6912d3a3866",
+  "test_binary_sha256": "e97a869d4006ebfc70dbfd789d7d3c6a0fb1cad727e2bee561d88cf9740c349a",
   "kernel_sha256": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
   "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
   "mode": "clock-intervals",
@@ -20,53 +20,66 @@
       "samples": [
         {
           "mode": "baseline",
-          "host_ns": 3006894886,
-          "guest_boottime_ns": 3006883054,
-          "guest_monotonic_ns": 3006879844,
-          "guest_realtime_ns": 3006879884,
+          "host_ns": 3006946957,
+          "guest_boottime_ns": 3007005535,
+          "guest_monotonic_ns": 3007002975,
+          "guest_realtime_ns": 3007003075,
           "marker_before": 1,
           "marker_after": 1,
-          "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4510324581,
+          "guard_accepts_timestamp": false,
+          "normalized_boottime_ns": 4510508302,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "qmp-stop",
-          "host_ns": 3008085100,
-          "guest_boottime_ns": 7300088,
-          "guest_monotonic_ns": 7302158,
-          "guest_realtime_ns": 7302278,
+          "host_ns": 3008244735,
+          "guest_boottime_ns": 7426529,
+          "guest_monotonic_ns": 7428179,
+          "guest_realtime_ns": 7428289,
           "marker_before": 1,
           "marker_after": 1,
-          "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 10950132,
+          "guard_accepts_timestamp": false,
+          "normalized_boottime_ns": 11139793,
           "within_candidate_bounds": false,
-          "guarded_scenario_passed": false
+          "guarded_scenario_passed": true
         },
         {
           "mode": "cgroup-freeze",
-          "host_ns": 3092068198,
-          "guest_boottime_ns": 3092073749,
-          "guest_monotonic_ns": 3092075869,
-          "guest_realtime_ns": 3092075989,
+          "host_ns": 3083132167,
+          "guest_boottime_ns": 3083189746,
+          "guest_monotonic_ns": 3083191486,
+          "guest_realtime_ns": 3083191606,
           "marker_before": 1,
           "marker_after": 1,
-          "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4638110623,
+          "guard_accepts_timestamp": false,
+          "normalized_boottime_ns": 4624784619,
+          "within_candidate_bounds": true,
+          "guarded_scenario_passed": true
+        },
+        {
+          "mode": "clocksource-fallback",
+          "host_ns": 53925381,
+          "guest_boottime_ns": 53712641,
+          "guest_monotonic_ns": 53712611,
+          "guest_realtime_ns": 53712621,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": false,
+          "normalized_boottime_ns": 80568961,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "snapshot-restore",
-          "host_ns": 3357170132,
-          "guest_boottime_ns": 145108465,
-          "guest_monotonic_ns": 145125275,
-          "guest_realtime_ns": 145125655,
+          "host_ns": 3337840027,
+          "guest_boottime_ns": 159002613,
+          "guest_monotonic_ns": 159013533,
+          "guest_realtime_ns": 159014033,
           "marker_before": 1,
           "marker_after": 2,
           "guard_accepts_timestamp": false,
-          "normalized_boottime_ns": 217662697,
+          "normalized_boottime_ns": 238503919,
           "within_candidate_bounds": false,
           "guarded_scenario_passed": true
         }
@@ -85,53 +98,66 @@
       "samples": [
         {
           "mode": "baseline",
-          "host_ns": 3006809596,
-          "guest_boottime_ns": 3006841717,
-          "guest_monotonic_ns": 3006837697,
-          "guest_realtime_ns": 3006837697,
+          "host_ns": 3006916350,
+          "guest_boottime_ns": 3006940838,
+          "guest_monotonic_ns": 3006939298,
+          "guest_realtime_ns": 3006939348,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4510262575,
+          "normalized_boottime_ns": 4510411257,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "qmp-stop",
-          "host_ns": 3008049676,
-          "guest_boottime_ns": 3008067268,
-          "guest_monotonic_ns": 3008069128,
-          "guest_realtime_ns": 3008069228,
+          "host_ns": 3008404067,
+          "guest_boottime_ns": 3008497113,
+          "guest_monotonic_ns": 3008498873,
+          "guest_realtime_ns": 3008499153,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4512100902,
+          "normalized_boottime_ns": 4512745669,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "cgroup-freeze",
-          "host_ns": 3092522932,
-          "guest_boottime_ns": 3092494083,
-          "guest_monotonic_ns": 3092495763,
-          "guest_realtime_ns": 3092495893,
+          "host_ns": 3093537958,
+          "guest_boottime_ns": 3093549343,
+          "guest_monotonic_ns": 3093551223,
+          "guest_realtime_ns": 3093551523,
           "marker_before": 1,
           "marker_after": 1,
           "guard_accepts_timestamp": true,
-          "normalized_boottime_ns": 4638741124,
+          "normalized_boottime_ns": 4640324014,
+          "within_candidate_bounds": true,
+          "guarded_scenario_passed": true
+        },
+        {
+          "mode": "clocksource-fallback",
+          "host_ns": 53309769,
+          "guest_boottime_ns": 53278802,
+          "guest_monotonic_ns": 53278852,
+          "guest_realtime_ns": 53278892,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": false,
+          "normalized_boottime_ns": 79918203,
           "within_candidate_bounds": true,
           "guarded_scenario_passed": true
         },
         {
           "mode": "snapshot-restore",
-          "host_ns": 3315780192,
-          "guest_boottime_ns": 7925134,
-          "guest_monotonic_ns": 7965285,
-          "guest_realtime_ns": 7965635,
+          "host_ns": 3376534163,
+          "guest_boottime_ns": 7995075,
+          "guest_monotonic_ns": 8004015,
+          "guest_realtime_ns": 8004305,
           "marker_before": 1,
           "marker_after": 2,
           "guard_accepts_timestamp": false,
-          "normalized_boottime_ns": 11887701,
+          "normalized_boottime_ns": 11992612,
           "within_candidate_bounds": false,
           "guarded_scenario_passed": true
         }
@@ -173,32 +199,27 @@
     }
   ],
   "date_utc": "2026-11-10",
-  "source_base_commit": "c698d32413ed0389ec3ba977fc66d9cf79a04354",
+  "source_base_commit": "188a93afd1dc8154e91dc1d5952f428cd30f1d91",
   "source_sha256": {
-    "scripts/check-vm-clock.py": "4060b3aa1a80685b7c23bd4edfaaa2f1163e58944596069cb091bf5c8d7bc924",
+    "scripts/check-vm-clock.py": "189d29043d3593b189397035d0e4e65dd564b6b36b241a8a7c80132ae421b3a8",
     "src/providers/s3/tests/timing.rs": "d1c1bbe5c0796472c70971e0e246349777758371cdae993d5de09e4d6ce7dd19",
-    "src/providers/s3/tests/timing/clock.rs": "75b7083bf2ba7eb65b5d43a32aafc0133908242b50952a249438723bc0e70557"
+    "src/providers/s3/tests/timing/clock.rs": "c6fdd488c50a5a6c2308bb804abc1f2d95b0e30902aa3acbf3df169f76b88ee4"
   },
-  "status": "Plain guest boottime rejected; test-only Rust TSC + VMClock guard passes the recorded intervals and native owner restore/takeover. The required unguarded control serves stale data and acknowledges a late write.",
+  "status": "Test-only binding refuses kvm-clock, PID changes, clocksource fallback and VM restoration; native takeover passes with an unsafe unguarded control.",
   "commands": [
     {
       "command": "scripts/check-vm-clock.py --output /tmp/vm-clock.json",
-      "expected_exit_code": 1
+      "expected_exit_code": 0
     },
     {
       "command": "scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json",
       "expected_exit_code": 0,
-      "takeover_cases_seconds": 22.68
+      "takeover_cases_seconds": 23.67
     }
   ],
   "checks": {
-    "local_rust_suite": {
-      "passed": 259,
-      "failed": 0,
-      "ignored": 16,
-      "large_directory_case": "skipped locally; retained in Woodpecker"
-    },
-    "focused_guard_test_seconds": 0.0,
+    "vm_marker_failure_retires_the_owner_timeline": "pass, under 0.01 seconds",
+    "physical_clock_refuses_forked_state": "pass, under 0.01 seconds",
     "fmt": "pass",
     "clippy_all_targets": "pass"
   },
@@ -207,9 +228,9 @@
     "BootClock is test-only. The CLI is not switched and no production physical timing profile is selected.",
     "The 1 ms allowance is an experimental threshold, not an established platform-wide bound. Host/guest interval sampling includes serial transport.",
     "Owner restore uses the native Rust owner, journal, recovery and provider HTTP binding. The object store fixture and successor run on the host, outside restored guest memory. This does not test a cloud service or the public HTTP router.",
-    "The marker is read through the Linux VMClock device before and after time sampling; missing, short or invalid headers refuse a timestamp. The timeline remains retired after refusal.",
-    "QEMU 10.1.5 marker behavior does not establish every hypervisor or VM cloning/migration contract. kvm-clock fails QMP pause even with the marker guard.",
-    "Cross-host rate/error bounds, live migration, clocksource/frequency changes, hardware suspend, process/VM cloning and repeated combined faults remain unqualified.",
+    "The binding checks PID before touching inherited state, then checks the VMClock marker and current tsc clocksource before and after time sampling. Timeline retirement survives later valid readings.",
+    "QEMU 10.1.5 behavior does not establish every hypervisor contract. The raw kvm-clock sample still misses a QMP pause; the binding now rejects that source before ownership can begin.",
+    "Cross-host rate/error bounds, live migration, frequency changes, hardware suspend, PID namespace recreation, CRIU, VM cloning and repeated combined faults remain unqualified. A privileged switch away from tsc and back between samples is outside this candidate contract.",
     "No new protocol theorem or Rust refinement is claimed. The existing conditional timing contract and failure retirement path are unchanged."
   ]
 }

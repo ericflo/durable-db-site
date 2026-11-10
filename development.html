@@ -90,7 +90,7 @@ scripts/check-proof.sh
 </tr>
 <tr>
 <td>VM pause/restore clock boundary</td>
-<td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; expected failure for <code>kvm-clock</code>, see verification)</td>
+<td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; rejects unsupported sources, see verification)</td>
 </tr>
 <tr>
 <td>Native takeover across VM restore</td>
