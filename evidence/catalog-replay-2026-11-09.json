@@ -111,5 +111,20 @@
     ".tools/candidates/CatalogReplay/model-catalog-replay-order.log": "87f1038ec7329d8e33edcd5f7b5eb325d6c71c5664ec8d7615cabe973b65c61a",
     ".tools/candidates/CatalogReplay/model-catalog-replay-skip.log": "ac333171df0eefcac22454a9e1d6630a7b72734fe39bf0fd43a6cf71a4c1bce9",
     ".tools/candidates/CatalogReplay/model-catalog-replay.log": "38ce1c750842246f47d01f52c64bd91aba17c37e989a81b20e0116f8f6b90e5f"
+  },
+  "qualification": {
+    "source_commit": "4a672e1c8bda1841456d87202bc3a0cc8ca02f61",
+    "woodpecker": {
+      "pipeline": 63,
+      "status": "success",
+      "build_log_sha256": "b5c1f6d5b814cc88992289d19b309d3c6c31757b68d5f2364882c4bd7c68dd5b"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "190569848b8c4438eb28b091a445eb22f86ac61fa4fd5cbe39ac7ad59c6d5162",
+    "pages_deployment_retry": {
+      "failed_deployment": 7671442939,
+      "successful_deployment": 7671679715,
+      "identical_tree": true
+    }
   }
 }

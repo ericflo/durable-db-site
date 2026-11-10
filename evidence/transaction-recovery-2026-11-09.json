@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T02:31:30.752495+00:00",
+  "base_commit": "4a672e1c8bda1841456d87202bc3a0cc8ca02f61",
+  "status": "Evaluated transaction records and private projection recovery; no production value index or serving adoption",
+  "record_format": "DDBTXN01; existing owned-candidate-3 catalog unchanged",
+  "behavior": [
+    "Canonical records bind database name and generation, resulting revision, original snapshot revision, request identity/fingerprint, retention floor and ordered final mutations",
+    "Empty values and deletions are distinct; application code and historical reads are not rerun",
+    "Per-database revisions must be contiguous; retained request reuse and wrong database state fail recovery",
+    "Receipt retention follows each immutable recorded floor, which cannot regress; no fixed 128-receipt policy in the replacement component",
+    "Retained matching receipts resolve before snapshot age; absence below the floor is expired, never proof of failure",
+    "An unread selected-history cursor and unpublished target are consumed; errors or cancellation drop the private target",
+    "Success returns only after complete selected history and grants no current ownership or serving permission"
+  ],
+  "bounds": {
+    "record_bytes_max": 1048576,
+    "mutations_max": 128,
+    "key_bytes_max": 1024,
+    "value_bytes_max": 65536,
+    "request_identity_bytes_max": 128,
+    "receipt_revision_window_max": 65536,
+    "receipt_policy_selected": false,
+    "decoded_values": "Borrowed from the accounted journal frame; at most 128 mutation views",
+    "receipt_lookup": "BTreeMap with shared request identities; eviction follows a revision queue",
+    "whole_process_memory_bound": false,
+    "target_obligations": "Bound resident databases, index state, copied bytes and concurrent restores; do not expose partial state; install all supplied values/revisions/receipts"
+  },
+  "model": {
+    "module": "TransactionRecovery",
+    "databases": 2,
+    "keys_per_database": 1,
+    "request_identities": 2,
+    "values": 2,
+    "records_max": 3,
+    "configurations": [
+      {
+        "receipt_limit": 1,
+        "distinct_states": 2114,
+        "generated_states": 2114,
+        "depth": 8
+      },
+      {
+        "receipt_limit": 2,
+        "distinct_states": 4002,
+        "generated_states": 4002,
+        "depth": 8
+      }
+    ],
+    "negative_controls": [
+      "Dropped receipt violates AtomicPrefix",
+      "Stale revision violates AtomicPrefix",
+      "Forgotten retention floor violates AtomicPrefix",
+      "Premature exposure violates CompleteView"
+    ],
+    "coverage": "Completed nonempty history after receipt eviction",
+    "symmetry_reduction": false,
+    "guided_constraints": false,
+    "unbounded_proof": false,
+    "rust_refinement_proof": false
+  },
+  "tests": {
+    "additional_rust_tests": 11,
+    "cases": [
+      "Every-byte corruption and truncation",
+      "Checksum-valid malformed headers, nil generation, invalid UTF-8/keys, duplicate keys, revision/floor errors and trailing bytes",
+      "Maximum record fields, mutation counts and receipt-window bounds",
+      "Receipt expiry, retained mismatch, 256 retained receipts, recorded floor advance and regression refusal",
+      "Revision gaps, repeated requests, database name/generation isolation",
+      "Two databases across owner replacement; exact value and receipt restoration; late suffix excluded",
+      "Failure after a private value change, missing later selected frame and fresh restart",
+      "Advanced cursor rejection and invalid selected record after earlier valid application",
+      "Cancellation drops a partially applied private target",
+      "Completed immutable restoration after permission expiry supplies no serving authority"
+    ],
+    "http_bindings": [
+      "Native B2 control fixture and in-memory immutable objects; empty selected history through the same restore runner",
+      "S3 HTTP control and object fixture; exact value/receipt recovery after lost publication reply; late old-writer transaction excluded"
+    ],
+    "rust_tests_passed": 186,
+    "opt_in_ignored": 9,
+    "capacity_filtered_from_debug_suite": 1,
+    "capacity_release_passed": true,
+    "capacity_databases": 10005,
+    "capacity_release_seconds": 83.43,
+    "fmt_passed": true,
+    "clippy_all_targets_warnings_denied": true,
+    "public_pages_built": 20,
+    "public_links_checked": 633
+  },
+  "publication": {
+    "change": "Woodpecker waits for public deployment.json to identify the checked source commit; push success alone no longer qualifies delivery",
+    "isolated_script_tests_passed": 4,
+    "cases": [
+      "Matching public marker succeeds",
+      "Stale public marker fails",
+      "HTTP error with matching response bytes fails",
+      "Invalid source identity fails before publication"
+    ],
+    "github_actions_added": false
+  },
+  "assumptions": [
+    "Complete valid immutable selected history from the catalog/journal protocol",
+    "Original request fingerprints and accepted transaction ordering supplied by the evaluator",
+    "Recovery target begins empty, keeps state private and installs every supplied mutation and metadata state",
+    "Durable receipt decisions obey admitted retention policy"
+  ],
+  "limitations": [
+    "No production value index, live write evaluator, group-commit driver or HTTP adoption",
+    "No creation/authorization/placement record recovery or checkpoint starting position",
+    "No proof of arbitrary Target implementations, physical clock contract or complete protocol/Rust refinement",
+    "No tenant physical admission, historical truncation or cleanup for this replacement path",
+    "In-memory test projection and loopback HTTP only; no new B2/AWS cloud benchmark or throughput claim",
+    "Existing HTTP engine retains conditional read barriers"
+  ],
+  "source_sha256": {
+    "src/transactions/mod.rs": "d7ef99691d53d48cb61dd52b18bd7dac7e8b6039985f123e91111b43de9cd460",
+    "src/transactions/record.rs": "15923d1bc8547bd31f98106b54fe4bc40cf3a4040e7f32905185f055511a10ea",
+    "src/transactions/record/tests.rs": "862949041b829ab26e0e22ecd272536dc4f1f10f06734dbd622ca520b4b70238",
+    "src/transactions/recovery.rs": "7caa58bb83d834d687e948f74b7c3037a19c9ddd8cf466cd57f27785c6bf7eda",
+    "src/transactions/recovery/tests.rs": "58a72ad53463f16f3c7a5f4e0fe7ffda7dfbae5bc73b96ea1229412b493bda41",
+    "src/ownership/root/replay.rs": "b8b3a0a39eb2c67f0b4498f846460cf05de21b52fc5c89294084540fce5654c8",
+    "src/ownership/root/tests.rs": "4604adbcf63f931d2432fde695c8b7c06282bf6ec1e1f3376cc8d31b339c7d5b",
+    "src/ownership/root/tests/transactions.rs": "f34139bb19332e97e00358dad858ced9329a91361ca9eac99e53818f2280ca73",
+    "src/providers/b2.rs": "512dbe82e00aa9ae90ce896bfede96b33c983225c8cfc78a56063073b40cef61",
+    "src/providers/s3.rs": "2575232d9f1f3e61439474cb8e0236db1df0ac067e81aa9b2622e0fccd857e43",
+    "Dockerfile": "5db68f5479efe68b79a42479a5f6ab1d418f481894cfa1b1953e63a464e5a706",
+    "scripts/publish-docs.sh": "238bb5fb5c49d8a2f3cfce4c4dc72f0ff7ce32fbd2356417edf60500de9f7a68",
+    "scripts/test-publish-docs.mjs": "2fb210a4480a08884fa87de1dbbd01e0291fbc490064c1cae13656cd5f25f0dd",
+    "spec/TransactionRecovery.cfg": "47af386da7c845504a9c0488758df4b0c6be3702806c8a6ab083a07611de7de8",
+    "spec/TransactionRecovery.checks": "9d715b75b29f626108b5988f4bc85b3b30703a2ce2303206ff6bf48bc0a4ed60",
+    "spec/TransactionRecovery.tla": "e304f23fc677c6a14751ee95aa09b2c69d140a5a34633b8e912467da2cd85691",
+    "spec/TransactionRecoveryComplete.cfg": "f86a7150c02fef4613389966713e10a77c33de911131667552d71ab26b468852",
+    "spec/TransactionRecoveryRetention.cfg": "710836e4b11684613266729af1f4621cd8ffb7bc723262eebb6e85b0e33c125a",
+    "spec/TransactionRecoveryUnsafeExpose.cfg": "052c4b7f0287087f61c106ad5623ee743b7adc9e0f50ec2cbf43615a1f0ead44",
+    "spec/TransactionRecoveryUnsafeFloor.cfg": "e80c9cc7c1d43bde71f79244ff762027fa51c5cdb3ca221f323bc1aecb929445",
+    "spec/TransactionRecoveryUnsafeReceipt.cfg": "77a03b256cda8f8c1b509aed49cba258600098ae24c7f682a747d4486beecc57",
+    "spec/TransactionRecoveryUnsafeRevision.cfg": "fbf6c952148c976e3a4f1472d2cc299bfc84644852b088fc629cef57981b3911",
+    "site/build.mjs": "95de8eb5f4efffd9539e645b983a930c4a7876ad0855fa4b3a64844d91de9339"
+  },
+  "local_log_sha256": {
+    ".tools/transaction-recovery-clippy.log": "13f82cad0eab08e6920627f3730028639779ee70345088c66c9ddafee15e5376",
+    ".tools/transaction-recovery-suite.log": "924cee3738f4e7930eb65361dca4d742b9dce528983109caa676eec0d031a7f7",
+    ".tools/transaction-recovery-capacity.log": "e0fc39a68d48c145ce20333d69eb76efeee7e02eac1a96a766fe0ef8a14dea5e",
+    ".tools/transaction-recovery-model.log": "953c21a2d0b4b250826083ae8baf2cb1c0b217f35c8c1302f736dec8ff24e2e6",
+    ".tools/publish-docs-marker-tests.log": "43882ec192b842553ce04504566b86c45895aa5dad209084d4da75998e1ae223",
+    ".tools/model-transaction-recovery-complete.log": "699bfbdfeee78395308c603e87693604b74fec589e22ea65014a9509707f8e4d",
+    ".tools/model-transaction-recovery-expose.log": "93c8b99a95b95861f3eb2f8710b1118af2e84c371f30b1aebc597b8343d735f5",
+    ".tools/model-transaction-recovery-floor.log": "5d83bb6793aa49e98588a2f4fad997ea7903e5d87d3e3c39c83cb358234791cb",
+    ".tools/model-transaction-recovery-receipt.log": "b221d197fc08d5f584f797968a561877509b8004bf9750842a5f067a61155945",
+    ".tools/model-transaction-recovery-retention.log": "b631806ef502be3a225377c023bbf9a7cc3546ede78bc96971b1177890741ad9",
+    ".tools/model-transaction-recovery-revision.log": "8902f7143146bbc873b9ca8e1f51f3eba9436ed2fb787835654ba62d38e30d8a",
+    ".tools/model-transaction-recovery.log": "8c3817874044cc2a5330b7fcfa503562cd9df32eea2e48643c7b40f733ead95c",
+    ".tools/transaction-recovery-site.log": "1cc292dd56e44e1e20dc360018f457cef3974a1050c0fcbe768786fb1dd6b1bc"
+  }
+}
