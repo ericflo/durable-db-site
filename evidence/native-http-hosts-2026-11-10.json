@@ -1,0 +1,65 @@
+{
+  "date_utc": "2026-11-10",
+  "source_commit": "5ad8e7d81bec555f6a2185698bef846759ad199b",
+  "status": "Three-host process-pause and native HTTP regressions passed; production physical timing is not qualified",
+  "binary_sha256": "52176b85a4334ffc0cd7657d9c1ab4366f5c9393ebc25ca93fe8979b6cbf922c",
+  "configuration": {
+    "image": "ubuntu:24.04 (resolved image IDs below)",
+    "cpu_limit": "1",
+    "memory_limit": "512Mi",
+    "security": "Non-root UID/GID 1000; all capabilities dropped; no service-account token; RuntimeDefault seccomp; no privileged access or host mounts",
+    "tls_roots": "System CA bundle supplied via SSL_CERT_FILE; no verification bypass",
+    "clock": "Test-only CLOCK_BOOTTIME scaled by 3/2; 1-second normalized lifetime, 1-millisecond error allowance",
+    "provider": "In-process S3 HTTP fault fixture in each test pod; no B2/AWS call",
+    "cache": "Native HTTP fixture has zero byte-cache capacity"
+  },
+  "commands": [
+    "cargo test --locked --lib --no-run (kache wrapper enabled)",
+    "Copy the resulting library test executable into one restricted pod on each host with a system CA bundle",
+    "./check --exact providers::s3::tests::timing::physical_owner_pause_fences_reads_and_late_acknowledgements --nocapture",
+    "./check ownership::root::tests::http:: --nocapture"
+  ],
+  "setup_failures": [
+    "The first attempt exited before pause and its harness omitted stderr. The diagnostic rerun on all three hosts identified absent system CA certificates: reqwest initialization failed before the pause scenario. The TCP HTTP case also failed at client construction; the in-process HTTP case passed.",
+    "One retry collided with a namespace still being deleted and ran no tests. The corrected harness used a fresh namespace, captured all per-host exits and supplied the CA bundle. Database source, test timing, and resource limits were unchanged by these setup corrections."
+  ],
+  "hosts": [
+    {
+      "node": "epsilon-1",
+      "kernel": "Linux 6.8.0-149-generic x86_64 GNU/Linux",
+      "clocksource": "tsc",
+      "image": "docker.io/library/ubuntu@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852",
+      "pause_seconds": 9.365,
+      "pause_test": "1 passed, including the required frozen-clock violation",
+      "native_http_tests": "4 passed",
+      "http_seconds": 0.4
+    },
+    {
+      "node": "epsilon-2",
+      "kernel": "Linux 6.8.0-149-generic x86_64 GNU/Linux",
+      "clocksource": "tsc",
+      "image": "docker.io/library/ubuntu@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852",
+      "pause_seconds": 9.365,
+      "pause_test": "1 passed, including the required frozen-clock violation",
+      "native_http_tests": "4 passed",
+      "http_seconds": 0.4
+    },
+    {
+      "node": "epsilon-3",
+      "kernel": "Linux 6.8.0-149-generic x86_64 GNU/Linux",
+      "clocksource": "tsc",
+      "image": "docker.io/library/ubuntu@sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852",
+      "pause_seconds": 9.443,
+      "pause_test": "1 passed, including the required frozen-clock violation",
+      "native_http_tests": "4 passed",
+      "http_seconds": 0.38
+    }
+  ],
+  "cleanup": "All temporary pods and namespaces deleted; no buckets, credentials, or persistent volumes created",
+  "limits": [
+    "Each takeover test uses two processes on the same host. This is not cross-host relative clock-rate qualification.",
+    "SIGSTOP is process descheduling, not hardware suspend, VM suspension, migration, or live-memory restoration.",
+    "No production clock adapter, election scheduler, placement, or CLI cutover is enabled by this result.",
+    "This finite test run does not prove the implementation, platform clock bounds, or production latency/throughput."
+  ]
+}

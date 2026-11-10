@@ -129,6 +129,10 @@ scripts/check-proof.sh
 <td><code>scripts/test-client.sh sdk.test.mjs</code></td>
 </tr>
 <tr>
+<td>Native HTTP and client contract</td>
+<td><code>cargo test --locked --lib root::tests::http</code>; after <code>npm --prefix clients/javascript ci</code>, run <code>cargo test --locked --lib native_http_javascript_contract -- --ignored --nocapture</code></td>
+</tr>
+<tr>
 <td>Pi adapter or HTTP client transport</td>
 <td><code>scripts/test-client.sh</code></td>
 </tr>
