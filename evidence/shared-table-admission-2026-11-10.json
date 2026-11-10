@@ -248,5 +248,86 @@
     "Physical ownership timing and native CLI cutover.",
     "Durable snapshot/backup retention and large-image cleanup throughput.",
     "Production operating envelope, sustained performance/failure qualification and AWS validation."
-  ]
+  ],
+  "release": {
+    "source_commit": "346f57c90c82a8e54ef1931970b4e4dd5d9af9cf",
+    "woodpecker_pipeline": 133,
+    "artifact_image_digest": "sha256:02536d826ceff52fe26403bac326e6d4bfe23bdd3460a4c4694e80e16afe4046",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.8.0",
+      "archive_sha256": "0c54ba72d95f91ed3ff0390b5eee5fafcf51c18dc78f2e9e98f044c40a51bec8",
+      "binary_sha256": "ab225825945096059f7ee855abb3f7a1fb854e3c90e86ab8d71aa3b9ce4e18ed",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 5687514,
+    "version": "v0.8.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 133,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/133/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1,
+      "woodpecker_seconds": 67.97,
+      "local_seconds": 26.97,
+      "deadline_seconds": 90
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.8.0",
+    "published_at": "2026-11-10T21:53:54Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.8.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "capacity_test_seconds": 199.04,
+    "scope": "Experimental shared-table copy admission; native format owned-candidate-15 requires a fresh namespace. CLI unchanged. New block/index/manifest overhead, administrative metadata writes, retries/recovery, physical timing, durable retention and broader qualification remain open.",
+    "tag_pipeline": {
+      "pipeline": 134,
+      "status": "success"
+    }
+  }
 }
