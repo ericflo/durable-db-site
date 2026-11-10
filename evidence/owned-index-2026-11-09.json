@@ -151,5 +151,16 @@
   "placement": {
     "b2": "Development host over the Internet to Backblaze B2; bucket region was not recorded in this run",
     "versioned_minio": "Loopback Docker fixture, 2 CPU/512 MiB container, MinIO RELEASE.2025-10-15T17-29-55Z rebuilt with go1.26.10; not AWS"
+  },
+  "qualification": {
+    "source_commit": "ec9200dd7ccbabfa085d694851bb6f64b1980be8",
+    "woodpecker": {
+      "pipeline": 68,
+      "status": "success",
+      "scope": "Main server, existing formal checks, documentation and publication; the isolated index/cloud fixture was run manually as recorded above"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "public_source_marker_matches_commit": true,
+    "pages_verification_sha256": "b2a28d21dfb3efc55d4884a8fcee8094b1eddd00563db1295b94d56043d11635"
   }
 }
