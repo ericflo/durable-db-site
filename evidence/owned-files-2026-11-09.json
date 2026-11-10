@@ -72,5 +72,16 @@
     ".tools/owned-files-suite.log": "85cafaba36befdfe9e35ec3e98b4fd78191edb83f8a801544889eb0797642b1a",
     ".tools/owned-files-capacity.log": "45988bee7218b0ae68c12ffbef3ff48ed5d932291daea8a1211a17969588c765",
     ".tools/owned-files-model.log": "624cac54f63408d254837a4659de14b3dc3b44a8a52eaafc84bf9abcbf27cf95"
+  },
+  "qualification": {
+    "source_commit": "2c5d72680b814c38950a06a35083c156b91ac171",
+    "woodpecker": {
+      "pipeline": 67,
+      "status": "success",
+      "build_log_sha256": "7814f6331aa11c000eeea5927c4d06931fd58704edbe090c7d1fcf77b90dd37b"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "public_source_marker_matches_commit": true,
+    "pages_verification_sha256": "b12f50a0f100e7381e06ab0448260f73569f1b52a5a6af1b98bf2c6ac8fca3fa"
   }
 }
