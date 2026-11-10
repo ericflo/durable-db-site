@@ -135,7 +135,13 @@
     ".tools/candidates/RootAcquisition/model-root-acquisition.log": "4aa93ddd960b1cb360184de42bf55512e44507e7c70d7cdcd9d34a41f76e65d1"
   },
   "qualification": {
-    "status": "pending",
-    "reason": "Local checks pass; complete Woodpecker qualification and public Pages verification follow the source commit."
+    "source_commit": "dcc9c57fc0adeab32e2d6b5f716c1d9af56a88f4",
+    "woodpecker": {
+      "pipeline": 60,
+      "status": "success",
+      "build_log_sha256": "6d27a976641523c93b50917f828c61def2f5cd24ecf9236cb7398799ecf26f47"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "00ceac15032bfc832b1a5a26dabb263e32eed914f8e6e25369d0435149034a7d"
   }
 }

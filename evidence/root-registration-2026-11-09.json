@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T01:08:23.819750+00:00",
+  "base_commit": "dcc9c57fc0adeab32e2d6b5f716c1d9af56a88f4",
+  "status": "Experimental durable journal discovery; not selected-prefix recovery or a serving engine",
+  "format": "owned-candidate-2",
+  "behavior": [
+    "Immutable registration names each fresh root journal and its captured predecessor",
+    "Exactly one physical registration PUT precedes the conditional root claim; an unknown upload requires an exact positive read",
+    "Unresolved upload sends no root metadata mutation; a late orphan upload cannot enter the winning ancestry",
+    "Registration traversal starts at the controller identity and follows persisted parent links without object listing",
+    "Missing, corrupt, incompatible or oversized registrations fail without advancing the cursor",
+    "The root journal writer can be taken once under a live interval; this is not database readiness or acknowledgement authority"
+  ],
+  "limits": {
+    "registration_bytes_min": 107,
+    "registration_bytes_max": 234,
+    "namespace_bytes_min": 1,
+    "namespace_bytes_max": 128,
+    "traversal_bookkeeping": "Fixed size; callers must bound retained outputs",
+    "recovery_io": "Linear in ownership history; no checkpoint index or compaction"
+  },
+  "model": {
+    "module": "RootRegistration",
+    "extends": "RootAcquisition",
+    "candidates": [
+      2,
+      3
+    ],
+    "invocations": 3,
+    "distinct_states": [
+      23865,
+      196213
+    ],
+    "generated_states": [
+      77775,
+      706774
+    ],
+    "depth": [
+      22,
+      25
+    ],
+    "symmetry_reduction": false,
+    "guided_constraints": false,
+    "negative_controls": [
+      "Early root publication violates RegistrationAvailable",
+      "Dropped predecessor violates AcknowledgedDiscoverable"
+    ],
+    "coverage": "Three winning generations retain at least two acknowledged-journal markers",
+    "acknowledgement_markers": "Overapproximation for discoverability only; no data, prefix or lease composition",
+    "unbounded_proof": false,
+    "rust_refinement_proof": false
+  },
+  "tests": {
+    "additional_registration_tests": 4,
+    "total_root_component_tests": 14,
+    "http_bindings_extended": [
+      "Native B2 metadata fixture with both cancelled-claim orders",
+      "S3 fixture loses an applied registration PUT response; exact read resolves it before root publication"
+    ],
+    "cold_discovery": "Drops all controllers, writers, readers and historical register snapshots; starts a fresh clock origin; recovers three earlier journals and frames from current register plus immutable objects without listing",
+    "corruption": "Every byte plus nine checksum-valid semantic mutations, oversized input and missing object; cursor does not advance on error",
+    "namespace_boundaries": [
+      1,
+      128
+    ],
+    "rust_tests_passed": 162,
+    "opt_in_ignored": 9,
+    "capacity_filtered_from_debug_suite": 1,
+    "capacity_release_passed": true,
+    "capacity_databases": 10005,
+    "capacity_release_seconds": 83.98,
+    "fmt_passed": true,
+    "clippy_all_targets_warnings_denied": true
+  },
+  "assumptions": [
+    "Immutable object writes are durable and exact reads do not invent bytes; positive read resolution is not inferred from absence",
+    "Fresh root identities, exact nonce-changing provider comparisons and trusted protocol credentials",
+    "No external deletion or alteration of referenced registrations",
+    "Ownership timing and invocation assumptions remain those documented for the candidate root controller"
+  ],
+  "limitations": [
+    "No selected-prefix catalog: recovered frames alone do not authorize database acknowledgements",
+    "No automatic election or renewal driver, system clock adapter, production timing profile, placement or routing",
+    "No registration collector, physical upload admission, indexed checkpoints or bounded recovery I/O",
+    "No complete composition, Rust refinement or liveness proof",
+    "Local fixtures only; no new cloud benchmark or production-readiness claim",
+    "Current HTTP engine retains conditional read barriers"
+  ],
+  "source_sha256": {
+    "src/ownership/root.rs": "8039995b88bef9a28a0ead359605cd6a358a6789f2764265dc46670f53360622",
+    "src/ownership/root/metadata.rs": "4c938be85b8aee9d87399c4b3a4497d1cd1ad348f7501b715dfc0099342764c3",
+    "src/ownership/root/registration.rs": "4a2c4a6bcd3b60189f1380fe9a9dad9570b372b639d75c558f5972a5537d503c",
+    "src/ownership/root/tests.rs": "d21758d710f0cc16c7bac991c431c5630d50edd11d2e867f43ea092bbc920831",
+    "src/ownership/root/tests/registration.rs": "e0216659ed6132aab85676233a4e1be3fd2aa32af56eb476d126fcfae7b2e60a",
+    "src/journal/frame.rs": "db07db938cda00d2b7e922d57a4a543a2aac3d17f2347b17231467b71a3bb423",
+    "src/journal/writer.rs": "9a408ddce3fd3fdc5389e1135c3b4fac5f5ede47211c209a54ca3dcac7027bd7",
+    "src/providers/mod.rs": "4347b9178b71d0ee485e7084f0f23301cb0e02c0f708098a94f29c867a511900",
+    "src/providers/b2.rs": "40e76b2f87243ffdacc099ab60c170dc898730f655b8bc36e140a4e15fbf7244",
+    "src/providers/s3.rs": "534be3a482a87f2389075a9bf1c46324bf622f2cc7c616d6909e9ecdec229293",
+    "Dockerfile": "aa92f8df19a4088e093d9014392e98a676cc4ee6f9318b1310243676f8e71426",
+    "scripts/check-candidate.sh": "30b26901838dd962f905125fd8e95a288f37bec51d80b7ecb271157c4abeb3f9",
+    "spec/candidates/RootRegistration.cfg": "1f4dd034b27f8331046cdebfb6524176bffe6480c1cbaf20868a795d528810bc",
+    "spec/candidates/RootRegistration.checks": "e0e1400e5d09b9c3719648831f51c4b5adaacf3bee3e4b90f563290da44bd693",
+    "spec/candidates/RootRegistration.tla": "e3b31b5a57486ae7aaa3cb31a37cae43ecffc4203cee43d94d6076eb903dbc78",
+    "spec/candidates/RootRegistrationRecovered.cfg": "48f2a1051cb87d009f935a0c7583af6497319f45f81415356f8325b93fd85ff6",
+    "spec/candidates/RootRegistrationThree.cfg": "2d151dc4addee8e139753dc070926daa8ac5f7b9772c618ee01b86623f7361df",
+    "spec/candidates/RootRegistrationUnsafeEarly.cfg": "af9bd5b07add5a01a5096fa2cd04e7f00566ecff0bde875d8b36769a69303a46",
+    "spec/candidates/RootRegistrationUnsafeParent.cfg": "68db7f9b3ba2054a4a7e76e645685e1d90bf7af81ad7bec259c72ca09e286b4a"
+  },
+  "local_log_sha256": {
+    ".tools/root-registration-clippy.log": "caca5ccc736aa77e40e63c32e0bdde2bf947445a6ec43853af45b5cbe5121b6d",
+    ".tools/root-registration-suite.log": "8fecb5a462def0b75567d2cd185c45be9b93fb26b1277ab0e6ff230775820d37",
+    ".tools/root-registration-capacity.log": "17bbd3047bbebfa727973064064f9e07b2e38e8537de2f08fd9a68d486c9461b",
+    ".tools/root-registration-http.log": "18c4678767d85eb6b97ac446061d5e5b5db3ab42032b823684efe64c35a40857",
+    ".tools/root-registration-model.log": "78ca8dcdc96beed9cd54b729ab782cae996fa00c0751d50b3d238acbe26afd0e",
+    ".tools/candidates/RootRegistration/model-root-registration-early.log": "047b8739167df19990d38d90382ff6034313d18dc13a5fd9ea2eb3389f49b308",
+    ".tools/candidates/RootRegistration/model-root-registration-parent.log": "3e5c24f8a3bf6ad64f9d1c29322ee95594442a21b978a313e8e73c35f5e10cd2",
+    ".tools/candidates/RootRegistration/model-root-registration-recovered.log": "0f2d4501de3d008f574b997b4a6be82125425ab6206ec89688ee9de68fd19554",
+    ".tools/candidates/RootRegistration/model-root-registration-three.log": "eede7993271617e728155c7e7b42ba33a92014f03866009967a3facf5f527e06",
+    ".tools/candidates/RootRegistration/model-root-registration.log": "63996b8eeabc230ec464625ca744307b168cec511ce7d471e353d3b1113f795d"
+  }
+}
