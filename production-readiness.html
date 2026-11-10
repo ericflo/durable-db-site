@@ -24,13 +24,13 @@
 </tr>
 <tr>
 <td>Replacement transactions</td>
-<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay and complete checkpoint rewriting; finite models and fault tests</td>
-<td>Add continuous live checkpoint scheduling and incremental table reuse; compose live journal admission, lifecycle, authenticated snapshots and ownership with a versioned API; prove full serializability/refinement and measure contention/fairness</td>
+<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints, public read/commit contract evaluation and bounded wire group commit; finite models and fault tests</td>
+<td>Connect the HTTP router and tenant lifecycle; add incremental table reuse; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
 </tr>
 <tr>
 <td>Replacement control requests</td>
 <td>Common Rust root controller with one-time candidate claims, checked intervals, durable registrations and prefix catalogs, timing-profile binding and B2/S3 HTTP fault tests; finite bootstrap/competition models and an abstract request proof across ordered epochs</td>
-<td>Add placement, bounded election/renewal scheduling and transaction recovery; compose request uncertainty, repeated election, platform timing and serving permission; prove the implementation refinement</td>
+<td>Add placement and bounded election/renewal scheduling; compose request uncertainty, repeated election, platform timing and serving permission; prove the implementation refinement</td>
 </tr>
 <tr>
 <td>Replacement journal</td>
@@ -40,7 +40,7 @@
 <tr>
 <td>Cloud performance</td>
 <td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; native read retries now recover bounded transient observations, with a separate B2 rerun passing</td>
-<td>Replace the shared per-request authority path, compose ownership and durable-log recovery, then publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
+<td>Cut the HTTP router over to the native owner after qualifying timing and lifecycle, then publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
 </tr>
 <tr>
 <td>Public multitenancy</td>
@@ -92,12 +92,11 @@
 <h2 id="implementation-order">Implementation order</h2>
 <p><strong>Current priority: <a href="design-owned-partitions.html">replace the shared serving and durability path</a>.</strong> The existing read barrier and shared publication path have not met the performance brief. Establish a safe ownership/read protocol and a measured batched durability path before expanding release or sustained-load qualification of a replacement.</p>
 <ol>
-<li>Compose a safe serving-authority protocol with immutable log batches and handoff seals. State the provider, timing and membership assumptions; retain one B2/S3 storage algorithm.</li>
-<li>Implement a small vertical prototype and measure warm reads, batched durable writes and independent active databases. Include stale-owner fencing and total-compute-loss recovery in that same experiment. Compare end-to-end cost with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>. Then qualify disjoint-key transactions within one database: the current whole-database revision condition is a separate contention limit, requiring modeled key/range validation and explicit API compatibility.</li>
-<li>Integrate per-tenant physical admission, fair request/egress budgets, authorization and lifecycle. Do not refund rights that could still produce delayed uploads.</li>
-<li>Add multilevel indexes, bounded compaction, retention-aware snapshots and recovery. Reclamation must honor retained roots, and restore must work without the original compute or caches.</li>
-<li>Run Pi and general application workloads against the resulting protocol, including request uncertainty, host ownership and the typed SDK.</li>
-<li>Qualify mixed versions, provider failures, Kubernetes autoscaling, sustained load, disaster recovery and release artifacts. Resolve independent review findings before changing the production status.</li>
+<li>Connect the native read/commit evaluators to HTTP authorization and database generations. Qualify the physical timing contract, election/renewal scheduling and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
+<li>Measure warm reads, group commit and independent active databases through that serving path, including total-compute-loss recovery. Compare with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>. The public whole-database revision condition still limits same-database concurrency; exposing the existing key/range validator requires an explicit API contract.</li>
+<li>Integrate per-tenant physical admission and fair request/egress budgets. Do not refund rights that could still produce delayed uploads.</li>
+<li>Replace full checkpoint rewrites with bounded table reuse and compaction. Add automatic physical reclamation that honors reader/backup references and recovers without compute or caches.</li>
+<li>Qualify Pi and general application workloads, mixed versions, provider failures, Kubernetes autoscaling, sustained load, disaster recovery and release artifacts. Resolve independent review findings before changing the production status.</li>
 </ol>
 <h2 id="reproducible-load-baseline">Reproducible load baseline</h2>
 <p><code>scripts/benchmark-http.mjs</code> creates synthetic databases on a <strong>disposable test deployment</strong>. It seeds one value per database, measures writes and reads with a configured number of workers, then verifies all seeded databases. The caller owns cleanup. Use scoped test-bucket credentials on the servers; the benchmark takes an administrator token from a file and does not print it.</p>

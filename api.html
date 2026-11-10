@@ -106,6 +106,7 @@
 </code></pre>
 <p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
 <p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
+<p>Only <code>409 conflict</code> authorizes a fresh transaction attempt before any uncertain write outcome. The native engine also distinguishes <code>409 receipt_expired</code>: the receipt no longer establishes the original outcome, so reconcile using the original request instead of generating a new ID. The JSON SDK raises <code>UncertainCommitError</code> for this case; Pi adapters stop instead of rebuilding the write. This distinction is implemented in the native library while HTTP router integration remains pending.</p>
 <h2 id="durable-token-revocation">Durable token revocation</h2>
 <p>PUT creation starts protected. For an existing legacy database, upgrade all servers, then enable its database policy with an administrator request:</p>
 <pre><code class="language-json">{
