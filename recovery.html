@@ -2,14 +2,14 @@
 <p>The binary provides <code>durable-db backup export</code>, <code>inspect</code>, and <code>restore</code>. An export contains the keys and values of one database revision, its original logical quotas, and source identity. Restore creates a new protected database with a fresh authorization incarnation and verifies every value. It does not restore credentials, policy history, transaction receipts, or the original revision number.</p>
 <p>This is an operator-driven recovery tool. Scheduled retained snapshots, point-in-time recovery, independent backup storage, and recurring restore drills remain production gates.</p>
 <h2 id="local-format-upgrades">Local format upgrades</h2>
-<p>v0.10.0 reopens v0.9.0 local directories directly, preserving values, revisions and receipts. No export is required between these versions.</p>
+<p>v0.11.0 retains the local storage format used by v0.9.0 and v0.10.0. These directories reopen directly, preserving values, revisions and receipts. No export is required between these versions.</p>
 <p>v0.9.0 switched local serving to the native journal and index. It refuses an older directory instead of interpreting it as an empty native store. The cloud CLI format is unchanged.</p>
 <ol>
 <li>Keep the previous binary and directory. Pause application writes and use that binary to serve the old directory and export each database using the commands below.</li>
 <li>Stop the old server. Start v0.9.0 with a <strong>new</strong> <code>--data</code> directory and restore each archive. Keep the old directory and exports until verification completes.</li>
 <li>Mint new scoped credentials and switch application routing only after every restore succeeds. Restore preserves keys, values and logical quotas; authorization incarnations, receipts and revision numbers are new.</li>
 </ol>
-<p>Rollback uses the previous binary and untouched old directory. Writes accepted by the new server are absent from that old directory; export and reconcile them before routing applications back. Never run an older binary against a native directory or replace its authority file. Missing authority in a nonempty native directory is refused.</p>
+<p>For a migration from pre-v0.9.0 storage, rollback uses the previous binary and untouched old directory. Writes accepted by the new server are absent from that old directory; export and reconcile them before routing applications back. Never run a pre-v0.9.0 binary against a native directory or replace its authority file. Missing authority in a nonempty native directory is refused.</p>
 <h2 id="export-a-consistent-revision">Export a consistent revision</h2>
 <p>Use a database-scoped read capability in a private token file. The API origin must use HTTPS, except that HTTP loopback is accepted for local development. Redirects are refused; credentials are never forwarded to another origin.</p>
 <pre><code class="language-sh">durable-db backup export \
