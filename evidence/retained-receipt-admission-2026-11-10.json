@@ -1,0 +1,214 @@
+{
+  "date_utc": "2026-11-10",
+  "source_commit": "d00d9ad4af998a0265a0a18589645cc91dbf8349",
+  "clean_worktree": true,
+  "native_format": "owned-candidate-14",
+  "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture",
+  "scope": "Debug native HTTP; 4 MiB cache; logical clock; old servers stopped before takeover. Real B2 and versioned MinIO, not AWS, physical timing, sustained load or an SLO.",
+  "results": [
+    {
+      "provider": "B2",
+      "test": {
+        "admission_bytes_per_write": [
+          428,
+          500
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 47579.95248,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 10477.480731,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-028e9bdd-4ac4-49c7-a706-e67cbab4f68e",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "b2",
+        "refusal_and_retry_immutable_puts": 0,
+        "retained_receipt_rewrite_bytes": 72,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 16.005566846,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 928
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 928
+          }
+        },
+        "total_seconds": 145.466956609,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.402026,
+          "p95": 1.4635239999999998,
+          "p99": 1.58365
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 18
+      }
+    },
+    {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "admission_bytes_per_write": [
+          428,
+          500
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 60388.936434999996,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 128.802466,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-7218c054-c592-45ce-bfb5-898165a41fc3",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "s3",
+        "refusal_and_retry_immutable_puts": 0,
+        "retained_receipt_rewrite_bytes": 72,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 0.283767022,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 928
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 928
+          }
+        },
+        "total_seconds": 121.550072568,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.387087,
+          "p95": 1.4371239999999998,
+          "p99": 1.729915
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 27,
+        "container_removed": true
+      }
+    }
+  ],
+  "change": {
+    "runtime_net_rust_lines": 18,
+    "accounting": "Before first dirtying a checkpoint, include the complete base receipt row window in the existing atomic write-admission charge. Once a committed write dirties the database, later writes pay direct contributions only until the next checkpoint. Concurrent first changes can overcharge; no refunds.",
+    "extra_provider_calls_or_allocations_for_receipt_pricing": 0,
+    "new_ledgers": 0,
+    "fresh_native_namespace_required": true,
+    "cli_engine_unchanged": true,
+    "deleted": [
+      "Superseded checkpoint-omission negative control/config (replaced with retained-receipt omission)",
+      "Duplicated test code for measuring encoded row bytes",
+      "Outdated comment claiming recovery is not yet used by HTTP serving"
+    ]
+  },
+  "local_checks": {
+    "rust": {
+      "command": "cargo test --locked --all-targets -- --skip ten_thousand_databases_split_page_recover_and_collect",
+      "passed": 283,
+      "capacity_test": "Required in release CI"
+    },
+    "fmt": "passed",
+    "clippy": "cargo clippy --locked --all-targets -- -D warnings passed",
+    "native_client": {
+      "passed": 99,
+      "skipped": 1,
+      "seconds": 28.89
+    },
+    "encoder": "Cold checkpoint receipts price exactly against actual encoded data; no pricing reads; dirty state returns zero additional base cost; checkpoint resets it; expired receipts remain conservatively charged.",
+    "tcp": "New-row-only allowance refuses before PUT/allocation; exact 70-byte base receipt increment admits; following dirty write succeeds with exactly its 420-byte direct contribution.",
+    "rust_negative_control": "Omitting retained-receipt credit fails the TCP budget boundary (exit 101)."
+  },
+  "models": {
+    "TenantAdmission": {
+      "distinct_states": 5776,
+      "generated_states": 24321,
+      "depth": 21,
+      "reported_seconds": 0,
+      "negative_controls": 3,
+      "scope": "First change to a checkpointed database: two names, one process/grant/request per name, two abstract units (direct work and retained receipts). Atomic scope/directory replacement assumed. Does not model repeated checkpoint cycles, byte encoding, later dirty writes or prove Rust refinement. Separate implementation tests guard these cases."
+    }
+  },
+  "remaining_gates": [
+    "Tenant attribution for unchanged rows copied from shared tables (including neighbors\u2019 receipts), block/index/manifest overhead, metadata, retries and recovery; request/control/egress budgets and fairness.",
+    "Physical ownership timing and native CLI cutover.",
+    "Durable snapshot/backup retention and large-image cleanup throughput.",
+    "Production operating envelope, sustained performance/failure qualification and AWS validation."
+  ]
+}
