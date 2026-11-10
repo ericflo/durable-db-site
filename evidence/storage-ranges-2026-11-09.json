@@ -158,5 +158,15 @@
     ".tools/storage-ranges-s3.log": "86f084347a3f7eb5749139f78055d998f0532097030be938e27742f763cb5031",
     ".tools/storage-ranges-b2-cleanup.log": "c244079342571538abfee881bc36785d5002aecd18ffdba90bd8378e37ff2084",
     ".tools/storage-ranges-s3-cleanup.json": "2eb8c0d8186668fe85d30502d3cc974c51ed0241e2927a68284a9f07a2a0dbb1"
+  },
+  "qualification": {
+    "source_commit": "1a0b958040b3c9b3a5fd0729cef7647eab31da5e",
+    "woodpecker": {
+      "pipeline": 69,
+      "status": "success"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "public_source_marker_matches_commit": true,
+    "pages_verification_sha256": "10f17799ca5a6c821d6ab361b8560c14cd528a8e19b86a15cfa716fec405d54c"
   }
 }

@@ -1,0 +1,222 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T04:37:56.217429+00:00",
+  "base_commit": "1a0b958040b3c9b3a5fd0729cef7647eab31da5e",
+  "status": "External immutable references and a real indexed B2/MinIO prototype; not production serving qualification",
+  "format": {
+    "record": "DDBFILE2",
+    "old_inline_record_rejected": true,
+    "maximum_blob_bytes": 67108864,
+    "reference_bytes": 56,
+    "maximum_range_response_bytes": 8388608,
+    "fresh_physical_namespace": "tables/",
+    "unknown_uploads_return_no_reference": true,
+    "physical_delete_implemented": false
+  },
+  "model": {
+    "module": "ExternalFiles",
+    "objects": 3,
+    "values": 2,
+    "names": 2,
+    "distinct_states": 1393,
+    "generated_states": 14427,
+    "depth": 12,
+    "unsafe_controls": [
+      "early reference publication loses required physical bytes",
+      "reused physical identity changes bytes behind a published reference"
+    ],
+    "coverage": [
+      "unconfirmed unreferenced upload can arrive"
+    ],
+    "unbounded_proof": false
+  },
+  "validation": {
+    "main_compiler": "Rust 1.90 via kache",
+    "rust_tests_passed": 199,
+    "opt_in_tests_ignored": 10,
+    "capacity_filtered_in_debug": 1,
+    "release_capacity_databases": 10005,
+    "release_capacity_seconds": 82.8,
+    "new_tests": 3,
+    "extended_collection_test_passed": true,
+    "main_clippy_all_targets_warnings_denied": true,
+    "experiment_compiler": "Rust 1.91.1 via kache",
+    "experiment_clippy_all_targets_warnings_denied": true,
+    "experiment_adapter_test_passed": true,
+    "snapshot_contract_regression_passed": true
+  },
+  "cloud": {
+    "execution": "Manual debug-build fixture, not the Woodpecker server test target",
+    "b2": {
+      "application_phase_control_calls": 0,
+      "batch_records": 128,
+      "block_cache_capacity_bytes": 8388608,
+      "build": "debug",
+      "cold_reopens": 2,
+      "durable_batch_latency_ms_samples": [
+        424.149849,
+        432.14175700000004,
+        106.94366099999999,
+        87.176723,
+        74.769532,
+        319.06054,
+        150.668178,
+        80.310598
+      ],
+      "external_file_threshold_bytes": 262144,
+      "first_journal_frames": 15,
+      "first_namespace_usage": {
+        "external_bytes": 1100152,
+        "external_files": 1,
+        "logical_files": 15,
+        "resident_name_payload_bytes": 1111382
+      },
+      "grouped_admission_concurrency": 16,
+      "grouped_durable_ms": 399.237803,
+      "grouped_logical_puts": 1,
+      "grouped_writes": 32,
+      "key_prefixes": 16,
+      "keys": 1024,
+      "late_manifest_upload_excluded": true,
+      "logical_store_operations": {
+        "external_reads": 688,
+        "external_uploads": 1,
+        "get_calls": 746,
+        "injected_lost_replies": 4,
+        "list_calls": 3,
+        "mutation_attempts": 24,
+        "put_payload_bytes": 2214868
+      },
+      "namespace": "owned-index-d5098681-85a1-4dd7-a8f4-f7b878039e5b",
+      "ordered_scan_rows": 1024,
+      "overwrite_and_delete_recovered": true,
+      "provider": "b2",
+      "rust": "rustc 1.91.1 (ed61e7d7e 2025-11-07)",
+      "scope": "External-file index integration with actual provider bytes and selected root catalogs; stopped writers and deterministic clocks, no concurrent ownership or serving qualification",
+      "slatedb": "0.18.1",
+      "value_bytes": 1024,
+      "warm_read_total_ms": 24.605207,
+      "warm_reads": 2000,
+      "warm_reads_additional_index_store_calls": 0,
+      "warm_table_read_total_ms": 78.771383,
+      "warm_table_reads": 2000,
+      "warm_table_reads_additional_store_calls": 0
+    },
+    "versioned_minio": {
+      "application_phase_control_calls": 0,
+      "batch_records": 128,
+      "block_cache_capacity_bytes": 8388608,
+      "build": "debug",
+      "cold_reopens": 2,
+      "durable_batch_latency_ms_samples": [
+        25.200236,
+        30.928826,
+        26.173946,
+        27.970829,
+        34.339669,
+        28.366317,
+        28.475193,
+        25.752509
+      ],
+      "external_file_threshold_bytes": 262144,
+      "first_journal_frames": 15,
+      "first_namespace_usage": {
+        "external_bytes": 1100152,
+        "external_files": 1,
+        "logical_files": 15,
+        "resident_name_payload_bytes": 1111382
+      },
+      "grouped_admission_concurrency": 16,
+      "grouped_durable_ms": 14.417646,
+      "grouped_logical_puts": 1,
+      "grouped_writes": 32,
+      "key_prefixes": 16,
+      "keys": 1024,
+      "late_manifest_upload_excluded": true,
+      "logical_store_operations": {
+        "external_reads": 688,
+        "external_uploads": 1,
+        "get_calls": 746,
+        "injected_lost_replies": 4,
+        "list_calls": 3,
+        "mutation_attempts": 24,
+        "put_payload_bytes": 2214868
+      },
+      "namespace": "owned-index-9f9d85c1-ec76-4d66-8576-70647d25faf8",
+      "ordered_scan_rows": 1024,
+      "overwrite_and_delete_recovered": true,
+      "provider": "s3",
+      "rust": "rustc 1.91.1 (ed61e7d7e 2025-11-07)",
+      "scope": "External-file index integration with actual provider bytes and selected root catalogs; stopped writers and deterministic clocks, no concurrent ownership or serving qualification",
+      "slatedb": "0.18.1",
+      "value_bytes": 1024,
+      "warm_read_total_ms": 36.595927,
+      "warm_reads": 2000,
+      "warm_reads_additional_index_store_calls": 0,
+      "warm_table_read_total_ms": 117.309947,
+      "warm_table_reads": 2000,
+      "warm_table_reads_additional_store_calls": 0
+    },
+    "placement": {
+      "b2": "Development host over Internet to B2; region not recorded",
+      "minio": "Loopback Docker, 2 CPU/512 MiB; not AWS"
+    }
+  },
+  "cleanup": {
+    "b2_bucket_removed": true,
+    "b2_key_revoked": true,
+    "b2_physical_versions_removed": 35,
+    "minio": {
+      "bucket_removed": true,
+      "physical_versions_deleted": 46
+    }
+  },
+  "limitations": [
+    "The finite model assumes unique identities and atomic immutable uploads; no Rust refinement or composition/liveness theorem",
+    "No physical collector is active; checkpoint, orphan and retained-reference reclamation remain open",
+    "References do not reserve global/tenant physical credit themselves; the production controller must admit and retain charges for uncertain uploads",
+    "Partial reads require index block integrity; only complete bounded blob reads verify the full SHA-256 digest",
+    "The 8 MiB cache setting is weighted entry capacity, not whole-process RSS; namespaces, buffers and concurrent callers need aggregate admission",
+    "Deterministic clocks and stopped writers do not qualify live ownership, autoscaling or a production timing contract",
+    "No serving API, tenant lifecycle, transaction-receipt composition or production dependency/toolchain adoption",
+    "Small debug timing samples do not establish sustained throughput or latency percentiles; MinIO is not AWS",
+    "The experimental payload encoding changes without a mixed-format migration path; use fresh buckets"
+  ],
+  "source_sha256": {
+    "Dockerfile": "dd52a3020723a8b178179b5299a772379d995fba36933601f251867983663f7b",
+    "experiments/slatedb-contract/Cargo.lock": "a18c798046d6c5a8cc6ea8e5b23da73fa0f85b568c0fa1260de4f82f42c64a6e",
+    "experiments/slatedb-contract/Cargo.toml": "17e6425f7c0e9733a2a3389800db3391c37332d58db178755847e35b233fc202",
+    "experiments/slatedb-contract/README.md": "4eb0952c20079bf9477bc2dec4a5b06debc9600bd84f7ab301b6f0eafe7680a8",
+    "experiments/slatedb-contract/build.rs": "9a2f82de71da5a3c21a008a6d4c6f9914aa1971dcebd59817b86e32b076ed475",
+    "experiments/slatedb-contract/src/bin/owned_index/main.rs": "fddb9c4039f88d67759f4fbbaf0183ecf5a6eb2c6874ccaf77acc3b345657429",
+    "experiments/slatedb-contract/src/bin/owned_index/store.rs": "9c9e915d634b6360505f54e857fbf3c86470abcfad0752be44c575d8774fb7ae",
+    "experiments/slatedb-contract/src/main.rs": "fae19c6a4d41d5b4d0ab37c1517b7e72e0a980f1e20645f910499332fa8a9247",
+    "spec/ExternalFiles.cfg": "f6beec705f18563593d74d82cca2a82ab01d49fb0d3076efae6d7798e9d4345a",
+    "spec/ExternalFiles.checks": "ab690de684202f975d2587855ed1f22cccad7a27b958262f403cb23e623e1c73",
+    "spec/ExternalFiles.tla": "fdb5ad1c7dec8960a31be05ce20a7bed2705d9ceda324d3cf813755479613efa",
+    "spec/ExternalFilesLate.cfg": "705959fbed785dce5aa152058e7a2a3ef1f9bcb655d8bea5739aceb512865f36",
+    "spec/ExternalFilesUnsafeEarly.cfg": "8c177686eb908e4c0cd2f8582283fe7d4748a6546a39ffee194d2ba7471bcd38",
+    "spec/ExternalFilesUnsafeReuse.cfg": "59363e3ef10d0fff40bbec5190717ae67ce3409891202d3738bbf650ad61c4df",
+    "src/owned_files/blob.rs": "9bc53d756b2b479538ca6cf0c0e68eaccbac0c29c28ad30f6cfa2c8152b75b63",
+    "src/owned_files/mod.rs": "4c42b0595ff312aa3cbb8224782676945867ec2b66bbd1d1a7333c352b0ae26d",
+    "src/owned_files/record.rs": "2e80dea096a7316abb974b2e7fd23a3a99b37256258cf2fbecdfbb511faca246",
+    "src/owned_files/tests.rs": "55dff25e16300d0f2ebc19b7a042f385d69a51a918305e1ae939b63fc33ed880",
+    "src/ownership/root/tests/owned_files.rs": "0fe1cdb5862008fa9c97054d5e11b20a0e3fad945115c66b226a76736c653a88",
+    "src/storage.rs": "b76f78231f2a7e9f423467d6b24e2b921dc71ab7bdca948591938e435fab7b84",
+    "tests/upload_budget.rs": "a0abc514be1a87985551bfce5940955cdc6e5dfa536b082808811d87dbdc6405"
+  },
+  "local_log_sha256": {
+    ".tools/external-files-clippy.log": "b2c04482cdae9113e1b7ddbe0ed8fd8b69577959201b6e44086ad64091ed0af7",
+    ".tools/external-files-suite.log": "b39880b3e39c634e6a50898b053017a273c352e5e1b64ef415a1844614f17535",
+    ".tools/external-files-capacity.log": "3a20207dce85cfc5300066905470abbf671bd09ef32f5411c3a9e0e35fcd294a",
+    ".tools/external-files-collection.log": "723f02bca262b2e68f0fd1473b336c36a2ca637c2295db987bf2219ae762ee5f",
+    ".tools/external-files-model.log": "c193db64c016c23658fa2977d44ede87994867063b59b616c02bdf3bb6ec74c7",
+    ".tools/external-index-clippy.log": "3515f0257a4855510ee615f3f342b2515b2ef05b4acbdec3f59d6644912c8af3",
+    ".tools/external-index-tests.log": "15098c8694f228eae658b4c8ab8c43b99c9ce9d82fb6fd3319ab78ab281a7f1b",
+    ".tools/external-index-b2.log": "169115694e8f24eae7ba7a2406b7c88b9d8308fd745a0ae4a87e36694dbcde30",
+    ".tools/external-index-s3.log": "4089450aaf509afb3c9a8c34b57a6b7125d3f150ef7aa267712fab671d02b560",
+    ".tools/external-index-b2-cleanup.log": "e1c9cf5dbd2826c724aa0c8f93fba60f99e42c85cafcfaefb88bd16694576b4b",
+    ".tools/external-index-s3-cleanup.json": "2c34819dadd5ff0b10d946fe0d123e688cce964093792b09ba4a7d522f63242f",
+    ".tools/external-index-snapshot-regression.log": "8de2a0c04414dd898d934a7c72dd8915f2e3ac3ce84b6b73fa8974f74968a2b8"
+  }
+}
