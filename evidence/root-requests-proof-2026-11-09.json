@@ -402,8 +402,14 @@
     }
   ],
   "qualification": {
-    "status": "pending",
-    "reason": "The complete revised proof and all four unsafe controls pass locally and on the CI builder; complete Woodpecker qualification and Pages publication remain required."
+    "source_commit": "903fdc73e1c29dad373479be80ce28b2e98b6649",
+    "woodpecker": {
+      "pipeline": 58,
+      "status": "success",
+      "build_log_sha256": "d79ea2a12ac047ab17de067443cb62ca5f98a76e0e20474011c96178dfec9efa"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "3ae2470d66d2c44fe145afcd72c9769a3b0773b7c5e29110e12f8f75138294ae"
   },
   "builder_preflight": {
     "status": "success",

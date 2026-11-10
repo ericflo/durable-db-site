@@ -102,7 +102,13 @@
     "tlaps_archive_sha256": "fa6d537fb62f8526e7dd0d716c88e3d18931cc5c6b5d9ba1949afdb8096fb758"
   },
   "qualification": {
-    "status": "pending",
-    "reason": "Local validation is recorded; a subsequent complete Woodpecker run must qualify this new Rust component."
+    "source_commit": "903fdc73e1c29dad373479be80ce28b2e98b6649",
+    "woodpecker": {
+      "pipeline": 58,
+      "status": "success",
+      "build_log_sha256": "d79ea2a12ac047ab17de067443cb62ca5f98a76e0e20474011c96178dfec9efa"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "3ae2470d66d2c44fe145afcd72c9769a3b0773b7c5e29110e12f8f75138294ae"
   }
 }

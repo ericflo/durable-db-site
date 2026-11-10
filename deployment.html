@@ -18,6 +18,35 @@ durable-db serve --data ./data
 <p>The multi-process integration test (<code>scripts/test-process-scaling.py</code>) exercised 1→3→1 servers, SIGKILL, and cache-free restart against B2 and versioned MinIO: all 36 writes survived. The format-3 B2 rerun included more than 70 databases with concurrent maintenance.</p>
 <p><code>scripts/test-kubernetes.py</code> passed against real B2 using the Woodpecker-built image: HPA bounds changed 1→3→1, all 36 writes were retained, and forced deletion of the last pod recovered with fresh disposable caches. This tests the HPA controller responding to bounds, not CPU load. The qualification cluster lacked a working resource-metrics API; CPU-triggered scaling, node drains, and partitions remain separate qualification work. The script records HPA conditions so that distinction stays visible.</p>
 <p>Use a registry address reachable by the <strong>nodes’ container runtime</strong>, not just by pods. For example, a build may push through a cluster DNS service while the nodes pull the same registry through a configured NodePort alias. The qualification run used this arrangement; it did not modify cluster-wide registry or metrics settings.</p>
+<h2 id="request-budgets">Request budgets</h2>
+<p>Current source builds expose two per-principal, per-pod overload settings:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Environment variable</th>
+<th>Default</th>
+<th>Accepted range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--request-units-per-second</code></td>
+<td><code>DURABLE_DB_REQUEST_UNITS_PER_SECOND</code></td>
+<td>20</td>
+<td>1–1,000,000</td>
+</tr>
+<tr>
+<td><code>--request-burst-units</code></td>
+<td><code>DURABLE_DB_REQUEST_BURST_UNITS</code></td>
+<td>40</td>
+<td>5–1,000,000</td>
+</tr>
+</tbody>
+</table>
+<p>A commit attempt costs five units; other authenticated requests cost one. A new principal starts with the burst allowance, which refills continuously up to that ceiling. With defaults, an otherwise idle principal can attempt eight commits immediately and sustain at most four per second. Mixed requests share the same budget. Raising concurrency alone does not raise this ceiling.</p>
+<p>All tokens for one database share its budget. All administrator credentials share one administrator budget across databases; metrics-only credentials have their own budget. Applications should use database-scoped credentials. Rate or concurrency rejection returns HTTP 429 before the handler runs; clients should back off. Invalid configuration fails before storage initialization.</p>
+<p>Choose these settings alongside concurrency, memory and measured provider capacity, and keep them consistent across the pod template. They are policy limits, not measured database throughput. Scaling and process restarts create additional initial allowances; these transient limits do not replace durable quotas or cluster-wide spending controls. See <a href="security.html">security</a>.</p>
 <h2 id="signing-key-changes">Signing-key changes</h2>
 <p>Current source builds read either the original hex key file or a bounded JSON keyring through the same <code>--admin-key-file</code> setting. Follow the <a href="design-signing-rotation.html">expansion, promotion, and retirement procedure</a>. Key files are loaded at startup: update the Secret and complete the corresponding rolling restart, including the template used by new autoscaled pods. A still-serving process outside the current control-plane view must be fenced from clients or included in the completion check. Keep the old key trusted during an availability rollback; a compromised or deliberately retired key must not be reintroduced by restoring an old Secret.</p>
 <p>For isolated qualification on an existing cluster, <code>scripts/qualify-multinode.py</code> creates a fresh namespace with explicit CPU/memory/pod quotas, private fixture Secrets, an authenticated control channel, and only namespace-scoped faults. It never drains or reboots nodes. Supply a dedicated disposable provider configuration and an image reference supported by the nodes’ container runtime, pinned by digest; a registry address usable inside pods may not be a valid host pull address. The script deletes its own namespace on exit; its caller must remove the disposable provider bucket and key. <code>scripts/check-autoscaling-history.py</code> checks its resulting append history.</p>

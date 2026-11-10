@@ -66,6 +66,7 @@
 </tbody>
 </table>
 <p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
+<p>Authenticated requests share a weighted <a href="deployment.html#request-budgets">request budget</a> per principal and pod. Commits cost five units; other requests cost one. Default refill is 20 units/second with a burst of 40. HTTP 429 means admission rejected the request before its handler ran; back off before retrying. These configurable policy limits are separate from database quotas and measured engine capacity.</p>
 <h2 id="create-a-protected-database">Create a protected database</h2>
 <p>Use <code>PUT /v1/databases/{db}</code> with an administrator credential:</p>
 <pre><code class="language-json">{

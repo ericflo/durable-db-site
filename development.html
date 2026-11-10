@@ -11,6 +11,7 @@ cargo test --locked --release --test publication ten_thousand_databases_split_pa
 scripts/check-model.sh
 scripts/check-proof.sh
 </code></pre>
+<p>The backup recovery fixture uses a larger bounded request budget so its 16,641-key interrupted restore tests recovery rather than waiting for the default four-commit-per-second allowance. Admission tests retain default-policy coverage and use a controlled clock for exact refill and eviction checks.</p>
 <p>The two Rust test commands match Woodpecker: run the capacity regression in release mode instead of paying for its large directory sweep in debug mode. Both commands are required for the complete suite.</p>
 <p>The model command checks every current-engine model and its required controls. The proof command above checks abstract publication safety; journal and research proofs have separate commands below. These checks do not establish that the Rust implementation refines the models. See <a href="verification.html">verification</a> for each theorem’s assumptions and scope.</p>
 <h2 id="work-on-one-component">Work on one component</h2>
@@ -23,6 +24,10 @@ scripts/check-proof.sh
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>HTTP admission</td>
+<td><code>cargo test --locked --lib api::rate</code>, <code>cargo test --locked --test http</code> and <code>scripts/check-model.sh RequestBudget</code></td>
+</tr>
 <tr>
 <td>Transaction validator</td>
 <td><code>cargo test --locked --lib transactions::validation</code> and <code>scripts/check-model.sh TransactionValidation</code></td>
