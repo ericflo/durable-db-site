@@ -682,5 +682,196 @@
       "clippy_all_targets": "pass"
     },
     "cleanup": "Disposable VM containers, sockets, disks and initramfs removed by the harness; kernel/image retained as build cache. Development host kernel and sleep settings unchanged."
+  },
+  "reported_error_bounds": {
+    "recorded_at": "2026-11-10T23:25:45.802760+00:00",
+    "source_base_commit": "70c9bcca876abe63081d2bddab44016f2a05657e",
+    "status": "REJECTED for the available VMClock platform: no calibrated counter or reported maximum errors. No production clock adapter or physical profile selected.",
+    "contract": {
+      "sample_error": "Each accepted integer timestamp is within A of a continuous reference clock. A includes calibration, accumulated counter-rate error, sampling and rounding.",
+      "elapsed_error": "E = 2*A covers both endpoints without rate scaling and satisfies the existing [t-E, 2*t+E] contract.",
+      "additional_obligations": [
+        "Coherent hardware counter/calibration sampling and outward-rounded arithmetic",
+        "Per-read uncertainty ceiling, backwards retirement, incarnation and disruption checks",
+        "Qualified host/hypervisor guarantees through pause, suspend, migration and cloning",
+        "Authenticated common profile, serving/placement composition and performance qualification"
+      ]
+    },
+    "vm_probe": {
+      "kind": "finite VM clock boundary experiment; not production qualification",
+      "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+      "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
+      "test_binary_sha256": null,
+      "kernel_sha256": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
+      "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device",
+      "kernel_profile": "stock",
+      "mode": "capabilities",
+      "runs": [
+        {
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          },
+          "header_hex": "56434c4b001000000100ff0002000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "size": 4096,
+          "flags": 0,
+          "counter_id": 255,
+          "time_type": 0,
+          "clock_status": 0,
+          "disruption_marker": 1,
+          "counter_period_shift": 0,
+          "counter_period_frac_sec": 0,
+          "counter_period_maxerror_rate_frac_sec": null,
+          "time_maxerror_nanosec": null,
+          "vm_generation_counter": null,
+          "missing_requirements": [
+            "no_supported_counter",
+            "no_tai_time",
+            "clock_not_reliable",
+            "missing_max_rate_error",
+            "missing_max_time_error",
+            "invalid_counter_period",
+            "missing_generation_counter"
+          ],
+          "requirements_present": false,
+          "qualified_for_serving": false
+        }
+      ]
+    },
+    "development_host_probe": {
+      "device": "/dev/vmclock0",
+      "unavailable": "[Errno 2] No such file or directory: '/dev/vmclock0'",
+      "requirements_present": false,
+      "qualified_for_serving": false
+    },
+    "cluster_inventory": {
+      "scope": "Read-only inventory; NIC PHC presence does not establish synchronization or conservative error bounds",
+      "hosts": [
+        {
+          "node": "epsilon-1",
+          "kernel": "6.8.0-149-generic",
+          "vmclock_devices": [],
+          "ptp_devices": [
+            {
+              "device": "/dev/ptp1",
+              "name": "i40e"
+            },
+            {
+              "device": "/dev/ptp0",
+              "name": "i40e"
+            }
+          ],
+          "clocksource": "tsc",
+          "power_states": "freeze mem disk"
+        },
+        {
+          "node": "epsilon-2",
+          "kernel": "6.8.0-149-generic",
+          "vmclock_devices": [],
+          "ptp_devices": [
+            {
+              "device": "/dev/ptp1",
+              "name": "i40e"
+            },
+            {
+              "device": "/dev/ptp0",
+              "name": "i40e"
+            }
+          ],
+          "clocksource": "tsc",
+          "power_states": "freeze mem disk"
+        },
+        {
+          "node": "epsilon-3",
+          "kernel": "6.8.0-149-generic",
+          "vmclock_devices": [],
+          "ptp_devices": [
+            {
+              "device": "/dev/ptp1",
+              "name": "i40e"
+            },
+            {
+              "device": "/dev/ptp0",
+              "name": "i40e"
+            }
+          ],
+          "clocksource": "tsc",
+          "power_states": "freeze mem disk"
+        }
+      ]
+    },
+    "existing_probe_regression": {
+      "kind": "finite VM clock boundary experiment; not production qualification",
+      "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+      "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
+      "test_binary_sha256": "6e8bb10a00f2e0bcfcd8a17e4811670982ebf8b28775bee8fd6863f7beee331a",
+      "kernel_sha256": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
+      "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
+      "kernel_profile": "stock",
+      "mode": "clock-intervals",
+      "runs": [
+        {
+          "guest": "READY 6.18.60-0-virt tsc",
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          },
+          "samples": [
+            {
+              "mode": "baseline",
+              "iteration": 1,
+              "host_ns": 3006937012,
+              "guest_boottime_ns": 3006957598,
+              "guest_monotonic_ns": 3006954438,
+              "guest_realtime_ns": 3006954378,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 4510436397,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            }
+          ]
+        }
+      ]
+    },
+    "checks": {
+      "tlaps_strict_fresh_obligations": 21,
+      "negative_controls": [
+        "single-endpoint error rejected",
+        "short drain margin rejected",
+        "missing child margin rejected"
+      ],
+      "capability_tests": 3,
+      "capability_seconds_no_rust_build": 2.27,
+      "unsafe_missing_validity_flag_control": "fails required zero-versus-missing-bound test",
+      "focused_timing_tests": 9,
+      "physical_process_tests": 3,
+      "physical_process_seconds": 8.33,
+      "rust_tests_passed": 288,
+      "rust_capacity_regression": "unchanged Rust; optimized 10,005-database check is required by Woodpecker",
+      "fmt": "pass",
+      "clippy_all_targets": "pass"
+    },
+    "source_sha256": {
+      "spec/candidates/GrantBounds.tla": "ad8d275a41f589bd107b625788e3b27a6fb259b4a011ef5d5b667d3afb8ba309",
+      "spec/candidates/GrantBoundsProof.tla": "2a956abc57baf38b92e5c88897cb30c8372be162000429853c6a43628a7bbbc0",
+      "spec/candidates/GrantBounds.proof": "8f4a1ef4af5a3f1859f770a6f353d00238ab388e19204d76e6d9b61e091d40d3",
+      "scripts/check-vm-clock.py": "3514c960f5d74cad5fc53539bcc7b0a2e54c41330f0d12858afd884d91c06c83",
+      "scripts/test-vm-clock.py": "62d16a6718c2de35cc6164bfb159541cc7843ac045ddda7914f16e579a2d05a8",
+      "Dockerfile": "0c9bdcc9bb723fd2c0c12c641766e83862998617591aec4a34ae3d9fbfd32f8e"
+    },
+    "proof_log_sha256": "58b1e6bd7e0eb71df3c98ca6cc45dfe7cd12774c974ad42c51130cd23c291162",
+    "cleanup": "Disposable VM containers, sockets, disks, sampled header and initramfs removed by the harness. Host and cluster inventory was read-only; no clocks, services, kernels or cluster settings changed. Reusable VM images retained.",
+    "limitations": "Capability inspection never qualifies serving, even for a synthetic complete header. NIC PTP device names are not synchronization/error-bound evidence. No production/runtime/storage-format change; no new binary release."
   }
 }
