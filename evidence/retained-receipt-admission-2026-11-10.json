@@ -210,5 +210,106 @@
     "Physical ownership timing and native CLI cutover.",
     "Durable snapshot/backup retention and large-image cleanup throughput.",
     "Production operating envelope, sustained performance/failure qualification and AWS validation."
-  ]
+  ],
+  "release": {
+    "source_commit": "c759469c79907a6127c320f9976136a9a767c110",
+    "woodpecker_pipeline": 130,
+    "artifact_image_digest": "sha256:18c50c1f5d97647f330f7a942ada2a68fec9cc307f31b3f9495ae250ed70ac3e",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.7.0",
+      "archive_sha256": "a2a373921c431ac9148689b6f03d9d30b4daceb534dc262092e4b309902bbcf1",
+      "binary_sha256": "26a1609f03c1a3ce55e44c4edd6d123b1d514904f518f878f4b2a4c7f6fd8a7e",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 5688315,
+    "version": "v0.7.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 130,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/130/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1,
+      "woodpecker_seconds": 74.31,
+      "local_ci_mode_seconds": 28.89,
+      "deadline_seconds": 90
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.7.0",
+    "published_at": "2026-11-10T21:03:16Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.7.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "scope": "Experimental admission for new rows and the first dirtying of a retained receipt window; native format owned-candidate-14 requires a fresh namespace. CLI unchanged. Shared-table copies, overhead, retries/recovery, physical timing, durable retention and large-image cleanup remain open.",
+    "tag_pipeline": {
+      "pipeline": 131,
+      "status": "success"
+    }
+  },
+  "ci_build_change": {
+    "exit_code": 0,
+    "seconds": 495.739583842922,
+    "client_image": "docker.io/moby/buildkit:v0.34.2-rootless@sha256:c8252268760e1baba80780d63d738ef9f260fb7c7c0973c78494cb9ddd99eda1",
+    "source_commit": "c759469c79907a6127c320f9976136a9a767c110",
+    "change": "Run the capacity regression on x86_64-unknown-linux-musl; remove the separate optimized GNU target build.",
+    "capacity_test_passed": true,
+    "capacity_target": "x86_64-unknown-linux-musl",
+    "capacity_test_seconds": 220.46,
+    "release_test_build_seconds": 166,
+    "following_release_binary_build_seconds": 0.28,
+    "binary_sha256": "26a1609f03c1a3ce55e44c4edd6d123b1d514904f518f878f4b2a4c7f6fd8a7e",
+    "byte_identical_to_published_release": true,
+    "original_ci": {
+      "pipeline": 130,
+      "gnu_release_test_build_seconds": 114,
+      "gnu_capacity_test_seconds": 184.63,
+      "musl_release_binary_build_seconds": 106
+    },
+    "scope": "Same committed source and remote builder, with one command change. Cache state and concurrent load differ; timings are not a controlled end-to-end speedup claim. Existing fmt, clippy and Rust tests ran unchanged; no gate removed."
+  }
 }

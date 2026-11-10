@@ -277,6 +277,10 @@
       "installed_binary_matches_smoke_test": true,
       "temporary_installation_removed": true
     },
-    "scope": "Experimental direct checkpoint-row admission; native format owned-candidate-13 requires a fresh namespace. CLI unchanged. Retained receipts, shared maintenance, physical timing, durable retention and large-image cleanup qualification remain open."
+    "scope": "Experimental direct checkpoint-row admission; native format owned-candidate-13 requires a fresh namespace. CLI unchanged. Retained receipts, shared maintenance, physical timing, durable retention and large-image cleanup qualification remain open.",
+    "tag_pipeline": {
+      "pipeline": 129,
+      "status": "success"
+    }
   }
 }
