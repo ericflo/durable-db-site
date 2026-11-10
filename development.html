@@ -41,6 +41,10 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib index::recovery::checkpoint::snapshot</code> and <code>scripts/check-model.sh CheckpointRead</code></td>
 </tr>
 <tr>
+<td>Checkpoint/suffix composition</td>
+<td><code>cargo test --locked --lib checkpoint</code> and <code>scripts/check-model.sh CheckpointOverlay</code></td>
+</tr>
+<tr>
 <td>Native memory and recovery</td>
 <td><code>cargo test --locked --lib index::memory</code>, <code>cargo test --locked --lib ownership::root::tests::transactions</code>, <code>scripts/check-model.sh MemoryIndex</code> and <code>scripts/check-model.sh TransactionRecovery</code></td>
 </tr>
@@ -172,5 +176,5 @@ npm --prefix site audit
 <p>For checkpoint composition, use the same disposable provider environment, set <code>DURABLE_DB_CHECKPOINT_REPORT</code>, and run:</p>
 <pre><code class="language-sh">cargo test --locked --test checkpoint_cloud -- --ignored --exact native_checkpoints_recover_selected_suffix_across_complete_reopen
 </code></pre>
-<p>This initializes <code>owned-candidate-4</code>, writes 1,024 database generations, checkpoints the first 16 selected frames, removes those covered fixture frames, and reconstructs through a fresh provider connection and controller. It checks nine suffix frames, retained receipts, excluded late old-owner data and zero control calls during reconstruction. Before eager recovery it also checks lazy checkpoint point reads, ordered scans and receipt resolution, including 1,000 warmed iterations with zero provider calls and all 1,024 databases at their checkpoint revision. Its timing samples use a debug build; they are not serving SLOs. It uses injected clocks and stops writers before takeover; it does not qualify physical lease safety, the serving API, automatic collection or AWS. Delete all physical versions and the dedicated bucket and revoke temporary credentials after either outcome. Checkpoint construction itself performs no cleanup.</p>
+<p>This initializes <code>owned-candidate-4</code>, writes 1,024 database generations, checkpoints the first 16 selected frames, removes those covered fixture frames, and reconstructs through a fresh provider connection and controller. It checks nine suffix frames, retained receipts, excluded late old-owner data and zero control calls during reconstruction. Before suffix recovery it also checks lazy checkpoint point reads, ordered scans and receipt resolution, including 1,000 warmed iterations with zero provider calls and all 1,024 databases at their checkpoint revision. It rewrites the combined image and reopens it with every resident limit set to one, checking all 1,024 database generations without resident rows or receipts. Its timing samples use a debug build; they are not serving SLOs. It uses injected clocks and stops writers before takeover; it does not qualify physical lease safety, the serving API, automatic collection or AWS. Delete all physical versions and the dedicated bucket and revoke temporary credentials after either outcome. Checkpoint construction itself performs no cleanup.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>
