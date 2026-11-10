@@ -33,6 +33,10 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib transactions::validation</code> and <code>scripts/check-model.sh TransactionValidation</code></td>
 </tr>
 <tr>
+<td>Native memory and recovery</td>
+<td><code>cargo test --locked --lib index::memory</code>, <code>cargo test --locked --lib ownership::root::tests::transactions</code>, <code>scripts/check-model.sh MemoryIndex</code> and <code>scripts/check-model.sh TransactionRecovery</code></td>
+</tr>
+<tr>
 <td>Native table merging</td>
 <td><code>cargo test --locked --lib index::merge</code> and <code>scripts/check-model.sh TableMerge</code></td>
 </tr>
@@ -139,7 +143,7 @@ cargo test --locked --test journal_cloud -- --ignored --exact journal_reconnect_
 <pre><code class="language-sh">cargo test --locked --test provider_ranges -- --ignored --exact bounded_ranges_of_a_large_immutable_object
 </code></pre>
 <p>It writes one 16 MiB object and verifies five bounded slices, missing/size errors and rejection above the 8 MiB cap. It does not retry an uncertain upload. Delete all versions and revoke the temporary key after either outcome. The <a href="design-owned-partitions.html#historical-third-party-index-integration">retired index evaluation</a> records historical selected-journal and grouped-write evidence.</p>
-<p>For native tables, set <code>DURABLE_DB_TABLE_REPORT</code> and use the same disposable provider environment:</p>
+<p>For native tables and their overlapping snapshot merge, set <code>DURABLE_DB_TABLE_REPORT</code> and use the same disposable provider environment:</p>
 <pre><code class="language-sh">cargo test --locked --test native_tables -- --ignored --exact native_tables_use_bounded_blocks_and_recover_revisioned_ordered_rows
 </code></pre>
 <p>This uploads two immutable objects for 3,072 revisioned rows, checks one-block point reads, bounded caching, ordered scans with deletion markers and cache-free reopening. It does not initialize a serving engine or publish a manifest. Remove both objects’ physical versions and the dedicated bucket, and revoke its temporary key after either outcome. The native index uses the existing Rust toolchain and kache configuration.</p>
