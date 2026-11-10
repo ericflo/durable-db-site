@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-11-10T01:45:53.139236+00:00",
+  "base_commit": "46bec22d4a3315f73412493b2d45889594ff4c73",
+  "status": "Ordered byte replay from complete selected coordinator-journal history; no transaction/view reconstruction or serving adoption",
+  "format": "owned-candidate-3 (unchanged)",
+  "behavior": [
+    "Requires confirmed active ownership to create a cursor",
+    "Checks catalog count before returning frames and canonical consecutive epoch keys while paging",
+    "Replays exact selected prefixes oldest first; late frames beyond a cut remain excluded",
+    "Missing or corrupt history cannot advance the failed read or mark replay complete",
+    "Cursor owns its frame and returns borrowed record views; it reuses one reader budget across journals",
+    "Replay completion is a snapshot fact and can occur after permission expires; final serving authority remains a separate check"
+  ],
+  "bounds": {
+    "queued_catalog_keys": 64,
+    "live_replay_frames_per_cursor": 1,
+    "frame_bytes_max": 4194304,
+    "index_page_bytes_max": 65536,
+    "whole_process_memory_bound": false,
+    "caller_obligations": "Admit cursor count and bound copied/retained application state",
+    "recovery_work": "Still grows with ownership history and selected journal length; no checkpoints or truncation"
+  },
+  "model": {
+    "module": "CatalogReplay",
+    "journals": 3,
+    "frames_per_journal": 2,
+    "initial_cut_combinations": 27,
+    "distinct_states": 2303,
+    "generated_states": 6649,
+    "depth": 11,
+    "negative_controls": [
+      "Skipping selected frames violates CompleteHistory",
+      "Extending a cut with late uploads violates OrderedPrefix",
+      "Reversing epoch order violates OrderedPrefix"
+    ],
+    "coverage": "Complete nonempty selected history",
+    "symmetry_reduction": false,
+    "guided_constraints": false,
+    "unbounded_proof": false,
+    "rust_refinement_proof": false
+  },
+  "tests": {
+    "additional_root_tests": 4,
+    "additional_journal_budget_tests": 1,
+    "total_root_tests": 26,
+    "split_catalog_journals": 130,
+    "cases": [
+      "Incomplete catalog exposes no frames",
+      "Epoch/frame order across ownership changes and exclusion of a late old frame",
+      "Complete immutable replay after ownership expiry does not restore permission",
+      "130 mixed empty/nonempty journals exercise catalog pagination and index splits",
+      "Missing/corrupt selected frame leaves replay incomplete and can be retried after repair",
+      "Checksum-valid noncanonical keys or wrong epochs cannot hide behind a matching entry count",
+      "A retained frame prevents reader reset from obtaining a second allocation slot"
+    ],
+    "http_bindings": [
+      "Native B2 control fixture, in-memory immutable files, ordered empty-journal replay",
+      "S3 HTTP fixture for control and immutable objects; replays first frame and excludes late second frame"
+    ],
+    "rust_tests_passed": 175,
+    "opt_in_ignored": 9,
+    "capacity_filtered_from_debug_suite": 1,
+    "capacity_release_passed": true,
+    "capacity_databases": 10005,
+    "capacity_release_seconds": 83.36,
+    "fmt_passed": true,
+    "clippy_all_targets_warnings_denied": true
+  },
+  "assumptions": [
+    "Complete immutable selected catalogs; their durability and selection discipline are separate obligations",
+    "Durable selected journal frames and exact byte reads",
+    "The root ownership and provider contracts documented for the candidate controller"
+  ],
+  "limitations": [
+    "No transaction evaluation, request-receipt recovery, consistent value view or serving API integration",
+    "No physical clock qualification, automatic election/renewal, placement or routing",
+    "No indexed data checkpoint, historical truncation, collection or physical upload admission",
+    "The model does not establish the storage tree or Rust implementation refinement",
+    "Local and loopback fixtures only; no new cloud benchmark or production-readiness claim",
+    "Current HTTP engine retains conditional read barriers"
+  ],
+  "source_sha256": {
+    "src/ownership/root.rs": "39c14e02d7a3d0adcebc17d3d102c342b7050ce8b537c003dee439bb1964a1ad",
+    "src/ownership/root/catalog.rs": "3686a67f69303d7ede7d48e04d73997e5767f0973f7e483d22058fa1575eb6f8",
+    "src/ownership/root/replay.rs": "e92a469b4b44015f1f363cc537892ae387de8cbd63409e4762ca38a905627b13",
+    "src/ownership/root/tests.rs": "2f0203b7f4555ba7ff9250aba1120ea90db634588da3eae4eb5ec427eabde082",
+    "src/ownership/root/tests/catalog.rs": "99b459104a134b545d90ecb51ce97c6bfa18de33beb8e1137b18f42c6ffeed65",
+    "src/ownership/root/tests/replay.rs": "bc75d18a87d0fd1e113fba269a23992f265dce24f9f76f839e14ab9b61efd003",
+    "src/journal/reader.rs": "046eb48eb784d72def4da81607d807d6a1485bffb972883f72a2f5156fc4413a",
+    "src/journal/tests.rs": "a359f439e0137bc00cf30cc672ef95cd618c04201dc110a2a4d5d26f6d913bbd",
+    "src/providers/b2.rs": "d89ebe01026f955589d5d71e56d908a05c0a72fcc817d722fe6d2d0491bba379",
+    "src/providers/s3.rs": "464cf0a9ba26a27a510479aedd65e38d0536e9087973ffcac3e458a8bd7a86f0",
+    "scripts/check-candidate.sh": "e570a7939dafe1964b71f922a0f63185bc57d94f7878fbd74309b5cc9a1b4bd6",
+    "Dockerfile": "b678c6f9537b5c9db3203dc9358e8af71cd083d5206e8945938be1a5f05febf4",
+    "spec/candidates/CatalogReplay.cfg": "a36ef0ac88b14b62a05e4747939efb6c0e0e4eb5790a26b350baa8f65084896b",
+    "spec/candidates/CatalogReplay.checks": "c89c57d7350dcdee50a731810eafb4bcfbdb00f36d09e70abe6e8d420f217059",
+    "spec/candidates/CatalogReplay.tla": "1665ca52a4c23ca45ae4a582fffe2e81f9ef186d38947d3a2eb088856f2d2f25",
+    "spec/candidates/CatalogReplayComplete.cfg": "877594484eb76a06fdd530ffea56b517d83647bea27eda6d328260edd8177308",
+    "spec/candidates/CatalogReplayUnsafeExtend.cfg": "381d5efc6012853238367aaffca8119737968c5345445f23c5c98b3c1de5e315",
+    "spec/candidates/CatalogReplayUnsafeOrder.cfg": "e828d3bc92056b729ce8d4cf3d9a568c475c1cae32404283849fbe3f81268552",
+    "spec/candidates/CatalogReplayUnsafeSkip.cfg": "0eaf7c28a70bcd726cb841874cdfb076e906de116bfc8b8f5a4bd5b5cb1f335b"
+  },
+  "local_log_sha256": {
+    ".tools/catalog-replay-clippy.log": "be46306ec55dac5cd37ce8c196323880e45c25aaa0da3e2514830794f1f6df6d",
+    ".tools/catalog-replay-suite.log": "983a2e2bffc1fae29465f2fed384213392e6700d10e53b9b027f7395c5f1cf91",
+    ".tools/catalog-replay-capacity.log": "6a4a9fc8bb2824d3eecfd80efb91d7c5d192eb9c35d1f1d762073eef923844f4",
+    ".tools/catalog-replay-model.log": "be4d766226b72829dfe7d10f16b4893c7269dfaff389c518aa0546d85a22f74a",
+    ".tools/candidates/CatalogReplay/model-catalog-replay-complete.log": "9fd81f1cf4fafbb9679e48e8cac8c9098fc8776253ad3783ef6ffda165c94112",
+    ".tools/candidates/CatalogReplay/model-catalog-replay-extend.log": "ab484e5d1e465064583c925bfad9fe94cd1951603babb320d54f2af059618a2f",
+    ".tools/candidates/CatalogReplay/model-catalog-replay-order.log": "87f1038ec7329d8e33edcd5f7b5eb325d6c71c5664ec8d7615cabe973b65c61a",
+    ".tools/candidates/CatalogReplay/model-catalog-replay-skip.log": "ac333171df0eefcac22454a9e1d6630a7b72734fe39bf0fd43a6cf71a4c1bce9",
+    ".tools/candidates/CatalogReplay/model-catalog-replay.log": "38ce1c750842246f47d01f52c64bd91aba17c37e989a81b20e0116f8f6b90e5f"
+  }
+}
