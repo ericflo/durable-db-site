@@ -24,8 +24,8 @@
 </tr>
 <tr>
 <td>Replacement transactions</td>
-<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints with unchanged-table reuse, public read/commit contract evaluation, bounded wire group commit and durable catalog-backed authorization and exact logical quotas; real-process pause/takeover regression with a frozen-clock control; finite models and fault tests</td>
-<td>Connect the HTTP router; complete deletion/retention and compaction; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
+<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints with unchanged-table reuse, public read/commit contract evaluation, bounded wire group commit and durable catalog-backed authorization and exact logical quotas; real-process pause/takeover regression with a frozen-clock control; shared HTTP routing with bounded server-owned uploads; finite models and fault tests</td>
+<td>Qualify the native HTTP runtime and cross-request batching; complete deletion/retention and compaction; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
 </tr>
 <tr>
 <td>Replacement control requests</td>
@@ -92,7 +92,7 @@
 <h2 id="implementation-order">Implementation order</h2>
 <p><strong>Current priority: <a href="design-owned-partitions.html">replace the shared serving and durability path</a>.</strong> The existing read barrier and shared publication path have not met the performance brief. Establish a safe ownership/read protocol and a measured batched durability path before expanding release or sustained-load qualification of a replacement.</p>
 <ol>
-<li>Connect the catalog-authorized native evaluators to HTTP routing. Qualify the physical timing contract, election/renewal scheduling and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
+<li>Qualify the native HTTP backend and switch the CLI once its runtime contract is established. Qualify the physical timing contract, election/renewal scheduling and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
 <li>Measure warm reads, group commit and independent active databases through that serving path, including total-compute-loss recovery. Compare with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>. The public whole-database revision condition still limits same-database concurrency; exposing the existing key/range validator requires an explicit API contract.</li>
 <li>Integrate per-tenant physical admission and fair request/egress budgets. Do not refund rights that could still produce delayed uploads.</li>
 <li>Add compaction to the checkpoint writer, which now reuses unchanged tables. Add automatic physical reclamation that honors reader/backup references and recovers without compute or caches.</li>

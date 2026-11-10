@@ -2,6 +2,8 @@
 <p>This page describes current source builds. The original v0.1.0 release predates protected creation, durable revocation, metrics-only credentials, and overlapping signing keys.</p>
 <p>Administrator tokens from current <code>token --admin</code> are expiring <code>ddb_control_</code> capabilities. Token TTL defaults to one hour and is bounded to 30 days. See the <a href="design-signing-rotation.html">key rollout procedure</a> before migrating control clients or rotating keys.</p>
 <p>Every data endpoint requires <code>Authorization: Bearer &lt;token&gt;</code>. JSON uses UTF-8. Keys are ordered by their UTF-8 bytes, independent of locale. Values are standard base64. <code>null</code> means absent in a read/check and delete in a write; an empty string is a present zero-byte value.</p>
+<p>The shared router can also serve a recovered native owner through <code>api::Native::new(owner, capacity)</code> and <code>App::new</code>. This library path supports protected creation, info, reads, commits, tokens, and access-policy changes with the same authentication and request budgets. Its bounded server-owned worker continues accepted writes after a caller disconnects, pipelines immutable uploads outside the owner lock, resolves unknown PUT outcomes by exact GET, and retries checkpoint maintenance. Capacity bounds queued, executing and pending replies, including duplicate requests. Each HTTP commit currently occupies one journal frame; cross-request batching remains open.</p>
+<p>Native readiness also checks current ownership permission. The runtime must independently renew the supplied ownership contract. No production physical clock or placement runtime is selected, and the CLI still uses the existing engine. Native legacy POST creation, <code>/gc</code>, and upload-budget endpoints return <code>501 unsupported_operation</code>; native physical budgets and collection are not implemented. Do not use the native adapter as a public multitenant service yet.</p>
 <h2 id="endpoints">Endpoints</h2>
 <table>
 <thead>
@@ -21,7 +23,7 @@
 </tr>
 <tr>
 <td><code>GET /v1/databases/{db}</code></td>
-<td>Revision, logical usage, pages, and limits</td>
+<td>Revision, live key/byte usage, access policy, and limits</td>
 </tr>
 <tr>
 <td><code>POST /v1/databases/{db}/read</code></td>
@@ -65,8 +67,9 @@
 </tr>
 </tbody>
 </table>
+<p>Database info reports logical usage. The experimental <code>pages</code> field has been removed: native tables are shared across databases, so a per-database physical page count is not a useful API contract.</p>
 <p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
-<p>Authenticated requests share a weighted <a href="deployment.html#request-budgets">request budget</a> per principal and pod. Commits cost five units; other requests cost one. Default refill is 20 units/second with a burst of 40. HTTP 429 means admission rejected the request before its handler ran; back off before retrying. These configurable policy limits are separate from database quotas and measured engine capacity.</p>
+<p>Authenticated requests share a weighted <a href="deployment.html#request-budgets">request budget</a> per principal and pod. Commits cost five units; other requests cost one. Default refill is 20 units/second with a burst of 40. HTTP 429 means a request or engine capacity limit was reached; back off and retry the identical request. An earlier attempt with that identity may still be pending. These configurable policy limits are separate from database quotas and measured engine capacity.</p>
 <h2 id="create-a-protected-database">Create a protected database</h2>
 <p>Use <code>PUT /v1/databases/{db}</code> with an administrator credential:</p>
 <pre><code class="language-json">{
@@ -74,7 +77,7 @@
   &quot;limits&quot;: {&quot;max_bytes&quot;: 67108864, &quot;max_keys&quot;: 100000}
 }
 </code></pre>
-<p>The operation atomically creates a format-2 database with revocable tokens enabled from the start. The response is <code>{info, replayed}</code>; initial <code>info.policy</code> has a fresh incarnation, generation zero, policy revision one, and no revocations. Legacy application tokens cannot access it. Mint scoped tokens through <code>POST /v1/tokens</code> after creation.</p>
+<p>The operation atomically creates a protected database with revocable tokens enabled from the start (format 2 in the existing engine; a durable catalog row in native serving). The response is <code>{info, replayed}</code>; initial <code>info.policy</code> has a fresh incarnation, generation zero, policy revision one, and no revocations. Legacy application tokens cannot access it. Mint scoped tokens through <code>POST /v1/tokens</code> after creation.</p>
 <p>Persist the exact creation request in your provisioning system before sending it. A retry with the same ID and limits returns the original initial info even after later data writes, policy changes, and collection. Its receipt lasts for the database lifetime, independently of the bounded transaction/policy receipt windows. A different creation ID returns 409; reusing the original ID with different limits returns 400. An existing legacy database cannot be claimed by this operation. PUT never replaces an existing database. On a transport failure or 503, retry the identical creation request; observing only that the name exists is insufficient evidence that your creation succeeded.</p>
 <p><code>POST /v1/databases/{db}</code> retains the original legacy behavior for compatibility. It accepts only <code>{max_bytes,max_keys}</code>, has no creation receipt, and starts without durable revocation. New provisioning should use PUT. All servers must support format 2 before serving protected databases.</p>
 <h2 id="read-a-snapshot">Read a snapshot</h2>
@@ -91,7 +94,7 @@
   }]
 }
 </code></pre>
-<p><code>expected_revision</code> is optional for the first read. All keys and scans in one request observe the same manifest. Subsequent requests in the same transaction must send the returned revision. A revision change is a 409; restart the whole transaction. This is optimistic snapshot validation, not a pinned long-running historical snapshot.</p>
+<p><code>expected_revision</code> is optional for the first read. All keys and scans in one request observe one committed snapshot. Subsequent requests in the same transaction must send the returned revision. A revision change is a 409; restart the whole transaction. This is optimistic snapshot validation, not a pinned long-running historical snapshot.</p>
 <p><code>start</code> is inclusive, <code>end</code> exclusive. <code>after</code> is exclusive in the chosen direction. Prefix and bounds are conjunctive. A scan returns <code>{items: [{key, value}], next}</code>; <code>next</code> is the last returned key when another matching item exists. Repeat the query with that cursor and revision. Zero-length prefixes are allowed.</p>
 <h2 id="commit">Commit</h2>
 <pre><code class="language-json">{
