@@ -205,11 +205,11 @@
     "src/providers/s3/tests/timing.rs": "d1c1bbe5c0796472c70971e0e246349777758371cdae993d5de09e4d6ce7dd19",
     "src/providers/s3/tests/timing/clock.rs": "c6fdd488c50a5a6c2308bb804abc1f2d95b0e30902aa3acbf3df169f76b88ee4"
   },
-  "status": "Test-only binding refuses kvm-clock, PID changes, clocksource fallback and VM restoration; native takeover passes with an unsafe unguarded control.",
+  "status": "REJECTED for a production timing binding: fork/source/restore checks pass, but short ACPI suspend violates the upper elapsed-time bound without changing the VMClock marker.",
   "commands": [
     {
       "command": "scripts/check-vm-clock.py --output /tmp/vm-clock.json",
-      "expected_exit_code": 0
+      "expected_exit_code": "1 if any short-suspend sample violates the bound; 0 is only a finite-run pass, not qualification"
     },
     {
       "command": "scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json",
@@ -231,6 +231,120 @@
     "The binding checks PID before touching inherited state, then checks the VMClock marker and current tsc clocksource before and after time sampling. Timeline retirement survives later valid readings.",
     "QEMU 10.1.5 behavior does not establish every hypervisor contract. The raw kvm-clock sample still misses a QMP pause; the binding now rejects that source before ownership can begin.",
     "Cross-host rate/error bounds, live migration, frequency changes, hardware suspend, PID namespace recreation, CRIU, VM cloning and repeated combined faults remain unqualified. A privileged switch away from tsc and back between samples is outside this candidate contract.",
-    "No new protocol theorem or Rust refinement is claimed. The existing conditional timing contract and failure retirement path are unchanged."
-  ]
+    "No new protocol theorem or Rust refinement is claimed. The existing conditional timing contract and failure retirement path are unchanged.",
+    "Short guest ACPI suspend is now an observed counterexample, not merely an untested obligation. Larger timing margins and post-resume statistics have not been adopted as a fix."
+  ],
+  "suspend_qualification": {
+    "source_base_commit": "40bbc19dc3367846329023d45f95f2f398435f97",
+    "source_sha256": {
+      "scripts/check-vm-clock.py": "a4ee49bb31e0799cedb5140e14c326d24a6466af5634c0078428cdefaea40442",
+      "src/providers/s3/tests/timing/clock.rs": "96bdfdc0d9b2880f092a3d77d63ebf40b0cc54d1eeed2295be959289f91d0fc3",
+      "src/ownership/timing/tests.rs": "9b36797da4b83ddcc498459ade9e4b82fad388189838ddc9619c010ac8bca514"
+    },
+    "first_short_counterexample": {
+      "test_binary_sha256": "02b93c3434b11672201544591533f6f771056f19d4ac36c253feb5bf9341c4f0",
+      "guest": "READY 6.18.60-0-virt tsc",
+      "samples": [
+        {
+          "mode": "guest-suspend-short",
+          "host_ns": 120244500,
+          "guest_boottime_ns": 335391747,
+          "guest_monotonic_ns": 17216202,
+          "guest_realtime_ns": 335447508,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": true,
+          "normalized_boottime_ns": 503087620,
+          "within_candidate_bounds": false,
+          "guarded_scenario_passed": false
+        }
+      ]
+    },
+    "repeated_short_samples": {
+      "test_binary_sha256": "db2ee6636521b9b961acf4a15600c43b41858665aae52a339f1d6802348b6740",
+      "guest": "READY 6.18.60-0-virt tsc",
+      "samples": [
+        {
+          "mode": "guest-suspend-short",
+          "iteration": 1,
+          "host_ns": 120067370,
+          "guest_boottime_ns": 503992605,
+          "guest_monotonic_ns": 16285104,
+          "guest_realtime_ns": 504006695,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": true,
+          "normalized_boottime_ns": 755988907,
+          "within_candidate_bounds": false,
+          "guarded_scenario_passed": false
+        },
+        {
+          "mode": "guest-suspend-short",
+          "iteration": 2,
+          "host_ns": 217802042,
+          "guest_boottime_ns": 217650859,
+          "guest_monotonic_ns": 157638235,
+          "guest_realtime_ns": 217653639,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": true,
+          "normalized_boottime_ns": 326476288,
+          "within_candidate_bounds": true,
+          "guarded_scenario_passed": true
+        },
+        {
+          "mode": "guest-suspend-short",
+          "iteration": 3,
+          "host_ns": 218027886,
+          "guest_boottime_ns": 217977000,
+          "guest_monotonic_ns": 152474686,
+          "guest_realtime_ns": 217979300,
+          "marker_before": 1,
+          "marker_after": 1,
+          "guard_accepts_timestamp": true,
+          "normalized_boottime_ns": 326965500,
+          "within_candidate_bounds": true,
+          "guarded_scenario_passed": true
+        }
+      ]
+    },
+    "long_suspend_sample": {
+      "mode": "guest-suspend",
+      "host_ns": 3068797890,
+      "guest_boottime_ns": 3474878067,
+      "guest_monotonic_ns": 16152342,
+      "guest_realtime_ns": 3474909178,
+      "marker_before": 1,
+      "marker_after": 1,
+      "guard_accepts_timestamp": true,
+      "normalized_boottime_ns": 5212317100,
+      "within_candidate_bounds": true,
+      "guarded_scenario_passed": true
+    },
+    "reproduce": "scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json",
+    "interpretation": "Any accepted sample outside the bounds rejects the candidate. Short-suspend outcomes vary with RTC phase; passing another sample does not erase the recorded failure. The tool exits 1 when it observes a violating sample.",
+    "rust_counterexample": {
+      "test": "measured_guest_suspend_can_finish_a_drain_while_the_old_owner_is_live",
+      "lifetime_ns": 200000000,
+      "error_ns": 1000000,
+      "host_elapsed_ns": 120244500,
+      "old_normalized_elapsed_ns": 180366750,
+      "new_normalized_elapsed_ns": 503087620,
+      "required_drain_ns": 403000000,
+      "old_remaining_ns": 19633250
+    },
+    "production_decision": "No runtime clock selected. A production platform must either exclude OS suspend through an enforceable contract or supply a stronger clock/invalidation mechanism. The kernel suspend-success statistic is updated after process thaw and is insufficient by itself.",
+    "checks": {
+      "rust_interval_tests": {
+        "passed": 9,
+        "seconds_after_compilation": 0.0
+      },
+      "GrantBounds": {
+        "obligations_proved": 19,
+        "negative_controls": 2
+      },
+      "fmt": "pass",
+      "clippy_all_targets": "pass"
+    }
+  }
 }

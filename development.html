@@ -90,7 +90,11 @@ scripts/check-proof.sh
 </tr>
 <tr>
 <td>VM pause/restore clock boundary</td>
-<td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; rejects unsupported sources, see verification)</td>
+<td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; known short-suspend counterexample, see verification)</td>
+</tr>
+<tr>
+<td>Focused short suspend</td>
+<td><code>scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json</code></td>
 </tr>
 <tr>
 <td>Native takeover across VM restore</td>
