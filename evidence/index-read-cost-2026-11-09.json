@@ -1,0 +1,267 @@
+{
+  "base_commit": "5f70d26e30e71fe9918dc22585352ae809e6aadb",
+  "baseline_source": {
+    "commit": "5f70d26e30e71fe9918dc22585352ae809e6aadb",
+    "source_sha256": {
+      "src/index/table/codec.rs": "13a959c3e6126bda6ecf7c8b30f9aa35a220fea338e18ca6153e295602a46779",
+      "src/index/table/mod.rs": "6832db8343e9778a66696f0306530b83d44a0ec3c5c96e985303fa65d91b0019",
+      "tests/index_read_bench.rs": "1f8438dba281d2ac807467effe219052abe1dec576c4556318ae98df783d8017"
+    }
+  },
+  "benchmark": {
+    "after": {
+      "results": [
+        {
+          "cache_accounted_bytes": 95412,
+          "keys": 4096,
+          "mean_ns": 16530.74345,
+          "p50_ns": 18260,
+          "p95_ns": 22039,
+          "p99_ns": 31629,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 0
+        },
+        {
+          "cache_accounted_bytes": 208594,
+          "keys": 4096,
+          "mean_ns": 8806.3732,
+          "p50_ns": 9070,
+          "p95_ns": 10290,
+          "p99_ns": 10860,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 32
+        },
+        {
+          "cache_accounted_bytes": 14572364,
+          "keys": 4096,
+          "mean_ns": 928.86345,
+          "p50_ns": 880,
+          "p95_ns": 1180,
+          "p99_ns": 1620,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 4096
+        }
+      ],
+      "schema": 1,
+      "scope": "Release CPU microbenchmark: one task, warm 32 MiB byte cache, in-memory authoritative test store, no HTTP/ownership/provider latency or concurrent workload"
+    },
+    "before": {
+      "results": [
+        {
+          "cache_accounted_bytes": 95412,
+          "keys": 4096,
+          "mean_ns": 172343.07385,
+          "p50_ns": 199284,
+          "p95_ns": 225654,
+          "p99_ns": 300641,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 0
+        },
+        {
+          "cache_accounted_bytes": 208594,
+          "keys": 4096,
+          "mean_ns": 132828.99065,
+          "p50_ns": 137866,
+          "p95_ns": 142385,
+          "p99_ns": 145516,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 32
+        },
+        {
+          "cache_accounted_bytes": 14572364,
+          "keys": 4096,
+          "mean_ns": 4029.748,
+          "p50_ns": 3930,
+          "p95_ns": 4450,
+          "p99_ns": 6930,
+          "provider_gets": 0,
+          "reads": 20000,
+          "value_bytes": 4096
+        }
+      ],
+      "schema": 1,
+      "scope": "Release CPU microbenchmark: one task, warm 32 MiB byte cache, in-memory authoritative test store, no HTTP/ownership/provider latency or concurrent workload"
+    },
+    "mean_speedup": [
+      {
+        "ratio": 10.42560937269884,
+        "value_bytes": 0
+      },
+      {
+        "ratio": 15.083279760389894,
+        "value_bytes": 32
+      },
+      {
+        "ratio": 4.338364266566846,
+        "value_bytes": 4096
+      }
+    ]
+  },
+  "cleanup": {
+    "b2": {
+      "bucket_removed": true,
+      "physical_versions_removed": 65,
+      "workload_key_revoked": true
+    },
+    "minio": {
+      "bucket_removed": true,
+      "physical_versions_deleted": 79
+    },
+    "minio_container_removed": true
+  },
+  "host": {
+    "cpu": "AMD RYZEN AI MAX+ 395 w/ Radeon 8060S",
+    "host_contention_controlled": false,
+    "logical_cpus": 32,
+    "release": true,
+    "runs_per_version": 1,
+    "rust": "1.90.0"
+  },
+  "limitations": [
+    "single-host component CPU samples, not serving SLOs",
+    "full block structural validation still scans all its rows",
+    "one task and warm cache; excludes HTTP, ownership, provider latency and concurrency",
+    "cloud fixture remains debug/injected-clock/stopped-writer qualification; no AWS or Kubernetes qualification"
+  ],
+  "log_sha256": {
+    ".tools/index-read-b2-cleanup.log": "42398b402243f3aa15694f2ee0ffeb72d6455d51e44ff49239e24b925043550a",
+    ".tools/index-read-b2.log": "032a72a11cd0eaeb35a20ac321fc822a81d31e6e843fd55d8cca4fc93fd47701",
+    ".tools/index-read-baseline.log": "a5bb301bf6338ee5533ccfefe80a356ba9838dd7963e609d545e5755d3bd3ec3",
+    ".tools/index-read-clippy.log": "f31eadbd18a43b82a018ee59524ff0e128bca4ec8b63def17457a838f479f674",
+    ".tools/index-read-model.log": "beef0da29eaf8dd9c940e76c328efa765219cd8b9df3fd9ab67720e19719882e",
+    ".tools/index-read-optimized.log": "c599ed1862af8139c94bb1c377ba077784527a6e84b450483f5e64406ad09782",
+    ".tools/index-read-s3-cleanup.json": "af0232c014482b04ec2455f1fdc61cf0ad4e12997c04b942199c89a622da30f4",
+    ".tools/index-read-s3.log": "c8da30499b3b4566beed2276035a1e53ec7f07e1f7023c8f6b8d4ffcafdf507e",
+    ".tools/index-read-suite.log": "caaea1e7e41038ec10a26c816fcc7429c9560ebeff3a38ab4cc86c38d555abbc",
+    ".tools/index-read-tests.log": "e1482a85a3ba843f8135636fac41588d0dab8faea47e852c3ecdc5651e2563a0",
+    ".tools/model-sorted-table-corrupt.log": "0a661ec7f25132bca799dbb2905554a7d9d8461e4e9de74cc2b20cc969abd9df",
+    ".tools/model-sorted-table-seek.log": "52977d0ecfa9c0f86153407e1b89e830265d8c64f74926ac4820909a277f0134",
+    ".tools/model-sorted-table.log": "eb88a725267c1d0320887c5886ea17598fbbc7f6caff2da6c5af7891d4cdcce6"
+  },
+  "providers": {
+    "b2": {
+      "checkpoint_cut_frame": 16,
+      "checkpoint_publication_abandoned_then_validated": true,
+      "checkpoint_stage_ms": 1859.102058,
+      "covered_frames_removed": 16,
+      "databases": 1024,
+      "fresh_connection_and_controller_reconstruction": true,
+      "late_old_suffix_excluded": true,
+      "lazy_reads": {
+        "cache_accounted_bytes": 412470,
+        "cache_capacity_bytes": 4194304,
+        "cold_object_gets": 4,
+        "cold_point_and_receipt_ms": 145.250505,
+        "control_calls": 0,
+        "scope": "Immutable checkpoint at revision 4 only; excludes later selected/live journal and serving authority; debug integration sample",
+        "verified_databases": 1024,
+        "warm_iterations": 1000,
+        "warm_ms": 1435.272731,
+        "warm_object_gets": 0,
+        "warm_operations_per_iteration": 3
+      },
+      "namespace": "checkpoint-ac0b6e6a-1c12-471d-a3a7-9071a549310f",
+      "original_selected_frames": 24,
+      "provider": "b2",
+      "receipts_after_suffix": 6400,
+      "recovery_control_calls": 0,
+      "recovery_ms": 2037.238629,
+      "recovery_object_gets": 27,
+      "resident_versions_after_suffix": 2304,
+      "rewrite_ms": 2272.3808679999997,
+      "rewritten_checkpoint_verified_databases": 1024,
+      "rewritten_recovery_object_gets": 4,
+      "rewritten_recovery_resident_databases": 0,
+      "rewritten_recovery_resident_receipts": 0,
+      "rewritten_recovery_resident_versions": 0,
+      "schema": 1,
+      "scope": "Native checkpoint composition; injected clocks, stopped writers, debug build; no serving API, live stale-owner fencing, automatic GC or AWS qualification",
+      "suffix_frames_replayed": 9,
+      "verification_ms": 492.37685,
+      "verification_object_calls": 0,
+      "verified_databases": 1024
+    },
+    "s3": {
+      "checkpoint_cut_frame": 16,
+      "checkpoint_publication_abandoned_then_validated": true,
+      "checkpoint_stage_ms": 79.009807,
+      "covered_frames_removed": 16,
+      "databases": 1024,
+      "fresh_connection_and_controller_reconstruction": true,
+      "late_old_suffix_excluded": true,
+      "lazy_reads": {
+        "cache_accounted_bytes": 412470,
+        "cache_capacity_bytes": 4194304,
+        "cold_object_gets": 4,
+        "cold_point_and_receipt_ms": 11.969763,
+        "control_calls": 0,
+        "scope": "Immutable checkpoint at revision 4 only; excludes later selected/live journal and serving authority; debug integration sample",
+        "verified_databases": 1024,
+        "warm_iterations": 1000,
+        "warm_ms": 1261.953356,
+        "warm_object_gets": 0,
+        "warm_operations_per_iteration": 3
+      },
+      "namespace": "checkpoint-beedb93b-fe70-4a3b-a7b6-96ea885cf432",
+      "original_selected_frames": 24,
+      "provider": "s3",
+      "receipts_after_suffix": 6400,
+      "recovery_control_calls": 0,
+      "recovery_ms": 1040.394975,
+      "recovery_object_gets": 27,
+      "resident_versions_after_suffix": 2304,
+      "rewrite_ms": 105.921145,
+      "rewritten_checkpoint_verified_databases": 1024,
+      "rewritten_recovery_object_gets": 4,
+      "rewritten_recovery_resident_databases": 0,
+      "rewritten_recovery_resident_receipts": 0,
+      "rewritten_recovery_resident_versions": 0,
+      "schema": 1,
+      "scope": "Native checkpoint composition; injected clocks, stopped writers, debug build; no serving API, live stale-owner fencing, automatic GC or AWS qualification",
+      "suffix_frames_replayed": 9,
+      "verification_ms": 330.813257,
+      "verification_object_calls": 0,
+      "verified_databases": 1024
+    }
+  },
+  "recorded_at": "2026-11-10T07:48:08.356930+00:00",
+  "schema": 1,
+  "source_sha256": {
+    "Cargo.lock": "865599bf0e433b41f93c47eb480aefffcc726599fa2d1ae3af34ef0d9daba4ce",
+    "rust-toolchain.toml": "c33d1f0b1b8fda448bea32d7dc867aa64947c87169fd9de7122ffccad1dd80f9",
+    "src/cache.rs": "a88c68d884cb5a07164d23d3fa1bc641c21d0399def280dcc914335501f7825f",
+    "src/index/merge.rs": "632143839b8a78b323c70283f742d7fc9089936bb6e7aa31abe119048e0df55f",
+    "src/index/recovery.rs": "3c4e4c427c4a0d8a0510eb7cf82ed49600f39a1117762e51f05f54d760695fa3",
+    "src/index/recovery/checkpoint/mod.rs": "09073d5e182b90a6257af322aeecb7b7ebcb7ece455ce2554b0c7c86ae6bb4be",
+    "src/index/recovery/checkpoint/snapshot.rs": "ab3ad7405f1d86f1f920a5ae5afc73f725d7e6a90e0bc6400121db64d1172a3f",
+    "src/index/recovery/checkpoint/tree.rs": "262b914b9b3d3c02521c8b9fe52ab5c71437eab0f780ce794b4de561138e12f8",
+    "src/index/table/codec.rs": "0b8e195274df68a7ac99935f990924c20a977da90dfe918405bde1101123c118",
+    "src/index/table/mod.rs": "ced80abb9f95874e855ad0f734ba710b00f0f580463cea2ba7751b69e34b571b",
+    "src/index/table/tests.rs": "f32cbf5cd38029a1b98cf7b20bad6556c577d2fe40a7a1f060163a74dc402238",
+    "src/storage/immutable.rs": "d60a048a86135ea5d547ab5ba0a3285eb91ed2f3fd5b96d2aa1c17e0a7907c69",
+    "tests/checkpoint_cloud.rs": "94973126d3c8f65335c28c25415842c32caada69abac1373b78e3a2fa5b59b9f",
+    "tests/index_read_bench.rs": "1f8438dba281d2ac807467effe219052abe1dec576c4556318ae98df783d8017"
+  },
+  "status": "Native block point lookup CPU optimization; unchanged formats and live serving remains open",
+  "validation": {
+    "all_rows_validated_after_point_hit": true,
+    "build_cache": "kache",
+    "clippy_all_targets_warnings_denied": true,
+    "debug_capacity_filtered": 1,
+    "format_changes": false,
+    "new_dependencies": 0,
+    "new_tail_corruption_test": true,
+    "opt_in_ignored": 13,
+    "rust_tests_passed": 242,
+    "sorted_table_model_depth": 10,
+    "sorted_table_model_distinct_states": 16188,
+    "sorted_table_model_generated_states": 18263,
+    "sorted_table_negative_controls": 2,
+    "table_tests": 8
+  }
+}

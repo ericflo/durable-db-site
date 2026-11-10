@@ -419,4 +419,38 @@
 <p>The combined test rewrites over 256 KiB of checkpoint values with a <strong>32-byte resident value budget</strong>, preserves an untouched generation, compares historical point/range reads, exercises four admission failures, and checks expired receipts after rewriting. Receipt restoration rejects missing/duplicate history, enforces count/byte admission and restarts cleanly after failure/cancellation. The existing <strong>10,005-generation</strong> check now reopens with every resident limit set to one and verifies all generations with <strong>zero resident database/value/receipt entries</strong>. Those limits are work budgets, not database-count caps. The local suite passes <strong>241 tests</strong>, with 12 opt-in cases ignored and the release capacity regression reserved for CI.</p>
 <p>B2 and versioned MinIO repeat the 1,024-database campaign, including nine selected suffix frames. Recovery retains <strong>2,304 recent versions</strong>, excluding the 1,024 checkpoint values, and <strong>6,400 receipts</strong> for the touched databases. It makes 27 object GETs and no control-register calls. A rewritten checkpoint reopens with four object GETs and zero resident database/value/receipt entries; all 1,024 generations are verified again. The B2 bucket’s 65 versions and MinIO bucket’s 79 versions were removed, both buckets deleted and the temporary B2 key revoked. <a href="evidence/checkpoint-overlay-2026-11-09.json">Source, tests, model and provider evidence</a>.</p>
 <p>The campaign uses debug builds, injected clocks and stopped writers. It qualifies data-path composition, not live serving, performance SLOs, Kubernetes behavior or AWS. Current recovery still requires its selected suffix and touched receipt metadata to fit admitted memory. Continuous checkpoints, live transaction admission and durability publication, current ownership, lifecycle/authorization recovery and whole-process limits are the next integration obligations.</p>
+<h2 id="native-point-read-cpu-cost">Native point-read CPU cost</h2>
+<p>The table reader now validates a block through borrowed rows and copies only the point lookup’s winning row. Previously it allocated/copy-filled every row before selecting one. Scans use the same validator and still return their full decoded block. The format, hashes, row ordering and first/last bounds are unchanged; even a successful point hit must validate the rest of its block. A new adversarial test reauthenticates a malformed later row and confirms that neither point lookup nor scan returns the earlier valid row.</p>
+<p>The opt-in release measurement uses 4,096 keys, 20,000 deterministic lookups per value size, one task and a warmed 32 MiB byte cache on an AMD Ryzen AI MAX+ 395 host. Every seventh key is a tombstone. The authoritative fixture is in memory and both runs make zero provider GETs. The before/after runs use the identical measurement source and record source hashes.</p>
+<table>
+<thead>
+<tr>
+<th>Value bytes</th>
+<th style="text-align:right">Before mean</th>
+<th style="text-align:right">After mean</th>
+<th style="text-align:right">Mean CPU-time reduction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align:right">172.3 µs</td>
+<td style="text-align:right">16.5 µs</td>
+<td style="text-align:right">10.4×</td>
+</tr>
+<tr>
+<td>32</td>
+<td style="text-align:right">132.8 µs</td>
+<td style="text-align:right">8.8 µs</td>
+<td style="text-align:right">15.1×</td>
+</tr>
+<tr>
+<td>4,096</td>
+<td style="text-align:right">4.0 µs</td>
+<td style="text-align:right">0.93 µs</td>
+<td style="text-align:right">4.3×</td>
+</tr>
+</tbody>
+</table>
+<p>Smaller values pack more rows into each block, so complete block validation does more work per lookup. These are single-host component measurements, with no HTTP, ownership, provider latency or concurrent workload. They are not database throughput or latency SLOs. Eight table tests and the existing SortedTable model/negative controls pass; the full regression suite and B2/MinIO checkpoint campaign also pass. <a href="evidence/index-read-cost-2026-11-09.json">Exact measurements, source and validation</a>. Reproduce the release measurement with the <a href="development.html#work-on-one-component">development command</a>.</p>
 </article></main><footer><a class="wordmark" href="index.html">durable-db</a><p>Apache-2.0 · Built in Rust · Verified within explicit bounds</p><a href="roadmap.html">Experimental. Follow the work ↗</a></footer></body></html>

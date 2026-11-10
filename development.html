@@ -57,6 +57,10 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib index::table</code> and <code>scripts/check-model.sh SortedTable</code></td>
 </tr>
 <tr>
+<td>Warm point-read CPU cost</td>
+<td><code>DURABLE_DB_INDEX_READ_REPORT=/tmp/index-reads.json cargo test --release --locked --test index_read_bench -- --ignored --exact cached_native_point_read_cost</code></td>
+</tr>
+<tr>
 <td>Rust journal</td>
 <td><code>cargo test --locked --lib journal</code></td>
 </tr>
