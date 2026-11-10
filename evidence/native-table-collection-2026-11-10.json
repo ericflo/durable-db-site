@@ -1,0 +1,214 @@
+{
+  "date_utc": "2026-11-10",
+  "source_commit": "ba739d25c900d8d6e2f4c645d4abb5f30045cf1a",
+  "clean_worktree": true,
+  "native_format": "owned-candidate-12",
+  "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture",
+  "scope": "Debug native HTTP; 4 MiB cache; logical clock; old servers stopped before takeover. Real B2 and versioned MinIO, not AWS, physical timing, sustained load or an SLO.",
+  "results": [
+    {
+      "provider": "B2",
+      "test": {
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 5,
+        "checkpoint_objects_after_takeover_sweep": 5,
+        "checkpoint_objects_before_first_sweep": 6,
+        "cleanup_wait_ms": 49689.887455,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 3754.899865,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "namespace": "native-http-89627ca1-3597-4a2f-86f3-4d6b464ed8af",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "provider": "b2",
+        "refusal_and_retry_immutable_puts": 0,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 14.860031139,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 136.616786502,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.456698,
+          "p95": 1.556066,
+          "p99": 1.7512
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 20
+      }
+    },
+    {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 5,
+        "checkpoint_objects_after_takeover_sweep": 5,
+        "checkpoint_objects_before_first_sweep": 6,
+        "cleanup_wait_ms": 60385.060544,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 132.86919899999998,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "namespace": "native-http-c4edc53e-8b3f-42b0-ab63-822a471d51ab",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "provider": "s3",
+        "refusal_and_retry_immutable_puts": 0,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 0.171582487,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 121.434855025,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.438449,
+          "p95": 1.579225,
+          "p99": 1.7428700000000001
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 29,
+        "container_removed": true
+      }
+    }
+  ],
+  "change": {
+    "summary": "Automatic collection of obsolete native checkpoint data, indexes and manifest nodes using the existing collector and manifest walker.",
+    "table_candidates_per_sweep": 128,
+    "manifest_reads_for_183_table_fixture": 4,
+    "table_data_and_index_reads_for_protection": 0,
+    "immutable_collection_uploads": 0,
+    "credit_refunds": 0,
+    "publication_rule": "Staging captures the persisted collection generation before upload and cannot adopt a newer generation; rebuild from the retained base. Sweeps without obsolete table objects leave the generation unchanged.",
+    "native_migration": "None; fresh native namespace required."
+  },
+  "validation": {
+    "rust_tests_passed": 279,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 27.0,
+    "focused_live_collection_seconds": 0.01,
+    "formatting": "passed",
+    "clippy": "passed with warnings denied",
+    "npm_advisories": 0,
+    "unsafe_rust_adoption_mutation": "Fails the staged checkpoint publication regression; correct guard restored.",
+    "model": {
+      "name": "PublicationSafety",
+      "distinct_states": 175546,
+      "generated_states": 810459,
+      "depth": 16,
+      "seconds": 2,
+      "negative_controls": 4,
+      "new_control": "Adopting a later collection generation without rebuilding can publish deleted objects."
+    },
+    "abstract_proof": {
+      "module": "PublicationSafetyProof",
+      "obligations": 35,
+      "seconds": 1.73,
+      "negative_control": "Missing collection fence fails the required obligation.",
+      "scope": "Existing abstract reachability proof; not a Rust refinement or protocol-composition proof."
+    }
+  },
+  "preceding_qualification_failures": [
+    {
+      "source_commit": "d2ce393cee697aa403ab24c5c7165387c80591e3",
+      "provider": "B2",
+      "outcome": "Stopped on HTTP 503 after 3.54 seconds, before collection qualification. Old assertion did not report the request. Cause not established; no implicit retry was added. Diagnostics now include the synthetic method/path and fixed-label failure counters.",
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 3
+      }
+    },
+    {
+      "source_commit": "d2ce393cee697aa403ab24c5c7165387c80591e3",
+      "provider": "versioned MinIO",
+      "outcome": "Timed out after 150.26 seconds because the fixture expected one retained table; collection retained two tables (five data/index/manifest objects). The fixture now checks the exact published table count instead of packing assumptions.",
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 13,
+        "container_removed": true
+      }
+    }
+  ],
+  "limitations": [
+    "Manifest traversal has bounded memory but work grows with checkpoint size; 30-second worker deadline means large-image progress requires qualification.",
+    "Raw checkpoint handles do not pin history. Durable reader/backup pins, compaction and registration/catalog-header cleanup remain open.",
+    "Physical ownership timing/native CLI cutover and full tenant maintenance accounting remain open.",
+    "Logical clocks and stopped old servers; not AWS, sustained load, autoscaling timing or a production-SLO qualification."
+  ]
+}
