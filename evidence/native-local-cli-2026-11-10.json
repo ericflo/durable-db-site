@@ -1,0 +1,97 @@
+{
+  "date_utc": "2026-11-10",
+  "status": "Local verification complete; release verification pending",
+  "scope": "Native single-host local CLI using exclusive directory ownership; cloud CLI remains on shared publication. Not cluster timing, AWS, sustained load or production qualification.",
+  "native_format": "owned-candidate-15",
+  "ownership": {
+    "physical_clock_required": false,
+    "lifetime_os_lock": true,
+    "blocking_mutations_retain_guard_after_cancellation": true,
+    "forked_handle_refused": true,
+    "unsupported": [
+      "shared/network filesystems",
+      "cloned live process memory"
+    ]
+  },
+  "local_checks": {
+    "format": "pass",
+    "clippy_all_targets": "pass",
+    "rust_tests_passed": 287,
+    "rust_command": "cargo test --locked -- --skip ten_thousand_databases_split_page_recover_and_collect",
+    "capacity_test": "unchanged; optimized musl check required in Woodpecker",
+    "cli_process_tests_passed": 2,
+    "cli_process_tests_seconds": 8.34,
+    "client_pi_tests_passed": 99,
+    "client_pi_tests_skipped": 1,
+    "client_pi_tests_seconds": 8.93,
+    "web_app_tests_passed": 4,
+    "benchmark_smoke": "pass; 40 operations, four databases, all final values verified; no SLO claim"
+  },
+  "adversarial_cases": [
+    "SIGSTOP refuses second server; SIGCONT preserves exact retry",
+    "SIGKILL and two cold reopens preserve values, revision and exact receipts",
+    "260 writes trigger checkpoint and automatic covered-journal collection",
+    "Legacy directory refused without replacing its heads",
+    "Missing authority in nonempty native directory refused",
+    "Cancelled async CAS retains exclusion until blocking mutation finishes",
+    "Forked logical adapter refuses serving permission"
+  ],
+  "models": {
+    "LocalExclusive": {
+      "distinct_states": 57,
+      "generated_states": 163,
+      "depth": 9,
+      "negative_controls": [
+        "release guard with pending I/O",
+        "expose before recovery"
+      ]
+    },
+    "Checkpoint": {
+      "distinct_states": 65664,
+      "generated_states": 147744,
+      "depth": 12,
+      "negative_controls_passed": 9
+    }
+  },
+  "rust_negative_control": {
+    "mutation": "Drop the OS lock clone at entry to Local.cas blocking task",
+    "result": "fails: cancelled waiter released a live filesystem mutation",
+    "restored_result": "pass in 0.01 seconds"
+  },
+  "upgrade": {
+    "previous_version": "0.8.0",
+    "previous_archive_sha256": "0c54ba72d95f91ed3ff0390b5eee5fafcf51c18dc78f2e9e98f044c40a51bec8",
+    "candidate_version": "durable-db 0.9.0",
+    "candidate_binary_sha256": "8850a6f7fd65375d2a9be3ab75b83433cffba85bc28d9e8d2989ef5abc24cbf8",
+    "keys_verified_after_sigkill_reopen": 3,
+    "legacy_directory_refused": true,
+    "legacy_heads_unchanged": true,
+    "quotas_preserved": true,
+    "credentials_reissued": true,
+    "temporary_directory_removed": true
+  },
+  "previous_failures": [
+    {
+      "check": "benchmark smoke",
+      "cause": "Obsolete POST creation returned HTTP 501 before seeding data",
+      "resolution": "Use protected PUT creation with stable request identity; strengthened fake endpoint and real smoke both pass"
+    },
+    {
+      "check": "upgrade qualification harness",
+      "cause": "Harness looked for quotas at top level instead of info.limits after successful restore/reopen",
+      "resolution": "Corrected harness; fresh complete drill passes; all temporary directories removed"
+    }
+  ],
+  "removed": [
+    "CLI selection of legacy local serving and its separate maintenance task",
+    "Optional collector branch that disabled automatic native cleanup without upload budgets",
+    "Obsolete benchmark POST creation",
+    "Stale blanket claims that all CLI serving awaits physical timing"
+  ],
+  "remaining": [
+    "Cloud native ownership timing and placement qualification",
+    "Complete maintenance overhead and retry attribution",
+    "Durable snapshot retention and registration/catalog-header reclamation",
+    "Sustained performance, adversarial tenant isolation and AWS qualification"
+  ]
+}
