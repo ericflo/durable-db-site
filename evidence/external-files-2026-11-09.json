@@ -218,5 +218,15 @@
     ".tools/external-index-b2-cleanup.log": "e1c9cf5dbd2826c724aa0c8f93fba60f99e42c85cafcfaefb88bd16694576b4b",
     ".tools/external-index-s3-cleanup.json": "2c34819dadd5ff0b10d946fe0d123e688cce964093792b09ba4a7d522f63242f",
     ".tools/external-index-snapshot-regression.log": "8de2a0c04414dd898d934a7c72dd8915f2e3ac3ce84b6b73fa8974f74968a2b8"
+  },
+  "qualification": {
+    "source_commit": "acc76e1f2c8af97f2fe161dce0ecc28109ef69f7",
+    "woodpecker": {
+      "pipeline": 70,
+      "status": "success"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "public_source_marker_matches_commit": true,
+    "pages_verification_sha256": "4cfad0c9692ba7f77b28f5e6f05c32a55d49fbeb894bfc3be37ce9b2ff8bfe16"
   }
 }
