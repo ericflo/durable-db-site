@@ -1,0 +1,150 @@
+{
+  "date_utc": "2026-11-10",
+  "source_commit": "9e70d5a53674fd78cf564fdc944cb545ca12c718",
+  "working_tree": "clean",
+  "fixture": "tests/checkpoint_cloud/native_http.rs",
+  "fixture_sha256": "cab792b5b1d666a3c9150c5ec53ae5e3022e332a4fb1e8c270a30b87f6bef92d",
+  "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture",
+  "configuration": {
+    "build": "Rust 1.90.0 debug, kache",
+    "http": "Local loopback, two databases, one owner at a time; no fixture HTTP retries",
+    "cache_bytes": 4194304,
+    "namespace_upload_limits": {
+      "bytes": 16777216,
+      "attempts": 256
+    },
+    "checkpoint_frames": 2,
+    "clock": "Injected logical clock; first server stopped before takeover",
+    "provider_fixtures": "Dedicated disposable buckets; B2 scoped workload key; versioned MinIO with bounded container memory and temporary storage"
+  },
+  "checks": [
+    "Exhausted database is refused before journal PUT; exact retry issues no immutable PUT; neighbor commits",
+    "Administrator refill is idempotent and preserves spent credit",
+    "Normal 60-second maintenance reduces six ledger objects to two live ledgers and one directory page without resetting balances",
+    "All server/cache/connection state dropped before reopen; authoritative limits survive zero-limit startup configuration",
+    "Checkpoint-backed and selected-suffix values, revisions, scans and exact retry receipts survive recovery",
+    "100 warmed HTTP reads, each including a point lookup and ordered scan, alternate both value paths and make zero authority calls or object GETs"
+  ],
+  "runs": [
+    {
+      "started_at": "2026-11-10T15:02:12.147737+00:00",
+      "provider": "b2",
+      "result": "passed",
+      "seconds": 69.632,
+      "evidence": {
+        "automatic_collection": true,
+        "cleanup_wait_ms": 45730.587185,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 5128.832281,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "refusal_and_retry_immutable_puts": 0,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 69.437544735,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.435229,
+          "p95": 1.502866,
+          "p99": 1.591174
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "complete": true,
+        "summary": "Removed task-owned test bucket, 23 physical versions, and revoked its workload key: durable-db-test-ff47a6a30e71"
+      }
+    },
+    {
+      "started_at": "2026-11-10T15:02:12.152394+00:00",
+      "provider": "s3",
+      "implementation": "versioned MinIO, epsilon-maintenance-minio:20261105",
+      "result": "passed",
+      "seconds": 61.043,
+      "evidence": {
+        "automatic_collection": true,
+        "cleanup_wait_ms": 60287.257631,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 134.307602,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "refusal_and_retry_immutable_puts": 0,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 60.855929545,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.430509,
+          "p95": 1.471898,
+          "p99": 1.517366
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "complete": true,
+        "physical_versions_removed": 32,
+        "remaining_control_versions_after_cold_recovery": 9,
+        "bucket_deleted": true,
+        "container_removed": true
+      }
+    }
+  ],
+  "local_validation": {
+    "rust": "273 tests passed; opt-in cloud tests excluded; 10,005-database release regression reserved for CI",
+    "format": "passed",
+    "clippy": "all targets, warnings denied, passed",
+    "reused_models": {
+      "ProviderRegister": {
+        "distinct_states": 8901,
+        "generated_states": 21289,
+        "depth": 10,
+        "negative_controls": 2
+      },
+      "PublicationSafety": {
+        "distinct_states": 175546,
+        "generated_states": 810459,
+        "depth": 16,
+        "negative_controls": 2
+      }
+    }
+  },
+  "limits": [
+    "Logical clock and stopped-server takeover do not qualify physical ownership timing, live stale-owner fencing or the CLI cutover",
+    "MinIO is an S3-compatible endpoint, not AWS S3 qualification",
+    "100 loopback debug/cache samples are not a sustained-load, tail-latency SLO or cloud roundtrip benchmark",
+    "Shared maintenance cost attribution and journal/table/checkpoint/registration reclamation remain open",
+    "Existing bounded protocol checks and provider experiments are not a proof of the Rust implementation or every deployment"
+  ]
+}
