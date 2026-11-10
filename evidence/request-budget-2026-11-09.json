@@ -107,7 +107,13 @@
     ".tools/restore-fixture-resources.json": "9c7180fdfd0ab62bf43695f50679f0e947fce2735295a2e3ea58ac701cb711a5"
   },
   "qualification": {
-    "status": "pending",
-    "reason": "Local checks passed; complete Woodpecker qualification and public Pages verification follow the source commit."
+    "source_commit": "2d525f9e126e0699cd2113ae16c0dd2702bc52c4",
+    "woodpecker": {
+      "pipeline": 59,
+      "status": "success",
+      "build_log_sha256": "b7419785675f64b669efd943c936ca5c0cf712b4bb7c769c611e567436edfdd0"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "pages_verification_sha256": "c5d7c50a1cbb8de706af82d90caa9c4cdfa0107d99a722eb72b263df74ba05dc"
   }
 }
