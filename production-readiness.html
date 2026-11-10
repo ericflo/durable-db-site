@@ -24,8 +24,8 @@
 </tr>
 <tr>
 <td>Replacement transactions</td>
-<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints, public read/commit contract evaluation, bounded wire group commit and durable catalog-backed authorization; finite models and fault tests</td>
-<td>Connect the HTTP router and quotas; complete deletion/retention; add incremental table reuse; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
+<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints, public read/commit contract evaluation, bounded wire group commit and durable catalog-backed authorization and exact logical quotas; finite models and fault tests</td>
+<td>Connect the HTTP router; complete deletion/retention; add incremental table reuse; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
 </tr>
 <tr>
 <td>Replacement control requests</td>
@@ -45,7 +45,7 @@
 <tr>
 <td>Public multitenancy</td>
 <td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-5 namespaces</td>
-<td>Native logical quota enforcement, per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
+<td>Per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
 </tr>
 <tr>
 <td>Credentials and lifecycle</td>
@@ -92,7 +92,7 @@
 <h2 id="implementation-order">Implementation order</h2>
 <p><strong>Current priority: <a href="design-owned-partitions.html">replace the shared serving and durability path</a>.</strong> The existing read barrier and shared publication path have not met the performance brief. Establish a safe ownership/read protocol and a measured batched durability path before expanding release or sustained-load qualification of a replacement.</p>
 <ol>
-<li>Connect the catalog-authorized native evaluators to HTTP routing and quota enforcement. Qualify the physical timing contract, election/renewal scheduling and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
+<li>Connect the catalog-authorized native evaluators to HTTP routing. Qualify the physical timing contract, election/renewal scheduling and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
 <li>Measure warm reads, group commit and independent active databases through that serving path, including total-compute-loss recovery. Compare with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>. The public whole-database revision condition still limits same-database concurrency; exposing the existing key/range validator requires an explicit API contract.</li>
 <li>Integrate per-tenant physical admission and fair request/egress budgets. Do not refund rights that could still produce delayed uploads.</li>
 <li>Replace full checkpoint rewrites with bounded table reuse and compaction. Add automatic physical reclamation that honors reader/backup references and recovers without compute or caches.</li>
