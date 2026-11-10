@@ -44,8 +44,8 @@
 </tr>
 <tr>
 <td>Public multitenancy</td>
-<td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-5 and native namespaces, including native bootstrap, journal and checkpoint uploads; native per-name journal, new-row and retained-receipt admission before shared ordering and automatic collection of obsolete budget/catalog directory metadata, checkpoint-covered journal history, obsolete table/manifest objects and S3 control versions; native HTTP refusal, neighbor progress and cold-budget recovery pass B2/MinIO</td>
-<td>Unchanged rows copied from shared tables, shared index/manifest costs, retries/recovery and complete per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
+<td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-5 and native namespaces, including native bootstrap, journal and checkpoint uploads; native per-name journal, new-row and shared-table copy admission before shared ordering and automatic collection of obsolete budget/catalog directory metadata, checkpoint-covered journal history, obsolete table/manifest objects and S3 control versions; native HTTP refusal, neighbor progress and cold-budget recovery pass B2/MinIO</td>
+<td>New block/index/manifest costs, retries/recovery and complete per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
 </tr>
 <tr>
 <td>Credentials and lifecycle</td>
