@@ -1,0 +1,242 @@
+{
+  "date_utc": "2026-11-10",
+  "source_commit": "361af979ae7dda8882e08d06e6f544cffbb0a1b6",
+  "clean_worktree": true,
+  "native_format": "owned-candidate-11",
+  "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture",
+  "scope": "Debug native HTTP; 4 MiB cache; logical clock; old servers stopped before takeover. Real B2 and versioned MinIO, not AWS, physical timing, sustained load or an SLO.",
+  "results": [
+    {
+      "provider": "B2",
+      "test": {
+        "automatic_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_before_first_sweep": 6,
+        "cleanup_wait_ms": 52511.638886,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 4869.325446999999,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "namespace": "native-http-5709efab-2dcb-4a44-a572-3e233cbd8a7a",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "provider": "b2",
+        "refusal_and_retry_immutable_puts": 0,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 18.926028871,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 144.03443028,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.442933,
+          "p95": 1.505212,
+          "p99": 1.57477
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 24
+      }
+    },
+    {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_collection": true,
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_before_first_sweep": 6,
+        "cleanup_wait_ms": 60272.354532000005,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 133.18514000000002,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 6,
+        "namespace": "native-http-3b1f0471-6a1a-49ea-8cd6-5800d2284178",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "provider": "s3",
+        "refusal_and_retry_immutable_puts": 0,
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 0.185107039,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4096
+          },
+          "configuration_revision": 2,
+          "limits": {
+            "attempts": 2,
+            "bytes": 8192
+          }
+        },
+        "total_seconds": 121.220463013,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.432088,
+          "p95": 1.480627,
+          "p99": 1.524076
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 33,
+        "container_removed": true
+      }
+    }
+  ],
+  "change": {
+    "summary": "Store complete checkpoint descriptors in authority metadata; remove checkpoint header objects and their upload/read/cache paths.",
+    "runtime_lines_added": 46,
+    "runtime_lines_deleted": 88,
+    "net_runtime_lines_removed": 42,
+    "snapshot_open_object_reads": 0,
+    "unchanged_checkpoint_rewrite_puts": 0,
+    "mixed_changed_range_puts": 5,
+    "ten_thousand_five_generations_checkpoint_objects": 17,
+    "descriptor_reserved_bytes": 1024,
+    "native_migration": "None; prior native candidates refused; fresh namespace required."
+  },
+  "local_validation": {
+    "rust_tests_passed": 276,
+    "focused_checkpoint_tests_passed": 33,
+    "formatting": "passed",
+    "clippy": "passed with warnings denied",
+    "journal_collection_and_descriptor_regression_seconds": 0.01,
+    "capacity_regression": "Separate release-mode Woodpecker gate."
+  },
+  "model": {
+    "name": "Checkpoint",
+    "distinct_states": 65664,
+    "generated_states": 147744,
+    "depth": 12,
+    "seconds": 1,
+    "negative_controls_passed": 9,
+    "additional_state": 0,
+    "scope": "Existing atomic published descriptor and complete table/manifest upload abstraction. Bounded model checking, not Rust refinement, physical timing or liveness proof."
+  },
+  "preceding_fixture_failures": [
+    {
+      "source_commit": "6b232a5ded5059310a398307ab8a87eadd1e19c7",
+      "outcome": "B2 setup overlapped the automatic 60-second sweep: one journal remained rather than the fixture-assumed five. MinIO passed. Setup latency cause was not established.",
+      "providers": [
+        {
+          "provider": "B2",
+          "passed": false,
+          "seconds": 127.81,
+          "cleanup": {
+            "bucket_removed": true,
+            "workload_key_revoked": true,
+            "physical_versions_deleted": 18
+          }
+        },
+        {
+          "provider": "versioned MinIO",
+          "passed": true,
+          "seconds": 121.52,
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 33,
+            "container_removed": true
+          }
+        }
+      ]
+    },
+    {
+      "source_commit": "8c4d2d51599c7a32562c65f125ef10e7e992711b",
+      "outcome": "The explicit-sweep helper incorrectly expected the pre-takeover metadata count after recovery. Both providers correctly retained three manifests and two indexes for the tenant budgets and recovery catalog, and zero journals; the helper timed out.",
+      "providers": [
+        {
+          "provider": "B2",
+          "passed": false,
+          "seconds": 224.71,
+          "cleanup": {
+            "bucket_removed": true,
+            "workload_key_revoked": true,
+            "physical_versions_deleted": 19
+          }
+        },
+        {
+          "provider": "versioned MinIO",
+          "passed": false,
+          "seconds": 210.89,
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 21,
+            "container_removed": true
+          }
+        }
+      ]
+    }
+  ],
+  "remaining_gates": [
+    "Physical ownership timing and native CLI cutover",
+    "Full tenant maintenance/request/egress accounting",
+    "Obsolete table/manifest reachability and reclamation with reader/backup retention",
+    "Sustained B2/AWS performance, failure and production qualification"
+  ],
+  "preceding_ci_failure": {
+    "pipeline": 117,
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/117/1",
+    "source_commit": "8c4d2d51599c7a32562c65f125ef10e7e992711b",
+    "failure": "Native JavaScript contract suite exceeded its unchanged 90-second deadline; the captured child output was lost on cancellation. Rust/capacity checks, legacy JavaScript/Pi contracts and binary compilation passed.",
+    "local_reproduction": "Two complete native contract runs passed: 99 tests, one opt-in test skipped; 26.66 and 26.96 seconds. Timeout cause not established.",
+    "harness_change": "Stream verbose test output so a future timeout identifies completed and pending tests; remove buffered-output handling. No timeout increase or skipped coverage."
+  }
+}
