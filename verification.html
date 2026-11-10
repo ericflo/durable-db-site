@@ -338,56 +338,58 @@
 <p>The Linux-only <code>physical_owner_pause_fences_reads_and_late_acknowledgements</code> test exercises the native owner in a separate process against the same S3 HTTP fixture. The old process commits one record, prepares a second upload, and receives <code>SIGSTOP</code>. A replacement process claims the register, completes its conservative drain, selects the first record, recovers and commits its own second revision. After <code>SIGCONT</code>, the old upload can arrive, but the old owner must refuse publication, acknowledgement and reads; the successor’s value and receipt remain intact. A pipe barrier prevents the test thread from racing asynchronous group-stop delivery. Child processes are killed on failure and fixture files are temporary.</p>
 <p>Its test-only clock reads <code>CLOCK_BOOTTIME</code> and multiplies ticks by 3/2 to center a nominal unit-rate source within the arithmetic model’s [1,2] interval. The fixture uses a one-second normalized lifetime and one-millisecond error allowance. The required negative control freezes the old clock before stopping: it must demonstrate unsafe stale reads and acknowledgements. Both paths pass on the development host (Linux 7.2.11 x86_64, <code>tsc</code>, no virtualization reported) in <strong>8.32 seconds after compilation</strong>. <code>GrantBounds</code> still proves all 19 obligations with both negative controls; the existing acquisition instances and controls also pass.</p>
 <p>Run <code>cargo test --locked --lib physical_owner_pause</code>. Woodpecker’s Linux Rust suite includes it. This establishes the process-pause scenario only. <a href="https://docs.kernel.org/core-api/timekeeping.html">Linux documents that boottime includes suspend</a>; <a href="https://docs.kernel.org/virt/kvm/x86/timekeeping.html">KVM timekeeping</a> does not establish our full platform bounds. Hardware/VM suspension, migration or memory restoration, clock-source/frequency changes, independent-host rate/error bounds and production profiles remain unqualified. The adapter stays test-only; no production runtime clock is selected.</p>
-<p>The opt-in VM experiment supplies a concrete counterexample to using unqualified <code>CLOCK_BOOTTIME</code> for leases. With QEMU 10.1.5/KVM and Linux 6.18.60, the <code>kvm-clock</code> source advanced only <strong>about 7 ms during a 3-second QMP pause</strong>. Selecting <code>tsc</code> passed that pause, but restoring saved memory still left only <strong>about 8 ms of guest elapsed time after more than three seconds on the host</strong>. The earlier process-pause passes do not cover these cases.</p>
-<p>A test-only guard reads <code>/dev/vmclock0</code> before and after sampling time and refuses a timestamp if the hypervisor’s disruption marker differs from its original value. Snapshot load changed that marker from 1 to 2 and the guard refused the restored timestamp. The binding now also requires <code>tsc</code> at every sample. Results for the finite scenarios:</p>
+<p>The opt-in VM experiment found two counterexamples to unqualified <code>CLOCK_BOOTTIME</code> leases. QEMU 10.1.5/KVM with Linux 6.18.60 advanced <code>kvm-clock</code> only <strong>about 7 ms during a 3-second QMP pause</strong>. Selecting <code>tsc</code> passed that pause, but restoring saved memory still left only <strong>about 8 ms of guest elapsed time after three seconds on the host</strong>. A shared test-only Rust <code>BootClock</code> now checks PID, VMClock v1 header and original disruption marker, <code>tsc</code> clocksource and disabled kernel sleep before and after sampling. Invalid readings permanently retire the owner’s timeline. A real fork regression refuses the child while leaving the parent usable.</p>
+<p>Short guest ACPI suspend exposed a separate failure with <code>tsc</code> and the original marker guard: <strong>120.2445 ms</strong> elapsed on the host while guest boottime advanced <strong>335.391747 ms</strong>, with the marker unchanged. The normalized <strong>503.087620 ms</strong> exceeds the <strong>241.489 ms</strong> upper bound. Repeated short suspends both passed and failed; success depends on sampling phase. The deterministic Rust regression <code>measured_guest_suspend_can_finish_a_drain_while_the_old_owner_is_live</code> feeds those readings into the interval component: with a 200 ms lifetime and 1 ms error allowance, the successor completes its 403 ms drain while the old owner still has <strong>19.63325 ms</strong> remaining. That test requires the unsafe outcome; it guards the qualification decision, not the platform. The historical source is commit <code>04ed2ff</code>; its measurements remain in the <a href="evidence/vm-clock-2026-11-10.json">evidence record</a>.</p>
+<p><strong>The candidate now refuses kernels that permit OS sleep.</strong> It requires a successful, empty read from <code>/sys/power/state</code>; missing/unreadable interfaces or any advertised state refuse admission. This is a kernel capability restriction, not a systemd policy or a configurable delay. The disposable qualification kernel has <code>CONFIG_SUSPEND=n</code> and <code>CONFIG_HIBERNATION=n</code>. Its guest rejects writes requesting <code>freeze</code>, <code>standby</code>, <code>mem</code> and <code>disk</code>. The host kernel is never changed or suspended. Linux’s <a href="https://github.com/torvalds/linux/blob/v6.18/kernel/power/main.c">state interface</a> supplies the capability list; its <a href="https://github.com/torvalds/linux/blob/v6.18/kernel/power/suspend.c">suspend path</a> updates the success statistic after process thaw, which is why polling that statistic was insufficient.</p>
 <table>
 <thead>
 <tr>
-<th>Scenario</th>
-<th><code>kvm-clock</code> binding</th>
-<th><code>tsc</code> binding</th>
+<th>Current binding scenario</th>
+<th>Stock kernel</th>
+<th>No-sleep kernel with <code>tsc</code></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Ordinary three-second interval</td>
-<td>Refused unsupported source</td>
-<td>Passed comparison</td>
+<td>Ordinary interval</td>
+<td>Refused admission</td>
+<td>Accepted within bounds</td>
 </tr>
 <tr>
 <td>QMP pause/resume</td>
-<td>Refused unsupported source; raw time misses the gap</td>
-<td>Passed comparison</td>
+<td>Refused admission</td>
+<td>Accepted within bounds</td>
 </tr>
 <tr>
-<td>Freeze the QEMU container</td>
-<td>Refused unsupported source</td>
-<td>Passed comparison</td>
+<td>Freeze QEMU container</td>
+<td>Refused admission</td>
+<td>Accepted within bounds</td>
 </tr>
 <tr>
 <td>Kernel clocksource fallback</td>
-<td>Refused unsupported source</td>
+<td>Refused admission</td>
 <td>Refused timestamp</td>
-</tr>
-<tr>
-<td>Short guest ACPI suspend</td>
-<td>Unsupported source</td>
-<td><strong>Failed: accepted clock advanced too far</strong></td>
 </tr>
 <tr>
 <td>Restore saved VM memory</td>
+<td>Refused admission</td>
 <td>Refused timestamp</td>
-<td>Refused timestamp</td>
+</tr>
+<tr>
+<td>OS sleep request</td>
+<td>Refused admission</td>
+<td>Kernel rejects request; clock stays usable</td>
 </tr>
 </tbody>
 </table>
-<p>Run <code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> on a Linux development host with the configured Rust/kache toolchain, Docker, <code>ldd</code>, <code>strip</code> and <code>/dev/kvm</code>. It exits <strong>1</strong> when an accepted timestamp violates the bound. A finite run that misses a violation does not qualify the platform; short suspend has a recorded counterexample. Raw measurements also retain the unsafe clocksource evidence. <code>--clocksource tsc</code> restricts it to the guarded candidate. The guest has one vCPU, 512 MiB, no network in clock-only mode and a disposable snapshot disk. No host is paused. The tool builds the library test executable through kache, or accepts <code>--test-binary</code> to reuse one. It removes its VMs and temporary files; its image may stay cached for repeat runs. <a href="evidence/vm-clock-2026-11-10.json">Exact samples, source hashes, configuration and limits</a>.</p>
-<p>The interval probe and takeover fixture now share one test-only Rust <code>BootClock</code>; the C probe was removed. It checks the original PID before touching inherited state, then the VMClock v1 header, initial disruption marker and <code>tsc</code> clocksource before and after sampling. A real <code>fork</code> regression requires refusal in the child; the parent clock remains usable. A disposable-VM clocksource fallback is also refused. Invalid, short or changed headers cause clock failure, which permanently retires the owner’s timeline. The model’s existing timing assumptions and refusal path are unchanged; this is a platform-binding experiment, not a new protocol theorem.</p>
-<p><code>scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json</code> reuses the process-pause fixture with its old owner in the VM and its object-store HTTP fixture and successor on the host. After the first acknowledgement and preparation of a late upload, the tool stops the VM and saves memory. The host successor fences, drains, recovers the selected prefix and commits revision two. Restoring the VM must leave all three old-owner outcomes false: publication, acknowledgement and reads. The required unguarded control reproduces all three unsafe outcomes. Both cases pass in <strong>23.67 seconds</strong> after guest preparation. The successor’s value and retry receipt remain unchanged by the late upload. This is native owner/journal/provider integration; it does not exercise the public HTTP router or a cloud service.</p>
-<p>A short <strong>guest ACPI suspend</strong> supplies a second counterexample even with <code>tsc</code> and the marker guard: <strong>120.2445 ms</strong> elapsed on the host while guest boottime advanced <strong>335.391747 ms</strong>, with the marker unchanged. The normalized <strong>503.087620 ms</strong> exceeds the upper bound of <strong>241.489 ms</strong>. Longer suspend passed the coarse interval comparison; three further short suspends included both passing and failing samples, so success depends on the sampling phase. Run <code>scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json</code>. <code>--scenario</code> avoids rerunning unrelated faults; each interval begins with a fresh unowned probe so a prior refusal cannot mask a later scenario.</p>
-<p>The deterministic Rust regression <code>measured_guest_suspend_can_finish_a_drain_while_the_old_owner_is_live</code> feeds the measured readings into the actual interval component. With a 200 ms lifetime and 1 ms error allowance, the successor completes its 403 ms drain while the old owner’s nominal independent clock still has <strong>19.63325 ms</strong> remaining. The test requires that unsafe outcome; it protects the qualification gate, not the platform. Run <code>cargo test --locked --lib ownership::timing</code>. The existing interval proof still assumes valid clock bounds.</p>
-<p><strong>The current binding is rejected for production use with OS suspend.</strong> Linux’s <a href="https://github.com/torvalds/linux/blob/v6.18/kernel/power/suspend.c">suspend path</a> thaws processes before updating its success statistic. That statistic alone cannot invalidate authority before the first resumed operation. No larger margin or statistical heuristic is substituted for a timing contract. The next admissible platform needs an enforceable no-suspend contract or a stronger clock/invalidation mechanism; the CLI remains gated.</p>
-<p>The marker behavior is consistent with the <a href="https://github.com/qemu/qemu/blob/master/hw/acpi/vmclock.c">QEMU device’s post-load update</a> and the <a href="https://uapi-group.org/specifications/specs/vmclock/">VMClock specification</a>. These are finite restore checks, not production qualification: inter-host rate/error bounds, live migration, frequency changes, hardware suspend, PID namespace recreation, CRIU and general VM cloning remain open. Privileged clocksource changes away from <code>tsc</code> and back between samples are outside this candidate contract. The CLI remains on its existing engine.</p>
+<p>The no-sleep run checks all six scenarios with both clock sources: <strong>12 passed</strong>, including refusal of every <code>kvm-clock</code> sample. A separate stock-kernel <code>tsc</code> baseline refuses admission. The native takeover fixture puts the old owner in the no-sleep VM and the provider HTTP fixture and successor on the host. After the first acknowledgement and preparation of a late upload, it saves VM memory. The successor fences, drains, recovers the selected prefix and commits revision two. Restoration leaves old-owner publication, acknowledgement and reads all false; the unguarded control reproduces all three unsafe outcomes. Both cases pass in <strong>23.60 seconds</strong> after guest preparation, preserving the successor’s value and retry receipt. This exercises the native owner/journal/provider composition, not the public HTTP router or a cloud service.</p>
+<p>Reproduce with Docker, <code>/dev/kvm</code>, <code>ldd</code>, <code>strip</code> and the configured Rust/kache toolchain:</p>
+<pre><code class="language-sh">scripts/check-vm-clock.py --kernel nosleep --output /tmp/vm-clock.json
+scripts/check-vm-clock.py --kernel nosleep --owner --output /tmp/vm-owner.json
+scripts/check-vm-clock.py --clocksource tsc --scenario baseline --output /tmp/vm-refusal.json
+</code></pre>
+<p><code>--scenario sleep-disabled --kernel nosleep --clocksource tsc</code> focuses the capability check; <code>--test-binary</code> reuses a built Rust test executable. Each interval starts a fresh unowned probe so earlier refusal cannot mask later scenarios. The first no-sleep run builds a pinned, checksum-verified Linux kernel; subsequent runs reuse its Docker cache. Guests use one vCPU, 512 MiB and a disposable snapshot disk. The tool removes temporary guests and files. Source/kernel/binary hashes and raw results are in the existing evidence record. Exit 1 means unexpected admission or a bound violation; a finite pass does not establish continuous clock bounds.</p>
+<p><strong>This closes guest OS sleep admission, not production platform qualification.</strong> A guest cannot establish that its hypervisor host cannot suspend. Cross-host rate/error bounds, live migration, hardware suspend and general cloning/CRIU remain unqualified. Privileged clocksource changes away and back between samples and PID namespace recreation are outside the candidate contract. The <a href="https://github.com/qemu/qemu/blob/master/hw/acpi/vmclock.c">QEMU post-load marker</a> and <a href="https://uapi-group.org/specifications/specs/vmclock/">VMClock specification</a> explain the tested restore behavior; neither establishes all those obligations. The custom kernel is an explicit deployment restriction, not generic Linux support. The adapter remains test-only and the CLI stays on its existing engine. The timing models and proof assumptions are unchanged.</p>
 <h2 id="candidate-root-controller">Candidate root controller</h2>
 <p><code>src/ownership/root.rs</code> composes the existing request session and interval arithmetic in Rust. <code>Connection::root</code> supplies the same controller for B2 and S3; there is no provider-specific ownership implementation. It creates a fresh incarnation, binds a claim once, confirms only the current invocation, starts the first drain after confirmation and preserves request-anchored expiry. Renewal attempts do not discard existing permission. Activation never extends it. Unknown activation outcomes require exact validation and reuse their completed drain.</p>
 <p>Its current <code>owned-candidate-3</code> metadata records the namespace, full timing profile, epoch, incarnation, phase and catalog identity. Both bindings use the B2 ten-field limit, including the fresh mutation identity. Existing publication formats, incompatible profiles, malformed records, overflow and invalid confirmations fail closed. The existing engine rejects the experimental format. Observation futures own their transport and session identity, allowing callers to await network work outside the controller lock.</p>

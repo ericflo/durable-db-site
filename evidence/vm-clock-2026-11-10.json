@@ -321,7 +321,7 @@
       "within_candidate_bounds": true,
       "guarded_scenario_passed": true
     },
-    "reproduce": "scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json",
+    "reproduce": "At commit 04ed2ff: scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json; current admission rejects this kernel.",
     "interpretation": "Any accepted sample outside the bounds rejects the candidate. Short-suspend outcomes vary with RTC phase; passing another sample does not erase the recorded failure. The tool exits 1 when it observes a violating sample.",
     "rust_counterexample": {
       "test": "measured_guest_suspend_can_finish_a_drain_while_the_old_owner_is_live",
@@ -346,5 +346,341 @@
       "fmt": "pass",
       "clippy_all_targets": "pass"
     }
+  },
+  "sleep_admission": {
+    "decision": "Test-only candidate requires an empty kernel sleep-capability list. Guest sleep exclusion passes; hypervisor-host sleep, inter-host bounds and migration remain unqualified. No CLI cutover.",
+    "base_commit": "04ed2ff674381b7e5c5ac03ea4ae9aa82cc16292",
+    "source_sha256": {
+      "scripts/check-vm-clock.py": "a56cc4bbc2d3a1f90166ab25199ddef9990da3ec542c0e3fa4cae3b4a0a9bc6d",
+      "scripts/vm-clock.Dockerfile": "e256db973b2ca3f1ceace07dcdc197e1396c8f752e4601d632b0419038f0895e",
+      "src/providers/s3/tests/timing/clock.rs": "0b0bb5383cdceefbf8a3478a9dd2e87dece96287a78bd12dbf6d5f2e623a2835"
+    },
+    "kernel": {
+      "version": "6.18.60",
+      "tar_xz_sha256": "3c2f44ef6acc021a7ad444d9a2e6ec1ef488ff09368793d0004a6080f69d621e",
+      "CONFIG_PM": "y",
+      "CONFIG_SUSPEND": "n",
+      "CONFIG_HIBERNATION": "n",
+      "CONFIG_PM_SLEEP": "n",
+      "CONFIG_PTP_1588_CLOCK_VMCLOCK": "y",
+      "rejected_requests": [
+        "freeze",
+        "standby",
+        "mem",
+        "disk"
+      ]
+    },
+    "intervals": {
+      "kind": "finite VM clock boundary experiment; not production qualification",
+      "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+      "image_id": "sha256:e743cec77de1089c31c970fb23266dcb9162868aec00ce376c4bc6e5d50f2841",
+      "test_binary_sha256": "071e9dc730321bfed078815dfca88f2ae25844b2a2b1ef707563b17a8d3bfed8",
+      "kernel_sha256": "fec0880ccded32e5294d1a895baefda015ced4f6dd707306cb695b06abdfb79d",
+      "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
+      "kernel_profile": "nosleep",
+      "mode": "clock-intervals",
+      "runs": [
+        {
+          "guest": "READY 6.18.60-durable-db-nosleep kvm-clock",
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          },
+          "samples": [
+            {
+              "mode": "baseline",
+              "iteration": 1,
+              "host_ns": 3006965487,
+              "guest_boottime_ns": 3006506101,
+              "guest_monotonic_ns": 3006503021,
+              "guest_realtime_ns": 3006502981,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 4509759151,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "qmp-stop",
+              "iteration": 1,
+              "host_ns": 3008266724,
+              "guest_boottime_ns": 7330899,
+              "guest_monotonic_ns": 7333209,
+              "guest_realtime_ns": 7333209,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 10996348,
+              "within_candidate_bounds": false,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "cgroup-freeze",
+              "iteration": 1,
+              "host_ns": 3086332232,
+              "guest_boottime_ns": 3086291845,
+              "guest_monotonic_ns": 3086294035,
+              "guest_realtime_ns": 3086294035,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 4629437767,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "clocksource-fallback",
+              "iteration": 1,
+              "host_ns": 53275572,
+              "guest_boottime_ns": 53281797,
+              "guest_monotonic_ns": 53281677,
+              "guest_realtime_ns": 53281677,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 79922695,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "snapshot-restore",
+              "iteration": 1,
+              "host_ns": 3330141470,
+              "guest_boottime_ns": 138458152,
+              "guest_monotonic_ns": 138467812,
+              "guest_realtime_ns": 138467982,
+              "marker_before": 1,
+              "marker_after": 2,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 207687228,
+              "within_candidate_bounds": false,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "sleep-disabled",
+              "iteration": 1,
+              "host_ns": 3636671,
+              "guest_boottime_ns": 3671954,
+              "guest_monotonic_ns": 3671934,
+              "guest_realtime_ns": 3671934,
+              "marker_before": 2,
+              "marker_after": 2,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 5507931,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            }
+          ]
+        },
+        {
+          "guest": "READY 6.18.60-durable-db-nosleep tsc",
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          },
+          "samples": [
+            {
+              "mode": "baseline",
+              "iteration": 1,
+              "host_ns": 3006959100,
+              "guest_boottime_ns": 3006950278,
+              "guest_monotonic_ns": 3006945348,
+              "guest_realtime_ns": 3006945278,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": true,
+              "normalized_boottime_ns": 4510425417,
+              "within_candidate_bounds": true,
+              "expected_admission": true,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "qmp-stop",
+              "iteration": 1,
+              "host_ns": 3008072753,
+              "guest_boottime_ns": 3008191299,
+              "guest_monotonic_ns": 3008193629,
+              "guest_realtime_ns": 3008193629,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": true,
+              "normalized_boottime_ns": 4512286948,
+              "within_candidate_bounds": true,
+              "expected_admission": true,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "cgroup-freeze",
+              "iteration": 1,
+              "host_ns": 3090863714,
+              "guest_boottime_ns": 3090911619,
+              "guest_monotonic_ns": 3090913929,
+              "guest_realtime_ns": 3090913929,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": true,
+              "normalized_boottime_ns": 4636367428,
+              "within_candidate_bounds": true,
+              "expected_admission": true,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "clocksource-fallback",
+              "iteration": 1,
+              "host_ns": 53388418,
+              "guest_boottime_ns": 53322161,
+              "guest_monotonic_ns": 53322431,
+              "guest_realtime_ns": 53322441,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 79983241,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "snapshot-restore",
+              "iteration": 1,
+              "host_ns": 3317803276,
+              "guest_boottime_ns": 8080626,
+              "guest_monotonic_ns": 8092266,
+              "guest_realtime_ns": 8092386,
+              "marker_before": 1,
+              "marker_after": 2,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 12120939,
+              "within_candidate_bounds": false,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            },
+            {
+              "mode": "sleep-disabled",
+              "iteration": 1,
+              "host_ns": 3719789,
+              "guest_boottime_ns": 3710995,
+              "guest_monotonic_ns": 3710995,
+              "guest_realtime_ns": 3710975,
+              "marker_before": 2,
+              "marker_after": 2,
+              "guard_accepts_timestamp": true,
+              "normalized_boottime_ns": 5566492,
+              "within_candidate_bounds": true,
+              "expected_admission": true,
+              "guarded_scenario_passed": true
+            }
+          ]
+        }
+      ]
+    },
+    "stock_refusal": {
+      "kind": "finite VM clock boundary experiment; not production qualification",
+      "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+      "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
+      "test_binary_sha256": "071e9dc730321bfed078815dfca88f2ae25844b2a2b1ef707563b17a8d3bfed8",
+      "kernel_sha256": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
+      "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
+      "kernel_profile": "stock",
+      "mode": "clock-intervals",
+      "runs": [
+        {
+          "guest": "READY 6.18.60-0-virt tsc",
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          },
+          "samples": [
+            {
+              "mode": "baseline",
+              "iteration": 1,
+              "host_ns": 3007123173,
+              "guest_boottime_ns": 3006911308,
+              "guest_monotonic_ns": 3006910358,
+              "guest_realtime_ns": 3006910298,
+              "marker_before": 1,
+              "marker_after": 1,
+              "guard_accepts_timestamp": false,
+              "normalized_boottime_ns": 4510366962,
+              "within_candidate_bounds": true,
+              "expected_admission": false,
+              "guarded_scenario_passed": true
+            }
+          ]
+        }
+      ]
+    },
+    "native_restore": {
+      "kind": "finite VM clock boundary experiment; not production qualification",
+      "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+      "image_id": "sha256:e743cec77de1089c31c970fb23266dcb9162868aec00ce376c4bc6e5d50f2841",
+      "test_binary_sha256": "071e9dc730321bfed078815dfca88f2ae25844b2a2b1ef707563b17a8d3bfed8",
+      "kernel_sha256": "fec0880ccded32e5294d1a895baefda015ced4f6dd707306cb695b06abdfb79d",
+      "configuration": "KVM, host CPU, one vCPU, 512 MiB, VMClock device; test-only 3/2 clock scaling and 1 ms error allowance",
+      "kernel_profile": "nosleep",
+      "mode": "owner-restore",
+      "runs": [
+        {
+          "guard": true,
+          "applied_acknowledged_served": [
+            false,
+            false,
+            false
+          ],
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          }
+        },
+        {
+          "guard": false,
+          "applied_acknowledged_served": [
+            true,
+            true,
+            true
+          ],
+          "qemu": {
+            "qemu": {
+              "micro": 5,
+              "minor": 1,
+              "major": 10
+            },
+            "package": ""
+          }
+        }
+      ]
+    },
+    "checks": {
+      "clock_intervals": 12,
+      "stock_refusal": 1,
+      "native_restore_seconds_after_guest_preparation": 23.6,
+      "marker_source_sleep_retirement": "pass",
+      "fork_refusal": "pass",
+      "fmt": "pass",
+      "clippy_all_targets": "pass"
+    },
+    "cleanup": "Disposable VM containers, sockets, disks and initramfs removed by the harness; kernel/image retained as build cache. Development host kernel and sleep settings unchanged."
   }
 }

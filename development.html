@@ -90,15 +90,15 @@ scripts/check-proof.sh
 </tr>
 <tr>
 <td>VM pause/restore clock boundary</td>
-<td><code>scripts/check-vm-clock.py --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; known short-suspend counterexample, see verification)</td>
+<td><code>scripts/check-vm-clock.py --kernel nosleep --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; first run builds a cached no-sleep kernel)</td>
 </tr>
 <tr>
-<td>Focused short suspend</td>
-<td><code>scripts/check-vm-clock.py --clocksource tsc --scenario guest-suspend-short --repeat 3 --output /tmp/vm-suspend.json</code></td>
+<td>Kernel sleep admission</td>
+<td><code>scripts/check-vm-clock.py --kernel nosleep --clocksource tsc --scenario sleep-disabled --output /tmp/vm-admission.json</code>; stock kernels must refuse admission</td>
 </tr>
 <tr>
 <td>Native takeover across VM restore</td>
-<td><code>scripts/check-vm-clock.py --owner --output /tmp/vm-owner.json</code> (same Rust fixture, guard and required unsafe control; about 23 seconds after guest preparation)</td>
+<td><code>scripts/check-vm-clock.py --kernel nosleep --owner --output /tmp/vm-owner.json</code> (same Rust fixture, guard and required unsafe control; about 23 seconds after guest preparation)</td>
 </tr>
 <tr>
 <td>Ownership intervals</td>
