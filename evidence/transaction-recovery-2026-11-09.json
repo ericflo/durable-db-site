@@ -152,5 +152,21 @@
     ".tools/model-transaction-recovery-revision.log": "8902f7143146bbc873b9ca8e1f51f3eba9436ed2fb787835654ba62d38e30d8a",
     ".tools/model-transaction-recovery.log": "8c3817874044cc2a5330b7fcfa503562cd9df32eea2e48643c7b40f733ead95c",
     ".tools/transaction-recovery-site.log": "1cc292dd56e44e1e20dc360018f457cef3974a1050c0fcbe768786fb1dd6b1bc"
+  },
+  "qualification": {
+    "source_commit": "7371f81a594dc161604c141e0828db648de3c861",
+    "woodpecker": {
+      "pipeline": 64,
+      "status": "success",
+      "build_log_sha256": "4a6ea6a8de50c7415523ef3bababf367b419b2f45f66c6b3f6d7f679c9961845"
+    },
+    "public_pages_evidence_matches_commit": true,
+    "public_source_marker_matches_commit": true,
+    "pages_verification_sha256": "bdcd8d4fdad236b7f130d052dbd15c66ea6a122ada4f3f93d84f52126c113f61",
+    "pages_deployment_retry": {
+      "failed_deployment": 7672055619,
+      "successful_deployment": 7672097565,
+      "identical_tree": true
+    }
   }
 }
