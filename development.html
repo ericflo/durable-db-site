@@ -29,6 +29,10 @@ scripts/check-proof.sh
 <td><code>cargo test --locked --lib native_budget</code>, <code>cargo test --locked --lib database_budget</code>, <code>cargo test --locked --test upload_budget</code>, <code>cargo test --locked --lib root::tests::http</code>, <code>scripts/check-model.sh UploadCredits</code> and <code>scripts/check-model.sh TenantAdmission</code></td>
 </tr>
 <tr>
+<td>Native budget metadata cleanup</td>
+<td><code>cargo test --locked --lib database_budget</code>, <code>cargo test --locked --lib automatically_collects</code>, <code>scripts/check-model.sh PublicationSafety</code> and <code>scripts/check-proof.sh PublicationSafety</code></td>
+</tr>
+<tr>
 <td>HTTP admission</td>
 <td><code>cargo test --locked --lib api::rate</code>, <code>cargo test --locked --test http</code> and <code>scripts/check-model.sh RequestBudget</code></td>
 </tr>
