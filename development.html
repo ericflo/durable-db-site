@@ -102,6 +102,10 @@ scripts/check-proof.sh
 <td><code>scripts/check-vm-clock.py --kernel nosleep --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; first run builds a cached no-sleep kernel)</td>
 </tr>
 <tr>
+<td>ClockBound counter/disruption rejection</td>
+<td><code>python3 scripts/check-clockbound.py --output /tmp/clockbound.json</code> (Docker + <code>/dev/kvm</code>; pinned upstream client, no database dependency; exit zero confirms the expected rejection and controls)</td>
+</tr>
+<tr>
 <td>Kernel sleep admission</td>
 <td><code>scripts/check-vm-clock.py --kernel nosleep --clocksource tsc --scenario sleep-disabled --output /tmp/vm-admission.json</code>; stock kernels must refuse admission</td>
 </tr>

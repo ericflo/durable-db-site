@@ -873,5 +873,334 @@
     "proof_log_sha256": "58b1e6bd7e0eb71df3c98ca6cc45dfe7cd12774c974ad42c51130cd23c291162",
     "cleanup": "Disposable VM containers, sockets, disks, sampled header and initramfs removed by the harness. Host and cluster inventory was read-only; no clocks, services, kernels or cluster settings changed. Reusable VM images retained.",
     "limitations": "Capability inspection never qualifies serving, even for a synthetic complete header. NIC PTP device names are not synchronization/error-bound evidence. No production/runtime/storage-format change; no new binary release."
+  },
+  "clockbound_v3_probe_2026_11_11": {
+    "kind": "ClockBound V3 counter/disruption rejection; synthetic calibration, no NTP qualification",
+    "upstream_commit": "371058f8f6a1786d4a4ab3eed9f5f2f16eea7777",
+    "archive_sha256": "d2ede954fe4631785c9457ddc100fdfa1c3252a47410432e250317f24402494f",
+    "host": "Linux 7.2.11-arch1-1 x86_64 GNU/Linux",
+    "qemu": {
+      "qemu": {
+        "micro": 5,
+        "minor": 1,
+        "major": 10
+      },
+      "package": ""
+    },
+    "image_id": "sha256:58f48a57f190e024b474afecc714c6c6d8813835752fb031fe215a18cc8eebeb",
+    "sha256": {
+      "binary": "69d60513f88da223e9651c4b568fb301de67ac1f7e3e49647aae7c0e64984c57",
+      "kernel": "0c41150f2c75a1edf0456ffeb54880837fd9cba86cbf3a351c4a1c94b6ab7978",
+      "lock": "316d155bfc7c838de797023478edf95fd0e397ed08dc84dc6bf48d231fe85c57",
+      "probe": "87784db82615adcf82732a7ef97ad984bf3ae3c5c3b3d115aed6699b8cdc46e9",
+      "driver": "9ffb89ce3d56314c1e245b3b1e24a0bb2cace9284a3113a7562b885e6331bea3"
+    },
+    "samples": [
+      {
+        "mode": "baseline",
+        "before": {
+          "guarded": [
+            1000007855640,
+            1000009873368,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000007879347,
+            1000009897123,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819647133098883,
+            819647140785861
+          ]
+        },
+        "after": {
+          "guarded": [
+            1003012880947,
+            1003020914741,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1003012893724,
+            1003020927544,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819650140845337,
+            819650148777657
+          ]
+        },
+        "host_elapsed_window_ns": [
+          3000059476,
+          3015678774
+        ],
+        "guarded": {
+          "elapsed_window_ns": [
+            3003007579,
+            3013059101
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        },
+        "unguarded": {
+          "elapsed_window_ns": [
+            3002996601,
+            3013048197
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        }
+      },
+      {
+        "mode": "qmp-stop",
+        "before": {
+          "guarded": [
+            1000007788488,
+            1000009806082,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000007794542,
+            1000009812148,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819650257745826,
+            819650265481852
+          ]
+        },
+        "after": {
+          "guarded": [
+            1003014218644,
+            1003022255116,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1003014230851,
+            1003022267349,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819653266945117,
+            819653274750141
+          ]
+        },
+        "host_elapsed_window_ns": [
+          3001463265,
+          3017004315
+        ],
+        "guarded": {
+          "elapsed_window_ns": [
+            3004412562,
+            3014466628
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        },
+        "unguarded": {
+          "elapsed_window_ns": [
+            3004418703,
+            3014472807
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        }
+      },
+      {
+        "mode": "cgroup-freeze",
+        "before": {
+          "guarded": [
+            1000007985548,
+            1000010003536,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000007992201,
+            1000010010203,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819653383808308,
+            819653391723529
+          ]
+        },
+        "after": {
+          "guarded": [
+            1003091446794,
+            1003099637878,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1003091459112,
+            1003099650220,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819656470242847,
+            819656478108910
+          ]
+        },
+        "host_elapsed_window_ns": [
+          3078519318,
+          3094300602
+        ],
+        "guarded": {
+          "elapsed_window_ns": [
+            3081443258,
+            3091652330
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        },
+        "unguarded": {
+          "elapsed_window_ns": [
+            3081448909,
+            3091658019
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": true
+        }
+      },
+      {
+        "mode": "guest-suspend-short",
+        "before": {
+          "guarded": [
+            1000007967637,
+            1000009985589,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000007973361,
+            1000009991325,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819656587225316,
+            819656594913364
+          ]
+        },
+        "after": {
+          "guarded": [
+            1000008674268,
+            1000010693634,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000008679632,
+            1000010699010,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819656656063228,
+            819667072241485
+          ]
+        },
+        "host_elapsed_window_ns": [
+          61149864,
+          10485016169
+        ],
+        "guarded": {
+          "elapsed_window_ns": [
+            -1311321,
+            2725997
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": false
+        },
+        "unguarded": {
+          "elapsed_window_ns": [
+            -1311693,
+            2725649
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": false
+        }
+      },
+      {
+        "mode": "snapshot-restore",
+        "before": {
+          "guarded": [
+            1000007947943,
+            1000009965855,
+            "Synchronized"
+          ],
+          "unguarded": [
+            1000007953728,
+            1000009971652,
+            "Synchronized"
+          ],
+          "marker": 1,
+          "host_window": [
+            819667181391692,
+            819667189148908
+          ]
+        },
+        "after": {
+          "guarded": [
+            1000017037050,
+            1000019073160,
+            "Disrupted"
+          ],
+          "unguarded": [
+            1000017048879,
+            1000019085011,
+            "Synchronized"
+          ],
+          "marker": 2,
+          "host_window": [
+            819670445537405,
+            819670454027249
+          ]
+        },
+        "host_elapsed_window_ns": [
+          3256388497,
+          3272635557
+        ],
+        "guarded": {
+          "elapsed_window_ns": [
+            7071195,
+            11125217
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": false,
+          "overlaps_host": false
+        },
+        "unguarded": {
+          "elapsed_window_ns": [
+            7077227,
+            11131283
+          ],
+          "nondecreasing_midpoint": true,
+          "trusted": true,
+          "overlaps_host": false
+        }
+      }
+    ],
+    "status": "REJECTED on this stock QEMU/KVM guest: suspend can violate the V3 error interval without a disruption signal or backwards reading.",
+    "scope": "Pinned upstream client with a synthetic, locally rate-estimated V3 calibration. No daemon, NTP, EC2, hypervisor-host suspend or production qualification. Baseline/pauses and restore control separate the clock discontinuity from ordinary calibration error.",
+    "command": "python3 scripts/check-clockbound.py --output /tmp/clockbound.json",
+    "limitations": [
+      "The probe is specific to Linux x86_64 and the recorded QEMU/KVM/kernel.",
+      "A monotonic host observation brackets each guest sample; reported elapsed ranges account for serial/QMP latency.",
+      "An old owner can first run after the counter catches up; intervening backwards diagnostic readings are not required observations by that owner.",
+      "No database code, formats, dependencies or TLA assumptions changed.",
+      "A supported platform needs a source/error contract and disruption signal before old authority can resume; an arbitrary margin cannot repair an undetected counter reset."
+    ]
   }
 }
