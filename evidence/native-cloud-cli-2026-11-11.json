@@ -1,10 +1,10 @@
 {
   "date_utc": "2026-11-11",
-  "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+  "source_commit": "f9089c013d7befb5c3d4dda8d515bf4f8c948818",
   "scope": "Native cloud CLI integration; DNS placement and bounded resident components. Experimental, not a production operating envelope or composed Rust proof.",
   "source_sha256": {
     "src/main.rs": "7e1654a210ce14a3b397ac99ab0e1b326fb53042f449fcef8456b53f4770f06d",
-    "src/api/cluster.rs": "0eefe9ff6383351068112fe9162dd980b931999a24bc89232bc4520fd697b314",
+    "src/api/cluster.rs": "f627800080d71d8699d7a064ae76b64a49bf754b3d0cb2e16a102783e4a09998",
     "src/api/membership.rs": "8d2096c896412cf6dde221ec01e8a9b8b57005a559491bc45aae11a70e3b6119",
     "src/api/native.rs": "2be72796680fd34baa72a8df6aadc8d98e4fc7f9d2623599feb508faddf35799",
     "src/providers/mod.rs": "5b897f129e0b045a5cd20ba0c3fd19d5ccc3762a3aab912e4551d35f843657be",
@@ -12,27 +12,34 @@
     "src/transactions/live.rs": "123ba55977b16301b1a784dc2dd4d4b92f47d76d93421be418011a3755dde341",
     "src/journal/writer.rs": "44b8a80b3837ce33a86ee9895269086968351a6d2007f5e049ce2120f45aad58",
     "tests/cluster_cli.rs": "6038989938e6d9a58b33002d4c349ef6e0101d0bc2f617b5017f7be891a0bd4d",
-    "src/ownership/root/tests/cluster.rs": "705e419f47d7e30092d9fd101cc42e99534ba0a3a75dd31609cbdbc70e772756",
+    "src/ownership/root/tests/cluster.rs": "cdbbcd7d545220300ce4c7d4e2b6c97ee425f3f3e178267e3b503a42b1bb4403",
     "deploy/kubernetes/deployment.yaml": "5e2ea2bef9070db9dca9dc0ce2c8916bd8b98142275534aab6257564daa0725d",
     "deploy/kubernetes/service.yaml": "474bcbe3a0b0418ba49699a3d50e0c4045bbfc36e993a4dfa9b92fe08f2d5ed0",
     "scripts/qualify-multinode.py": "204af03a6c4a4c454e3383ae38f87af70249568d3f5a13016a3c511fa2b6dc69",
     "spec/OwnerResidency.tla": "e53363d00997756fc2c5b5598d691e3a3d390a28921a518be8d93dbdc06a6089",
-    "spec/ClusterLayout.tla": "f1d15b87630b027b3875b54ab89ec7210ef3634e1e87036f299b4805475b4854"
+    "spec/ClusterLayout.tla": "f1d15b87630b027b3875b54ab89ec7210ef3634e1e87036f299b4805475b4854",
+    "src/api/forward.rs": "59e83985c6967e507fbc825af8c07ad861ab1038f73a78ae1aa461c919205eef",
+    "src/ownership/root/tests/routing.rs": "265e623bcf241b56b18820b9b157560bfb0fab45ddc15ff22a164c43b6b07682",
+    "spec/OwnerRouting.tla": "36346c9b71b046645dda944ba05b23763db556352981e9ff65d20686e5cb0588"
   },
   "local": {
-    "enabled_rust_tests_passed": 316,
+    "enabled_rust_tests_passed": 318,
     "capacity_test": "optimized in Woodpecker; excluded from debug suite",
     "clippy": "all-targets -D warnings passed",
     "formatting": "passed",
-    "focused_controller_tests": 8,
-    "focused_controller_seconds": 0.31,
+    "focused_controller_tests": 9,
+    "focused_controller_seconds": 3.16,
     "membership_tests": 3,
     "membership_seconds_less_than": 0.01,
     "cli_configuration_test_seconds": 0.04,
     "negative_controls": [
       "retired owner reservation released too early: detected",
-      "eager partition initialization at zero shared credit: detected"
-    ]
+      "eager partition initialization at zero shared credit: detected",
+      "cache retained after pre-identity Busy rejection: detected",
+      "30-second deadline restored around acquisition: detected"
+    ],
+    "focused_routing_tests": 5,
+    "focused_routing_seconds": 0.1
   },
   "models": [
     {
@@ -50,66 +57,16 @@
       "depth": 6,
       "negative_controls": 2,
       "bounds": "existing bounded layout model extended with empty membership"
+    },
+    {
+      "name": "OwnerRouting",
+      "distinct_states": 55,
+      "generated_states": 90,
+      "depth": 7,
+      "negative_controls": 4,
+      "bounds": "one request; stale route, address reuse, pinned destination, pre-identity overload"
     }
   ],
-  "cloud_cli": {
-    "date_utc": "2026-11-11",
-    "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
-    "clean_worktree": true,
-    "native_format": "owned-candidate-23",
-    "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_cloud_cli_recovers_exhausted_admission_and_preserves_data --nocapture",
-    "scope": "Debug native cloud CLI; two partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Zero-credit startup, refill, SIGKILL, exhausted-credit recovery, cold values and exact receipts, incompatible layout refusal. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
-    "results": [
-      {
-        "provider": "B2",
-        "test": {
-          "admin_bootstrap_from_zero_credit": true,
-          "admin_refill_available_before_owner_readiness": true,
-          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
-          "cold_processes": 3,
-          "exhausted_credit_preserved_on_restart": true,
-          "incompatible_layout_refused": true,
-          "native_cloud_cli": true,
-          "partitions": 2,
-          "refill_idempotent": true,
-          "replenished_limits_preserved_on_restart": true,
-          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
-          "seconds": 64.722093237,
-          "values_and_exact_receipts_recovered": true
-        },
-        "cleanup": {
-          "bucket_removed": true,
-          "workload_key_revoked": true,
-          "physical_versions_deleted": 100
-        }
-      },
-      {
-        "provider": "versioned MinIO",
-        "image": "epsilon-maintenance-minio:20261105",
-        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
-        "test": {
-          "admin_bootstrap_from_zero_credit": true,
-          "admin_refill_available_before_owner_readiness": true,
-          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
-          "cold_processes": 3,
-          "exhausted_credit_preserved_on_restart": true,
-          "incompatible_layout_refused": true,
-          "native_cloud_cli": true,
-          "partitions": 2,
-          "refill_idempotent": true,
-          "replenished_limits_preserved_on_restart": true,
-          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
-          "seconds": 1.492340002,
-          "values_and_exact_receipts_recovered": true
-        },
-        "cleanup": {
-          "bucket_removed": true,
-          "physical_versions_deleted": 209,
-          "container_removed": true
-        }
-      }
-    ]
-  },
   "failed_attempts": [
     {
       "source_commit": "ba54a48",
@@ -1112,6 +1069,391 @@
         "bucket_removed": true,
         "workload_key_revoked": true,
         "physical_versions_deleted": 490
+      }
+    }
+  },
+  "initial_cloud_cli": {
+    "date_utc": "2026-11-11",
+    "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+    "clean_worktree": true,
+    "native_format": "owned-candidate-23",
+    "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_cloud_cli_recovers_exhausted_admission_and_preserves_data --nocapture",
+    "scope": "Debug native cloud CLI; two partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Zero-credit startup, refill, SIGKILL, exhausted-credit recovery, cold values and exact receipts, incompatible layout refusal. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 64.722093237,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 100
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 1.492340002,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 209,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "cloud_cli": {
+    "date_utc": "2026-11-11",
+    "source_commit": "f9089c013d7befb5c3d4dda8d515bf4f8c948818",
+    "clean_worktree": true,
+    "native_format": "owned-candidate-23",
+    "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_cloud_cli_recovers_exhausted_admission_and_preserves_data --nocapture",
+    "scope": "Debug native cloud CLI; two partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Zero-credit startup, refill, SIGKILL, exhausted-credit recovery, cold values and exact receipts, incompatible layout refusal. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "c739f1ac961a2daf86d9cbe92f01f32e2848f91d0654070e36f007dcd074ad43",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 68.228493457,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 100
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "c739f1ac961a2daf86d9cbe92f01f32e2848f91d0654070e36f007dcd074ad43",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 1.453005359,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 209,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "kubernetes_after_routing_and_recovery_fixes": {
+    "result": {
+      "binary_source_commit": "f9089c013d7befb5c3d4dda8d515bf4f8c948818",
+      "image_digest": "sha256:99a266242f416157a1a687881b555d2d952e1ca5a025c61ef51919be0e002d76",
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 107
+      }
+    },
+    "qualification": {
+      "schema": 1,
+      "complete": false,
+      "started_at": "2026-11-11T15:17:56.086025+00:00",
+      "context": "epsilon",
+      "namespace": "durable-db-qualification-c9e74632a436",
+      "image": "localhost:32000/durable-db@sha256:99a266242f416157a1a687881b555d2d952e1ca5a025c61ef51919be0e002d76",
+      "source_commit": "f9089c013d7befb5c3d4dda8d515bf4f8c948818",
+      "harness_sha256": "204af03a6c4a4c454e3383ae38f87af70249568d3f5a13016a3c511fa2b6dc69",
+      "workload_sha256": "b510563bb967aa22daadf5bbc3b1e9b52f22a58f7eba2324ca3c98fe439b3a83",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "phases": [],
+      "budget_observations": [],
+      "resource_samples": [],
+      "failures": [],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Application-pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "controller_failure": {
+        "type": "RuntimeError",
+        "reason": "Replica readiness deadline exceeded"
+      },
+      "pod_states": [
+        {
+          "name": "durable-db-54b595f74f-gtkqk",
+          "node": "epsilon-3",
+          "phase": "Running",
+          "conditions": [
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-11T15:18:05Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodReadyToStartContainers"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-11T15:18:05Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "Initialized"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-11T15:18:05Z",
+              "message": "containers with unready status: [database]",
+              "observedGeneration": 1,
+              "reason": "ContainersNotReady",
+              "status": "False",
+              "type": "Ready"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-11T15:18:05Z",
+              "message": "containers with unready status: [database]",
+              "observedGeneration": 1,
+              "reason": "ContainersNotReady",
+              "status": "False",
+              "type": "ContainersReady"
+            },
+            {
+              "lastProbeTime": null,
+              "lastTransitionTime": "2026-11-11T15:18:04Z",
+              "observedGeneration": 1,
+              "status": "True",
+              "type": "PodScheduled"
+            }
+          ],
+          "containers": [
+            {
+              "name": "database",
+              "restart_count": 0,
+              "state": {
+                "running": {
+                  "startedAt": "2026-11-11T15:18:06Z"
+                }
+              },
+              "last_state": {}
+            }
+          ]
+        }
+      ],
+      "event_reasons": [
+        {
+          "reason": "Scheduled",
+          "message": "Successfully assigned durable-db-qualification-c9e74632a436/durable-db-54b595f74f-gtkqk to epsilon-3"
+        },
+        {
+          "reason": "Pulling",
+          "message": "Pulling image \"localhost:32000/durable-db@sha256:99a266242f416157a1a687881b555d2d952e1ca5a025c61ef51919be0e002d76\""
+        },
+        {
+          "reason": "Pulled",
+          "message": "Successfully pulled image \"localhost:32000/durable-db@sha256:99a266242f416157a1a687881b555d2d952e1ca5a025c61ef51919be0e002d76\" in 474ms (474ms including waiting). Image size: 6480894 bytes."
+        },
+        {
+          "reason": "Created",
+          "message": "Container created"
+        },
+        {
+          "reason": "Started",
+          "message": "Container started"
+        },
+        {
+          "reason": "Unhealthy",
+          "message": "Readiness probe failed: HTTP probe failed with statuscode: 503"
+        },
+        {
+          "reason": "SuccessfulCreate",
+          "message": "Created pod: durable-db-54b595f74f-gtkqk"
+        },
+        {
+          "reason": "ClusterIPNotAllocated",
+          "message": "Cluster IP [IPv4]: 10.152.183.245 is not allocated; repairing"
+        },
+        {
+          "reason": "ScalingReplicaSet",
+          "message": "Scaled up replica set durable-db-54b595f74f from 0 to 1"
+        }
+      ],
+      "namespace_removed": true,
+      "finished_at": "2026-11-11T15:22:22.895347+00:00"
+    },
+    "scope": "Failed the initial 240-second readiness deadline with sixteen partitions. Not a passing Kubernetes qualification. The namespace, disposable bucket, and workload key were removed."
+  },
+  "default_layout_startup": {
+    "before": {
+      "source_commit": "28b90b2",
+      "b2": {
+        "native_default_cli_ready": false,
+        "partitions": 16,
+        "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+        "startup_seconds": 240.001232073
+      },
+      "b2_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 120
+      },
+      "s3": {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "native_default_cli_ready": true,
+          "partitions": 16,
+          "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+          "startup_seconds": 2.025993353
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 398,
+          "container_removed": true
+        }
+      }
+    },
+    "after": {
+      "date_utc": "2026-11-11",
+      "source_commit": "929620175c09ececce4233a7f0f8f8b169c83218",
+      "clean_worktree": true,
+      "native_format": "owned-candidate-23",
+      "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_default_cli_starts_sixteen_partitions --nocapture",
+      "scope": "Debug native cloud CLI; sixteen partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Default-layout startup with scheduled maintenance and fixed-stage diagnostics. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
+      "results": [
+        {
+          "provider": "B2",
+          "test": {
+            "native_default_cli_ready": true,
+            "partitions": 16,
+            "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+            "startup_seconds": 126.628451879
+          },
+          "cleanup": {
+            "bucket_removed": true,
+            "workload_key_revoked": true,
+            "physical_versions_deleted": 115
+          }
+        },
+        {
+          "provider": "versioned MinIO",
+          "image": "epsilon-maintenance-minio:20261105",
+          "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+          "test": {
+            "native_default_cli_ready": true,
+            "partitions": 16,
+            "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+            "startup_seconds": 2.024375933
+          },
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 398,
+            "container_removed": true
+          }
+        }
+      ]
+    },
+    "change": "Shared directory collection is scheduled once on the peer preferred for partition zero, not delegated by each native partition collector. Membership disagreement remains safe under the existing fenced collector.",
+    "local_checks": {
+      "rust_passed": 319,
+      "cargo_fmt": "passed",
+      "cargo_clippy_all_targets": "passed",
+      "shared_maintenance_reassignment_regression": "passed",
+      "reintroduced_recovery_timeout": "detected after 50 seconds of virtual time",
+      "PublicationSafety": {
+        "distinct_states": 175546,
+        "negative_controls": 4
+      }
+    }
+  },
+  "unknown_journal_upload": {
+    "failed_cloud_run": {
+      "source_commit": "cc9e1ebb47497b943551dd413eb2b010cb0ca5b7",
+      "provider": "B2",
+      "seconds": 399.4,
+      "result": "Repeated commit deadline, live owner with no provider I/O outstanding. An unresolved journal could remain absent forever while the worker kept polling.",
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 16
+      }
+    },
+    "fix": "Retire on an absent resolving GET; normal cluster reacquisition revokes the old permit and selects its durable journal prefix. No inference of abort and no repeated PUT.",
+    "local": {
+      "rust_passed": 320,
+      "focused_http_seconds": 6.16,
+      "old_indefinite_polling_mutant": "detected within the two-second request deadline",
+      "late_old_upload_and_second_reopen": "passed",
+      "RevocableOwner": {
+        "distinct_states": 856,
+        "controls": 9
       }
     }
   }
