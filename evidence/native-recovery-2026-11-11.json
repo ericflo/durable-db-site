@@ -579,6 +579,189 @@
       "rolling_phase_seconds_including_aggregate_progress": 85.126074,
       "scope": "Kubernetes rollout and aggregate progress passed; individual writer recovery was not established at each phase boundary. This is a debug-image campaign, not release performance or complete availability qualification.",
       "per_writer_recovery_barrier": false
+    },
+    {
+      "binary_source_commit": "5a69e41427c8be23fb2cdc161082cbee3bce1b8f",
+      "binary_profile": "verified static release v0.23.3",
+      "binary_sha256": "4f8a7966e0daf4635bea7b53a4fdac88f533cb376360ecde076dbd18fee56904",
+      "image_digest": "sha256:18139d6e806d3ff1c4337e539a80b40755d76faaa96232ff80d2d11e092a1c99",
+      "campaign_exit_code": 0,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1073
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T23:03:57.990835+00:00",
+      "finished_at": "2026-11-11T23:28:18.030274+00:00",
+      "source_commit": "5a143b5fe9e74e9aaf72d7d8a729319f2520850a",
+      "harness_sha256": "39bfac962b1938ec1e29ad44cfd6b41319a79498beb35e4b6399e7bb1baacf75",
+      "workload_sha256": "91e6cfd9ed83115127bb85c4dec5c0d412609950be07773c9d34b98ae823d09a",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": false,
+        "maximum_write_intents": 100000
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "writes_acknowledged": 1791,
+      "reads_verified": 1791,
+      "verified_keys": 1791,
+      "expected": [
+        371,
+        452,
+        501,
+        467
+      ],
+      "verified": [
+        371,
+        452,
+        501,
+        467
+      ],
+      "http_attempt_statuses": {
+        "200": 3629,
+        "429": 573,
+        "503": 459,
+        "transport_or_decode_error": 87
+      },
+      "history_sha256": "b083c2f39b1d0bea148dbbbc9e126a01dfb0ff572d8ae7f27c3ab923586f3b13",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T23:04:18.028484+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T23:04:32.224677+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T23:06:19.095491+00:00",
+          "writes_acknowledged": 25
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T23:08:43.039161+00:00",
+          "writes_acknowledged": 239
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T23:11:11.838092+00:00",
+          "writes_acknowledged": 420
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T23:11:17.052870+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 441
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T23:14:00.677174+00:00",
+          "elapsed_seconds": 120.000107014901,
+          "writes_acknowledged": 795
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-11T23:17:09.826971+00:00",
+          "writes_acknowledged": 1142
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-11T23:19:54.960422+00:00",
+          "writes_acknowledged": 1265
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-11T23:20:17.297571+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-11T23:21:19.420835+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 1363
+        },
+        {
+          "name": "scale-one",
+          "time_utc": "2026-11-11T23:24:16.307536+00:00",
+          "writes_acknowledged": 1604
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-11T23:24:44.100056+00:00",
+          "writes_acknowledged": 1677
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-11T23:26:51.231653+00:00",
+          "writes_acknowledged": 1785
+        }
+      ],
+      "per_writer_recovery_barrier": true,
+      "sequential_history_checker": {
+        "passed": true,
+        "writers": 4,
+        "acknowledged": 1791,
+        "checks": "Unique request identities, per-writer invocation order, contiguous revisions, value hashes and recovered totals; not a general linearizability checker."
+      },
+      "phase_to_phase_seconds": {
+        "provider-reachable": 14.196,
+        "one-progress": 106.871,
+        "scale-3": 143.944,
+        "scale-6": 148.799,
+        "steady-start": 5.215,
+        "steady-complete": 163.624,
+        "forced-api-pod-loss": 189.15,
+        "rolling-replacement": 165.133,
+        "provider-partition-start": 22.337,
+        "provider-partition-healed": 62.123,
+        "scale-one": 176.887,
+        "zero-api-pods": 27.793,
+        "cold-three": 127.132
+      },
+      "limitations": [
+        "One short four-writer campaign on existing Kubernetes hosts; manual scale changes, not HPA or whole-host loss.",
+        "The tested executable is released v0.23.3, before the local-health patch in v0.23.4.",
+        "Two verified readbacks per writer are required before every next fault. The unchanged client retry deadline is 180 seconds; rollout/progress deadlines are 240 seconds.",
+        "Recovery phase times include orchestration and readback barriers; no latency/throughput SLO or controlled debug-versus-release comparison.",
+        "Workload uses the stable client Service. Auxiliary read-only direct-pod info probes and fixed-cardinality metrics were collected for diagnosis.",
+        "No peak-memory, AWS, long-soak, backup/restore or general concurrent-history qualification.",
+        "This run predates the diagnostic error-field correction; no HTTP 409 was observed."
+      ],
+      "sampled_acquisition_failure_stages": {
+        "claim": 7
+      },
+      "sampled_completed_acquisitions": {
+        "count": 83,
+        "minimum_ms": 6204,
+        "maximum_ms": 90804
+      }
     }
   ],
   "release": {
@@ -816,7 +999,9 @@
     "rollout_surge": 1,
     "rollout_deadline_seconds": 240,
     "client_retry_deadline_seconds": 180,
-    "fresh_cloud_campaign_with_stronger_barrier_pending": true
+    "fresh_cloud_campaign_with_stronger_barrier_pending": false,
+    "conflict_error_field_corrected_commit": "64e8efd33bc298a0f35f6c952a6d0e93a1c667d6",
+    "remaining": "Repeatability, faster recovery under declared targets, peak-memory, HPA, host failures and sustained B2/AWS qualification remain open."
   },
   "release_0_23_3": {
     "source_commit": "5a69e41427c8be23fb2cdc161082cbee3bce1b8f",
@@ -880,6 +1065,104 @@
     "github_actions_disabled": true,
     "tag_pipeline": {
       "number": 221,
+      "status": "success"
+    },
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.3",
+    "published_at": "2026-11-11T22:54:29Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "5a143b5fe9e74e9aaf72d7d8a729319f2520850a",
+      "default_version": "v0.23.3",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    }
+  },
+  "local_health": {
+    "source_commit": "981eb40",
+    "enabled_rust_checks": 324,
+    "strict_clippy": true,
+    "provider_error_regression_failed_old_probe": true,
+    "idle_owner_survives_failed_permit_reads_without_authority_writes": true,
+    "data_refused_until_fresh_permit_validation": true,
+    "paused_exclusive_admission_does_not_block_health": true,
+    "retired_journal_owner_still_reacquired": true,
+    "owner_routing_model": {
+      "distinct_states": 110,
+      "generated_states": 289,
+      "depth": 8,
+      "mandatory_negative_controls": 5
+    },
+    "obsolete_network_health_probe_test_replaced": true,
+    "scope": "Local adversarial tests and bounded model; the completed B2 campaign uses the preceding v0.23.3 release."
+  },
+  "release_0_23_4": {
+    "source_commit": "2d629755cca3dad2d9fe9cfae947eb5bed782332",
+    "woodpecker_pipeline": 224,
+    "artifact_image_digest": "sha256:e54abe6ab338860d88a2b18b2fa6a1607d4622dbd5c6c7ec1af21fb55790aeea",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.4",
+      "archive_sha256": "bbcc1882cb57125639e494699e0e00f0acd4d8552c618cb25c165a63e2477363",
+      "binary_sha256": "bee5febc9beb00bdda7333820c9a32f0c2b8781e9b93a3fe150e2b272894c36b",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6266161,
+    "version": "v0.23.4",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 224,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/224/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.4",
+    "published_at": "2026-11-11T23:41:52Z",
+    "github_asset_digest_matches": true,
+    "tag_pipeline": {
+      "number": 225,
       "status": "success"
     }
   }
