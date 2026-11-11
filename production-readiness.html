@@ -22,7 +22,7 @@
 <tr>
 <td><strong>1</strong></td>
 <td><strong>Native clustered serving — large, integration complete; qualification open</strong></td>
-<td>Qualify the native CLI on the existing Kubernetes hosts. DNS membership, automatic ownership/forwarding, fixed database mapping and bounded resident state are integrated. Add/remove pods and return to one node without lost acknowledged writes or manual data movement; retain administrator recovery at exhausted upload credit. Cached data must remain safe after pauses, takeover and total process replacement. Bounded concurrent acquisition reaches six pods, a short steady phase and pod-loss recovery in a debug campaign; rolling replacement exposes stale client pod-IP routing in the fixture. Repeat through the stable Service against the release image, and retain peak-memory and broader host/provider failure qualification.</td>
+<td>Qualify the native CLI on the existing Kubernetes hosts. DNS membership, automatic ownership/forwarding, fixed database mapping and bounded resident state are integrated. Add/remove pods and return to one node without lost acknowledged writes or manual data movement; retain administrator recovery at exhausted upload credit. Cached data must remain safe after pauses, takeover and total process replacement. The release image passes one/three/six readiness, a short steady phase and pod-loss recovery through the stable Service. Rolling replacement exceeds the 240-second deadline; provider interruption, scale-down and cold recovery remain unqualified. Reduce acquisition/journal-selection work during membership churn and collection, then repeat those phases; retain peak-memory and broader host/provider failure qualification.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>

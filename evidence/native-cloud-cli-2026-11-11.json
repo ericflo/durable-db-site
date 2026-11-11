@@ -3584,5 +3584,509 @@
       ],
       "preserved_overrides": []
     }
+  },
+  "release_image_kubernetes": {
+    "binary_source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "image_digest": "sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9",
+    "namespace_removed": true,
+    "cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 921
+    },
+    "runtime_binary_sha256": "5d9a21accb82b704f5de3aedb5d80b985f8f76b28dcb27b52abb92bcffac8acb",
+    "runtime_binary_matches_github_release": true,
+    "complete": false,
+    "harness_source_commit": "a60915f0ffd3c0580d5d47bb277128b03a919de7",
+    "harness_sha256": "15152ad8c327830d49e8750d91e12557424f390edd473685a19b02bf71ff2760",
+    "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+    "started_at": "2026-11-11T16:57:58.377501+00:00",
+    "finished_at": "2026-11-11T17:14:38.517560+00:00",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "client_origin": "http://durable-db:7654",
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 120,
+      "memory_observation": true,
+      "maximum_write_intents": 100000
+    },
+    "phases": [
+      {
+        "name": "initial-one",
+        "time_utc": "2026-11-11T16:59:26.680203+00:00",
+        "placement": [
+          "epsilon-3"
+        ]
+      },
+      {
+        "name": "provider-reachable",
+        "time_utc": "2026-11-11T16:59:42.154980+00:00",
+        "probe": "CONNECTED"
+      },
+      {
+        "name": "one-progress",
+        "time_utc": "2026-11-11T17:00:45.697957+00:00",
+        "writes_acknowledged": 22
+      },
+      {
+        "name": "scale-3",
+        "time_utc": "2026-11-11T17:02:52.030207+00:00",
+        "placement": [
+          {
+            "pod": "durable-db-65c58848c9-78jxq",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-b6qsd",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-mh5qx",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          }
+        ],
+        "writes_acknowledged": 227
+      },
+      {
+        "name": "scale-6",
+        "time_utc": "2026-11-11T17:04:16.062138+00:00",
+        "placement": [
+          {
+            "pod": "durable-db-65c58848c9-69jj2",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-78jxq",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-8bqt9",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-b6qsd",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-jx62t",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-mh5qx",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          }
+        ],
+        "writes_acknowledged": 366
+      },
+      {
+        "name": "steady-start",
+        "time_utc": "2026-11-11T17:04:17.420690+00:00",
+        "seconds": 120,
+        "writes_acknowledged": 368
+      },
+      {
+        "name": "steady-complete",
+        "time_utc": "2026-11-11T17:06:16.677052+00:00",
+        "elapsed_seconds": 120.00009566708468,
+        "writes_acknowledged": 655
+      },
+      {
+        "name": "forced-api-pod-loss",
+        "time_utc": "2026-11-11T17:08:49.323338+00:00",
+        "victim_node": "epsilon-3",
+        "placement": [
+          {
+            "pod": "durable-db-65c58848c9-78jxq",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-8bqt9",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-9qffp",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-b6qsd",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-jx62t",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          },
+          {
+            "pod": "durable-db-65c58848c9-mh5qx",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:cb414cd0a581064d3cd082fd27fd9265e92645b2890eefba9248b69f5b6fcbd9"
+          }
+        ],
+        "writes_acknowledged": 820
+      }
+    ],
+    "failure": "Rolling replacement exceeded its 240-second deadline; a workload worker also exhausted its identical-request retry deadline.",
+    "partial_workload": {
+      "schema": 1,
+      "state": "running",
+      "writes_acknowledged": 926,
+      "reads_verified": 924,
+      "http_attempt_statuses": {
+        "200": 1882,
+        "429": 274,
+        "503": 279,
+        "transport_or_decode_error": 37
+      },
+      "failures": [
+        {
+          "worker": 1,
+          "reason": "Identical-request recovery deadline exceeded"
+        }
+      ],
+      "expected": [
+        223,
+        203,
+        273,
+        227
+      ]
+    },
+    "budget_observations": [
+      {
+        "stage": "initial-one",
+        "namespace_allocated": {
+          "bytes": 8388608,
+          "attempts": 352
+        },
+        "tenants": [
+          {
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "scale-3",
+        "namespace_allocated": {
+          "bytes": 25165824,
+          "attempts": 832
+        },
+        "tenants": [
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 64
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 96
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 64
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 64
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "scale-6",
+        "namespace_allocated": {
+          "bytes": 50331648,
+          "attempts": 1344
+        },
+        "tenants": [
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 128
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 467874,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 160
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 96
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 128
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 431616,
+                "attempts": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "steady-76",
+        "namespace_allocated": {
+          "bytes": 50331648,
+          "attempts": 1856
+        },
+        "tenants": [
+          {
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 192
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 467874,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 224
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 192
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "allocated": {
+              "bytes": 67108864,
+              "attempts": 160
+            },
+            "maintenance": {
+              "funded_bytes": 33554432,
+              "allocated": {
+                "bytes": 431616,
+                "attempts": 1
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "budget_checks": "Harness checked configured ceilings/revisions and monotone allocations within those ceilings at every completed budget observation.",
+    "acquisition_failures": {
+      "durable-db-65c58848c9-b6qsd": [],
+      "durable-db-65c58848c9-mh5qx": [
+        {
+          "partition": 7,
+          "stage": "claim"
+        },
+        {
+          "partition": 1,
+          "stage": "claim"
+        },
+        {
+          "partition": 1,
+          "stage": "select_journals"
+        },
+        {
+          "partition": 7,
+          "stage": "select_journals"
+        },
+        {
+          "partition": 12,
+          "stage": "activate"
+        },
+        {
+          "partition": 14,
+          "stage": "activate"
+        }
+      ],
+      "durable-db-6744c6648f-cblsc": [],
+      "durable-db-6744c6648f-fmgkz": [],
+      "durable-db-6744c6648f-j4gnc": [],
+      "durable-db-6744c6648f-ktqlm": [],
+      "durable-db-6744c6648f-vxhgg": [
+        {
+          "partition": 7,
+          "stage": "claim"
+        },
+        {
+          "partition": 6,
+          "stage": "activate"
+        }
+      ]
+    },
+    "memory": {
+      "samples": 6,
+      "peak_rss_bytes": 4272128,
+      "peak_working_set_bytes": 4370432,
+      "observed_restarts": 0
+    },
+    "limitations": [
+      "Exact published release executable, real B2, three existing hosts, stable client Service, manual replica changes.",
+      "Passed one/three/six readiness, a requested 120-second steady phase and forced pod-loss replacement; rolling replacement failed.",
+      "No final history/recovered-total validation, provider-interruption phase, scale-down, cold recovery, AWS, HPA, whole-host failure, RSS bound, SLO or sustained-load claim."
+    ]
+  },
+  "cleanup": {
+    "obsolete_qualification_scripts_removed": 7,
+    "obsolete_script_lines_removed": 1294,
+    "removed_old_cloud_cli_serving_and_maintenance_branch": true,
+    "removed_orphan_publication_design_doc": true,
+    "temporary_debug_image_removed_locally_and_from_registry": true,
+    "superseded_candidate_binaries_removed": true
   }
 }

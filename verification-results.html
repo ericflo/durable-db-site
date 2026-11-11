@@ -4,6 +4,7 @@
 <code>74a6c83</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/207/1">Woodpecker #207</a>.
 The independently downloaded static executable passes installation without a
 toolchain, transactions, ordered reads, export/restore and forced-stop recovery.
+The public default installer downloads that identical binary; the tag pipeline passes.
 It integrates headless-service DNS discovery, native
 cloud serving for B2 and S3, and aggregate resident index/validation/journal
 budgets. Resident reservations survive retirement and pending I/O. Cloud startup
@@ -52,7 +53,17 @@ a short steady phase and recovers from forced pod loss. Rolling replacement fail
 a client retry deadline after 924 acknowledgements: the fixture still targeted
 original pod IPs as they disappeared. The manual routing endpoint is removed;
 clients now use the stable Kubernetes Service. This failure does not complete
-the recovery-history check or qualify the release image.
+the recovery-history check or qualify the release image. The subsequent release-image
+campaign uses the stable Service and passes one/three/six readiness, the two-minute
+steady phase and forced pod-loss replacement. Its rolling update exceeds the
+240-second deadline, with a client retry deadline failure too. The partial record
+contains 926 acknowledgements and 924 completed readbacks; it is not a recovered
+history check. Six steady-phase samples peak at 4.07 MiB RSS per pod, with no
+restarts in that phase; this tiny workload does not establish a memory bound.
+Provider interruption, scale-down and cold recovery are not reached. The native
+cluster gate remains open. All 921 remaining bucket versions, the scoped key and
+test namespace were removed. The tested container binary matches the GitHub
+release executable by SHA-256.
 <a href="evidence/native-cloud-cli-2026-11-11.json">Evidence</a>.</p>
 <p>Native Kubernetes scaling and the production operating envelope remain under
 qualification. MinIO results do not
