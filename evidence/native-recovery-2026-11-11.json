@@ -99,9 +99,6 @@
         "failures": []
       },
       "partial_history_sha256": "a0d5fce4753719fe87130a3a33767c99be301e45971c2f28c7e791bb28ab6e03",
-      "acquisition_failure_stages": {
-        "claim": 3
-      },
       "memory": {
         "samples": 5,
         "peak_sampled_rss_bytes": 6180864,
@@ -111,7 +108,182 @@
         "Temporary debug image, not the static release executable.",
         "No final recovered-history verification; 3 readbacks were pending in the captured snapshot.",
         "Provider interruption, scale-down and cold replacement were not reached. No AWS, HPA, whole-host loss, SLO, RSS bound or sustained-load claim."
+      ],
+      "sampled_acquisition_failure_stages": {
+        "claim": 3
+      }
+    },
+    {
+      "binary_source_commit": "664ee9bb7d1c8f84246e15d49b0ba4db49f7f532",
+      "binary_profile": "debug, stripped temporary image",
+      "binary_sha256": "40fea86848ae75c9f3ca5ea9200b1d406354b1a2a1c55ae3458f28a9d8b2f6cb",
+      "image_digest": "sha256:efe0bba20e60f28d60b92e094fb8a5436fdb1dcd8c60af145920e40fec7848e4",
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 482
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T17:55:30.043114+00:00",
+      "finished_at": "2026-11-11T18:14:15.905383+00:00",
+      "harness_sha256": "15152ad8c327830d49e8750d91e12557424f390edd473685a19b02bf71ff2760",
+      "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "failure": "Rolling replacement exceeded 240 seconds; one client exceeded its identical-request recovery deadline.",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T17:57:13.035077+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T17:57:27.421249+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T17:58:49.935916+00:00",
+          "writes_acknowledged": 21
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T18:01:24.223963+00:00",
+          "writes_acknowledged": 260
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T18:03:48.717863+00:00",
+          "writes_acknowledged": 491
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T18:03:53.497649+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 495
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T18:05:53.119370+00:00",
+          "elapsed_seconds": 123.49375195195898,
+          "writes_acknowledged": 823
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-11T18:07:25.157948+00:00",
+          "writes_acknowledged": 974
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 1107,
+        "reads_verified": 1107,
+        "http_attempt_statuses": {
+          "200": 2246,
+          "429": 450,
+          "503": 169,
+          "transport_or_decode_error": 3
+        },
+        "failures": [
+          {
+            "worker": 3,
+            "reason": "Identical-request recovery deadline exceeded"
+          }
+        ]
+      },
+      "partial_history_sha256": "b711d12d13bbf8d559c28620035aafc385d1c6b7aa2c1f298f4bbae7281ef123",
+      "acquisition_failure_sampling": "incomplete",
+      "memory": {
+        "samples": 5,
+        "peak_sampled_rss_bytes": 6201344,
+        "peak_sampled_working_set_bytes": 6828032
+      },
+      "limitations": [
+        "Temporary debug image, not the static release executable.",
+        "No final recovered-history verification; one unresolved client operation exceeded its deadline.",
+        "Provider interruption, scale-down and cold replacement were not reached. No AWS, HPA, whole-host loss, SLO, RSS bound or sustained-load claim."
       ]
     }
-  ]
+  ],
+  "release": {
+    "source_commit": "664ee9bb7d1c8f84246e15d49b0ba4db49f7f532",
+    "version": "v0.23.1",
+    "woodpecker": {
+      "pipeline": 214,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/214/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "artifact_image_digest": "sha256:3be54c2a5763ad1d4847b9f570146de3a64cd8d069fe9c37461c67aee1106582",
+    "standalone": {
+      "version": "0.23.1",
+      "archive_sha256": "bba6c2356fa1a3c3d3f121c7c1c6bfbb841146c7520dfcdb69a0de880f8c936b",
+      "binary_sha256": "521b3aec20db5e1e7d4645a89dd202bca0424bac53b7116753846419fa483369",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "static_pie": true,
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 215,
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/215/1"
+    }
+  }
 }
