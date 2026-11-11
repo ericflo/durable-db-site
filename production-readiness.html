@@ -9,7 +9,7 @@
 <p>The first production release needs automatic, independently stored backups with a declared backup interval, retention bound and measured restore time. Continuous point-in-time recovery and a 30-day history are optional later features, not requirements of the original brief. Neither is currently implemented or promised.</p>
 <h2 id="remaining-production-gates-in-order">Remaining production gates, in order<a class="anchor" href="#remaining-production-gates-in-order" aria-label="Link to this section">#</a></h2>
 <p>The critical path is the fast clustered engine. Accounting patches and additional tests of the old cloud engine cannot substitute for that cutover. A release number is not a readiness measure. Close usable end-to-end capabilities, use focused checks during development, and run full qualification when a capability is ready.</p>
-<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. In particular, the timing infrastructure below has no established delivery date.</p>
+<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. In particular, the timing contract below has no qualified implementation yet.</p>
 <table>
 <thead>
 <tr>
@@ -21,7 +21,7 @@
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td><strong>Native clustered serving — large, infrastructure-blocked</strong></td>
+<td><strong>Native clustered serving — large, timing unresolved</strong></td>
 <td>Establish one supported compute/clock profile, implement and qualify placement and ownership transfer, then switch the cloud CLI. Cached reads must be safe after pauses, takeover and total process replacement. Add/remove pods and return to one node without lost acknowledged writes or manual data movement. The native library and local CLI exist; the production clock binding and clustered placement do not.</td>
 </tr>
 <tr>
@@ -51,7 +51,7 @@
 </tr>
 </tbody>
 </table>
-<p>Gate 1 has a concrete external prerequisite: the available hosts/VM fixture do not supply the conservative clock bounds required by the candidate protocol. The <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">timing infrastructure requirements</a> describe the needed calibrated source, independent hosts and disruption tests. A host/kernel promise must be justified and enforced where possible; an arbitrary safety margin or a passing pause test is not a clock guarantee. If that supported profile cannot be established, the ownership mechanism needs a design change. More accounting work will not unblock it.</p>
+<p>Gate 1’s direct VMClock approach is blocked: the available hosts/VM fixture lack its required calibration fields. That does not rule out another bounded clock source. The <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">timing requirements and ClockBound alternative</a> distinguish missing direct-VMClock hardware from an unqualified software path. The next timing decision is whether a supported source plus disruption detection satisfies the contract; if not, change the ownership mechanism. A host/kernel promise must be justified and enforced where possible; an arbitrary safety margin or a passing pause test is not a clock guarantee. More accounting work will not unblock it.</p>
 <p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with logical clocks, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
 <h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>
 <p>These are recommended deferrals within the original brief, not claims that they are implemented:</p>
