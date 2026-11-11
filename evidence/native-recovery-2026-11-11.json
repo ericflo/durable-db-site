@@ -111,7 +111,8 @@
       ],
       "sampled_acquisition_failure_stages": {
         "claim": 3
-      }
+      },
+      "per_writer_recovery_barrier": false
     },
     {
       "binary_source_commit": "664ee9bb7d1c8f84246e15d49b0ba4db49f7f532",
@@ -226,7 +227,8 @@
         "Temporary debug image, not the static release executable.",
         "No final recovered-history verification; one unresolved client operation exceeded its deadline.",
         "Provider interruption, scale-down and cold replacement were not reached. No AWS, HPA, whole-host loss, SLO, RSS bound or sustained-load claim."
-      ]
+      ],
+      "per_writer_recovery_barrier": false
     },
     {
       "binary_source_commit": "a275944fefb0dea87be00dbfbbe4ce4643a55e32",
@@ -344,7 +346,239 @@
         "max": 85742
       },
       "timing_scope": "Bounded progress logs sampled at phase boundaries and failure; not a complete trace, latency SLO or comparison of release binaries.",
-      "partial_history_sha256": "9f5fc2e7d8b74811ff1a585d4df38e1517c035e04cfe58c1ffbc0a4d70ed0207"
+      "partial_history_sha256": "9f5fc2e7d8b74811ff1a585d4df38e1517c035e04cfe58c1ffbc0a4d70ed0207",
+      "per_writer_recovery_barrier": false
+    },
+    {
+      "binary_source_commit": "a275944fefb0dea87be00dbfbbe4ce4643a55e32",
+      "binary_profile": "debug, stripped temporary image",
+      "binary_sha256": "720d05a9b19c8b47654dbf3af57b7e1a102608355737e9aaf704126d1bfb2c05",
+      "image_digest": "sha256:ab4dd343c4238241341a15408af9c059fc5848654dc87e5871a92ce9d3bc9f95",
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 481
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T22:20:24.772419+00:00",
+      "finished_at": "2026-11-11T22:33:54.313278+00:00",
+      "harness_sha256": "30436d26915d9e29fa44568273c65aef6c18eb36609b1c253b4da3b4ae02c96a",
+      "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 3,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "failure": "Client identical-request deadline exceeded during forced pod-loss recovery; rolling replacement was not reached.",
+      "rollout_surge_experiment": "Inconclusive: the configured surge of three was never exercised.",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T22:22:02.571597+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T22:22:15.952623+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T22:23:21.135965+00:00",
+          "writes_acknowledged": 22
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T22:25:25.018473+00:00",
+          "writes_acknowledged": 269
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T22:27:42.588491+00:00",
+          "writes_acknowledged": 480
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T22:27:47.856519+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 494
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T22:30:55.903127+00:00",
+          "elapsed_seconds": 188.28355115803424,
+          "writes_acknowledged": 830
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 832,
+        "reads_verified": 832,
+        "http_attempt_statuses": {
+          "200": 1696,
+          "429": 347,
+          "503": 256,
+          "transport_or_decode_error": 20
+        },
+        "failures": [
+          {
+            "worker": 1,
+            "reason": "Identical-request recovery deadline exceeded"
+          }
+        ]
+      },
+      "partial_history_sha256": "04a858f0f6d9dfad6df8af8ee26a029533cfa1e5410805a62202e849b0b6305b",
+      "per_writer_recovery_barrier": false
+    },
+    {
+      "binary_source_commit": "cbf4a70c9a728884c53c6cdc5250151ca3de91e9",
+      "binary_profile": "debug, stripped temporary image",
+      "binary_sha256": "cd78951f66f5e36888d24acee176337b7e64e034f883a75f4d715fcb9fe5b8c6",
+      "image_digest": "sha256:28be2fe20c1d9b55415b5a287e6d33bb3824136fb5f44b537941146be1a893d3",
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1211
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T22:34:51.587411+00:00",
+      "finished_at": "2026-11-11T22:50:00.493955+00:00",
+      "harness_sha256": "30436d26915d9e29fa44568273c65aef6c18eb36609b1c253b4da3b4ae02c96a",
+      "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "failure": "One client retry deadline expired during scale-down after rolling replacement and provider interruption. Final recovered-history verification was not reached.",
+      "failure_phase": "scale-one progress",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T22:35:12.236541+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T22:35:26.409378+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T22:38:27.610456+00:00",
+          "writes_acknowledged": 20
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T22:40:08.540842+00:00",
+          "writes_acknowledged": 210
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T22:42:04.234442+00:00",
+          "writes_acknowledged": 370
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T22:42:09.718101+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 388
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T22:44:10.290809+00:00",
+          "elapsed_seconds": 121.03130639798474,
+          "writes_acknowledged": 759
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-11T22:44:42.158671+00:00",
+          "writes_acknowledged": 813
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-11T22:46:07.284745+00:00",
+          "writes_acknowledged": 878
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-11T22:46:27.762157+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-11T22:47:35.056134+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 910
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 915,
+        "reads_verified": 912,
+        "http_attempt_statuses": {
+          "200": 1859,
+          "429": 362,
+          "503": 290,
+          "transport_or_decode_error": 22
+        },
+        "failures": [
+          {
+            "worker": 0,
+            "reason": "Identical-request recovery deadline exceeded"
+          }
+        ]
+      },
+      "partial_history_sha256": "8b1648214c8e2a601b427c93a9e8acab0f4839405a8857b99977f413b8c4acc5",
+      "rolling_phase_seconds_including_aggregate_progress": 85.126074,
+      "scope": "Kubernetes rollout and aggregate progress passed; individual writer recovery was not established at each phase boundary. This is a debug-image campaign, not release performance or complete availability qualification.",
+      "per_writer_recovery_barrier": false
     }
   ],
   "release": {
@@ -405,7 +639,7 @@
     }
   },
   "acquisition_recovery": {
-    "source_commit": "05f6359",
+    "source_commit": "05f6359978d9c316bf3e4e0d4078388b1692f830",
     "root_model": {
       "two_candidates_four_invocations": {
         "distinct_states": 117741,
@@ -485,6 +719,18 @@
     },
     "capacity_test_passed": true,
     "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.2",
+    "published_at": "2026-11-11T22:15:54Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "1a61006db84d25defe3890a26cd19c9408086eca",
+      "default_version": "v0.23.2",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
     "tag_pipeline": {
       "number": 218,
       "status": "success"
@@ -501,5 +747,140 @@
       "physical_versions_deleted": 0
     },
     "temporary_contexts_and_credentials_removed": true
+  },
+  "readiness": {
+    "source_commit": "cbf4a70c9a728884c53c6cdc5250151ca3de91e9",
+    "enabled_rust_checks": 324,
+    "controller_lines_added": 7,
+    "controller_lines_deleted": 16,
+    "owner_routing_model": {
+      "distinct_states": 110,
+      "generated_states": 289,
+      "depth": 8,
+      "mandatory_negative_controls": 5,
+      "new_invariant": "AuthorizedResponse"
+    },
+    "real_http_refuses_unconfirmed_owner_while_probe_ready": true,
+    "zero_credit_administrator_probe_ready": true,
+    "minio_cli": {
+      "provider": "versioned MinIO, not AWS S3",
+      "source_commit": "5a69e41427c8be23fb2cdc161082cbee3bce1b8f",
+      "container_removed": true,
+      "tests": [
+        {
+          "test": "native_default_cli_starts_sixteen_partitions",
+          "exit_code": 0,
+          "report": {
+            "native_default_cli_ready": true,
+            "partitions": 16,
+            "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+            "startup_check": "Authenticated absent-database response from every recovered partition, not HTTP readiness alone",
+            "startup_seconds": 1.457752258
+          },
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 271
+          }
+        },
+        {
+          "test": "native_cloud_cli_recovers_exhausted_admission_and_preserves_data",
+          "exit_code": 0,
+          "report": {
+            "admin_bootstrap_from_zero_credit": true,
+            "admin_refill_available_before_owner_recovery": true,
+            "binary_sha256": "2d4c9cf56d4ad8b165c35cfe592817a3b231202a0f2830df5ff41e1b254cbb08",
+            "cold_processes": 3,
+            "exhausted_credit_preserved_on_restart": true,
+            "incompatible_layout_refused": true,
+            "native_cloud_cli": true,
+            "partitions": 2,
+            "refill_idempotent": true,
+            "replenished_limits_preserved_on_restart": true,
+            "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+            "seconds": 5.114355307,
+            "values_and_exact_receipts_recovered": true
+          },
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 232
+          }
+        }
+      ]
+    }
+  },
+  "qualification_followup": {
+    "every_writer_requires_two_further_verified_readbacks": true,
+    "previous_aggregate_progress_negative_control_detected": true,
+    "timeout_reports_operation_and_last_status": true,
+    "unknown_refusal_text_redacted": true,
+    "rollout_surge": 1,
+    "rollout_deadline_seconds": 240,
+    "client_retry_deadline_seconds": 180,
+    "fresh_cloud_campaign_with_stronger_barrier_pending": true
+  },
+  "release_0_23_3": {
+    "source_commit": "5a69e41427c8be23fb2cdc161082cbee3bce1b8f",
+    "woodpecker_pipeline": 220,
+    "artifact_image_digest": "sha256:3802390ab4bda67e03d206b38f5d2ab75909e11edd5669c984c3f24e2fa4e2e9",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.3",
+      "archive_sha256": "13b64a9675fed463402435aa30f32c9c3ada5e3431184b4b1bc9b2f8ad13f983",
+      "binary_sha256": "4f8a7966e0daf4635bea7b53a4fdac88f533cb376360ecde076dbd18fee56904",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6265207,
+    "version": "v0.23.3",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 220,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/220/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 221,
+      "status": "success"
+    }
   }
 }
