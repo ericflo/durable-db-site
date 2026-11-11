@@ -6,98 +6,63 @@
 <p>The initial contract is atomic, revision-checked transactions and ordered scans within one database. Acknowledged writes must survive the loss of every API process and cache. Uncertain writes require identical retries; the recent receipt window is bounded. Cross-database transactions are outside this contract.</p>
 <p>Current per-database limits are 256 MiB, 1,000,000 keys, and 2,048 pages, with smaller request and rewrite budgets. Large database counts and high active throughput are different requirements. The directory has been tested at 100,005 entries with sequential insertion, periodic collection, pagination, and an uncached reopen of every head. Concurrent HTTP provisioning and collection at that population, and a declared active workload, remain capacity gates. This synthetic-provider result is not a cloud capacity guarantee.</p>
 <p>Total databases, active databases, peak read/write arrival rates, value sizes, contention, and p99 latency targets must be recorded before choosing a production topology. Measure B2 first, then AWS S3, using the same implementation and workload. Include physical object versions, provider calls, and bandwidth when estimating cost. A laptop-to-cloud measurement is not a regional Kubernetes SLO.</p>
-<p>Backup retention and recovery objectives are not yet selected. A proposed starting point is 30-day point-in-time recovery with at most five minutes of backup lag. Recovery time must be measured against a declared database size and number of simultaneous restores. Neither this policy nor its cost is currently implemented or promised.</p>
-<h2 id="release-gates">Release gates<a class="anchor" href="#release-gates" aria-label="Link to this section">#</a></h2>
+<p>The first production release needs automatic, independently stored backups with a declared backup interval, retention bound and measured restore time. Continuous point-in-time recovery and a 30-day history are optional later features, not requirements of the original brief. Neither is currently implemented or promised.</p>
+<h2 id="remaining-production-gates-in-order">Remaining production gates, in order<a class="anchor" href="#remaining-production-gates-in-order" aria-label="Link to this section">#</a></h2>
+<p>The critical path is the fast clustered engine. Accounting patches and additional tests of the old cloud engine cannot substitute for that cutover. A release number is not a readiness measure. Close usable end-to-end capabilities, use focused checks during development, and run full qualification when a capability is ready.</p>
+<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. In particular, the timing infrastructure below has no established delivery date.</p>
 <table>
 <thead>
 <tr>
-<th>Gate</th>
-<th>Current evidence or gap</th>
-<th>Evidence required to close</th>
+<th>Order</th>
+<th>Gate and rough size</th>
+<th>What must be true for 1.0</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Publication safety</td>
-<td>Finite TLA+ models plus an unbounded abstract page-reachability proof cover conditional provider mutations, pinned-owner takeover, logical backup/restore, global data collection without uploads, the upload-credit allocator, signing-key rollout, the indexed Pi Session design, protected creation, authorization, publication, collection, directory reachability, retries, rebasing, sealed read groups, and cross-replica publication groups; negative controls and race tests</td>
-<td>Compose the models; document storage/network assumptions; extend the unbounded proof to complete protocol composition and mechanize implementation refinement; independently review the protocol</td>
+<td><strong>1</strong></td>
+<td><strong>Native clustered serving — large, infrastructure-blocked</strong></td>
+<td>Establish one supported compute/clock profile, implement and qualify placement and ownership transfer, then switch the cloud CLI. Cached reads must be safe after pauses, takeover and total process replacement. Add/remove pods and return to one node without lost acknowledged writes or manual data movement. The native library and local CLI exist; the production clock binding and clustered placement do not.</td>
 </tr>
 <tr>
-<td>Replacement transactions</td>
-<td>Bounded key/range conflict validation; canonical evaluated records; selected replay into a native revisioned memory index with retry receipts and aggregate admission; native table/memory merging; durable checkpoints, lazy checkpoint/recent-memory read views, bounded suffix replay, live admission/publication, automatic checkpoints with unchanged table/manifest reuse, public read/commit contract evaluation, bounded wire group commit and durable catalog-backed authorization and exact logical quotas; real-process pause/takeover and native VM restore checks with unsafe controls; shared HTTP routing with bounded server-owned uploads; native local CLI passes pause, process exclusion, kill/recovery and automatic collection; native HTTP budgets, metadata cleanup and cold recovery pass real B2/versioned MinIO; finite models and fault tests</td>
-<td>Qualify native runtime timing and cross-request batching; complete deletion/retention and compaction; qualify ownership timing and authenticated snapshots; prove full serializability/refinement and measure contention/fairness</td>
+<td><strong>2</strong></td>
+<td><strong>Tenant isolation and lifecycle — medium to large</strong></td>
+<td>Finish charging administrative work and retries, bound creation/request/egress costs across replicas, and prevent an exhausted tenant from stopping funded neighbors’ ordinary operation. Verify credential rotation/revocation, tenant deletion and data isolation. Existing logical quotas and durable admission/reserve funding cover only part of this.</td>
 </tr>
 <tr>
-<td>Replacement control requests</td>
-<td>Common Rust root controller with one-time candidate claims, checked intervals, durable registrations and prefix catalogs, timing-profile binding and B2/S3 HTTP fault tests; finite bootstrap/competition models and an abstract request proof across ordered epochs</td>
-<td>Add placement and bounded election scheduling; qualify the implemented renewal scheduling; compose request uncertainty, repeated election, platform timing and serving permission; prove the implementation refinement</td>
+<td><strong>3</strong></td>
+<td><strong>Automatic maintenance and recovery — medium</strong></td>
+<td>Bound growth of every physical object class, including registrations and catalog headers; qualify large-image cleanup and concurrent readers. Schedule bounded backups to independently protected storage, recover interrupted jobs and demonstrate restore after source loss. The retained checkpoint/export primitives already exist.</td>
 </tr>
 <tr>
-<td>Replacement journal</td>
-<td>Bounded Rust frames, ordered replay, thirteen adversarial tests, B2/MinIO reconnect checks, a 4,134-state model, an 88-obligation prefix proof and a 1,061-obligation abstract repeated root/journal composition theorem, a 687-obligation delegated permission theorem, and a 785-obligation delegated journal theorem with five finite regressions</td>
-<td>Implement and compose clock conversion, provider request uncertainty, transaction semantics, physical admission and reclamation; prove implementation refinement</td>
+<td><strong>4</strong></td>
+<td><strong>Performance and autoscaling qualification — large, plus a 72-hour run</strong></td>
+<td>Declare workload and latency/throughput targets, then measure the native serving path on B2 and AWS S3 using the same algorithm. Exercise Pi and web-app workloads, contention, provider failures, scale up/down, rolling replacement and whole-host loss. Check histories, memory, object growth and cost throughout a sustained run. Earlier shared-engine tests do not qualify the replacement.</td>
 </tr>
 <tr>
-<td>Cloud performance</td>
-<td>Initial B2 baseline failed at 0.341 successful ops/s; the combiner completed the short workload at 1.051 ops/s with retries and poor tail latency; native HTTP warm point-and-scan reads make zero authority calls/object GETs on B2/MinIO fixtures with a logical clock</td>
-<td>Cut the cloud CLI over to the native owner after qualifying timing and lifecycle, then publish B2 and AWS p50/p95/p99, failures, retries, sustained throughput, physical amplification, and cost at the selected workload</td>
+<td><strong>5</strong></td>
+<td><strong>Composed correctness and security review — large</strong></td>
+<td>Connect the TLA+ ownership, journal, transaction, admission, retention and collection arguments under explicit provider/platform assumptions. Keep bounded checks and negative controls small; verify the implementation’s corresponding boundaries with adversarial tests. Resolve independent protocol and tenant-isolation review findings. Do not present bounded exploration as an unbounded proof or as a proof of Rust.</td>
 </tr>
 <tr>
-<td>Public multitenancy</td>
-<td>Exact logical quotas, scoped tokens, bounded requests/caches, per-pod limits, and a cumulative global immutable-upload ceiling for fresh format-5 and native namespaces, including native bootstrap, journal and checkpoint uploads; native per-name journal, new-row block/index encoding, shared-table reblocking and manifest encoding/split admission before shared ordering, with durable reserve claims for retry/recovery construction and automatic collection of obsolete budget/catalog directory metadata, checkpoint-covered journal history, obsolete table/manifest objects and S3 control versions; native HTTP refusal, neighbor progress and cold-budget recovery pass B2/MinIO</td>
-<td>Tighter admission bounds, administrative metadata attribution, reserve-exhaustion progress isolation and complete per-tenant physical admission, sustained cleanup under adversarial load, and distributed request, bandwidth, and administrative creation budgets; adversarial tests show that adding pods, retries, cancellation, and delayed uploads cannot bypass them</td>
-</tr>
-<tr>
-<td>Credentials and lifecycle</td>
-<td>Expiring administrator/metrics/tenant capabilities; bounded overlapping signing keys; durable individual revocation and generations; idempotent protected creation</td>
-<td>Qualify key rollout in the deployment and offline issuers; tenant export/deletion/retention and durable audit delivery, exercised during rolling deploys and partitions</td>
-</tr>
-<tr>
-<td>Recovery</td>
-<td>Object-store authority and cache-free reopening pass; consistent logical export and resumable protected restore pass B2 source removal → versioned-MinIO restore and cold verification; native Rust operator API adds one durable checkpoint slot with identity-checked release and logical export from its exact catalog/value cut into the existing verified restore</td>
-<td>Scheduled backup retention/PITR, isolated backup credentials, public administrative backup routes, corruption diagnosis, measured large restores and recurring disaster drills</td>
-</tr>
-<tr>
-<td>Pi integration</td>
-<td>All 32 upstream cases pass for both adapters locally and the indexed adapter on B2; eight actual Harness cases pass on three cache-free B2 and MinIO API processes, including cancellation, live-owner takeover, model/tool SIGKILL, and complete API replacement</td>
-<td>Long-running workflows, host-side scheduling and external-effect fencing, and Harness qualification across physical hosts</td>
-</tr>
-<tr>
-<td>Autoscaling and maintenance</td>
-<td>CPU-driven 1→3→8→1, drain, SIGKILL, confirmed kernel OOM, provider partition, and 0→1 cold recovery pass on kind with B2 (35 writes), versioned MinIO (468 writes), and format-5 budgeted MinIO/B2 (433/49 writes); manual scaling, pod loss, rolling replacement, provider egress restriction, and cold recovery pass across three physical hosts (130 writes)</td>
-<td>Qualify whole-host/control-plane loss, independent rack failure domains, sustained memory bounds, broader partitions/provider throttling, and bounded cleanup progress; verify operation histories throughout</td>
-</tr>
-<tr>
-<td>Operations</td>
-<td>Fixed-label request/provider latency and outcome metrics, cache/collection activity, cancellation accounting, synthetic alert tests, expiring metrics-only credentials, and initial runbooks</td>
-<td>Measured cleanup backlog, end-to-end alert delivery and recovery drills, qualified latency/error budgets, and production dashboard review</td>
-</tr>
-<tr>
-<td>Upgrades</td>
-<td>One old/new format-3 pair passes mixed writes, SIGKILL, and cold rollback/reopen on versioned MinIO and B2; broader upgrade campaign open</td>
-<td>Mixed-version readers/writers/collectors, migration interruption, downgrade refusal where required, rollback and restore procedure, and compatibility fixtures from every supported release</td>
-</tr>
-<tr>
-<td>Supply chain and platforms</td>
-<td>Static Linux x86_64 release; kache and Woodpecker; dependency auditing</td>
-<td>Fresh Rust/npm advisory gates, image/toolchain review, signed release checksums/provenance/SBOM, installation and upgrade tests on each advertised platform, and independent security review</td>
-</tr>
-<tr>
-<td>Sustained operation</td>
-<td>Short integration tests and a <a href="verification-results.html#one-hour-physical-b2-baseline--2026-11-09">one-hour physical B2 baseline</a>; no production-load qualification</td>
-<td>At least 72 hours at the selected steady and burst workload with failures injected; no acknowledged-data loss, quota bypass, unbounded memory/object growth, or unexplained history violations; report all failures</td>
+<td><strong>6</strong></td>
+<td><strong>Operational release — medium</strong></td>
+<td>Verify installation, supported-version upgrades, interruption/rollback or export/restore, alert delivery and operator recovery procedures on the chosen deployment profile. Keep dependency audits, kache/Woodpecker builds, checked release artifacts, README and Pages current. Publish the supported operating envelope and remaining exclusions.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="implementation-order">Implementation order<a class="anchor" href="#implementation-order" aria-label="Link to this section">#</a></h2>
-<p><strong>Current priority: <a href="design-owned-partitions.html">replace the shared serving and durability path</a>.</strong> The existing read barrier and shared publication path have not met the performance brief. Establish a safe ownership/read protocol and a measured batched durability path before expanding release or sustained-load qualification of a replacement.</p>
-<ol>
-<li>The <a href="verification-results.html#native-http-budgets-and-recovery-2026-11-10">native HTTP provider fixture</a> passes B2 and versioned MinIO with a logical clock. Local CLI serving now uses native components under a lifetime directory lock. Qualify runtime timing and switch the cloud CLI once its contract is established. Complete the supported timing contract: the test binding now enforces guest sleep exclusion and passes no-sleep VM takeover, but hypervisor-host sleep and cross-host bounds remain unqualified. Then qualify elapsed time and restore/fork detection, the implemented renewal scheduler, election and placement, including a paused old owner that resumes after takeover. Keep the common B2/S3 storage algorithm.</li>
-<li>Measure warm reads, group commit and independent active databases through that serving path, including total-compute-loss recovery. Compare with the <a href="design-owned-partitions.html#what-the-provider-measurements-establish">raw provider baseline</a>. The public whole-database revision condition still limits same-database concurrency; exposing the existing key/range validator requires an explicit API contract.</li>
-<li>Integrate per-tenant physical admission and fair request/egress budgets. Do not refund rights that could still produce delayed uploads.</li>
-<li>Add compaction to the checkpoint writer, which now reuses unchanged tables and manifest nodes. Journal reclamation is implemented and checkpoint header objects have been eliminated. Automatic table/manifest reclamation protects the current checkpoint and the new explicit namespace backup slot, and rejects collected staging. Qualify large-image progress and concurrent readers; add scheduled retention, multiple restore points and tenant isolation. Registration and catalog-header cleanup remain open.</li>
-<li>Qualify Pi and general application workloads, mixed versions, provider failures, Kubernetes autoscaling, sustained load, disaster recovery and release artifacts. Resolve independent review findings before changing the production status.</li>
-</ol>
+<p>Gate 1 has a concrete external prerequisite: the available hosts/VM fixture do not supply the conservative clock bounds required by the candidate protocol. The <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">timing infrastructure requirements</a> describe the needed calibrated source, independent hosts and disruption tests. A host/kernel promise must be justified and enforced where possible; an arbitrary safety margin or a passing pause test is not a clock guarantee. If that supported profile cannot be established, the ownership mechanism needs a design change. More accounting work will not unblock it.</p>
+<p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with logical clocks, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
+<h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>
+<p>These are recommended deferrals within the original brief, not claims that they are implemented:</p>
+<ul>
+<li><strong>Continuous PITR, a 30-day history and arbitrary historical queries.</strong> Keep scheduled retained backups, bounded retention and tested restore in 1.0.</li>
+<li><strong>Every hardware, hypervisor and binary platform.</strong> Start with one qualified cluster profile and the existing Linux x86_64 binary/local-directory path. Refuse unsupported timing environments. Add other platforms after qualification; preserve Kubernetes scale-up/down on the supported profile.</li>
+<li><strong>Exposing key/range validation in the public API.</strong> Keep the existing per-database revision transaction contract initially; independent databases must still scale and meet the declared performance target.</li>
+<li><strong>A complete mechanized proof of the Rust program.</strong> The brief calls for a TLA-based correctness argument from the start. Composed protocol reasoning, explicit assumptions, negative controls and implementation validation remain gates; full source-language refinement is separate research work.</li>
+<li><strong>Optional packaging and presentation breadth.</strong> Extra package-manager channels, a hosted dashboard and additional deployment examples can follow. Keep the single-file installer, dependency checks, usable documentation and basic operational tooling.</li>
+</ul>
+<p>Correctness, meaningful performance, one-node/laptop operation, shared B2/S3 storage semantics, tenant protection, automatic maintenance, Kubernetes scaling, and clear docs remain required. None is traded away to label a release production-ready.</p>
 <h2 id="reproducible-load-baseline">Reproducible load baseline<a class="anchor" href="#reproducible-load-baseline" aria-label="Link to this section">#</a></h2>
 <p><code>scripts/benchmark-http.mjs</code> creates synthetic databases on a <strong>disposable test deployment</strong>. It seeds one value per database, measures writes and reads with a configured number of workers, then verifies all seeded databases. The caller owns cleanup. Use scoped test-bucket credentials on the servers; the benchmark takes an administrator token from a file and does not print it.</p>
 <pre><code class="language-sh">node scripts/benchmark-http.mjs \
@@ -110,4 +75,4 @@
 <p>Each worker owns one database so publication conflicts can retry the same request without recomputing application state. Ambiguous retries retain the exact ID, revision, and body. Reports include attempted/failed/not-started operations, HTTP statuses, full operation latency including backoff, successful latency separately, elapsed throughput, verification, and binary hash. A failed worker stops instead of issuing a new write ID after an unresolved outcome. The harness writes partial results and exits unsuccessfully on any failed phase or verification.</p>
 <p>After a failed measured phase, the harness still checks final state, allowing an uncertain write to be either visible or absent at that read. This does not turn the timed-out operation into a success or establish that a delayed write can never arrive later. A lost-acknowledgement fixture checks failure accounting and identical retry bodies.</p>
 <p>This is a closed-loop baseline: each worker waits for its preceding operation. It does not measure queue growth under a fixed arrival rate, establish a p99 SLO from a small sample, measure provider billing, or replace an open-loop overload test and soak campaign. The first B2 run <a href="verification-results.html#b2-contention-baseline-release-gate-failed">failed its progress gate</a>; that older serving path remains a baseline for the native replacement.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="development.html"><span>Previous</span>Development</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#contract-to-qualify">Contract to qualify</a></li><li><a href="#release-gates">Release gates</a></li><li><a href="#implementation-order">Implementation order</a></li><li><a href="#reproducible-load-baseline">Reproducible load baseline</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<nav class="pager" aria-label="Pagination"><a class="previous" href="development.html"><span>Previous</span>Development</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#contract-to-qualify">Contract to qualify</a></li><li><a href="#remaining-production-gates-in-order">Remaining production gates, in order</a></li><li><a href="#scope-that-can-wait-until-after-10">Scope that can wait until after 1.0</a></li><li><a href="#reproducible-load-baseline">Reproducible load baseline</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
