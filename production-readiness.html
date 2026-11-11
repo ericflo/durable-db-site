@@ -22,7 +22,7 @@
 <tr>
 <td><strong>1</strong></td>
 <td><strong>Native clustered serving — large, integration complete; qualification open</strong></td>
-<td>Qualify complete handoffs on the existing Kubernetes hosts: DNS discovery, rolling replacement, provider interruption, return to one node and total compute replacement. Acknowledged data and administrator recovery must survive, including exhausted upload credit. The v0.23.0 release image and two subsequent debug campaigns reach six pods and recover from forced pod loss, but miss the 240-second rollout deadline; one newer run also exhausts a client retry deadline. Journal revalidation, placement-aware cancellation and idle checkpoints are implemented. Next: resolve uncertain claims/activation in place and measure whole handoff latency, then complete the remaining phases and peak-memory/host-failure qualification.</td>
+<td>Qualify complete handoffs on the existing Kubernetes hosts: DNS discovery, rolling replacement, provider interruption, return to one node and total compute replacement. Acknowledged data and administrator recovery must survive, including exhausted upload credit. The v0.23.0 release image and two subsequent debug campaigns reach six pods and recover from forced pod loss, but miss the 240-second rollout deadline; one newer run also exhausts a client retry deadline. Journal revalidation, placement-aware cancellation and idle checkpoints are implemented. Uncertain claims/activation now validate the same owner within a bounded retry budget. Next: measure whole handoff latency, then complete the remaining phases and peak-memory/host-failure qualification.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
