@@ -1,0 +1,111 @@
+{
+  "milestone": "existing manifest-path admission",
+  "date": "2026-11-10",
+  "base_commit": "89fff34c57d856cb45b34239395ac1010ee9a74f",
+  "scope": {
+    "runtime_net_rust_lines_including_comments": 37,
+    "new_runtime_dependencies": false,
+    "new_persisted_fields": 0,
+    "budgeted_format": "owned-candidate-19",
+    "unbudgeted_format": "owned-candidate-15",
+    "deduplication_references": 9,
+    "new_entries_splits_and_retries_included": false
+  },
+  "regressions": {
+    "shared_paths": {
+      "fixture_tables": 183,
+      "affected_tables": 3,
+      "cold_manifest_reads": 4,
+      "table_reads": 0,
+      "existing_path_nodes_charged": 2,
+      "existing_path_bytes": 11871,
+      "base_table_reblocking_bytes": 3725,
+      "total_copy_contribution_bytes": 15596
+    },
+    "cross_leaf_paths": {
+      "manifest_nodes_charged_once": 3,
+      "root_charged_once": true
+    },
+    "append": {
+      "cold_manifest_reads": 2,
+      "warm_provider_reads": 0,
+      "existing_path_bytes": 10743,
+      "missing_leaf_fails_closed_without_put": true
+    },
+    "reblocking": {
+      "encoded_table_bytes": 533678,
+      "contribution_including_existing_manifest": 2622710
+    },
+    "tcp_one_byte_short_refuses_before_allocation_and_put": true,
+    "exact_retry_and_neighbor_progress": true,
+    "old_budgeted_policy_refused_before_mutation": true
+  },
+  "negative_controls": [
+    "Omit existing path bytes.",
+    "Omit rightmost append path bytes.",
+    "Omit path admission and observe HTTP accepting an underfunded write.",
+    "Charge shared ancestors once per table instead of once per transaction."
+  ],
+  "local": {
+    "rust_tests_passed": 299,
+    "fmt": true,
+    "strict_clippy": true,
+    "focused_path_seconds": 0.79,
+    "focused_append_seconds": 0.02,
+    "focused_tcp_seconds": 0.07,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 27.82,
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 9.06,
+    "opt_in_client_tests_skipped_per_suite": 1,
+    "capacity_test": "optimized musl Woodpecker release gate"
+  },
+  "model": {
+    "name": "TenantAdmission",
+    "distinct_states": 5776,
+    "generated_states": 24321,
+    "depth": 21,
+    "negative_controls": 3,
+    "new_states_or_transitions": 0,
+    "scope": "Same-name credit before journal assignment; authenticated routing/byte sizing and deduplication are tested separately in Rust, not proven by the finite model."
+  },
+  "remaining": [
+    "New manifest entries and split overhead, retries/recovery and administrative costs in tenant admission.",
+    "Retained-image export/restore and scheduled backups.",
+    "Physical ownership timing and placement qualification; clustered native CLI cutover.",
+    "Full-manifest traversal, sparse-node compaction, sustained cleanup and broader cloud/performance qualification."
+  ],
+  "deleted": [
+    "Superseded table-only copy price and zero-charge append case.",
+    "Outdated current-policy descriptions; existing documentation updated in place."
+  ],
+  "source_sha256": {
+    "spec/TenantAdmission.tla": "2c127aa9b815793d75bdd32b277355b95f652c2f670dd7b9c9e0d53c88fe065d",
+    "src/index/recovery/checkpoint/mod.rs": "5aafa3475a270caadb08a13b45798006aae22d83ab3e93f062a868b82a2dcd7d",
+    "src/index/recovery/checkpoint/tree.rs": "2a4b26ed828383554a7a094a2561985c8dda03b53dedcd303ee8344d00796cc5",
+    "src/index/recovery/checkpoint/snapshot.rs": "747041e117558074b55adb19e375762718d2f8ba3d8703c51b932cc17f6bb79b",
+    "src/index/recovery/checkpoint/snapshot/tests.rs": "966a342ba1e1f94a893bdf2899d0fede07525a5581a013809f3fa0e5a6b69878",
+    "src/index/recovery/checkpoint/tests.rs": "46b35a6b43fbd8f3ab188c4ae056935590a968c93dcd67852eb38f0048c7f595",
+    "src/ownership/root/metadata.rs": "7fbb0ed87be1a191c91fc7b06dc5f5fc6b5d7e36be816ceedea1f3b6dcf9a3a5",
+    "src/ownership/root/tests/budget.rs": "7dc64b09ee7c0aef4cb0c2be471524810992b3f82554eeb5a31c1991e9b55c94",
+    "src/ownership/root/tests/http.rs": "8b20274798fe25cbe2600c41ad52cb59f3ce80c99d3fbe610b8f70797e4783d2",
+    "tests/checkpoint_cloud/native_http.rs": "fed607c00b3d5069566ee17cda69c9abfab98639be668c1d30a08d05aada6fe5"
+  },
+  "log_sha256": {
+    "clippy": "3080e7b43c7eb4bf6ca0aed8899074b85703b1cb0c8cdfdeac0de66f22a5c413",
+    "suite": "c3f92e540744fb19fbc98acecf5f95c6ec67acf9f6ae770e411501344c4cd684",
+    "native-client": "90b7561eec2a0248d03cb77c2e684dbc9ff4cbacd3dd7e15729de371cb53974a",
+    "local-client": "6a7d2e3acb952b67549c0036acbff657c1a468d2f3b7e24722b75b3253bfbfce",
+    "negative-paths": "32d6ddb18018b4e5955506a7a44639b50c9f9bdd0c90b050bd4f7fd3eb2c3827",
+    "negative-append": "6bd574ff32c39c94f7b73d1e15ddf845f398c577105e80b7b9eb2db5ad86fa41",
+    "negative-http": "00792b8f29e3266dc73f5c2f025b599a9e97f520db9e220b36e07c2feb4a5f0c",
+    "negative-dedup": "a1b79eff8cb325a47b43b469d1b0876637c5d9cb3357d13da7dc407199197ac1"
+  },
+  "model_log_sha256": "8a1ca6e458307e378f4212377ee874f90537bf1690dd760af643e209e73524b5",
+  "cleanup": {
+    "generated_logs_removed": 1032,
+    "generated_model_state_directories_removed": 31,
+    "bytes_removed": 8245400,
+    "reusable_tool_and_compilation_caches_preserved": true
+  }
+}
