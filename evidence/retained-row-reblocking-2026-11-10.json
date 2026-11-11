@@ -1,0 +1,279 @@
+{
+  "milestone": "retained-row reblocking admission",
+  "date": "2026-11-10",
+  "base_commit": "2c68688fbbec93fcccbf864b96d1d3cd6e79ebeb",
+  "scope": {
+    "budgeted_format": "owned-candidate-18",
+    "unbudgeted_format": "owned-candidate-15",
+    "new_data_or_index_encoding": false,
+    "additional_provider_calls": 0,
+    "additional_allocations": 0,
+    "runtime_net_rust_lines_including_comments": 2,
+    "admission": "five times the authenticated data size per affected base table, plus existing direct journal/new-row contribution",
+    "tradeoff": "Deliberately conservative and can substantially overestimate actual work; not billing or a reservation of future physical PUT rights."
+  },
+  "counterexample": {
+    "base_blocks": 8,
+    "unchanged_key_bytes": 1010,
+    "actual_rebuilt_data_and_index_bytes": 533678,
+    "old_allowance_bytes": 526021,
+    "old_shortfall_bytes": 7657,
+    "new_allowance_including_new_rows": 2622515,
+    "old_pricing_test_failed": true,
+    "new_pricing_test_passed": true,
+    "unchanged_composite_key_bytes": 1031
+  },
+  "local": {
+    "rust_tests_passed": 295,
+    "capacity_test": "reserved for optimized Woodpecker check",
+    "fmt": true,
+    "strict_clippy": true,
+    "reblocking_regression_seconds": 0.14,
+    "shared_copy_regression_seconds": 0.07,
+    "cold_manifest_regression_seconds": 0.71,
+    "http_budget_regression_seconds": 0.1,
+    "cold_manifest_reads": 4,
+    "cold_table_reads_for_pricing": 0,
+    "negative_control": "restoring the old recorded-size formula admits an underfunded HTTP write (200 instead of 413)",
+    "collector_fixture": "Raised the bounded test allowance from 4096/8192 to 32768/65536 to fund its three writes under the new policy."
+  },
+  "model": {
+    "name": "TenantAdmission",
+    "distinct_states": 5776,
+    "generated_states": 24321,
+    "depth": 21,
+    "negative_controls": 3,
+    "new_states_or_transitions": 0,
+    "scope": "Abstract credit and assignment coverage; encoding algebra and Rust routing checked separately."
+  },
+  "remaining": [
+    "tightening the conservative reblocking allowance",
+    "manifest encoding and retry/recovery attribution",
+    "retained-image export/restore and scheduled backups",
+    "qualified physical ownership timing and clustered placement"
+  ],
+  "source_sha256": {
+    "spec/TenantAdmission.tla": "53301fb737258a15733793906db153285b358cc10e39e0580f244dcc5d5199ab",
+    "src/index/recovery/checkpoint/snapshot.rs": "546d8147d3e596578dd5fa8bec142a8c1a5c39f846677aeb63a73e6289b3a41a",
+    "src/index/recovery/checkpoint/mod.rs": "c545830734ab754c16f56140c6e7e9da5ac965ef2d35f50a95c0a31130ded703",
+    "src/index/recovery/checkpoint/tests.rs": "3f98c036ee7a0a577b98ff21357c0aa956a06433edbcf0075440b2573e791d46",
+    "src/index/recovery/checkpoint/snapshot/tests.rs": "7a224f9da5b1dba20fc9097dce1a2a92b14fe3a10ee8f38d470c958ad0335900",
+    "src/ownership/root/metadata.rs": "1070448469c41c89fe6d25d4e9f457286f9231ac959cb579e140b991ccbab939",
+    "src/ownership/root/tests/budget.rs": "bafc90cd7e655bffb7b49e8a1cb27c5f442a8e3bc8f9334db5ed9c5a533abd29",
+    "src/ownership/root/tests/http.rs": "d6216f2357367bf4ba7b0713a6d5f64f2d02467e0a3200ededa181936f949677",
+    "tests/checkpoint_cloud/native_http.rs": "3610fdc30d1e9330ac4ec5c80a94f70aeeeef09071a861adbc2c7df986e3c7d0",
+    "Dockerfile": "ce9f302e08caa81742c5f87d2da3a0d8591c89653b804f0b8ee1067988d2c5d4",
+    "clients/javascript/database-fixture.mjs": "1e338ebbb21c7afe7bc17710bfdd75eaf25e5995c8e54e8726ef4544af792243",
+    "clients/javascript/pi.test.mjs": "48fd3abef7e9c0496476ee7aa7f98232d3034d1d26e9c4630f0bb43360965f84",
+    "clients/javascript/indexed.test.mjs": "5bc638d09523999543a41dccf318e71aa76f915898274c638bfb2bf34cf9028c",
+    "clients/javascript/harness.test.mjs": "6532c5c9c1c388f0c1d9da04792249b5c9dcf612e76ae6a7735a6e1fc6ef2d35",
+    "clients/javascript/sdk.test.mjs": "9c6690d59e6986a215bcabe2aa234300e7a9f1e5b8c1e0152a0289d00f95cf2c"
+  },
+  "log_sha256": {
+    "before": "bdf211ad3232ae3b210196fe36a37655fb1693720712ec3687e5ef3a5d98cf97",
+    "after": "0aa6afc4f37bb1ddaff357497aff1d9c2429d2a3f8aa12d0653258be4bb47a28",
+    "negative-http": "c36249d945d8ecaf549c1181bdcb9bb70707fae33d8257b11ffe1a07b5d0cce2",
+    "shared": "6d84c5cce220d5a1ea918006adab73303b0d4f90253ff557dd15a90f8716f5a3",
+    "seeks": "69fbc4f106fd5c77721898ba94242044362bb6a5c37166a7db32ce4c661d74a0",
+    "http": "7c6de789362124cc7013de79a8547c5a9fc79361d4f67d91e3b3ebc550403a4c",
+    "model": "a05c6ffd6adb88e9fd30d103be53601ee085f608077403c76eca924b2bb3b41e",
+    "suite": "15226070dc97a8f5006924a256c3da40f178c1794251f223d333d8654655fad3",
+    "clippy": "41b010151db28962827a71b3b14abc8857213e55dec78b3d3bfd38ce40af179d",
+    "client-native": "4101feebda37bf302cacb560913f53db1119a89fa6492311d9c13e1aed8bca34",
+    "client-local": "1183c915603e1526014f57d541807c0a60cc02bece73598d02e7caa68c1a86e3"
+  },
+  "cloud": {
+    "b2": {
+      "provider": "B2",
+      "test": {
+        "admission_bytes_per_write": [
+          7519,
+          9259
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "base_reblocking_allowance_per_write": [
+          6685,
+          8425
+        ],
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 47691.685249,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 6690.736967000001,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-0bbf75ae-2ac3-4fd5-812b-5cf8923fb8b7",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "b2",
+        "refusal_and_retry_immutable_puts": 0,
+        "retention": {
+          "cold_reopen_and_collection": true,
+          "exact_cut_values": true,
+          "immutable_puts": 0,
+          "release_reclaimed_old_checkpoint": true
+        },
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 17.58910897,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 16778
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 16778
+          }
+        },
+        "total_seconds": 200.533918314,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.402968,
+          "p95": 1.457857,
+          "p99": 1.558474
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 18
+      }
+    },
+    "s3_compatible_minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "admission_bytes_per_write": [
+          7519,
+          9259
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "base_reblocking_allowance_per_write": [
+          6685,
+          8425
+        ],
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 60399.413244999996,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 133.91708899999998,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-727e40ae-b8e9-4113-81e9-d58f9dad0073",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "s3",
+        "refusal_and_retry_immutable_puts": 0,
+        "retention": {
+          "cold_reopen_and_collection": true,
+          "exact_cut_values": true,
+          "immutable_puts": 0,
+          "release_reclaimed_old_checkpoint": true
+        },
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 0.312009398,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 16778
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 16778
+          }
+        },
+        "total_seconds": 181.987752868,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.387199,
+          "p95": 1.460717,
+          "p99": 1.497756
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 28,
+        "container_removed": true
+      }
+    }
+  },
+  "cloud_scope": "Logical-clock native HTTP fixture with stopped predecessors. Not physical timing, AWS or a latency/throughput SLO.",
+  "runtime_source_commit": "fc3e928ec920325daa1a18366c7ddb00ad42c046",
+  "client_qualification": {
+    "initial_woodpecker_pipeline": 149,
+    "initial_result": "97 passed, two native Pi contract cases exhausted the default 64 MiB write-admission ceiling; one process-control case skipped",
+    "fixture_admission_bytes": 536870912,
+    "fixture_admissions": 16384,
+    "funding": "Existing administrator POST upload-budget before protected creation; only explicitly enabled for native contracts",
+    "runtime_defaults_changed": false,
+    "local_native_tests_passed": 99,
+    "local_native_seconds": 28.19,
+    "local_cli_tests_passed": 99,
+    "local_cli_seconds": 9.21,
+    "opt_in_skipped_per_suite": 1,
+    "cleanup": "Consolidated repeated database creation, credential loading and retry loops into one test fixture."
+  }
+}
