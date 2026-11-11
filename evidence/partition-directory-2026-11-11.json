@@ -1,0 +1,96 @@
+{
+  "date_utc": "2026-11-11",
+  "source_commit": "a3104ccf4022e3f7b782d27b81427fd8c5e31797",
+  "clean_worktree": true,
+  "native_format": "owned-candidate-23",
+  "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::independent_partitions_serve_and_recover_over_http --nocapture",
+  "scope": "Independent partition control through native HTTP; three live servers, two partitions, one live takeover, exact retries and shared metadata collection. Explicit placement, not automatic election/routing, AWS, Kubernetes or an SLO.",
+  "results": [
+    {
+      "provider": "B2",
+      "test": {
+        "ceilings_preserved_on_reopen": true,
+        "checkpoint_recovery": true,
+        "concurrent_writes": true,
+        "independent_values": true,
+        "old_owner_read_and_retry_refused": true,
+        "partitions": [
+          7,
+          4294967295
+        ],
+        "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
+        "seconds": 50.357276933,
+        "shared_metadata_collection": true,
+        "simultaneous_http_servers": 3,
+        "unmoved_partition_progress": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 42
+      }
+    },
+    {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "ceilings_preserved_on_reopen": true,
+        "checkpoint_recovery": true,
+        "concurrent_writes": true,
+        "independent_values": true,
+        "old_owner_read_and_retry_refused": true,
+        "partitions": [
+          7,
+          4294967295
+        ],
+        "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
+        "seconds": 1.144796938,
+        "shared_metadata_collection": true,
+        "simultaneous_http_servers": 3,
+        "unmoved_partition_progress": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 48,
+        "container_removed": true
+      }
+    }
+  ],
+  "directory_format": 6,
+  "local": {
+    "rust_tests_passed": 295,
+    "focused_tests": 4,
+    "focused_seconds": 0.64,
+    "formatting": "pass",
+    "strict_all_target_clippy": "pass"
+  },
+  "models": {
+    "PublicationRebase": {
+      "distinct": 195642,
+      "generated": 827904,
+      "depth": 24,
+      "negative_controls": 3
+    },
+    "RootRegistration": {
+      "distinct": [
+        34061,
+        281563
+      ],
+      "unsafe_controls": 4,
+      "reachability_controls": 2
+    },
+    "PublicationCombining": {
+      "jobs": 2,
+      "targets": 2,
+      "helpers": 2,
+      "revisions": 2,
+      "distinct": 1722773,
+      "generated": 10689765,
+      "depth": 25,
+      "seconds": 43,
+      "negative_controls": 4,
+      "note": "Default revision bound reduced from 3 to 2; all four unsafe behaviors still detected. Larger historical runs retained in verification record."
+    }
+  }
+}
