@@ -191,6 +191,48 @@
 <p><code>spec/candidates/RevocableOwner.tla</code> checks one timing-independent handoff: exactly-once positive permit creation before publication, a fresh permit GET after a response group is sealed and its journal prefix is durable, revocation before recovery, and immutable selection before successor service. No clock or failure timer appears. Old successful replies can finish late; they cannot admit later requests. Missing permission refuses service.</p>
 <p>With two old journal positions and one successor write, TLC checks <strong>856 distinct states</strong>, 1,690 generated, depth 15, in under one second (optimistic fingerprint collision estimate 3.9e-14). Seven required controls detect recreation, premature publication, validation before upload, acknowledgement gaps, stale positive GETs, late group admission and early recovery. Two separate reachability checks require a read reply <em>after</em> the successor write and an upload <em>after</em> successor activation. Run <code>scripts/check-candidate.sh RevocableOwner</code>; Woodpecker checks it in its own cached stage. <a href="evidence/revocable-owner-2026-11-11.json">Source/configuration/log hashes</a>.</p>
 <p>Assumptions: one selected successor with exact conditional acquisition and fresh identities, durable immutable journal objects, fresh point observations, and durable prefix selection. The permit PUT must have only one physical attempt and complete positively before publication; a successful GET cannot be reused. Provider consistency must forbid stale positive reads initiated after confirmed revocation. No production provider contract is established by this model. Repeated competing takeovers, discovering all unresolved ancestors, placement, collection, resource admission, KV/receipt semantics, liveness and Rust refinement remain unproved here. The current runtime is unchanged. One ordinary provider GET per sealed group remains a latency/cost floor; removing shared conditional writes is not a zero-I/O-read claim.</p>
+<h3 id="permit-provider-experiment">Permit provider experiment<a class="anchor" href="#permit-provider-experiment" aria-label="Link to this section">#</a></h3>
+<p>At <code>4f450dc</code>, the shared fixture passes on real B2 (15.36 seconds) and versioned MinIO (0.36 seconds). It creates 32 unique positive objects with one PUT each, measures fresh GETs at concurrency 1/4/16, deletes every permit physically, and checks absence 97 times through original, independent and reopened connections. One journal frame is durable before the held positive reply; recovery retains that prefix, while a later upload cannot gain new validation and is excluded from replay. There are zero logical authority reads/replacements/barriers during the measured phases and handoff fixture. The result uses existing transports and journal code; it adds no runtime permit format or controller.</p>
+<table>
+<thead>
+<tr>
+<th>B2 GET concurrency</th>
+<th>Median</th>
+<th>Maximum</th>
+<th>Validations/second</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>35.17 ms</td>
+<td>1,042.08 ms</td>
+<td>7.14</td>
+</tr>
+<tr>
+<td>4</td>
+<td>32.10 ms</td>
+<td>252.46 ms</td>
+<td>77.73</td>
+</tr>
+<tr>
+<td>16</td>
+<td>66.91 ms</td>
+<td>111.31 ms</td>
+<td>200.33</td>
+</tr>
+</tbody>
+</table>
+<p>These are 32 samples per phase from the development host, including bounded SDK GET retries; neither client geography nor regional SLO is established. The fixture holds a completed positive reply locally across deletion rather than delaying it inside the provider. It does not exercise competing control claims or collectors. It demonstrates a transport primitive and its current cost, not database throughput, sustained capacity, a consistency proof or AWS qualification. The one-second outlier matters: removing metadata contention does not eliminate provider tail latency.</p>
+<p>Both disposable buckets, the scoped B2 key and the MinIO container were removed. The test physically removed 32 permits per provider; teardown removed two remaining journal versions per provider. <a href="evidence/revocable-owner-2026-11-11.json">Evidence, all samples and cleanup</a>.</p>
+<p>Use scoped credentials and an explicitly disposable <code>durable-db-test-*</code> bucket; the caller must remove all versions, bucket and workload credentials even on failure:</p>
+<pre><code class="language-sh">DURABLE_DB_DISPOSABLE=1 DURABLE_DB_TEST_PROVIDER=b2 \
+DURABLE_DB_TEST_BUCKET=durable-db-test-UNIQUE \
+DURABLE_DB_TEST_CONTEXT='Describe actual client and provider placement' \
+DURABLE_DB_PROVIDER_FLOOR_REPORT=/tmp/permit-report.json \
+cargo test --locked --test provider_floor -- --ignored --exact revocable_permit_floor --nocapture
+</code></pre>
+<p>Use <code>s3</code> with the same fixture for the S3 binding. It caps uploads at 34 objects: 32 small permits and two journal frames. Do not run both ignored provider-floor tests concurrently in the same process: they share process-wide metric counters. Real-provider observations support the expected behavior but do not strengthen the documented contract. <a href="https://www.backblaze.com/apidocs/b2-delete-file-version">B2 deletion</a> and <a href="https://www.backblaze.com/docs/cloud-storage-download-files-with-the-native-api">download semantics</a> describe removal and missing-file responses; an explicit guarantee against every post-revocation stale positive remains a qualification obligation. <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html#ConsistencyModel">AWS consistency</a> covers object deletion, but the AWS deployment is not tested here.</p>
 <h2 id="candidate-serving-permission-and-log-acknowledgement">Candidate serving permission and log acknowledgement<a class="anchor" href="#candidate-serving-permission-and-log-acknowledgement" aria-label="Link to this section">#</a></h2>
 <p>The timed <code>OwnedWal</code> experiment is retired in favor of the revocable-permit candidate. Its standalone model/configurations and cached CI stage were removed; <a href="evidence/owned-wal-candidate-2026-11-09.json">historical evidence</a> retains the 570,280-state result, seven controls, source commit and timing assumptions. Timed root/partition models still describe the current experimental controller and are retained until its replacement is integrated. The restricted-profile and VM failure evidence below remains available as a fallback, not a production deployment restriction.</p>
 <h2 id="candidate-permission-delegation">Candidate permission delegation<a class="anchor" href="#candidate-permission-delegation" aria-label="Link to this section">#</a></h2>

@@ -52,5 +52,1299 @@
     "Conditional acquisition, fresh identities, journal durability and atomic durable selection are assumptions.",
     "No repeated-root/placement/collection composition, liveness or Rust proof.",
     "Ordinary group validation retains a provider GET latency/cost floor."
-  ]
+  ],
+  "provider_experiment": {
+    "date_utc": "2026-11-11",
+    "source_commit": "4f450dc13eb70334711340bc8971fa40c1ac62d4",
+    "clean_worktree": true,
+    "runtime_changed": false,
+    "command": "cargo test --locked --test provider_floor -- --ignored --exact revocable_permit_floor --nocapture",
+    "scope": "Revocable permit provider primitive, not a serving controller. Real B2 and versioned MinIO, not AWS, sustained load, provider consistency proof or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "complete": true,
+          "control_calls_during_handoff_fixture": [
+            0,
+            0,
+            0
+          ],
+          "initialization": {
+            "all_attempt_latency_ms": {
+              "max": 1193.234831,
+              "p50": 370.15011599999997,
+              "p95": 1160.695405,
+              "p99": 1193.234831
+            },
+            "authority_calls_during_phase": [
+              0,
+              0,
+              0
+            ],
+            "concurrency": 4,
+            "elapsed_seconds": 3.9509226760000002,
+            "failed": 0,
+            "operation": "immutable_put",
+            "payload_bytes": 36,
+            "planned": 32,
+            "samples_ms_and_success": [
+              [
+                188.22023099999998,
+                true
+              ],
+              [
+                124.029994,
+                true
+              ],
+              [
+                454.06256099999996,
+                true
+              ],
+              [
+                502.14293799999996,
+                true
+              ],
+              [
+                619.533957,
+                true
+              ],
+              [
+                847.315813,
+                true
+              ],
+              [
+                1160.695405,
+                true
+              ],
+              [
+                976.56539,
+                true
+              ],
+              [
+                522.155269,
+                true
+              ],
+              [
+                71.620868,
+                true
+              ],
+              [
+                524.259299,
+                true
+              ],
+              [
+                563.3933850000001,
+                true
+              ],
+              [
+                290.392155,
+                true
+              ],
+              [
+                325.372507,
+                true
+              ],
+              [
+                45.729422,
+                true
+              ],
+              [
+                751.1718960000001,
+                true
+              ],
+              [
+                370.15011599999997,
+                true
+              ],
+              [
+                281.637579,
+                true
+              ],
+              [
+                49.478547,
+                true
+              ],
+              [
+                41.588218000000005,
+                true
+              ],
+              [
+                237.986189,
+                true
+              ],
+              [
+                242.492823,
+                true
+              ],
+              [
+                1039.778282,
+                true
+              ],
+              [
+                460.831111,
+                true
+              ],
+              [
+                42.721266,
+                true
+              ],
+              [
+                455.52090899999996,
+                true
+              ],
+              [
+                192.933288,
+                true
+              ],
+              [
+                94.93534700000001,
+                true
+              ],
+              [
+                46.231268,
+                true
+              ],
+              [
+                472.830645,
+                true
+              ],
+              [
+                1193.234831,
+                true
+              ],
+              [
+                779.943451,
+                true
+              ]
+            ],
+            "succeeded": 32,
+            "successful_objects_per_second": 8.099373899262815
+          },
+          "late_suffix_excluded": true,
+          "limitations": [
+            "Provider primitive, not a serving controller, placement protocol or database benchmark.",
+            "Finite deletion observations do not prove provider linearizability.",
+            "32 samples per phase, one client host, no SLO or sustained-capacity claim.",
+            "The positive reply is retained locally across revocation, not delayed inside the provider.",
+            "No concurrent collector or competing root acquisition; dedicated fixture owns deletion.",
+            "GETs may use bounded SDK retries; PUTs are single attempt.",
+            "S3-compatible MinIO does not qualify AWS S3."
+          ],
+          "maximum_put_attempts": 34,
+          "namespace": "permit-17555214-024b-45d1-908c-8f94d74838e6",
+          "permits": 32,
+          "phases": [
+            {
+              "all_attempt_latency_ms": {
+                "max": 1042.0814730000002,
+                "p50": 35.172687,
+                "p95": 573.5614260000001,
+                "p99": 1042.0814730000002
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 1,
+              "elapsed_seconds": 4.481414504,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  134.78571300000002,
+                  true
+                ],
+                [
+                  270.615746,
+                  true
+                ],
+                [
+                  35.31839299999999,
+                  true
+                ],
+                [
+                  51.687455,
+                  true
+                ],
+                [
+                  266.06551299999995,
+                  true
+                ],
+                [
+                  32.919740000000004,
+                  true
+                ],
+                [
+                  1042.0814730000002,
+                  true
+                ],
+                [
+                  37.418114,
+                  true
+                ],
+                [
+                  32.433893,
+                  true
+                ],
+                [
+                  32.623188,
+                  true
+                ],
+                [
+                  32.983748,
+                  true
+                ],
+                [
+                  32.276648,
+                  true
+                ],
+                [
+                  31.747283,
+                  true
+                ],
+                [
+                  486.446754,
+                  true
+                ],
+                [
+                  33.777406000000006,
+                  true
+                ],
+                [
+                  32.312907,
+                  true
+                ],
+                [
+                  40.908117000000004,
+                  true
+                ],
+                [
+                  250.99545299999997,
+                  true
+                ],
+                [
+                  28.707277,
+                  true
+                ],
+                [
+                  29.659140999999998,
+                  true
+                ],
+                [
+                  26.809290999999998,
+                  true
+                ],
+                [
+                  262.342127,
+                  true
+                ],
+                [
+                  35.172687,
+                  true
+                ],
+                [
+                  34.026469,
+                  true
+                ],
+                [
+                  33.320547999999995,
+                  true
+                ],
+                [
+                  265.56563700000004,
+                  true
+                ],
+                [
+                  41.914699,
+                  true
+                ],
+                [
+                  573.5614260000001,
+                  true
+                ],
+                [
+                  87.59450100000001,
+                  true
+                ],
+                [
+                  126.549262,
+                  true
+                ],
+                [
+                  31.622836000000003,
+                  true
+                ],
+                [
+                  26.677695,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 7.140602586847878
+            },
+            {
+              "all_attempt_latency_ms": {
+                "max": 252.46061199999997,
+                "p50": 32.097103000000004,
+                "p95": 108.138816,
+                "p99": 252.46061199999997
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 4,
+              "elapsed_seconds": 0.411685371,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  30.111659,
+                  true
+                ],
+                [
+                  63.218821999999996,
+                  true
+                ],
+                [
+                  93.338611,
+                  true
+                ],
+                [
+                  108.138816,
+                  true
+                ],
+                [
+                  80.55188700000001,
+                  true
+                ],
+                [
+                  60.219125999999996,
+                  true
+                ],
+                [
+                  32.371505,
+                  true
+                ],
+                [
+                  26.82903,
+                  true
+                ],
+                [
+                  32.18921,
+                  true
+                ],
+                [
+                  32.806692999999996,
+                  true
+                ],
+                [
+                  39.811497,
+                  true
+                ],
+                [
+                  37.390225,
+                  true
+                ],
+                [
+                  32.398265,
+                  true
+                ],
+                [
+                  30.226225,
+                  true
+                ],
+                [
+                  34.410917999999995,
+                  true
+                ],
+                [
+                  36.598617,
+                  true
+                ],
+                [
+                  33.192372,
+                  true
+                ],
+                [
+                  28.342017000000002,
+                  true
+                ],
+                [
+                  33.171223,
+                  true
+                ],
+                [
+                  31.734762,
+                  true
+                ],
+                [
+                  26.755952,
+                  true
+                ],
+                [
+                  31.11196,
+                  true
+                ],
+                [
+                  28.104324,
+                  true
+                ],
+                [
+                  32.097103000000004,
+                  true
+                ],
+                [
+                  31.349743,
+                  true
+                ],
+                [
+                  30.348591000000003,
+                  true
+                ],
+                [
+                  30.124918,
+                  true
+                ],
+                [
+                  28.030426000000002,
+                  true
+                ],
+                [
+                  28.029306000000002,
+                  true
+                ],
+                [
+                  28.485804,
+                  true
+                ],
+                [
+                  31.009233000000002,
+                  true
+                ],
+                [
+                  252.46061199999997,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 77.72926184447783
+            },
+            {
+              "all_attempt_latency_ms": {
+                "max": 111.314888,
+                "p50": 66.91317,
+                "p95": 105.19032,
+                "p99": 111.314888
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 16,
+              "elapsed_seconds": 0.159738034,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  27.460752000000003,
+                  true
+                ],
+                [
+                  32.509501,
+                  true
+                ],
+                [
+                  33.080755,
+                  true
+                ],
+                [
+                  37.978339,
+                  true
+                ],
+                [
+                  46.018544,
+                  true
+                ],
+                [
+                  45.963625,
+                  true
+                ],
+                [
+                  60.950136,
+                  true
+                ],
+                [
+                  66.17233999999999,
+                  true
+                ],
+                [
+                  66.034914,
+                  true
+                ],
+                [
+                  66.91317,
+                  true
+                ],
+                [
+                  80.406552,
+                  true
+                ],
+                [
+                  82.424236,
+                  true
+                ],
+                [
+                  90.296196,
+                  true
+                ],
+                [
+                  101.405035,
+                  true
+                ],
+                [
+                  101.79007399999999,
+                  true
+                ],
+                [
+                  111.314888,
+                  true
+                ],
+                [
+                  72.782515,
+                  true
+                ],
+                [
+                  86.281998,
+                  true
+                ],
+                [
+                  94.785221,
+                  true
+                ],
+                [
+                  47.496012,
+                  true
+                ],
+                [
+                  62.922940999999994,
+                  true
+                ],
+                [
+                  105.19032,
+                  true
+                ],
+                [
+                  99.390992,
+                  true
+                ],
+                [
+                  77.296479,
+                  true
+                ],
+                [
+                  98.258663,
+                  true
+                ],
+                [
+                  79.74327000000001,
+                  true
+                ],
+                [
+                  80.274396,
+                  true
+                ],
+                [
+                  44.108357,
+                  true
+                ],
+                [
+                  39.461825999999995,
+                  true
+                ],
+                [
+                  48.877304,
+                  true
+                ],
+                [
+                  73.299651,
+                  true
+                ],
+                [
+                  66.456332,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 200.32799452132983
+            }
+          ],
+          "post_revocation_negative_gets": 97,
+          "pre_revocation_prefix_recovered": true,
+          "provider": "b2",
+          "revoke_all_seconds": 0.611315499,
+          "schema": 1
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 2
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "complete": true,
+          "control_calls_during_handoff_fixture": [
+            0,
+            0,
+            0
+          ],
+          "initialization": {
+            "all_attempt_latency_ms": {
+              "max": 4.595442,
+              "p50": 1.44316,
+              "p95": 3.891991,
+              "p99": 4.595442
+            },
+            "authority_calls_during_phase": [
+              0,
+              0,
+              0
+            ],
+            "concurrency": 4,
+            "elapsed_seconds": 0.016892528,
+            "failed": 0,
+            "operation": "immutable_put",
+            "payload_bytes": 36,
+            "planned": 32,
+            "samples_ms_and_success": [
+              [
+                4.595442,
+                true
+              ],
+              [
+                3.891991,
+                true
+              ],
+              [
+                3.543741,
+                true
+              ],
+              [
+                3.036735,
+                true
+              ],
+              [
+                1.43857,
+                true
+              ],
+              [
+                1.311503,
+                true
+              ],
+              [
+                1.888527,
+                true
+              ],
+              [
+                1.78637,
+                true
+              ],
+              [
+                1.6918630000000001,
+                true
+              ],
+              [
+                1.44316,
+                true
+              ],
+              [
+                1.957195,
+                true
+              ],
+              [
+                1.990394,
+                true
+              ],
+              [
+                1.982135,
+                true
+              ],
+              [
+                1.6290740000000001,
+                true
+              ],
+              [
+                1.2841040000000001,
+                true
+              ],
+              [
+                1.956825,
+                true
+              ],
+              [
+                1.459969,
+                true
+              ],
+              [
+                1.499348,
+                true
+              ],
+              [
+                1.3846209999999999,
+                true
+              ],
+              [
+                1.0764399999999998,
+                true
+              ],
+              [
+                1.276344,
+                true
+              ],
+              [
+                1.256704,
+                true
+              ],
+              [
+                1.310683,
+                true
+              ],
+              [
+                1.1766969999999999,
+                true
+              ],
+              [
+                1.4896289999999999,
+                true
+              ],
+              [
+                1.528887,
+                true
+              ],
+              [
+                1.41102,
+                true
+              ],
+              [
+                1.167747,
+                true
+              ],
+              [
+                1.360672,
+                true
+              ],
+              [
+                1.099859,
+                true
+              ],
+              [
+                1.187187,
+                true
+              ],
+              [
+                1.0386309999999999,
+                true
+              ]
+            ],
+            "succeeded": 32,
+            "successful_objects_per_second": 1894.3286641288976
+          },
+          "late_suffix_excluded": true,
+          "limitations": [
+            "Provider primitive, not a serving controller, placement protocol or database benchmark.",
+            "Finite deletion observations do not prove provider linearizability.",
+            "32 samples per phase, one client host, no SLO or sustained-capacity claim.",
+            "The positive reply is retained locally across revocation, not delayed inside the provider.",
+            "No concurrent collector or competing root acquisition; dedicated fixture owns deletion.",
+            "GETs may use bounded SDK retries; PUTs are single attempt.",
+            "S3-compatible MinIO does not qualify AWS S3."
+          ],
+          "maximum_put_attempts": 34,
+          "namespace": "permit-8e00fdb7-2875-4470-af25-074d123e8777",
+          "permits": 32,
+          "phases": [
+            {
+              "all_attempt_latency_ms": {
+                "max": 1.773521,
+                "p50": 1.038461,
+                "p95": 1.309774,
+                "p99": 1.773521
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 1,
+              "elapsed_seconds": 0.034704011,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  1.773521,
+                  true
+                ],
+                [
+                  1.285084,
+                  true
+                ],
+                [
+                  1.193267,
+                  true
+                ],
+                [
+                  1.2035369999999999,
+                  true
+                ],
+                [
+                  0.923404,
+                  true
+                ],
+                [
+                  0.918404,
+                  true
+                ],
+                [
+                  0.874146,
+                  true
+                ],
+                [
+                  1.309774,
+                  true
+                ],
+                [
+                  1.110429,
+                  true
+                ],
+                [
+                  1.038461,
+                  true
+                ],
+                [
+                  1.1428580000000002,
+                  true
+                ],
+                [
+                  1.030011,
+                  true
+                ],
+                [
+                  1.156428,
+                  true
+                ],
+                [
+                  1.187756,
+                  true
+                ],
+                [
+                  1.2021169999999999,
+                  true
+                ],
+                [
+                  1.2897239999999999,
+                  true
+                ],
+                [
+                  1.219576,
+                  true
+                ],
+                [
+                  1.05847,
+                  true
+                ],
+                [
+                  1.050141,
+                  true
+                ],
+                [
+                  0.8967740000000001,
+                  true
+                ],
+                [
+                  0.9310339999999999,
+                  true
+                ],
+                [
+                  1.1949269999999999,
+                  true
+                ],
+                [
+                  1.046321,
+                  true
+                ],
+                [
+                  0.931874,
+                  true
+                ],
+                [
+                  0.927084,
+                  true
+                ],
+                [
+                  0.8531660000000001,
+                  true
+                ],
+                [
+                  0.866136,
+                  true
+                ],
+                [
+                  0.963803,
+                  true
+                ],
+                [
+                  0.9516429999999999,
+                  true
+                ],
+                [
+                  0.955833,
+                  true
+                ],
+                [
+                  1.031431,
+                  true
+                ],
+                [
+                  0.970253,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 922.0836173663039
+            },
+            {
+              "all_attempt_latency_ms": {
+                "max": 2.695385,
+                "p50": 1.229835,
+                "p95": 2.469741,
+                "p99": 2.695385
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 4,
+              "elapsed_seconds": 0.013292269,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  1.513358,
+                  true
+                ],
+                [
+                  2.469741,
+                  true
+                ],
+                [
+                  1.673034,
+                  true
+                ],
+                [
+                  2.695385,
+                  true
+                ],
+                [
+                  2.442712,
+                  true
+                ],
+                [
+                  1.514588,
+                  true
+                ],
+                [
+                  1.503428,
+                  true
+                ],
+                [
+                  1.178507,
+                  true
+                ],
+                [
+                  1.4356499999999999,
+                  true
+                ],
+                [
+                  1.5305570000000002,
+                  true
+                ],
+                [
+                  1.42219,
+                  true
+                ],
+                [
+                  1.238116,
+                  true
+                ],
+                [
+                  1.163208,
+                  true
+                ],
+                [
+                  1.583435,
+                  true
+                ],
+                [
+                  1.224146,
+                  true
+                ],
+                [
+                  1.2143659999999998,
+                  true
+                ],
+                [
+                  1.527407,
+                  true
+                ],
+                [
+                  1.637454,
+                  true
+                ],
+                [
+                  1.372102,
+                  true
+                ],
+                [
+                  1.229835,
+                  true
+                ],
+                [
+                  1.188977,
+                  true
+                ],
+                [
+                  1.030521,
+                  true
+                ],
+                [
+                  1.233165,
+                  true
+                ],
+                [
+                  0.984713,
+                  true
+                ],
+                [
+                  1.128888,
+                  true
+                ],
+                [
+                  0.985482,
+                  true
+                ],
+                [
+                  1.128828,
+                  true
+                ],
+                [
+                  0.9493429999999999,
+                  true
+                ],
+                [
+                  0.8031069999999999,
+                  true
+                ],
+                [
+                  1.096869,
+                  true
+                ],
+                [
+                  0.7900379999999999,
+                  true
+                ],
+                [
+                  0.914504,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 2407.414415100988
+            },
+            {
+              "all_attempt_latency_ms": {
+                "max": 18.99997,
+                "p50": 6.020032,
+                "p95": 18.861653,
+                "p99": 18.99997
+              },
+              "authority_calls_during_phase": [
+                0,
+                0,
+                0
+              ],
+              "concurrency": 16,
+              "elapsed_seconds": 0.025026801,
+              "failed": 0,
+              "operation": "immutable_get_and_verify",
+              "payload_bytes": 36,
+              "planned": 32,
+              "samples_ms_and_success": [
+                [
+                  4.552951999999999,
+                  true
+                ],
+                [
+                  4.287071,
+                  true
+                ],
+                [
+                  4.177702999999999,
+                  true
+                ],
+                [
+                  4.146914,
+                  true
+                ],
+                [
+                  4.083726,
+                  true
+                ],
+                [
+                  5.624393,
+                  true
+                ],
+                [
+                  6.020032,
+                  true
+                ],
+                [
+                  5.486377,
+                  true
+                ],
+                [
+                  16.4547,
+                  true
+                ],
+                [
+                  16.036871,
+                  true
+                ],
+                [
+                  17.155441,
+                  true
+                ],
+                [
+                  17.725465,
+                  true
+                ],
+                [
+                  14.585852,
+                  true
+                ],
+                [
+                  14.451445999999999,
+                  true
+                ],
+                [
+                  16.039792000000002,
+                  true
+                ],
+                [
+                  18.99997,
+                  true
+                ],
+                [
+                  18.581311,
+                  true
+                ],
+                [
+                  18.099334000000002,
+                  true
+                ],
+                [
+                  16.503619,
+                  true
+                ],
+                [
+                  18.861653,
+                  true
+                ],
+                [
+                  16.417301,
+                  true
+                ],
+                [
+                  3.379346,
+                  true
+                ],
+                [
+                  15.645603000000001,
+                  true
+                ],
+                [
+                  3.168062,
+                  true
+                ],
+                [
+                  15.908616,
+                  true
+                ],
+                [
+                  16.582317,
+                  true
+                ],
+                [
+                  3.383216,
+                  true
+                ],
+                [
+                  2.901388,
+                  true
+                ],
+                [
+                  2.1594499999999996,
+                  true
+                ],
+                [
+                  1.7261819999999999,
+                  true
+                ],
+                [
+                  1.285764,
+                  true
+                ],
+                [
+                  1.049181,
+                  true
+                ]
+              ],
+              "succeeded": 32,
+              "successful_objects_per_second": 1278.6292582899428
+            }
+          ],
+          "post_revocation_negative_gets": 97,
+          "pre_revocation_prefix_recovered": true,
+          "provider": "s3",
+          "revoke_all_seconds": 0.029104407,
+          "schema": 1
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 2,
+          "container_removed": true
+        }
+      }
+    ],
+    "context_note": "Existing development host to B2 and loopback versioned MinIO. The caller-supplied client geography/region label was not verified and is excluded; this is not a regional SLO measurement.",
+    "fixture_sha256": "3b0c96d10ee6625c03239c36d5ac1e9f272608210eaf5379d08b8e1f3ed00659"
+  }
 }
