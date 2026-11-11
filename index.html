@@ -131,7 +131,7 @@ curl http://127.0.0.1:7654/v1/databases/demo/read \
 <div class="stats">
 <a href="verification-results.html#initial-release-2026-11-08"><strong>36.3M</strong><span>distinct states checked in the shared-page cluster model</span></a>
 <a href="proof-publication.html"><strong>35</strong><span>obligations in an unbounded TLAPS proof of abstract page reachability</span></a>
-<a href="verification-results.html#v0230-native-cloud-cli-2026-11-11"><strong>1 → 3 → 6</strong><span>native replicas ready on the existing Kubernetes hosts with B2; rolling recovery remains under qualification</span></a>
+<a href="verification-results.html#v0234-local-health-and-complete-b2-recovery-2026-11-11"><strong>1,791 writes</strong><span>acknowledged and recovered in a complete B2/Kubernetes campaign with the v0.23.3 release: scaling, rolling replacement, provider interruption and total compute replacement; every writer must recover before the next fault</span></a>
 <a href="verification-results.html#directory-capacity-at-100005-entries"><strong>100,005</strong><span>databases in the directory capacity check, every head reopened without a cache</span></a>
 </div>
 <p class="caveat">Bounded model checking is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification record</a> lists every assumption, checked bound and remaining obligation.</p>
