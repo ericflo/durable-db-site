@@ -1,0 +1,59 @@
+{
+  "milestone": "durable native checkpoint retention",
+  "date": "2026-11-10",
+  "base_commit": "0f81727af3b7a762b2823269208535ece7cc4111",
+  "scope": {
+    "operator_api": "native Rust Root and Control; no HTTP or CLI retention endpoint",
+    "slots_per_namespace": 1,
+    "metadata_bytes_limit": 1024,
+    "immutable_uploads_for_slot_changes": 0,
+    "expiry": "explicit release; no clock-dependent expiry",
+    "readback": "exact published checkpoint cut; later journal entries excluded"
+  },
+  "local": {
+    "rust_tests_passed": 294,
+    "capacity_test": "optimized CI check; skipped in local debug suite",
+    "focused_retention_tests": 4,
+    "focused_retention_seconds": 0.02,
+    "tcp_retention_seconds": 0.03,
+    "fmt": true,
+    "strict_clippy": true,
+    "negative_control": "omitting retained-root protection makes cold verification fail because its manifest is missing"
+  },
+  "model": {
+    "name": "PublicationSafety",
+    "distinct_states": 175546,
+    "generated_states": 810459,
+    "depth": 16,
+    "negative_controls": 4,
+    "new_states_or_transitions": 0,
+    "tlaps_obligations": 35,
+    "tlaps_negative_controls": 1,
+    "limits": "abstract reachability; no Rust refinement, identity semantics or physical clock proof"
+  },
+  "remaining": [
+    "retained-row reblocking, manifests and retry attribution",
+    "physical timing and native clustered placement",
+    "multiple restore points and scheduled retention",
+    "retained-image restore/import, tenant isolation and independent disaster recovery"
+  ],
+  "source_sha256": {
+    "spec/PublicationSafety.tla": "f3ebeb18f51436a068829ae48d50e97b2b605a9d6505a94b377eba3c74292539",
+    "src/ownership/root.rs": "c6a22a6aa4d7c333877d715d9716743a50d6d7acceeffd0aa1517c93124d6f06",
+    "src/ownership/root/metadata.rs": "b0f424b107507581748d795a2f192ee9d855b65f5287f3800cfb4b807fa3a4c8",
+    "src/ownership/root/collection.rs": "5e315198cc79dfced5326b42331ede9a5e31bf798b7732482d546a1029f42dbb",
+    "src/transactions/live/control.rs": "d810766900c8c97acd0151f44b88f80913d4302d37c36dc0e0b92e332c94b431",
+    "src/transactions/live/checkpoint.rs": "7eb36b0bec0c7708a5a0e51d48215079e2e24bf68adecc799c28a2235706a07c",
+    "src/ownership/root/tests/retention.rs": "728bd320d46e02539e6ba7bcd85e12d74a4e965f3d95582c476bf6ca79c56602",
+    "src/ownership/root/tests/http.rs": "d09fa313b85e855e21ee2d2ef73c55e5ad51eb6c85b2b13c8dd65f15baaaa682",
+    "tests/checkpoint_cloud/native_http.rs": "cc513badcc0fac6c9a7be379605daa0be2bcba939ec6d89267148da8494484b6"
+  },
+  "log_sha256": {
+    "suite": "5d85e3d7e672d13d5a6f4b0020d40b37a30cf4339efa597b694149b9bcb70e44",
+    "focused": "5351899143f63951d95c41447efe446918a708544ff73c828f43baa8dbfb0682",
+    "http": "e042955a2a288766833510c715339b3a4f81aad9f367117f7e1ad270d4b2e0fc",
+    "model": "a6e2ad1622f2e048b0e71b705969986074ef01b808b7dd529ea1ace7e3f05641",
+    "proof": "bbc1513b75526bbf3aed4e300425e8eb19813a31306a79ccc001ded9abd57f7b",
+    "negative": "e6462d4136f7495c9fac09ef85189a02583887551e553a65d687b634e06a6d49"
+  }
+}
