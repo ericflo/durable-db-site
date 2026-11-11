@@ -1,0 +1,97 @@
+{
+  "milestone": "stable checkpoint manifest groups",
+  "date": "2026-11-10",
+  "base_commit": "f95bfb6887a3302914f3a938aee587f1dbe6f4b4",
+  "scope": {
+    "runtime_net_rust_lines_including_comments": 32,
+    "new_runtime_dependencies": false,
+    "encoding_or_admission_policy_change": false,
+    "budgeted_format": "owned-candidate-18",
+    "unbudgeted_format": "owned-candidate-15",
+    "additional_provider_reads": 0,
+    "maximum_pending_entries_per_level": 65,
+    "maximum_encoded_children_per_node": 64,
+    "maximum_reuse_candidates_per_reader_or_builder": 9
+  },
+  "regressions": {
+    "prefix_insert_4096_tables": {
+      "old_manifest_uploads": 68,
+      "new_manifest_uploads": 5
+    },
+    "8193_tables": {
+      "prefix_insert_manifest_uploads": 5,
+      "prefix_delete_manifest_uploads": 3,
+      "whole_leaf_removal_manifest_uploads": 2,
+      "unchanged_uploads": 0,
+      "original_traversal_reads": 133
+    },
+    "projection_repacking_183_tables": {
+      "old_uploads": 6,
+      "new_uploads": 4,
+      "reads": 10,
+      "values_or_deletions_verified": 540
+    },
+    "repeated_prefix_inserts": {
+      "initial_tables": 64,
+      "inserts": 128,
+      "maximum_height": 1
+    },
+    "forward_and_reverse_order": true,
+    "unchanged_rebuild_of_split_tree_zero_puts": true,
+    "applied_lost_and_cancelled_boundary_uploads_leave_base_readable": true
+  },
+  "negative_controls": [
+    "Original regrouping needs 68 uploads rather than five.",
+    "Omitting the row-buffer boundary flush needs six uploads rather than four.",
+    "Full-plus-one splits violate the repeated-prefix height bound."
+  ],
+  "local": {
+    "rust_tests_passed": 298,
+    "fmt": true,
+    "strict_clippy": true,
+    "capacity_test": "reserved for optimized musl Woodpecker check",
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 28.81,
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 8.84,
+    "opt_in_client_tests_skipped_per_suite": 1
+  },
+  "model": {
+    "name": "CheckpointOverlay",
+    "distinct_states": 31104,
+    "generated_states": 34560,
+    "depth": 5,
+    "negative_controls": 8,
+    "new_states_or_transitions": 0,
+    "scope": "Abstract subtree equality and selected-prefix reconstruction; packing, encoding and I/O are checked separately in Rust, not a refinement proof."
+  },
+  "remaining": [
+    "manifest and retry/recovery attribution to tenants",
+    "full-manifest traversal and sparse-node compaction",
+    "retained-image export/restore and scheduled backups",
+    "qualified physical ownership timing and placement"
+  ],
+  "deleted": [
+    "old regrouping and blind reuse-candidate replacement path",
+    "redundant base fixture builds; split/collapse outputs cover their boundary sizes",
+    "superseded verification prose"
+  ],
+  "source_sha256": {
+    "spec/CheckpointOverlay.tla": "ec8d3a6b1cb2ee8be3d05f6c7b5bfe6b46e83e85fa41b14566fe6618d603298b",
+    "src/index/recovery/checkpoint/tree.rs": "6196cf41b4d32022636fd78c221f16ad103fa4f4df3fbe4064e6f93edabd56a7",
+    "src/index/recovery/checkpoint/mod.rs": "f33a57731586c6c2ab0aa0de8439996fabba602dc0a08a4b23ba56b167ab67c7",
+    "src/index/recovery/checkpoint/tests.rs": "9f0252729cfb9b4692d57f9dbbfc5c7f5cf266f60729b07dfabd0789fa5c562a",
+    "src/index/recovery/checkpoint/snapshot/tests.rs": "f7af0483c9190868dc548273fa728100d4c2350aa2999e729f8ba95c0f7250cd"
+  },
+  "log_sha256": {
+    "align": "b2f887c0ff091397adc1a00206f6a905ca544f4abdf19207c6797062a6b79ce9",
+    "negative-suffix": "13d1da9658454b57f22398061d0012f2c9ca731563a031130109ed4af9d3da53",
+    "negative-buffer": "3d35abae3abfdb4cca0648edc8877f4198d963075afdc440f820f30d8e5f6b1c",
+    "negative-split": "b65c3564aaf09cd913105e696436c421e0e6996d5aa158b136fd8e6f24d08073",
+    "model": "155766eb563bc0ade3ccef6187bbb94f0af63bd4cf54451f3a2f1455e2e6c715",
+    "clippy": "a686e43d7223ecdc3b2742f58c30a90e03544f5de4048dd522a69cf9d66aecec",
+    "suite": "8788b889ba73bc8fc6db51b7018f91bec3d33923d849d0f0c30bdda760654869",
+    "native-client": "a98d520245be8839f29e220c1d50bfc61adbfcbd167d0a860c2a3e5ad784989b",
+    "local-client": "a15c0282bff1a8f2a450b7894f802141aac88b4d6597aba9d3478adc8beb27dd"
+  }
+}
