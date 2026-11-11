@@ -47,7 +47,8 @@
       "publication-model": "d0e3c5c9cbf9101d8dd3b63957730b288c4854397b6699a3ddb8eca756743425",
       "safety-model": "df213abb7c5eea0145e5e844caae21678dc09c67285fe96856a1cd606184715b"
     },
-    "reserve_regression_seconds": 0.72
+    "reserve_regression_seconds": 0.72,
+    "capacity_seconds": 201.18
   },
   "model": {
     "name": "TenantAdmission",
@@ -192,5 +193,242 @@
     "prior_local_log_sha256": "efbb28266a06c53be66c2b83df1b8a0ca83d67b1d6288d40af483f69dc0de368",
     "ci_171": "All 99 client cases passed in 89.44 seconds, but the outer 90-second process deadline expired during shutdown. Raised only that harness deadline to 120 seconds; per-test timeouts unchanged.",
     "ci_171_log_sha256": "eee88a46acce9de664bc5032bf1a4b787f1ddaaa9853cfc6cf95f5c0f96cb9a4"
+  },
+  "cloud": {
+    "source_commit": "8f0b282bcaff1b6d063e46fcf95e921eb14e071e",
+    "clean_worktree": true,
+    "first_attempt_passed": true,
+    "providers": [
+      {
+        "provider": "B2",
+        "seconds": 207.08,
+        "maintenance_funding": {
+          "after_recovery": {
+            "allocated": {
+              "attempts": 2,
+              "bytes": 105008
+            },
+            "funded_bytes": 105516
+          },
+          "before_recovery": {
+            "allocated": {
+              "attempts": 1,
+              "bytes": 51581
+            },
+            "funded_bytes": 105516
+          },
+          "cold_recovery_claimed_preserved_reserve": true,
+          "no_new_admission_allocation_for_recovery": true,
+          "second_cold_reopen_preserved_counters": true
+        },
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 211032
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 211032
+          },
+          "maintenance": {
+            "allocated": {
+              "attempts": 2,
+              "bytes": 105008
+            },
+            "funded_bytes": 105516
+          }
+        },
+        "complete_reopens": 2,
+        "cold_values_receipts_and_budgets_verified": true,
+        "retained_export": {
+          "databases": 2,
+          "identical_restore_repeated": true,
+          "immutable_puts": 0,
+          "independent_local_destination": true,
+          "restored_after_source_image_collection": true,
+          "source_revision": 1
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 18
+        },
+        "report_sha256": "db4a709e7520564f34737307091914df191d37114bed840d755aa14b4b673ab0",
+        "log_sha256": "aa99c6fae4dc12a37f4d31918b10185dff310f14b4ee23e69255f1aa19865cc4"
+      },
+      {
+        "provider": "versioned MinIO",
+        "seconds": 182.28,
+        "maintenance_funding": {
+          "after_recovery": {
+            "allocated": {
+              "attempts": 2,
+              "bytes": 105008
+            },
+            "funded_bytes": 105516
+          },
+          "before_recovery": {
+            "allocated": {
+              "attempts": 1,
+              "bytes": 51581
+            },
+            "funded_bytes": 105516
+          },
+          "cold_recovery_claimed_preserved_reserve": true,
+          "no_new_admission_allocation_for_recovery": true,
+          "second_cold_reopen_preserved_counters": true
+        },
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 211032
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 211032
+          },
+          "maintenance": {
+            "allocated": {
+              "attempts": 2,
+              "bytes": 105008
+            },
+            "funded_bytes": 105516
+          }
+        },
+        "complete_reopens": 2,
+        "cold_values_receipts_and_budgets_verified": true,
+        "retained_export": {
+          "databases": 2,
+          "identical_restore_repeated": true,
+          "immutable_puts": 0,
+          "independent_local_destination": true,
+          "restored_after_source_image_collection": true,
+          "source_revision": 1
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 28,
+          "container_removed": true
+        },
+        "report_sha256": "1b5a2ce32ccb69ed99cb34a116ba44d9c742f286f9c53f9e1467802744c36941",
+        "log_sha256": "660b29a4858df9c83078c1aea32264d72d0fa397a7428b19a3209a38b0ed9c59"
+      }
+    ],
+    "scope": "Debug native HTTP; 4 MiB cache; logical clock; old servers stopped before takeover. Real B2 and versioned MinIO, not AWS, physical timing, sustained load or an SLO."
+  },
+  "earlier_cloud_run": {
+    "source_commit": "3fc3102a99721414ea418c1e1f22ab81cc4f9852",
+    "both_providers_passed": true,
+    "repeated_after_large_group_fix": true,
+    "cleanup": [
+      {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 18
+      },
+      {
+        "bucket_removed": true,
+        "physical_versions_deleted": 28,
+        "container_removed": true
+      }
+    ],
+    "report_sha256": "b84a9987294049b8cf4a665719b7c8cad7e499b66a8b5655bf2fad6ef1ae5f7f"
+  },
+  "cleanup_totals": {
+    "disposable_buckets_removed": 4,
+    "b2_workload_keys_revoked": 2,
+    "minio_containers_removed": 2,
+    "physical_versions_removed": 92,
+    "temporary_model_state_directories_removed": 14,
+    "temporary_fault_and_doc_helpers_removed": 5
+  },
+  "release": {
+    "source_commit": "8f0b282bcaff1b6d063e46fcf95e921eb14e071e",
+    "woodpecker_pipeline": 172,
+    "artifact_image_digest": "sha256:83c3fa4e1d239082ab682fed8a407c2158dc0cda94db92220688cd4429815a24",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.18.0",
+      "archive_sha256": "2beb1de2026b51428d8fbc65c836857b20931700625fae31af37001ad94edce7",
+      "binary_sha256": "c0af57904517c2597f536abccaed0d4ffea0b6393507c67c04f93a3cbc0dd652",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6225220,
+    "version": "v0.18.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 172,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/172/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.18.0",
+    "published_at": "2026-11-11T06:14:45Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.18.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "tag_pipeline": {
+      "number": 173,
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/173/1"
+    }
+  },
+  "pages": {
+    "publisher_safety_commit": "e3c472f2820a1ef17bd154d0684382263da8845b",
+    "independent_redesign_commit": "adba6018195c4e918b2aefb079a2ef7afc74de51",
+    "redesign_preserved": true,
+    "pull_rebase_before_each_push": true,
+    "preserved_overrides_at_release": [],
+    "publisher_tests_passed": 9,
+    "publisher_test_log_sha256": "3443237e93e1efaf30f306cc2d6ad6e30b454919cef9f51a0d236a652feb8fdc",
+    "hosting_observation": "GitHub reported deployment success while public files still served adba601. Requested a Pages rebuild of the unchanged branch; the public marker subsequently matched 8f0b282 and Woodpecker 172 passed. No site content was replaced to recover hosting."
   }
 }
