@@ -19,23 +19,28 @@ repeating the original physical PUT.</p>
 residency, layout, collection and revocation models retain their negative
 controls. Focused Rust mutations detect premature resident release, eager
 zero-credit initialization, stale-route caching, a whole-recovery deadline and
-indefinite unresolved-upload polling.</p>
+indefinite unresolved-upload polling. Restoring serial acquisition also fails the
+paused-partition progress regression.</p>
 <p>At <code>14ba978</code>, the actual debug CLI passes zero-credit bootstrap, refill, three cold
 processes, exact receipts and incompatible-layout refusal on B2 in 74.864 seconds
 and versioned MinIO in 4.628 seconds. Default sixteen-partition startup passes in
 129.345 and 2.027 seconds respectively. Earlier B2 default startup exceeded 240
 seconds; two Kubernetes candidates failed readiness/convergence, and a recovery
 run exposed the indefinite polling defect. Failed attempts remain recorded.
-The final Kubernetes image passes one-to-three-to-six-pod readiness on the existing
+The first Kubernetes run of that image passes one-to-three-to-six-pod readiness on the existing
 hosts, then the steady phase stops with an unclassified HTTP 413 after 874
-acknowledged and read-back writes. A separate MinIO reproduction exhausts the
+acknowledged and read-back writes (<a href="evidence/native-cloud-cli-partial-2026-11-11.history.jsonl">partial history</a>). A separate MinIO reproduction exhausts the
 default 64 MiB tenant allowance on its fourth cold owner, with only 300 tiny
 appends: unused grants are deliberately lost across ownership changes. The
 qualification fixture now preprovisions finite tenant ceilings and records their
 monotone counters alongside the unchanged shared physical ceiling. Grant sizing
 and default-quota usability remain production work, not claims that larger test
-allowances solve tenant isolation. All completed disposable runs removed their
-buckets, keys and containers.
+allowances solve tenant isolation. The funded repeat still times out scaling from
+one to three pods after 317 acknowledgements/readbacks; two pods were ready and
+none restarted. Acquisition now runs in batches of at most four under the same
+resident reservations, replacing the serialized loop. The focused paused-time
+regression verifies independent progress and cancellation; a fresh cloud campaign
+is required. All completed disposable runs removed their buckets, keys and containers.
 <a href="evidence/native-cloud-cli-2026-11-11.json">Evidence</a>.</p>
 <p>This candidate is not yet published as v0.23.0. Native Kubernetes scaling and the
 production operating envelope remain under qualification. MinIO results do not
