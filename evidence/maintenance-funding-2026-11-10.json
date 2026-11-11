@@ -1,0 +1,196 @@
+{
+  "milestone": "durable per-tenant checkpoint attempt funding across retries and recovery",
+  "date": "2026-11-10",
+  "base_commit": "adba6018195c4e918b2aefb079a2ef7afc74de51",
+  "scope": {
+    "runtime_net_rust_lines": 319,
+    "new_dependencies": false,
+    "budgeted_format": "owned-candidate-21",
+    "budgeted_fresh_namespace_required": true,
+    "local_format": "owned-candidate-15",
+    "journal_table_archive_encodings_unchanged": true
+  },
+  "behavior": {
+    "admission_grant_prepays_equal_separate_reserve": true,
+    "complete_group_claim_before_checkpoint_uploads": true,
+    "atomic_tenant_group_refusal": true,
+    "lost_reply_never_restores_claim": true,
+    "replacement_can_claim_unissued_reserve": true,
+    "replacement_cannot_recreate_admission": true,
+    "retry_reduces_unbacked_local_admission": true,
+    "recovery_can_allocate_unissued_tenant_ceiling": true,
+    "explicit_refill_required_after_exhaustion": true,
+    "staged_resolution_uses_no_new_claim": true,
+    "catalog_exemption_uses_full_identity": true,
+    "physical_attempt_wrapper_enforces_allowance": true
+  },
+  "local": {
+    "rust_tests_passed": 300,
+    "fmt": true,
+    "strict_clippy": true,
+    "capacity_test": "optimized musl Woodpecker release gate",
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 9.32,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 28.55,
+    "opt_in_client_tests_skipped_per_suite": 1,
+    "web_app_tests_passed": 4,
+    "logs_sha256": {
+      "all": "c49d7bab3a7222644353b00c448685b9a99939cced3a2bde39108e9368cbf463",
+      "clippy": "5437bffcfce86da24670dad74602c7ef93504a51a2e6850c6f3a6d12dec5912a",
+      "client": "b4aed0658f3722e2e66e6e82018464631d222b67d107dd575df2d9c0c0f12f4c",
+      "native-client": "1c3647b9edfd5a3703f28eb39e1aadaf7eb9befdc789fc39759b2e301a43ba96",
+      "model": "c93f1452f6aa1d40b07b4b74c6f7abce5adea5d58cc4f9f328cd47e78e09eef5",
+      "reserve": "de2447aadbd1f29eb018b3e443a8bbfc2be7598a15adb2210d97d2d3844e3bab",
+      "sizing": "be9d4ecf5d50cfbce34dcd88a8f80483ebf51e73ada0888122aad1dba6b1db90",
+      "collection": "648670cbac2d330f677903b2430feea72bd45371ac75ba62bec9b43495d01aba",
+      "publication-model": "d0e3c5c9cbf9101d8dd3b63957730b288c4854397b6699a3ddb8eca756743425",
+      "safety-model": "df213abb7c5eea0145e5e844caae21678dc09c67285fe96856a1cd606184715b"
+    },
+    "reserve_regression_seconds": 0.72
+  },
+  "model": {
+    "name": "TenantAdmission",
+    "distinct_states": 10402,
+    "generated_states": 39228,
+    "depth": 17,
+    "negative_controls": 6,
+    "safe_seconds_less_than": 1,
+    "bounds": {
+      "tenants": 2,
+      "grants_per_tenant": 1,
+      "accepted_writes_per_tenant": 1,
+      "takeovers": 1,
+      "construction_claims": 3
+    },
+    "scope": "Finite reserve and owner-fencing abstraction. Atomic directory replacement and name binding assumed. UploadCredits separately models physical grants and late arrivals. No byte-sizing proof, Rust refinement, fairness or production timing claim."
+  },
+  "rust_negative_controls": [
+    {
+      "control": "reused-reserve",
+      "detected": true,
+      "seconds": 7.58
+    },
+    {
+      "control": "admission-rights",
+      "detected": true,
+      "seconds": 6.88
+    },
+    {
+      "control": "stale-owner",
+      "detected": true,
+      "seconds": 5.84
+    },
+    {
+      "control": "unbounded-attempt",
+      "detected": true,
+      "seconds": 6.48
+    },
+    {
+      "control": "catalog-name-collision",
+      "detected": true,
+      "seconds": 5.73
+    },
+    {
+      "control": "stale-control",
+      "detected": true,
+      "seconds": 5.93
+    },
+    {
+      "control": "metadata-fence",
+      "detected": true,
+      "seconds": 5.68
+    },
+    {
+      "control": "large-group-rebase",
+      "detected": true,
+      "seconds": 7.03
+    }
+  ],
+  "deleted": [
+    "Two-instance TenantAdmission wrapper replaced in place; no new model or CI stage.",
+    "Duplicate single-name ledger write implementation and cached allocator lookup.",
+    "Obsolete current docs excluding retry/recovery funding.",
+    "Transient mutation and evidence-generation helpers removed after publication.",
+    "Unused UploadCredits copy in the direct TenantAdmission Docker stage."
+  ],
+  "inputs_sha256": {
+    "spec/PublicationSafety.tla": "549e7328bf323c2d233eb95e580e0efce17377b9b12c2e5b0e6fbd160ffc73ca",
+    "spec/TenantAdmission.cfg": "d9815549ba6e903f6527430a2a45bcd8e683bc8656fe96cdcb69b32efef19313",
+    "spec/TenantAdmission.checks": "3b2f938b764f31f050adf399b5d723537e18abb3498f5706bf14088db1b338da",
+    "spec/TenantAdmission.tla": "441d02a31ffb5ae8ea3d0e351cd89af6bb4f3e76f7a74d6ed3f5dba8a5eb4669",
+    "spec/TenantAdmissionUnsafeCopies.cfg": "2aab74e819cf782df203ccb9d732a1ea514aa00bd1aa7247f30c48603d40ddd2",
+    "spec/TenantAdmissionUnsafeCrossScope.cfg": "e1cf98a137d7937c60734e0bb4b447a8597746aa06f77dead78b6e39021ea2c3",
+    "spec/TenantAdmissionUnsafeLateCheck.cfg": "e4b399395f4e9cd12d48901f281c8fd0685c036fa375ff3088575dbd1839621a",
+    "spec/TenantAdmissionUnsafeOwner.cfg": "8c30216c50d39b2a36c8c996cd06a4a065353bb38c4fe40c9ddd6625201bbcc0",
+    "spec/TenantAdmissionUnsafeRefund.cfg": "09cdeaab4e16d3ff2c59df9490da4cb70e343485558af5e381fca8832a9954d7",
+    "spec/TenantAdmissionUnsafeRestore.cfg": "10ea9077452349a8faf0043874c130051538270670d3505c3997ce935698edd3",
+    "src/directory.rs": "a3c3c6daefabf80d21e60fc5694b5490d86edc1c06a6ea1c59310c578bf71163",
+    "src/index/recovery/checkpoint/mod.rs": "b9648963b2c532a01191512ef3547b6b5a169f9cec7142ef5e295bfeb414988b",
+    "src/index/recovery/checkpoint/tests.rs": "120532dbb3e7518aab9da2c6e4bfefeefdc5059cb6ab87f25a656bd4894b61fd",
+    "src/ownership/root.rs": "1805ac4ae6a04fafdb1142cad97f405296eada28545df85cbbc24e7bb0bf7641",
+    "src/ownership/root/collection.rs": "6bc86d8d8724476748ad534047bf0edf82defb2e31bddae267f9e23862d08d6b",
+    "src/ownership/root/metadata.rs": "a42699cade02f3862d5de8a521e460712bded67f189ca31e9e9ff1a3632f845d",
+    "src/ownership/root/tests.rs": "589a8d602f98fde1dc99dbcbe279839c2050764395a16640e862d59a3618457e",
+    "src/ownership/root/tests/budget.rs": "a8a32d8c50974c38b9daf6792bed1f6ec60c8122d3cb5dcf718218a741bbf170",
+    "src/ownership/root/tests/http.rs": "6c266485be7f4819c7279622ac12e6cd2fa0d0ed495de848e7110db9001c7b79",
+    "src/ownership/root/tests/live.rs": "8ab9c1377399328a49145a682502c9083224aefb166dc27628591ecd9d5d7a66",
+    "src/providers/mod.rs": "5a9ccd85f3542c0d87890d8712d8b4f71fc64f39705134228cd6b98e9ec7a2d6",
+    "src/transactions/live.rs": "4198ee3e852a211c065d0f27448527bc8e766268679c01d64a46cd5a3aa9efda",
+    "src/transactions/live/checkpoint.rs": "3ec90293e95f9c0c6b71795ff1baa2485592cdd2d08bc9702ca67c30283f96c5",
+    "src/upload_budget.rs": "5c7ab27f1cfada42898322dfe694ede0b210029a77712bb93af178609ab481f6",
+    "src/upload_budget/database.rs": "e1204166a22d2375a6dcd445df87c3c71233d1576d7f9a0fbd991fb1347f54b1",
+    "tests/checkpoint_cloud/native_http.rs": "92b50bd5f9257817be766213d0678eed63433b5445b3a5e9326a4a7417f9ee6a"
+  },
+  "remaining": [
+    "Administrative catalog/ledger metadata and other provider costs remain namespace-funded.",
+    "Finite tenant reserve exhaustion can pause shared maintenance/recovery until refill.",
+    "Namespace physical credit must remain funded separately.",
+    "Tighter sizing bounds, sustained adversarial load and large-image cleanup qualification.",
+    "Scheduled backups, multiple restore points and public administrative backup routes.",
+    "Physical clock error bounds/host suspend qualification, placement and native cloud CLI cutover.",
+    "AWS qualification and independent protocol/security review."
+  ],
+  "concurrent_site_work": {
+    "preserved_commit": "adba6018195c4e918b2aefb079a2ef7afc74de51",
+    "scope": "Kept the independent website redesign; only release version and evidence link additions."
+  },
+  "publication_models": [
+    {
+      "name": "PublicationRetry",
+      "distinct_states": 44354,
+      "generated_states": 117886,
+      "depth": 21,
+      "negative_controls": 1
+    },
+    {
+      "name": "PublicationSafety",
+      "distinct_states": 175546,
+      "generated_states": 810459,
+      "depth": 16,
+      "negative_controls": 4
+    }
+  ],
+  "large_group": {
+    "tenants": 70,
+    "crosses_32_put_grants": true,
+    "crosses_64_entry_directory_batches": true,
+    "atomic_final_directory_publication": true,
+    "collector_deletes_unpublished_metadata": true,
+    "ordinary_control_rebase_reuses_staging": true,
+    "metadata_sweeps_always_advance_fence": true,
+    "local_encoding_unchanged": true
+  },
+  "review_findings_fixed_before_release": [
+    "Funding batches originally self-conflicted when namespace credit replenished; conditional rebase now compares directory, owner/recovery origin and metadata fence.",
+    "A group above 64 names originally exceeded the tree update batch bound; staged batches now feed one final root."
+  ],
+  "client_fixture": {
+    "combined_tenant_bytes": 1073741824,
+    "reason": "Preserves the former 512 MiB admission allowance plus an equal prepaid maintenance reserve. Runtime defaults and exact refusal tests unchanged.",
+    "prior_local_run": "512 MiB combined fixture exhausted during receipt eviction: 98 passed, one failed.",
+    "prior_local_log_sha256": "efbb28266a06c53be66c2b83df1b8a0ca83d67b1d6288d40af483f69dc0de368",
+    "ci_171": "All 99 client cases passed in 89.44 seconds, but the outer 90-second process deadline expired during shutdown. Raised only that harness deadline to 120 seconds; per-test timeouts unchanged.",
+    "ci_171_log_sha256": "eee88a46acce9de664bc5032bf1a4b787f1ddaaa9853cfc6cf95f5c0f96cb9a4"
+  }
+}
