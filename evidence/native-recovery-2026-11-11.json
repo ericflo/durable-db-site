@@ -227,6 +227,124 @@
         "No final recovered-history verification; one unresolved client operation exceeded its deadline.",
         "Provider interruption, scale-down and cold replacement were not reached. No AWS, HPA, whole-host loss, SLO, RSS bound or sustained-load claim."
       ]
+    },
+    {
+      "binary_source_commit": "a275944fefb0dea87be00dbfbbe4ce4643a55e32",
+      "binary_profile": "debug, stripped temporary image",
+      "binary_sha256": "720d05a9b19c8b47654dbf3af57b7e1a102608355737e9aaf704126d1bfb2c05",
+      "image_digest": "sha256:ab4dd343c4238241341a15408af9c059fc5848654dc87e5871a92ce9d3bc9f95",
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 611
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T21:58:49.251485+00:00",
+      "finished_at": "2026-11-11T22:17:29.916733+00:00",
+      "harness_sha256": "4bdf5141d5395fb7ca3e0ce454ae6be2d3a0b35d92f6bd0e17278b572093ff71",
+      "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "failure": "Rolling replacement exceeded 240 seconds; two clients exceeded their 180-second identical-request retry deadline.",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T22:00:30.479385+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T22:00:43.638635+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T22:01:53.749236+00:00",
+          "writes_acknowledged": 22
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T22:04:25.199595+00:00",
+          "writes_acknowledged": 323
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T22:07:13.180236+00:00",
+          "writes_acknowledged": 531
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T22:07:24.499621+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 558
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T22:09:26.790657+00:00",
+          "elapsed_seconds": 121.59575749200303,
+          "writes_acknowledged": 833
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-11T22:11:31.758385+00:00",
+          "writes_acknowledged": 1000
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 1044,
+        "reads_verified": 1044,
+        "http_attempt_statuses": {
+          "200": 2120,
+          "429": 605,
+          "503": 193,
+          "transport_or_decode_error": 8
+        },
+        "failures": [
+          {
+            "worker": 0,
+            "reason": "Identical-request recovery deadline exceeded"
+          },
+          {
+            "worker": 1,
+            "reason": "Identical-request recovery deadline exceeded"
+          }
+        ]
+      },
+      "sampled_acquisition_failures_by_stage": {
+        "claim": 19
+      },
+      "sampled_completed_acquisition_ms": {
+        "count": 57,
+        "min": 11913,
+        "median": 24526,
+        "max": 85742
+      },
+      "timing_scope": "Bounded progress logs sampled at phase boundaries and failure; not a complete trace, latency SLO or comparison of release binaries.",
+      "partial_history_sha256": "9f5fc2e7d8b74811ff1a585d4df38e1517c035e04cfe58c1ffbc0a4d70ed0207"
     }
   ],
   "release": {
@@ -285,5 +403,103 @@
       "status": "success",
       "url": "https://ci.eflorenzano.com/repos/18/pipeline/215/1"
     }
+  },
+  "acquisition_recovery": {
+    "source_commit": "05f6359",
+    "root_model": {
+      "two_candidates_four_invocations": {
+        "distinct_states": 117741,
+        "generated_states": 305335,
+        "depth": 17
+      },
+      "three_candidates_three_invocations": {
+        "distinct_states": 30349,
+        "generated_states": 71455,
+        "depth": 13
+      },
+      "mandatory_controls": 6
+    },
+    "registration_controls_passed": true,
+    "enabled_rust_checks": 324,
+    "http_regression_retains_epoch_one": true,
+    "validation_attempts": 4,
+    "wire_and_storage_formats_unchanged": true
+  },
+  "release_0_23_2": {
+    "source_commit": "49615c54161707e9b24dc6dff7ca13e6904df439",
+    "woodpecker_pipeline": 217,
+    "artifact_image_digest": "sha256:2ddc14c5dee7d4433722d88bad263085776bcb507fa5e42f2e191bf0c460cc7f",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.2",
+      "archive_sha256": "a1f8859f84dd2f1b12e836f1a3d608ab057c7b74d84d26225b663188573877f2",
+      "binary_sha256": "86124024bef0f7f83b63fd846ff53c8a8e07ddb688bcdf150c7959699e891b5e",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6264569,
+    "version": "v0.23.2",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 217,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/217/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 218,
+      "status": "success"
+    }
+  },
+  "fixture_cleanup_0_23_2": {
+    "stale_local_kind_cluster_removed": true,
+    "stale_local_nodes_removed": 3,
+    "prestart_image_pull_attempt": {
+      "database_started": false,
+      "namespace_removed": true,
+      "bucket_removed": true,
+      "scoped_key_revoked": true,
+      "physical_versions_deleted": 0
+    },
+    "temporary_contexts_and_credentials_removed": true
   }
 }
