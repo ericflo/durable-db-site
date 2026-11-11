@@ -1,0 +1,1118 @@
+{
+  "date_utc": "2026-11-11",
+  "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+  "scope": "Native cloud CLI integration; DNS placement and bounded resident components. Experimental, not a production operating envelope or composed Rust proof.",
+  "source_sha256": {
+    "src/main.rs": "7e1654a210ce14a3b397ac99ab0e1b326fb53042f449fcef8456b53f4770f06d",
+    "src/api/cluster.rs": "0eefe9ff6383351068112fe9162dd980b931999a24bc89232bc4520fd697b314",
+    "src/api/membership.rs": "8d2096c896412cf6dde221ec01e8a9b8b57005a559491bc45aae11a70e3b6119",
+    "src/api/native.rs": "2be72796680fd34baa72a8df6aadc8d98e4fc7f9d2623599feb508faddf35799",
+    "src/providers/mod.rs": "5b897f129e0b045a5cd20ba0c3fd19d5ccc3762a3aab912e4551d35f843657be",
+    "src/providers/partitions.rs": "7cf1ce977d2b0172ffb2b472477aa392e9ef7d50bbc90559a905d24d0572635e",
+    "src/transactions/live.rs": "123ba55977b16301b1a784dc2dd4d4b92f47d76d93421be418011a3755dde341",
+    "src/journal/writer.rs": "44b8a80b3837ce33a86ee9895269086968351a6d2007f5e049ce2120f45aad58",
+    "tests/cluster_cli.rs": "6038989938e6d9a58b33002d4c349ef6e0101d0bc2f617b5017f7be891a0bd4d",
+    "src/ownership/root/tests/cluster.rs": "705e419f47d7e30092d9fd101cc42e99534ba0a3a75dd31609cbdbc70e772756",
+    "deploy/kubernetes/deployment.yaml": "5e2ea2bef9070db9dca9dc0ce2c8916bd8b98142275534aab6257564daa0725d",
+    "deploy/kubernetes/service.yaml": "474bcbe3a0b0418ba49699a3d50e0c4045bbfc36e993a4dfa9b92fe08f2d5ed0",
+    "scripts/qualify-multinode.py": "204af03a6c4a4c454e3383ae38f87af70249568d3f5a13016a3c511fa2b6dc69",
+    "spec/OwnerResidency.tla": "e53363d00997756fc2c5b5598d691e3a3d390a28921a518be8d93dbdc06a6089",
+    "spec/ClusterLayout.tla": "f1d15b87630b027b3875b54ab89ec7210ef3634e1e87036f299b4805475b4854"
+  },
+  "local": {
+    "enabled_rust_tests_passed": 316,
+    "capacity_test": "optimized in Woodpecker; excluded from debug suite",
+    "clippy": "all-targets -D warnings passed",
+    "formatting": "passed",
+    "focused_controller_tests": 8,
+    "focused_controller_seconds": 0.31,
+    "membership_tests": 3,
+    "membership_seconds_less_than": 0.01,
+    "cli_configuration_test_seconds": 0.04,
+    "negative_controls": [
+      "retired owner reservation released too early: detected",
+      "eager partition initialization at zero shared credit: detected"
+    ]
+  },
+  "models": [
+    {
+      "name": "OwnerResidency",
+      "distinct_states": 19,
+      "generated_states": 46,
+      "depth": 5,
+      "negative_controls": 2,
+      "bounds": "two slots, three contenders; reservation retained through retirement/last reference"
+    },
+    {
+      "name": "ClusterLayout",
+      "distinct_states": 56,
+      "generated_states": 341,
+      "depth": 6,
+      "negative_controls": 2,
+      "bounds": "existing bounded layout model extended with empty membership"
+    }
+  ],
+  "cloud_cli": {
+    "date_utc": "2026-11-11",
+    "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+    "clean_worktree": true,
+    "native_format": "owned-candidate-23",
+    "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_cloud_cli_recovers_exhausted_admission_and_preserves_data --nocapture",
+    "scope": "Debug native cloud CLI; two partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Zero-credit startup, refill, SIGKILL, exhausted-credit recovery, cold values and exact receipts, incompatible layout refusal. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 64.722093237,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 100
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "admin_bootstrap_from_zero_credit": true,
+          "admin_refill_available_before_owner_readiness": true,
+          "binary_sha256": "9f4f95427e0568b0c23009b2a91cda5ce7fa0bc7d21e48c0d4af1ed08a290a21",
+          "cold_processes": 3,
+          "exhausted_credit_preserved_on_restart": true,
+          "incompatible_layout_refused": true,
+          "native_cloud_cli": true,
+          "partitions": 2,
+          "refill_idempotent": true,
+          "replenished_limits_preserved_on_restart": true,
+          "scope": "Debug executable with single-process membership over real B2/versioned MinIO. Not DNS/Kubernetes, AWS, a sustained workload or an RSS/SLO bound.",
+          "seconds": 1.492340002,
+          "values_and_exact_receipts_recovered": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 209,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "failed_attempts": [
+    {
+      "source_commit": "ba54a48",
+      "reason": "128 MiB aggregate sizing exceeded the validator component ceiling before provider access. Components are now capped; valid defaults added to the CLI regression.",
+      "cleanup": [
+        {
+          "provider": "B2",
+          "cleanup": {
+            "bucket_removed": true,
+            "workload_key_revoked": true,
+            "physical_versions_deleted": 0
+          }
+        },
+        {
+          "provider": "versioned MinIO",
+          "image": "epsilon-maintenance-minio:20261105",
+          "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 0,
+            "container_removed": true
+          }
+        }
+      ]
+    },
+    {
+      "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+      "reason": "Kubernetes initial 16-partition readiness took almost four minutes; scale to three exceeded the 240-second readiness deadline. All four writers exceeded identical-request recovery deadline; 741 HTTP 429s and 3 HTTP 503s were observed. Stale Busy-route retention reproduced by a focused TCP regression.",
+      "kubernetes": {
+        "schema": 1,
+        "complete": false,
+        "started_at": "2026-11-11T14:38:02.481342+00:00",
+        "context": "epsilon",
+        "namespace": "durable-db-qualification-eb6c384781be",
+        "image": "localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777",
+        "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+        "harness_sha256": "204af03a6c4a4c454e3383ae38f87af70249568d3f5a13016a3c511fa2b6dc69",
+        "workload_sha256": "b510563bb967aa22daadf5bbc3b1e9b52f22a58f7eba2324ca3c98fe439b3a83",
+        "configuration": {
+          "cpu_request": "25m",
+          "cpu_limit": "250m",
+          "memory_request": "96Mi",
+          "memory_limit": "384Mi",
+          "memory_cache_mib": 8,
+          "resident_memory_mib": 128,
+          "partitions": 16,
+          "discovery": "headless DNS",
+          "disk_cache": false,
+          "maintenance_seconds": 60,
+          "upload_budget": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "steady_seconds": 120,
+          "memory_observation": true,
+          "maximum_write_intents": 100000
+        },
+        "phases": [
+          {
+            "name": "initial-one",
+            "time_utc": "2026-11-11T14:42:07.891637+00:00",
+            "placement": [
+              "epsilon-3"
+            ]
+          },
+          {
+            "name": "provider-reachable",
+            "time_utc": "2026-11-11T14:42:17.708647+00:00",
+            "probe": "CONNECTED"
+          },
+          {
+            "name": "one-progress",
+            "time_utc": "2026-11-11T14:43:03.611854+00:00",
+            "writes_acknowledged": 21
+          }
+        ],
+        "budget_observations": [
+          {
+            "stage": "initial-one",
+            "status": {
+              "configuration_revision": 0,
+              "limits": {
+                "bytes": 1073741824,
+                "attempts": 100000
+              },
+              "allocated": {
+                "bytes": 8388608,
+                "attempts": 512
+              }
+            }
+          }
+        ],
+        "resource_samples": [],
+        "failures": [],
+        "limitations": [
+          "Manual replica changes; no CPU-driven HPA claim.",
+          "Application-pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure or control-plane failure.",
+          "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+        ],
+        "nodes": [
+          "epsilon-1",
+          "epsilon-2",
+          "epsilon-3"
+        ],
+        "kubernetes_version": "v1.36.2",
+        "controller_failure": {
+          "type": "RuntimeError",
+          "reason": "Replica readiness deadline exceeded"
+        },
+        "pod_states": [
+          {
+            "name": "durable-db-5648bd7f55-cwr95",
+            "node": "epsilon-3",
+            "phase": "Running",
+            "conditions": [
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:38:13Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodReadyToStartContainers"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:38:12Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "Initialized"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:42:06Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "Ready"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:42:06Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "ContainersReady"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:38:11Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodScheduled"
+              }
+            ],
+            "containers": [
+              {
+                "name": "database",
+                "restart_count": 0,
+                "state": {
+                  "running": {
+                    "startedAt": "2026-11-11T14:38:13Z"
+                  }
+                },
+                "last_state": {}
+              }
+            ]
+          },
+          {
+            "name": "durable-db-5648bd7f55-kw4k6",
+            "node": "epsilon-2",
+            "phase": "Running",
+            "conditions": [
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:05Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodReadyToStartContainers"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:05Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "Initialized"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:05Z",
+                "message": "containers with unready status: [database]",
+                "observedGeneration": 1,
+                "reason": "ContainersNotReady",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:05Z",
+                "message": "containers with unready status: [database]",
+                "observedGeneration": 1,
+                "reason": "ContainersNotReady",
+                "status": "False",
+                "type": "ContainersReady"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:04Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodScheduled"
+              }
+            ],
+            "containers": [
+              {
+                "name": "database",
+                "restart_count": 0,
+                "state": {
+                  "running": {
+                    "startedAt": "2026-11-11T14:43:08Z"
+                  }
+                },
+                "last_state": {}
+              }
+            ]
+          },
+          {
+            "name": "durable-db-5648bd7f55-tbwk8",
+            "node": "epsilon-1",
+            "phase": "Running",
+            "conditions": [
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:06Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodReadyToStartContainers"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:04Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "Initialized"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:04Z",
+                "message": "containers with unready status: [database]",
+                "observedGeneration": 1,
+                "reason": "ContainersNotReady",
+                "status": "False",
+                "type": "Ready"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:04Z",
+                "message": "containers with unready status: [database]",
+                "observedGeneration": 1,
+                "reason": "ContainersNotReady",
+                "status": "False",
+                "type": "ContainersReady"
+              },
+              {
+                "lastProbeTime": null,
+                "lastTransitionTime": "2026-11-11T14:43:04Z",
+                "observedGeneration": 1,
+                "status": "True",
+                "type": "PodScheduled"
+              }
+            ],
+            "containers": [
+              {
+                "name": "database",
+                "restart_count": 0,
+                "state": {
+                  "running": {
+                    "startedAt": "2026-11-11T14:43:08Z"
+                  }
+                },
+                "last_state": {}
+              }
+            ]
+          }
+        ],
+        "event_reasons": [
+          {
+            "reason": "Scheduled",
+            "message": "Successfully assigned durable-db-qualification-eb6c384781be/durable-db-5648bd7f55-kw4k6 to epsilon-2"
+          },
+          {
+            "reason": "Pulling",
+            "message": "Pulling image \"localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777\""
+          },
+          {
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777\" in 2.342s (2.342s including waiting). Image size: 6480934 bytes."
+          },
+          {
+            "reason": "Created",
+            "message": "Container created"
+          },
+          {
+            "reason": "Started",
+            "message": "Container started"
+          },
+          {
+            "reason": "Unhealthy",
+            "message": "Readiness probe failed: HTTP probe failed with statuscode: 503"
+          },
+          {
+            "reason": "Scheduled",
+            "message": "Successfully assigned durable-db-qualification-eb6c384781be/durable-db-5648bd7f55-tbwk8 to epsilon-1"
+          },
+          {
+            "reason": "Pulling",
+            "message": "Pulling image \"localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777\""
+          },
+          {
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777\" in 2.297s (2.297s including waiting). Image size: 6480934 bytes."
+          },
+          {
+            "reason": "Created",
+            "message": "Container created"
+          },
+          {
+            "reason": "Started",
+            "message": "Container started"
+          },
+          {
+            "reason": "Unhealthy",
+            "message": "Readiness probe failed: HTTP probe failed with statuscode: 503"
+          },
+          {
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: durable-db-5648bd7f55-tbwk8"
+          },
+          {
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: durable-db-5648bd7f55-kw4k6"
+          },
+          {
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set durable-db-5648bd7f55 from 1 to 3"
+          },
+          {
+            "reason": "Scheduled",
+            "message": "Successfully assigned durable-db-qualification-eb6c384781be/provider-probe-bd64c6 to epsilon-3"
+          },
+          {
+            "reason": "Pulled",
+            "message": "Container image \"docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4\" already present on machine and can be accessed by the pod"
+          },
+          {
+            "reason": "Created",
+            "message": "Container created"
+          },
+          {
+            "reason": "Started",
+            "message": "Container started"
+          },
+          {
+            "reason": "Scheduled",
+            "message": "Successfully assigned durable-db-qualification-eb6c384781be/workload to epsilon-3"
+          },
+          {
+            "reason": "Pulled",
+            "message": "Container image \"docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4\" already present on machine and can be accessed by the pod"
+          },
+          {
+            "reason": "Created",
+            "message": "Container created"
+          },
+          {
+            "reason": "Started",
+            "message": "Container started"
+          }
+        ],
+        "partial_workload": {
+          "schema": 1,
+          "state": "running",
+          "writes_acknowledged": 55,
+          "reads_verified": 53,
+          "http_attempt_statuses": {
+            "200": 117,
+            "429": 741,
+            "503": 3
+          },
+          "failures": [
+            {
+              "worker": 2,
+              "reason": "Identical-request recovery deadline exceeded"
+            },
+            {
+              "worker": 3,
+              "reason": "Identical-request recovery deadline exceeded"
+            },
+            {
+              "worker": 1,
+              "reason": "Identical-request recovery deadline exceeded"
+            },
+            {
+              "worker": 0,
+              "reason": "Identical-request recovery deadline exceeded"
+            }
+          ],
+          "history": [
+            {
+              "database_index": 1,
+              "request_id": "88e0e7b9-fe14-44e6-a2f0-ccc01889f68e",
+              "revision": 1,
+              "start": 39.071567258,
+              "end": 39.686257927999996,
+              "value_sha256": "18d6e1cac2a8adaf25577cca14db7753507f4f03a288124ce9fe2d60babd7bb0"
+            },
+            {
+              "database_index": 0,
+              "request_id": "7158406d-96e7-4218-bac2-f999036cb451",
+              "revision": 1,
+              "start": 39.070593542000005,
+              "end": 39.690155892,
+              "value_sha256": "5513e3eabba6d75402c1c34c7365c6fac01024589d0a6996329255cd18fec5cc"
+            },
+            {
+              "database_index": 3,
+              "request_id": "c9a510cd-e5af-414f-bcff-5dfb3b180382",
+              "revision": 1,
+              "start": 39.073094818,
+              "end": 39.731882672,
+              "value_sha256": "1032746e7e3338a630f96b947de5165b7511f00a0fb4f7fc0e99b1c74b0f77cd"
+            },
+            {
+              "database_index": 2,
+              "request_id": "d8afdac1-69d8-4614-884c-730a4616c536",
+              "revision": 1,
+              "start": 39.072358321,
+              "end": 39.807930362,
+              "value_sha256": "98ce94b2b196906ca4859e068b8ef92e6de9e641972d54de4af1d6eaa6431147"
+            },
+            {
+              "database_index": 3,
+              "request_id": "92e60452-2a59-40ef-aee4-0f1d2186b12e",
+              "revision": 2,
+              "start": 40.058039116,
+              "end": 40.465289621000004,
+              "value_sha256": "02925afd44e2946e583a7f6434585a77c146fcf4533cd4b3793f62f0d5b7c60c"
+            },
+            {
+              "database_index": 2,
+              "request_id": "8353bebe-6ff8-4c75-ba02-72201326e27a",
+              "revision": 2,
+              "start": 40.136972158999995,
+              "end": 40.686259163,
+              "value_sha256": "1d800ad9f4e99e1c61aa45473623da4013509f1ab2e23718f713de921b0eee90"
+            },
+            {
+              "database_index": 1,
+              "request_id": "640f18d3-5cc1-4d21-852a-4b1567042164",
+              "revision": 2,
+              "start": 40.016481752,
+              "end": 40.755700252000004,
+              "value_sha256": "253d950f11ebdbeb4c2d54c57803deb69869b832a2e03010620d462a85d15290"
+            },
+            {
+              "database_index": 0,
+              "request_id": "70aa5307-f618-42bc-b988-0678e96484b9",
+              "revision": 2,
+              "start": 40.029184912,
+              "end": 40.933544382,
+              "value_sha256": "a93875fe509ac2fae0e0939d3ec71c4d978244c7398dd7185ca68c393426a5a6"
+            },
+            {
+              "database_index": 3,
+              "request_id": "1ff96c11-4996-4823-8c06-288316636688",
+              "revision": 3,
+              "start": 40.793463499,
+              "end": 41.016254524000004,
+              "value_sha256": "6d27ca189b30af4f85eab024881ab00a37ef4bab14248c18349e900f40510397"
+            },
+            {
+              "database_index": 1,
+              "request_id": "0daa02f0-ac36-4354-b71b-965897ec6b20",
+              "revision": 3,
+              "start": 41.080952182000004,
+              "end": 41.337618066000005,
+              "value_sha256": "d939926f05444b0f4495fb9629ecbfa80d99a8ec1a20d06800ca5a3d5f4fd276"
+            },
+            {
+              "database_index": 2,
+              "request_id": "62a5b32e-03d0-48b6-bd8a-76e81cb989a4",
+              "revision": 3,
+              "start": 41.013532266,
+              "end": 41.446570789,
+              "value_sha256": "58c0e7476a0d98d74ec64f7d9241c9d5e7c0e0991739eb1cde0b4d173a988e14"
+            },
+            {
+              "database_index": 3,
+              "request_id": "999cdf58-088c-4b5f-8d1a-3be580a55159",
+              "revision": 4,
+              "start": 41.348363004999996,
+              "end": 41.660562403,
+              "value_sha256": "e86574df7434a3b185fb0ee23d093e6815e565798898627fd4842d3fd36d0b26"
+            },
+            {
+              "database_index": 2,
+              "request_id": "f3e0d2c9-97c1-4160-9e8b-b9598a25e25d",
+              "revision": 4,
+              "start": 41.776047052,
+              "end": 42.098835928,
+              "value_sha256": "484aa6ccd17c9fe96eb955b9b56ed0c883b275301479deec1b817afe2abdaf72"
+            },
+            {
+              "database_index": 1,
+              "request_id": "2dabdbc3-0c97-4db6-8951-0e9d9de66ada",
+              "revision": 4,
+              "start": 41.674656755,
+              "end": 42.149851295,
+              "value_sha256": "0d7f0e336166042f8cc9e4c20ae427ba367c279d6e3dfd1bd7247b0fbce61d50"
+            },
+            {
+              "database_index": 0,
+              "request_id": "3b31d5de-d164-4f2b-90b4-bd1598513d89",
+              "revision": 3,
+              "start": 41.257633487,
+              "end": 42.152202983,
+              "value_sha256": "9dc6366a2003d418ace6b6c74e29980f7844abbc3511a78bcbe973e800b71574"
+            },
+            {
+              "database_index": 3,
+              "request_id": "2676f115-3f9f-4600-8ecc-797f45fb5cd1",
+              "revision": 5,
+              "start": 41.989494674,
+              "end": 42.201286556,
+              "value_sha256": "5132a20379415fe98f3a0700afc2a901e9b01af839b5454a8659152f0782c223"
+            },
+            {
+              "database_index": 2,
+              "request_id": "7d1fa5ba-6fd0-4251-a568-ef08b7b6a56a",
+              "revision": 5,
+              "start": 42.434123475,
+              "end": 42.629924834,
+              "value_sha256": "401133a5a31266432a69f7be1858b12a1c9334b94a3d2402e0894085b83aa55a"
+            },
+            {
+              "database_index": 0,
+              "request_id": "540b83b6-617a-4f31-ad5d-684d33501964",
+              "revision": 4,
+              "start": 42.477118855,
+              "end": 42.916757327,
+              "value_sha256": "ecbe93f9c7fbf3c6a01b3bff4b6ecdd823fc43ea82010f1ee42a4293ce139a55"
+            },
+            {
+              "database_index": 1,
+              "request_id": "dd0b541f-7315-4026-b302-2d7a02a78a6f",
+              "revision": 5,
+              "start": 42.475673801999996,
+              "end": 42.918849994,
+              "value_sha256": "f70b94aeb67de2a5eb4bd8c2ea85128f13776cb545a661abe422b378a6cf3099"
+            },
+            {
+              "database_index": 3,
+              "request_id": "e3b3f62e-6f5a-4c92-8b7a-b830852e1790",
+              "revision": 6,
+              "start": 42.532555679999994,
+              "end": 43.256656851,
+              "value_sha256": "e8692ca200b54ddada768e71960a0511416137a374776dcfd1aa8305d0a96fa3"
+            },
+            {
+              "database_index": 2,
+              "request_id": "82c74235-82fb-4e10-a64a-8ffc466c0e44",
+              "revision": 6,
+              "start": 42.955209737,
+              "end": 43.404351984,
+              "value_sha256": "0b9db2ecfb8de65fb248232d099982a827055c98d6372e9b4e1fa81d98dc1cc2"
+            },
+            {
+              "database_index": 0,
+              "request_id": "37f60663-41bb-426b-8425-51efe739e39d",
+              "revision": 5,
+              "start": 43.245988117,
+              "end": 43.674515697000004,
+              "value_sha256": "341a66fe9750f5ee9b016bb2a79386a2a6a4b61d2975ce0d09114f10b3970e95"
+            },
+            {
+              "database_index": 1,
+              "request_id": "1ec068f9-d805-42c8-a4b4-5438df902c5b",
+              "revision": 6,
+              "start": 43.249099568,
+              "end": 43.87149472,
+              "value_sha256": "bd82a28b1f088b3a186737712fb16fe7323aecb3abc234b38c9534349aaa1757"
+            },
+            {
+              "database_index": 2,
+              "request_id": "82895758-dad8-4231-9d80-790fb10b9efe",
+              "revision": 7,
+              "start": 43.727562563,
+              "end": 43.991629187,
+              "value_sha256": "82ba318b1c8623381c6f0524c518ae34a4e84204870f5e90a739dc930bcdecbc"
+            },
+            {
+              "database_index": 3,
+              "request_id": "3acd5301-33ed-4dac-8221-6c93f0e176db",
+              "revision": 7,
+              "start": 43.580576041,
+              "end": 44.207889367,
+              "value_sha256": "a786dd9eb664a366b235627144ecf2844c08f08913cddce985973ce5ee39cf5b"
+            },
+            {
+              "database_index": 0,
+              "request_id": "9328fb6d-fa4d-4144-a3b8-29913959568e",
+              "revision": 6,
+              "start": 43.99821446,
+              "end": 44.272093946,
+              "value_sha256": "c2f817b7c4677f4f428d0a88fe676634356ad263ff0e0b98a9ca4b61dc82bcbc"
+            },
+            {
+              "database_index": 1,
+              "request_id": "fee8d2e8-4ca4-4a48-92e4-0cc909f606a7",
+              "revision": 7,
+              "start": 44.195078024000004,
+              "end": 44.595490848000004,
+              "value_sha256": "8f854692d8bc8def84a88d511dd150de9dd8b6bfe000d5a417dde49e4a3d12c2"
+            },
+            {
+              "database_index": 3,
+              "request_id": "633203be-5786-46c7-b7e2-4870c1bf929a",
+              "revision": 8,
+              "start": 44.531069368,
+              "end": 44.719212508999995,
+              "value_sha256": "d016d339874fc1562fe41bdd5dc2606fdff3c9b627dc0351985a0cae3b4ea4e6"
+            },
+            {
+              "database_index": 2,
+              "request_id": "479fd6ca-85d0-4a80-994e-1f3ab28c4151",
+              "revision": 8,
+              "start": 44.316968073,
+              "end": 44.778831995,
+              "value_sha256": "55ba88e4b6928dfded4e47a08bd074de25cc6253504c6cc6669c4d7912418723"
+            },
+            {
+              "database_index": 0,
+              "request_id": "a5d95314-cedc-401e-8e2b-f686465f121c",
+              "revision": 7,
+              "start": 44.59699979,
+              "end": 44.888649232000006,
+              "value_sha256": "67c37a4a0e9b3ba242292b85d0e1f991ad348a7b6b145586b4b5d846999e6ea8"
+            },
+            {
+              "database_index": 1,
+              "request_id": "14b12a68-ae59-4b1b-820f-055270d1d7ca",
+              "revision": 8,
+              "start": 44.919421093,
+              "end": 45.297226687000006,
+              "value_sha256": "2da190e578ddcfcde27e772094a620aacca6b6b5f26f3ce58a42640b4363b509"
+            },
+            {
+              "database_index": 2,
+              "request_id": "c94d6b81-5c68-45fe-97b6-22ac57f95cc2",
+              "revision": 9,
+              "start": 45.10903212,
+              "end": 45.343046314,
+              "value_sha256": "8c22d1a5d3974dbd8b65dd0726e73e634984f96eafe3427bde2865c3cfb87c9b"
+            },
+            {
+              "database_index": 0,
+              "request_id": "312adbb5-ddc4-4cce-b4e2-1f672c1c8f0c",
+              "revision": 8,
+              "start": 45.215772012,
+              "end": 45.474370049,
+              "value_sha256": "8cc99d736ffa5304e6de4440f40e8701bb2ba64da439b624fcd5406ce5d1e1bf"
+            },
+            {
+              "database_index": 3,
+              "request_id": "e72e9f6f-8c9d-4064-9c0e-132979e8b770",
+              "revision": 9,
+              "start": 45.047107286,
+              "end": 45.623654518,
+              "value_sha256": "896af01783cc4ba66a114b2b1cc0284bad63a52fca0571dafbbed491c95972c5"
+            },
+            {
+              "database_index": 2,
+              "request_id": "733ebe88-81b6-49ba-9198-7eb2c41bffef",
+              "revision": 10,
+              "start": 45.671444285999996,
+              "end": 45.847392546,
+              "value_sha256": "185b24d9b65771b0c597f1cb146a9aa5f45091ef88b25cfe570676c6a62e52eb"
+            },
+            {
+              "database_index": 3,
+              "request_id": "885b9845-6472-40a6-8969-fd57dfe1c8a7",
+              "revision": 10,
+              "start": 45.949442913,
+              "end": 46.142232498,
+              "value_sha256": "b81416295c41df470b3da2f494e646b695ca3d99b5ac59df9541934d1092159d"
+            },
+            {
+              "database_index": 3,
+              "request_id": "393cf46f-7db4-4f9c-a55f-4e702d8158b7",
+              "revision": 11,
+              "start": 46.469168536999995,
+              "end": 47.138957728,
+              "value_sha256": "088ae5cc7815cf98be130c0421b8ba0cb92125b5a50045e0aff058e5e04bfe94"
+            },
+            {
+              "database_index": 2,
+              "request_id": "4cfa6840-d8e8-4f8d-a10d-21cf4df56e7c",
+              "revision": 11,
+              "start": 46.171165278000004,
+              "end": 47.413413790999996,
+              "value_sha256": "2d866606585aa639cf523cfcef1bb61c881f5aefc78b0d1e220369b5488008b0"
+            },
+            {
+              "database_index": 3,
+              "request_id": "b10e9fa1-d949-49bc-ad0f-3c97c77e2dff",
+              "revision": 12,
+              "start": 47.462257572000006,
+              "end": 48.093114856,
+              "value_sha256": "3eadd86d2622740a91bbe7e84f64a43dce7b6f2e56490445ac444f8e8ea213d5"
+            },
+            {
+              "database_index": 2,
+              "request_id": "87cbe737-ad12-4a40-9c1b-7eebe35f9e0c",
+              "revision": 12,
+              "start": 47.738180749,
+              "end": 48.262101581,
+              "value_sha256": "4b847c112cde826adae03fe0f4f98397df3b2661e1d1ce51aec33e312156e761"
+            },
+            {
+              "database_index": 2,
+              "request_id": "44724dcc-7b84-47ed-81b3-74e8962579b5",
+              "revision": 13,
+              "start": 48.5868582,
+              "end": 48.843514407,
+              "value_sha256": "aaf23a1a08e137107d30646c211d7b656d73eabcdcd56b3a6b2b943e14dd5d4f"
+            },
+            {
+              "database_index": 3,
+              "request_id": "35a8c91f-b7b0-48b7-96ee-4cac51c424a3",
+              "revision": 13,
+              "start": 48.41694568,
+              "end": 48.886112776000004,
+              "value_sha256": "f2e2205ac894199d95b46601c0348566c2cb074697d0ad593f35e9dce7b3dc62"
+            },
+            {
+              "database_index": 2,
+              "request_id": "4cc5745a-6bbb-484c-a973-04a0b60cb388",
+              "revision": 14,
+              "start": 49.169666346999996,
+              "end": 49.34822369,
+              "value_sha256": "c0ea3e7b864309bef7c93263624ac2021bdf4282d0a27f6d897aa576be6a5fad"
+            },
+            {
+              "database_index": 3,
+              "request_id": "f9d4adc4-f409-464d-a7f5-e03dd542ed32",
+              "revision": 14,
+              "start": 49.210594246,
+              "end": 50.922366811,
+              "value_sha256": "0a74839d7549e1b2fcbee535afb85966be40f0aded8e4a76168cd0d6c45a52d4"
+            },
+            {
+              "database_index": 2,
+              "request_id": "fd633427-c753-4aec-a47f-09d77d22199d",
+              "revision": 15,
+              "start": 49.683911787,
+              "end": 51.717024513,
+              "value_sha256": "447b307380b5e31c149a1f76aa0ebb97eaad6498b2b8ba26073a9489afa0ce7e"
+            },
+            {
+              "database_index": 3,
+              "request_id": "157d5059-dd40-48e6-b214-bc8d252098dc",
+              "revision": 15,
+              "start": 51.245622430000004,
+              "end": 51.980522307,
+              "value_sha256": "312e4fd94e4a31b29d81f491a367c7a9efc93d1d06c821c6c1e3734d626fe762"
+            },
+            {
+              "database_index": 2,
+              "request_id": "7b70095d-5b8f-442d-afb1-46a4588affe6",
+              "revision": 16,
+              "start": 52.041025184999995,
+              "end": 52.206790442999996,
+              "value_sha256": "3d9e0949dfd88625c2042dd6d84f515e48907b31a7e8c4232c891613ddce9e00"
+            },
+            {
+              "database_index": 3,
+              "request_id": "93594c9a-e43c-43ca-a9c9-e16245338991",
+              "revision": 16,
+              "start": 52.304880091,
+              "end": 52.490802044999995,
+              "value_sha256": "1da322b07489b68f6d9feafba35464dff16051e1f7071575a703be804b0f2692"
+            },
+            {
+              "database_index": 2,
+              "request_id": "8dec3ad0-c6b9-48d6-bbad-5e98231b4f49",
+              "revision": 17,
+              "start": 52.531381943,
+              "end": 52.85772156,
+              "value_sha256": "f6074f557a7d8ea1177ca2c58205795f6e4b83c3d5d3fd8fac297c5eb999d325"
+            },
+            {
+              "database_index": 3,
+              "request_id": "c8c84c47-41e8-49b9-8f2c-fc18588a66b7",
+              "revision": 17,
+              "start": 52.815619207999994,
+              "end": 53.128727268000006,
+              "value_sha256": "b9aca0d34018cc5cd9ce0c77838edb31b92dc5f99a44ab1759ac2f703d2d4ccc"
+            },
+            {
+              "database_index": 2,
+              "request_id": "62d2048e-4c26-4fef-8c2a-ae741dad0645",
+              "revision": 18,
+              "start": 53.182533571,
+              "end": 53.361188753,
+              "value_sha256": "adee68a72960e1750542a6c2f8553726e2c1eacdfa2b83fcb9be5cd227b0c77e"
+            },
+            {
+              "database_index": 2,
+              "request_id": "63a2cd59-6f38-47f9-9930-48d56457b5de",
+              "revision": 19,
+              "start": 53.691199988,
+              "end": 53.861939088999996,
+              "value_sha256": "1a0f17454da9c1232e49d1b0cffc2c5ee82251d079c7a8fe5d08cdf7c72337fd"
+            },
+            {
+              "database_index": 3,
+              "request_id": "56c8dc4f-6a9b-429f-8da6-254fe01cfe7b",
+              "revision": 18,
+              "start": 53.458556164,
+              "end": 53.97950001,
+              "value_sha256": "9c681e51eadc7546316cbb191f0a2d70d27882e49f0a97aeaf3fb40904a80c3b"
+            },
+            {
+              "database_index": 1,
+              "request_id": "8bf06455-1607-41c1-b81d-df26be795f9b",
+              "revision": 9,
+              "start": 45.625107229,
+              "end": 61.816924562,
+              "value_sha256": "52e90ae24326591c8161e2e05a8f3b9b57287ca13aba3be7e84043691e160ba6"
+            },
+            {
+              "database_index": 0,
+              "request_id": "a6cd59ec-eca5-4267-8e0a-e965687312b1",
+              "revision": 9,
+              "start": 45.798800548,
+              "end": 62.040723187000005,
+              "value_sha256": "c42c02c8e37202ff4a884733dcc397fabe6274e10a1cc92ca6fe161cc56d760d"
+            }
+          ],
+          "expected": [
+            9,
+            9,
+            19,
+            18
+          ],
+          "route_count": 1
+        },
+        "namespace_removed": true,
+        "finished_at": "2026-11-11T14:47:55.909797+00:00"
+      },
+      "cleanup": {
+        "binary_source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+        "image_digest": "sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777",
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 332
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Resident payload/count and journal limits do not bound total RSS; cache, transport, allocator and checkpoint scratch are separate.",
+    "DNS membership is a scheduling hint. Permanently inconsistent membership can cause safe but unavailable takeover churn.",
+    "Fixed partition count; changing the count requires migration to a fresh namespace.",
+    "Legacy cloud namespaces require export/restore; local format 15 remains compatible.",
+    "No AWS, production SLO, 72-hour soak, arbitrary host-failure or composed Rust proof claim."
+  ],
+  "startup_diagnostic": {
+    "scope": "Same baseline CI image, 3600-second maintenance, paused writers; diagnostic only, not the full qualification. Temporary harness derived from qualify-multinode.py and removed afterward.",
+    "report": {
+      "schema": 1,
+      "complete": true,
+      "started_at": "2026-11-11T14:50:32.309660+00:00",
+      "context": "epsilon",
+      "namespace": "durable-db-qualification-fe13134b07bf",
+      "image": "localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777",
+      "source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+      "harness_sha256": "51236ea439393d63a67515ed68933b74fe15c1118f62a234cb2e6310cde8b5bc",
+      "workload_sha256": "b510563bb967aa22daadf5bbc3b1e9b52f22a58f7eba2324ca3c98fe439b3a83",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 3600,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T14:54:05.912969+00:00",
+          "placement": [
+            "epsilon-3"
+          ]
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T14:54:20.486611+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "paused-before-scale",
+          "time_utc": "2026-11-11T14:54:48.684027+00:00"
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T14:57:03.085442+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-566745847d-kh256",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777"
+            },
+            {
+              "pod": "durable-db-566745847d-slmtl",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777"
+            },
+            {
+              "pod": "durable-db-566745847d-wvsh9",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777"
+            }
+          ]
+        }
+      ],
+      "budget_observations": [
+        {
+          "stage": "initial-one",
+          "status": {
+            "configuration_revision": 0,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 8388608,
+              "attempts": 384
+            }
+          }
+        },
+        {
+          "stage": "scale-3",
+          "status": {
+            "configuration_revision": 0,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 25165824,
+              "attempts": 704
+            }
+          }
+        }
+      ],
+      "resource_samples": [],
+      "failures": [],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Application-pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 0,
+      "verified_keys": 0,
+      "scope": "Diagnostic only: initial one and scale to three while workload is paused; maintenance interval 3600 seconds; no failure campaign.",
+      "namespace_removed": true,
+      "finished_at": "2026-11-11T14:57:53.907176+00:00"
+    },
+    "cleanup": {
+      "binary_source_commit": "0afabc06b13989bde32c11dd755104cad102bda5",
+      "image_digest": "sha256:075bdeec7eed3f663ddb02e577b6a2cc7716daf234db815c19e8451ca17aa777",
+      "scope": "Diagnostic startup with 3600-second maintenance and paused writers; no history qualification",
+      "complete": true,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 490
+      }
+    }
+  }
+}
