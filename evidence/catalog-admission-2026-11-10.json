@@ -1,0 +1,114 @@
+{
+  "milestone": "Unreleased target-tenant creation admission; policy revocation stays operator-funded",
+  "date": "2026-11-10",
+  "base_commit": "1765023785609f6ac89f66ddeefe0a8e07af09b1",
+  "scope": {
+    "released": false,
+    "budgeted_format": "owned-candidate-22",
+    "fresh_budgeted_namespace_required": true,
+    "local_format": "owned-candidate-15",
+    "new_allocator_model_or_dependency": false
+  },
+  "local": {
+    "rust_tests_passed": 302,
+    "fmt": true,
+    "strict_clippy": true,
+    "focused_seconds": 0.02,
+    "capacity_test": "optimized musl Woodpecker gate",
+    "logs_sha256": {
+      "focused": "c7855eb699a042d002dcdad16d6bcb69f2248137d094e48bc291b6642f481237",
+      "all": "b4ad65ba8651e54226316fd6971b7345d5fca883f2e54a7b279cd61a757557da",
+      "clippy": "d24fded6671140604dcbbba0d39b75046a5586c221c5a7b589563830b03e9ef5",
+      "model": "6b680034f11aed1170889f862fcba8426ee1bd95475415f117535c368b50738b",
+      "native-client": "9466fd793940d712da478aabb61ad76459ed26fd5d5edc92a9e0215fc3d7ad64",
+      "cloud-compile": "afe0a51a56f89a5323a3b2e8a4cf9e1bd4d404dcff3b8bca1ebd321883efb376"
+    },
+    "native_client_tests_passed": 99,
+    "native_client_opt_in_skipped": 1,
+    "native_client_seconds": 29.06
+  },
+  "checks": [
+    "Creation charged to target name before shared journal order",
+    "Pending and committed creation retries reuse admission",
+    "Lost grant reply cannot authorize catalog upload",
+    "Exhausted tenant cannot block a funded neighbor or credential rotation",
+    "Public catalog-like database name cannot redirect ordinary data charge",
+    "Existing exact-byte HTTP refusal fixtures retain their boundary checks"
+  ],
+  "model": {
+    "name": "TenantAdmission",
+    "distinct_states": 10402,
+    "generated_states": 39228,
+    "depth": 17,
+    "negative_controls": 6,
+    "bounds": {
+      "tenants": 2,
+      "grant_per_tenant": 1,
+      "accepted_write_per_tenant": 1,
+      "takeovers": 1,
+      "construction_attempts": 3
+    },
+    "scope": "Existing finite admission/reserve abstraction. Cross-scope control now also targets admission. Operator-funded policy changes, byte sizing, complete catalog/ledger retry attribution and Rust refinement remain outside the model."
+  },
+  "rust_negative_controls": [
+    {
+      "control": "catalog-exemption",
+      "detected": true,
+      "seconds": 6.57
+    },
+    {
+      "control": "wrong-payer",
+      "detected": true,
+      "seconds": 5.58
+    },
+    {
+      "control": "catalog-name-collision",
+      "detected": true,
+      "seconds": 5.88
+    },
+    {
+      "control": "tenant-blocks-revocation",
+      "detected": true,
+      "seconds": 9.53
+    }
+  ],
+  "inputs_sha256": {
+    "spec/TenantAdmission.tla": "333e34b83819b391136d0cb168318ff97a3260dbc1c080c7e35c8151bb048ddf",
+    "src/transactions/live.rs": "d4b305d4dad6714a048c4b079fb50f7716415b39cf7fb25037e676d658fbd9af",
+    "src/transactions/live/catalog.rs": "844cc9de779b70265c44696b09a606b1dca201c890ef708c2a38ffae1cb9da2d",
+    "src/ownership/root/metadata.rs": "960642ee35da3d588b393bd5c9cbe67162d87b1f03c917cf4529d7ddb53851ac",
+    "src/ownership/root/tests/budget.rs": "1c240dfb811b6883ba0514e8ace2b2982f0d172d338e5e32c2962c7ad646f19b",
+    "src/ownership/root/tests/http.rs": "5e02819ea755707b69a58a919f374c02f38ea04958c1664e63d7e1ee3d7ceb90",
+    "tests/checkpoint_cloud/native_http.rs": "7e7edb2faf346c583847e485a1403ff975ea87a9864252542c79198da69651c8"
+  },
+  "deleted": [
+    "Blanket catalog admission exemption replaced with target-bound creation admission.",
+    "Old fixtures that implicitly gave tenant creation free admission.",
+    "Duplicated production gate/implementation lists and the speculative 30-day PITR launch requirement.",
+    "Stale README release number and ambiguous public budget scope."
+  ],
+  "remaining": [
+    "Separate administrative allowance and policy attribution without making revocation depend on spendable tenant credit.",
+    "Shared catalog construction claims and ledger publication costs.",
+    "Qualified clustered timing and placement, scheduled backups and the other ordered production gates."
+  ],
+  "qualification_fix": {
+    "issue": "Adding report fields exceeded serde_json macro recursion during the first cloud fixture compilation.",
+    "fix": "Computed the data contribution before the macro and assigned the extra field after constructing the report; no recursion-limit increase.",
+    "runtime_unchanged": true,
+    "cloud_fixture_recompiled": true,
+    "strict_clippy_repeated": true,
+    "failed_setup_cleanup": [
+      {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 0
+      },
+      {
+        "bucket_removed": true,
+        "physical_versions_deleted": 0,
+        "container_removed": true
+      }
+    ]
+  }
+}
