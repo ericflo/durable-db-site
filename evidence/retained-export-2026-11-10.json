@@ -1,0 +1,92 @@
+{
+  "milestone": "retained checkpoint logical export and existing HTTP restore",
+  "date": "2026-11-10",
+  "base_commit": "5d96c14401d03243d1397e7fba891bff6c893d74",
+  "scope": {
+    "runtime_net_rust_lines": 81,
+    "new_dependencies": false,
+    "storage_and_admission_formats_unchanged": true,
+    "archive_format": 1,
+    "operator_rust_api": true,
+    "new_http_or_cli_endpoint": false,
+    "tenant_retry_attribution_complete": false
+  },
+  "behavior": {
+    "catalog_identity_quotas_values_from_same_checkpoint": true,
+    "live_writes_do_not_invalidate_export": true,
+    "durable_slot_must_remain_occupied": true,
+    "one_existing_archive_format_and_restore_path": true,
+    "verify_before_nonoverwriting_publication": true,
+    "cancelled_or_failed_export_removes_temporary": true
+  },
+  "regressions": {
+    "source_revision": 1,
+    "live_revision": 2,
+    "source_removed_before_restore": true,
+    "verified_live_keys": 11,
+    "logical_bytes": 524358,
+    "restore_chunks": 2,
+    "largest_value_bytes": 65536,
+    "empty_database": true,
+    "empty_value": true,
+    "unicode_key": true,
+    "tombstones_omitted": true,
+    "original_quotas_and_incarnation": true,
+    "post_cut_database_absent": true,
+    "same_restore_repeated": true,
+    "cancellation_after_partial_output": true,
+    "racing_output_creation_preserved": true,
+    "corrupted_reads_and_partial_file_refused": true,
+    "released_collected_source_unreadable": true
+  },
+  "local": {
+    "rust_tests_passed": 299,
+    "fmt": true,
+    "strict_clippy": true,
+    "capacity_test": "optimized musl Woodpecker release gate",
+    "focused_tcp_seconds": 1.34,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 27.88,
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 8.89,
+    "opt_in_client_tests_skipped_per_suite": 1,
+    "web_app_tests_passed": 4
+  },
+  "model": {
+    "name": "LogicalBackup",
+    "distinct_states": 6888,
+    "generated_states": 40320,
+    "depth": 16,
+    "negative_controls": 4,
+    "new_distinct_states": 0,
+    "scope": "Retained reads use the immutable source image, including catalog metadata, while live writes advance. Retention availability is modeled separately by PublicationSafety. Bounded checking does not prove filesystem durability, hash integrity, scheduling or Rust refinement."
+  },
+  "negative_controls": [
+    "Wrong catalog generation exports an empty database and fails exact revision.",
+    "Default quotas fail original-quota assertion.",
+    "Exporting tombstones as empty values exceeds declared totals.",
+    "Replacing a racing output file fails refusal/preservation checks.",
+    "Publishing before validation leaves a corrupt final file and fails cleanup assertion."
+  ],
+  "deleted": [
+    "Duplicate catalog parsing/validation.",
+    "Duplicate archive file-publication code and validation after publication.",
+    "Obsolete current documentation claiming retained-image export/restore is unimplemented.",
+    "Existing tests/model extended without a parallel archive format or new model/configuration."
+  ],
+  "remaining": [
+    "Per-tenant retry/recovery funding and attribution.",
+    "Public administrative retained-export routes and scheduled backups.",
+    "Multiple restore points, independent backup credentials/storage and PITR.",
+    "Physical ownership timing and placement for clustered native CLI.",
+    "Large restore, adversarial sustained load and production performance qualification."
+  ],
+  "source_sha256": {
+    "src/backup/mod.rs": "0b69e86a6c4ff97f8fe910d05f8ec9671f98bcc0352435724b3bfcbbff2f34dc",
+    "src/transactions/live.rs": "b77885a1d0460726d3ed059be062a1c9f6dbfa62deda273d091f826374f0b855",
+    "src/transactions/live/catalog.rs": "a10132b0f1ee0c4c8d0064ea11abbfdc930c33663b1a59410e0cd838b0abdf00",
+    "src/ownership/root/tests/http.rs": "a6db09e12d01cf5c0365da2df7da00207e4d4a45eaa3926a16ea2ace48268017",
+    "tests/checkpoint_cloud/native_http.rs": "80a72f0ed018d4146a09dddc15892018ac71198b792d5d569e888cfa52e56e82",
+    "spec/LogicalBackup.tla": "1c1ca97c29264da77a1ddaeb274955679675c0435a2c7267bef73ed41e8fa0fe"
+  }
+}
