@@ -1346,5 +1346,62 @@
     ],
     "context_note": "Existing development host to B2 and loopback versioned MinIO. The caller-supplied client geography/region label was not verified and is excluded; this is not a regional SLO measurement.",
     "fixture_sha256": "3b0c96d10ee6625c03239c36d5ac1e9f272608210eaf5379d08b8e1f3ed00659"
+  },
+  "ancestor_revocation": {
+    "bounds": {
+      "candidates": [
+        2,
+        3
+      ],
+      "control_invocations": 3
+    },
+    "results": [
+      {
+        "candidates": 2,
+        "distinct_states": 34061,
+        "generated_states": 110125,
+        "depth": 23,
+        "seconds": 1
+      },
+      {
+        "candidates": 3,
+        "distinct_states": 281563,
+        "generated_states": 1029247,
+        "depth": 27,
+        "seconds": 7
+      }
+    ],
+    "unsafe_controls": 3,
+    "coverage_controls": 2,
+    "files": {
+      "spec/candidates/RootRegistration.cfg": "f0d99f07e79173984f0216e023d6d85eca793005bcacafeb990e703e5245e122",
+      "spec/candidates/RootRegistration.tla": "1dd6685885ae0f14841a306f260bd5c5e5eff443ffc1c4f5e08ebc1ac56d11e9",
+      "spec/candidates/RootRegistration.checks": "3f25570893ffa46802fdd5dbd942bc57f419548de47b54d0c7fa2de0e5c747e9",
+      "spec/candidates/RootRegistrationUnsafeImmediate.cfg": "cc7c521e5d1404bc11d9429833a86b802d9ba944f8f3348f713d0153adda9098",
+      "spec/candidates/RootRegistrationInterrupted.cfg": "da2569a28c1ef815260e81502736628e2779a37e90d5f50be4b98c4b35f5d714",
+      "spec/candidates/RootRegistrationRecovered.cfg": "ce1f668cda7713e01f068328fef6e14cade0f84d5b7e9a57385caf55cf7ad617",
+      "spec/candidates/RootRegistrationUnsafeParent.cfg": "9c340185046cd12f4fc842630e90d9a5a8a5d4c67ddab8cdcabca144f61504d3",
+      "spec/candidates/RootRegistrationUnsafeEarly.cfg": "a4ac8ff5ec2f657373a622a8b3bad0c343becace4dba9afce66c4e9a32a32977",
+      "spec/candidates/RootRegistrationThree.cfg": "85aef8f525698b6022fa7ef559330aae58332fe62f965cd9dbcce7c3880fd526",
+      "spec/candidates/RootAcquisition.tla": "9cab3e4d400776ce3d90c17cc912f2b9193adb060ab239041cf6c9afbaed0f99"
+    },
+    "logs": {
+      "model-root-registration-parent.log": "3cbcc995cdaacb94cd039cd7df136650d9864b9abe118f085c755189b2f16947",
+      "model-root-registration.log": "0a68825922f859489515bd921fac1927c1cd85423719b4884653ac4ded7b0fe5",
+      "model-root-registration-interrupted.log": "c53e0a27f356842dc204fd3a5db6507b09385fdf442214c7cfa87b5bbed59dc7",
+      "model-root-registration-three.log": "89d50fac401415bea0e61cf56952064618895d7915e0c62b41d957137fac303d",
+      "model-root-registration-recovered.log": "159c6d1f35954765ac79df02e15a5f6a074840103b8711d89be4222edb938800",
+      "model-root-registration-immediate.log": "36251997854e04f2217b9504977815445913cc9b644d43a3734686d7b6d2bb07",
+      "model-root-registration-early.log": "93ad4d9a5f22efd654b1b3078c27b4376b768b2af47ee3b79a73cc721d4b45da"
+    },
+    "scope": "Extends exact acquisition/registration with separate, permanently revoked positive permits and complete ancestor discovery. Registration plus permit creation is abstracted as one completion. No journal selection, cleanup, placement, liveness or Rust composition proof."
+  },
+  "local_checks": {
+    "format": "pass",
+    "clippy_all_targets": "pass",
+    "rust_enabled_passed": 302,
+    "capacity": "Separate optimized Woodpecker check; excluded from fast local suite.",
+    "new_runtime_dependencies": 0,
+    "runtime_protocol_changed": false
   }
 }
