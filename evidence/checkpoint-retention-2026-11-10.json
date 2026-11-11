@@ -18,7 +18,11 @@
     "tcp_retention_seconds": 0.03,
     "fmt": true,
     "strict_clippy": true,
-    "negative_control": "omitting retained-root protection makes cold verification fail because its manifest is missing"
+    "negative_control": "omitting retained-root protection makes cold verification fail because its manifest is missing",
+    "negative_control_error": "retained-image verification fails with Object at location fixture/tables/... not found",
+    "strict_clippy_seconds": 10.08,
+    "site_pages": 19,
+    "site_links": 643
   },
   "model": {
     "name": "PublicationSafety",
@@ -54,6 +58,300 @@
     "http": "e042955a2a288766833510c715339b3a4f81aad9f367117f7e1ad270d4b2e0fc",
     "model": "a6e2ad1622f2e048b0e71b705969986074ef01b808b7dd529ea1ace7e3f05641",
     "proof": "bbc1513b75526bbf3aed4e300425e8eb19813a31306a79ccc001ded9abd57f7b",
-    "negative": "e6462d4136f7495c9fac09ef85189a02583887551e553a65d687b634e06a6d49"
+    "negative": "e6462d4136f7495c9fac09ef85189a02583887551e553a65d687b634e06a6d49",
+    "clippy": "4c7a936c1d571a8525100fabbd46bad66c0f7340cf415074e8837d3334896e83"
+  },
+  "source_commit": "10eb661aa32de37ac9789af9327091e8ce9953ae",
+  "runtime_net_rust_lines_including_comments": 165,
+  "cloud": {
+    "b2": {
+      "provider": "B2",
+      "test": {
+        "admission_bytes_per_write": [
+          2318,
+          2652
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "base_copy_bytes_per_write": [
+          1484,
+          1818
+        ],
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 48023.841578,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 3969.676093,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-2d72c3ca-7655-4def-8c91-10cfcd168549",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "b2",
+        "refusal_and_retry_immutable_puts": 0,
+        "retention": {
+          "cold_reopen_and_collection": true,
+          "exact_cut_values": true,
+          "immutable_puts": 0,
+          "release_reclaimed_old_checkpoint": true
+        },
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 16.556675924,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4970
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 4970
+          }
+        },
+        "total_seconds": 200.696357359,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.384747,
+          "p95": 1.530462,
+          "p99": 1.730526
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 18
+      }
+    },
+    "s3": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "admission_bytes_per_write": [
+          2318,
+          2652
+        ],
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "base_copy_bytes_per_write": [
+          1484,
+          1818
+        ],
+        "catalog_survived_collection_after_takeover": true,
+        "checkpoint_objects_after_first_sweep": 3,
+        "checkpoint_objects_after_takeover_sweep": 3,
+        "checkpoint_objects_before_first_sweep": 6,
+        "checkpoint_row_bytes_per_write": 174,
+        "cleanup_wait_ms": 60388.854956999996,
+        "closed_journal_epochs_reclaimed": true,
+        "cold_receipts_and_values_verified": true,
+        "cold_recovery_ms": 133.57949399999998,
+        "complete_reopens": 2,
+        "directory_objects_after": 1,
+        "exhausted_tenant_did_not_stall_neighbor": true,
+        "inline_checkpoint_descriptors": true,
+        "journal_bytes_per_write": 254,
+        "journal_objects_after_first_sweep": 1,
+        "journal_objects_after_takeover_sweep": 0,
+        "journal_objects_before": 5,
+        "journal_only_funding_refused": true,
+        "ledger_objects_after": 2,
+        "ledger_objects_before": 8,
+        "namespace": "native-http-5416a73e-8ee8-4ede-bf5a-e1b4233b199e",
+        "namespace_budget": {
+          "allocated": {
+            "attempts": 96,
+            "bytes": 25165824
+          },
+          "configuration_revision": 0,
+          "limits": {
+            "attempts": 256,
+            "bytes": 33554432
+          }
+        },
+        "new_rows_only_funding_refused": true,
+        "provider": "s3",
+        "refusal_and_retry_immutable_puts": 0,
+        "retention": {
+          "cold_reopen_and_collection": true,
+          "exact_cut_values": true,
+          "immutable_puts": 0,
+          "release_reclaimed_old_checkpoint": true
+        },
+        "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; logical clock; old server stopped before takeover. Not physical timing, AWS or performance-SLO qualification.",
+        "setup_seconds": 0.218222593,
+        "tenant_budget": {
+          "allocated": {
+            "attempts": 2,
+            "bytes": 4970
+          },
+          "configuration_revision": 4,
+          "limits": {
+            "attempts": 2,
+            "bytes": 4970
+          }
+        },
+        "total_seconds": 181.900334321,
+        "warm_http_reads": 100,
+        "warm_read_control_calls": 0,
+        "warm_read_ms": {
+          "p50": 1.4054060000000002,
+          "p95": 1.470944,
+          "p99": 1.651598
+        },
+        "warm_read_object_gets": 0,
+        "warm_read_paths": [
+          "checkpoint",
+          "recovered_suffix"
+        ]
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 28,
+        "container_removed": true
+      }
+    },
+    "attempts_per_provider": 1
+  },
+  "release": {
+    "source_commit": "10eb661aa32de37ac9789af9327091e8ce9953ae",
+    "woodpecker_pipeline": 146,
+    "artifact_image_digest": "sha256:4842605f7dc338724f9239d7b386860075463dcfa24752639501993f7c057f5b",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.12.0",
+      "archive_sha256": "4d7dde3925a06182f052605648fd698d553496f94a54259153f18c6601afbe27",
+      "binary_sha256": "c53e3113d873cc9fd515531024fdcf8bfe37bc8fe2f92b24e5c33ea6064190f4",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6196015,
+    "version": "v0.12.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 146,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/146/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:4842605f7dc338724f9239d7b386860075463dcfa24752639501993f7c057f5b",
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.12.0",
+    "published_at": "2026-11-11T00:32:48Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.12.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "repository_private": true,
+    "capacity_test_seconds": 205.59,
+    "tag_pipeline": {
+      "number": 147,
+      "status": "success"
+    }
+  },
+  "compatibility": {
+    "version": "0.12.0",
+    "archive_sha256": "4d7dde3925a06182f052605648fd698d553496f94a54259153f18c6601afbe27",
+    "binary_sha256": "c53e3113d873cc9fd515531024fdcf8bfe37bc8fe2f92b24e5c33ea6064190f4",
+    "previous_binary_sha256": "41ff1013f80ee39aecce184be79011b2caffe76e42b57f1dffea163017299f88",
+    "upgrade_checkpoint_and_suffix": true,
+    "old_binary_refuses_occupied_slot_without_authority_mutation": true,
+    "new_binary_opens_occupied_slot": true,
+    "old_binary_reopens_without_slot": true,
+    "scope": "Sequential local binaries; occupied/empty slot injected offline into a disposable directory, not an operator recovery procedure.",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true,
+    "fixture_request_units_per_second": 10000,
+    "fixture_request_burst_units": 10000,
+    "initial_fixture_result": "Default rate limit returned HTTP 429 during the 260-write drill; the bounded fixture budget was increased without changing runtime code."
+  },
+  "cleanup": {
+    "b2_bucket_removed": true,
+    "b2_key_revoked": true,
+    "minio_bucket_and_container_removed": true,
+    "physical_versions_removed": 46,
+    "cloud_credentials_directory_removed": true,
+    "model_output_directories_removed": 5,
+    "temporary_static_compatibility_fixture_removed": true,
+    "previous_download_removed": true,
+    "kept_latest_archive_and_checksums": true,
+    "registry_tunnel_stopped": true
   }
 }
