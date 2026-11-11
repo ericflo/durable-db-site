@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "campaigns": [
+    {
+      "binary_source_commit": "b51c42acaf851f6fac3a1ef0211621c23dc4f8e0",
+      "binary_profile": "debug, stripped temporary image",
+      "binary_sha256": "4b1e0af7d97f36075d1aabd2a88f571b5061b1ebfff53458f2607fd51b618f12",
+      "image_digest": "sha256:155e4194aa24117abb30d5fd092e50f184edadd9e394aa0117769e202e4e98f4",
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 875
+      },
+      "temporary_image_manifest_removed": true,
+      "started_at": "2026-11-11T17:32:30.515612+00:00",
+      "finished_at": "2026-11-11T17:48:21.361197+00:00",
+      "harness_sha256": "15152ad8c327830d49e8750d91e12557424f390edd473685a19b02bf71ff2760",
+      "workload_sha256": "e1a5c9cde3646f768dbbed15b91e326380c1a65f94225b0a33bdcfd6360d759b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "failure": "Rolling replacement exceeded 240 seconds.",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-11T17:34:07.406522+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-11T17:34:22.113118+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-11T17:35:26.597647+00:00",
+          "writes_acknowledged": 20
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-11T17:37:05.501104+00:00",
+          "writes_acknowledged": 213
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-11T17:38:35.354879+00:00",
+          "writes_acknowledged": 432
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-11T17:38:36.370525+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 434
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-11T17:40:36.110402+00:00",
+          "elapsed_seconds": 120.00009321200196,
+          "writes_acknowledged": 694
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-11T17:42:24.431768+00:00",
+          "writes_acknowledged": 830
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 1067,
+        "reads_verified": 1064,
+        "http_attempt_statuses": {
+          "200": 2163,
+          "429": 431,
+          "503": 197,
+          "transport_or_decode_error": 15
+        },
+        "failures": []
+      },
+      "partial_history_sha256": "a0d5fce4753719fe87130a3a33767c99be301e45971c2f28c7e791bb28ab6e03",
+      "acquisition_failure_stages": {
+        "claim": 3
+      },
+      "memory": {
+        "samples": 5,
+        "peak_sampled_rss_bytes": 6180864,
+        "peak_sampled_working_set_bytes": 7577600
+      },
+      "limitations": [
+        "Temporary debug image, not the static release executable.",
+        "No final recovered-history verification; 3 readbacks were pending in the captured snapshot.",
+        "Provider interruption, scale-down and cold replacement were not reached. No AWS, HPA, whole-host loss, SLO, RSS bound or sustained-load claim."
+      ]
+    }
+  ]
+}
