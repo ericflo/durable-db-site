@@ -568,6 +568,16 @@ failures stay local to affected partitions; they do not hide the HTTP router.
 No owner is admitted before recovery and every data response retains its fresh
 permit check. The all-partitions readiness scan and recovery-driven flag resets
 were deleted.</p>
+<p>Native worker health now uses only local retirement state and a nonblocking
+owner-lock check. A failed provider observation no longer replaces an idle owner,
+and a busy checkpoint cannot hold up another partition’s health check. This
+does not grant response authority: every data result retains fresh permit
+validation, and an observed revocation or uncertain journal retirement still
+requires recovery. The provider-outage regression first failed against the old
+probe, then checks unchanged owner identity and zero additional authority writes
+while data requests fail closed. Existing HTTP checks cover a paused exclusive
+admission and refusal after revocation. The earlier network-health probe test
+was replaced; no parallel health mechanism or new model was added.</p>
 <p>The existing TCP regression observes HTTP 200 from the probe while a claim is
 paused, HTTP 503 for the unconfirmed database, then service on the original
 confirmed identity. The zero-credit regression requires the ready administrator
