@@ -22,12 +22,12 @@
 <tr>
 <td><strong>1</strong></td>
 <td><strong>Native clustered serving — large, integration complete; qualification open</strong></td>
-<td>Qualify the native CLI on the existing Kubernetes hosts. DNS membership, automatic ownership/forwarding, fixed database mapping and bounded resident state are integrated. Add/remove pods and return to one node without lost acknowledged writes or manual data movement; retain administrator recovery at exhausted upload credit. Cached data must remain safe after pauses, takeover and total process replacement. The candidate failed its initial 240-second Kubernetes readiness deadline with the default 16 partitions. Removing duplicated shared collection makes the default-layout CLI startup pass locally against B2 in 126.6 seconds; Kubernetes scaling must still be repeated. peak-memory and broader host/provider failure checks remain.</td>
+<td>Qualify the native CLI on the existing Kubernetes hosts. DNS membership, automatic ownership/forwarding, fixed database mapping and bounded resident state are integrated. Add/remove pods and return to one node without lost acknowledged writes or manual data movement; retain administrator recovery at exhausted upload credit. Cached data must remain safe after pauses, takeover and total process replacement. After correcting shared collection, the candidate passes one-to-three-to-six-pod readiness on the existing hosts; a tenant-funding refusal stops the preliminary steady run. Repeat the full fault/recovery campaign with declared funding and retain peak-memory and broader host/provider failure qualification.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
 <td><strong>Tenant isolation and lifecycle — medium to large</strong></td>
-<td>Finish charging administrative work and retries, bound creation/request/egress costs across replicas, and prevent an exhausted tenant from stopping funded neighbors’ ordinary operation. Verify credential rotation/revocation, tenant deletion and data isolation. Existing logical quotas and durable admission/reserve funding cover only part of this.</td>
+<td>Finish charging administrative work and retries, reduce unused tenant-credit loss across handoffs, bound creation/request/egress costs across replicas, and prevent an exhausted tenant from stopping funded neighbors’ ordinary operation. Verify credential rotation/revocation, tenant deletion and data isolation. Existing logical quotas and durable admission/reserve funding cover only part of this.</td>
 </tr>
 <tr>
 <td><strong>3</strong></td>
