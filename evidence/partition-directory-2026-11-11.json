@@ -1,10 +1,10 @@
 {
   "date_utc": "2026-11-11",
-  "source_commit": "a3104ccf4022e3f7b782d27b81427fd8c5e31797",
+  "source_commit": "00637a486aa54f38bc8aa6ccf1ff8636001849ac",
   "clean_worktree": true,
   "native_format": "owned-candidate-23",
   "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::independent_partitions_serve_and_recover_over_http --nocapture",
-  "scope": "Independent partition control through native HTTP; three live servers, two partitions, one live takeover, exact retries and shared metadata collection. Explicit placement, not automatic election/routing, AWS, Kubernetes or an SLO.",
+  "scope": "Independent native partitions and physical metrics, three live HTTP servers, two partitions, one live takeover. Explicit placement, not automatic election/routing, AWS, Kubernetes or an SLO.",
   "results": [
     {
       "provider": "B2",
@@ -18,8 +18,9 @@
           7,
           4294967295
         ],
+        "provider_metrics_count_once": true,
         "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
-        "seconds": 50.357276933,
+        "seconds": 52.976498659,
         "shared_metadata_collection": true,
         "simultaneous_http_servers": 3,
         "unmoved_partition_progress": true
@@ -27,7 +28,7 @@
       "cleanup": {
         "bucket_removed": true,
         "workload_key_revoked": true,
-        "physical_versions_deleted": 42
+        "physical_versions_deleted": 41
       }
     },
     {
@@ -44,15 +45,16 @@
           7,
           4294967295
         ],
+        "provider_metrics_count_once": true,
         "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
-        "seconds": 1.144796938,
+        "seconds": 0.98962401,
         "shared_metadata_collection": true,
         "simultaneous_http_servers": 3,
         "unmoved_partition_progress": true
       },
       "cleanup": {
         "bucket_removed": true,
-        "physical_versions_deleted": 48,
+        "physical_versions_deleted": 47,
         "container_removed": true
       }
     }
@@ -63,7 +65,8 @@
     "focused_tests": 4,
     "focused_seconds": 0.64,
     "formatting": "pass",
-    "strict_all_target_clippy": "pass"
+    "strict_all_target_clippy": "pass",
+    "final_focused_seconds": 0.66
   },
   "models": {
     "PublicationRebase": {
@@ -104,5 +107,142 @@
       "test": "partition_stale_comparison_and_lost_publication_reply",
       "detected": true
     }
-  ]
+  ],
+  "earlier_qualification": {
+    "source_commit": "a3104ccf4022e3f7b782d27b81427fd8c5e31797",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "ceilings_preserved_on_reopen": true,
+          "checkpoint_recovery": true,
+          "concurrent_writes": true,
+          "independent_values": true,
+          "old_owner_read_and_retry_refused": true,
+          "partitions": [
+            7,
+            4294967295
+          ],
+          "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
+          "seconds": 50.357276933,
+          "shared_metadata_collection": true,
+          "simultaneous_http_servers": 3,
+          "unmoved_partition_progress": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 42
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "ceilings_preserved_on_reopen": true,
+          "checkpoint_recovery": true,
+          "concurrent_writes": true,
+          "independent_values": true,
+          "old_owner_read_and_retry_refused": true,
+          "partitions": [
+            7,
+            4294967295
+          ],
+          "scope": "Explicit Rust placement; no automatic election, routing, Kubernetes scaling or performance SLO",
+          "seconds": 1.144796938,
+          "shared_metadata_collection": true,
+          "simultaneous_http_servers": 3,
+          "unmoved_partition_progress": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 48,
+          "container_removed": true
+        }
+      }
+    ],
+    "note": "Passed functional isolation; final review then removed duplicate provider metric wrappers and added direct counting assertions."
+  },
+  "rust_negative_controls_source": "d29af33340863a44d3fda4f595a3c283dd48dfee",
+  "release": {
+    "source_commit": "00637a486aa54f38bc8aa6ccf1ff8636001849ac",
+    "woodpecker_pipeline": 193,
+    "artifact_image_digest": "sha256:9f300887b0bec771fba842de0ef7f82b6042f9fa3755c0dbbdd26fba92782528",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.20.0",
+      "archive_sha256": "efc22e771dd50e550a9611e53d41ebc10247aedb56c128b6ca0d5f9c558d34de",
+      "binary_sha256": "e8fcbe4066e52d5271f5a718c79cca55a0771fa995d0e4c9ff90926945ae01e9",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6194738,
+    "version": "v0.20.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 193,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/193/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1,
+      "passing_contracts": 2
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.20.0",
+    "published_at": "2026-11-11T11:25:55Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.20.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "capacity_test_seconds": 195.89,
+    "source_pipeline_seconds": 796,
+    "tag_pipeline": {
+      "number": 194,
+      "status": "success",
+      "source_commit": "00637a486aa54f38bc8aa6ccf1ff8636001849ac"
+    }
+  }
 }
