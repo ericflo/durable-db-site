@@ -1,0 +1,110 @@
+{
+  "milestone": "Reuse tenant budget metadata across unrelated control conflicts",
+  "date": "2026-11-10",
+  "base_commit": "e79c9d9409636dfc4192b8ae5aa47c549b03b85d",
+  "implementation_commit": "4d5a838a9d76d600e283a276b10dbe46bf3d0eec",
+  "scope": {
+    "runtime_net_rust_lines": 19,
+    "new_dependencies": false,
+    "budgeted_format": "owned-candidate-21",
+    "local_format": "owned-candidate-15",
+    "formats_and_accounting_policy_unchanged": true
+  },
+  "behavior": {
+    "shared_publication_path": [
+      "tenant initialization",
+      "tenant refill",
+      "tenant admission grants",
+      "maintenance funding"
+    ],
+    "nonce_conflicts_reuse_staging": true,
+    "competing_directory_or_collection_requires_rebuild": true,
+    "lost_replies_propagate_without_restored_rights": true,
+    "malformed_format_rejected": true,
+    "same_scope_comparison_attempt_bound": 8
+  },
+  "local": {
+    "rust_tests_passed": 301,
+    "fmt": true,
+    "strict_clippy": true,
+    "focused_tests_passed": 5,
+    "focused_seconds": 0.68,
+    "funding_70_tenant_regression_seconds": 0.88,
+    "forced_nonce_conflicts": 3,
+    "total_metadata_objects_for_initialization_refill_and_grant": 6,
+    "reupload_negative_control_first_initialization_objects": 4,
+    "expected_first_initialization_objects": 2,
+    "capacity_test": "optimized musl Woodpecker release gate",
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 9.13,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 27.48,
+    "opt_in_client_tests_skipped_per_suite": 1,
+    "web_app_tests_passed": 4,
+    "logs_sha256": {
+      "focused": "02f09e853ecc77177659a067797e0536b849a74bb456b346913faed17c7355f7",
+      "funding": "bdfdffd8c42fc00e5db98c33516913f9221983fe4964cd20b3195fda946da5cd",
+      "all": "a95dfb74c547e178e8fe538cd1564b44c142ff0934b5ce4932801ec704fd2878",
+      "clippy": "840fe3871043c974315299428be9e806f404595e0acde83073b505fed1805f73",
+      "client": "02b58435dcfaa54d13fe262f31a7b7dd5b1d048c7ad4ad05df50e4cb100f7da7",
+      "native-client": "ed044176289af08da94a46bde77cd524a611b82b27f6c03be38007c4c17bd172",
+      "model": "9e4c68fb1e6c5160b770b84e00cfc1921397746dce2a021fc7879b92a3823013"
+    }
+  },
+  "model": {
+    "name": "PublicationRetry",
+    "new_transitions": false,
+    "distinct_states": 44354,
+    "generated_states": 117886,
+    "depth": 21,
+    "negative_controls": 1,
+    "unsafe_control_detects": "ReferencedManifestExists",
+    "scope": "Existing bounded immutable-publication abstraction, with ledger root and collection-fence mapping documented. No Rust refinement, production clock qualification or unbounded proof."
+  },
+  "rust_negative_controls": [
+    {
+      "control": "reupload-on-control-conflict",
+      "detected": true,
+      "seconds": 7.33
+    },
+    {
+      "control": "missing-directory-check",
+      "detected": true,
+      "seconds": 7.29
+    },
+    {
+      "control": "missing-collection-check",
+      "detected": true,
+      "seconds": 7.33
+    },
+    {
+      "control": "missing-format-check",
+      "detected": true,
+      "seconds": 7.08
+    }
+  ],
+  "inputs_sha256": {
+    "src/upload_budget.rs": "da008f6fe86c83c8ea2ecc6fa2d97721f89030bee994b9e44f034aec0cae85ea",
+    "src/upload_budget/database.rs": "be1ca06cfb3b7a0fc71280f5927ba1681612cbe528e954ad72c3b6c602973833",
+    "src/ownership/root/tests/budget.rs": "4091ab0aa4bdd780f368b5c4c907f74feb40e8222ad62da84fe3b675fa2c2997",
+    "spec/PublicationRetry.tla": "74445c51eb072853ed41608062771c56b2fe19a99be20595dcb33daaf77590f3",
+    "spec/PublicationRetry.cfg": "2b1b3e3e82bca8b574e3103e6f4b3b5aa4b84f49125daa04e18313e79cb96059",
+    "spec/UnsafePublicationRetry.cfg": "4de76545ab7e4b836978bbac4211b9e5cac97a21d9e90ae0666dc3fc4008c083"
+  },
+  "deleted": [
+    "Separate single-record ledger publication path; maintenance and administrative budget updates now share one fenced retry loop.",
+    "Obsolete documentation saying every ledger publication rebuilds after a control conflict."
+  ],
+  "remaining": [
+    "Full per-tenant attribution of administrative catalog/ledger metadata and other provider costs.",
+    "Scheduled backups and multiple restore points.",
+    "Qualified physical clock bounds, placement and native clustered CLI cutover.",
+    "Sustained adversarial load, large-image cleanup, AWS and independent review."
+  ],
+  "concurrent_work": {
+    "readme_untouched": true,
+    "readme_commit_preserved": "e79c9d9409636dfc4192b8ae5aa47c549b03b85d",
+    "site_design_commit_preserved": "adba6018195c4e918b2aefb079a2ef7afc74de51",
+    "site_scope": "One additive evidence whitelist entry; existing design unchanged."
+  }
+}
