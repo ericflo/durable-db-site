@@ -92,5 +92,17 @@
       "negative_controls": 4,
       "note": "Default revision bound reduced from 3 to 2; all four unsafe behaviors still detected. Larger historical runs retained in verification record."
     }
-  }
+  },
+  "rust_negative_controls": [
+    {
+      "mutation": "scope",
+      "test": "partition_objects_ranges_cursors_and_deletion_are_scoped",
+      "detected": true
+    },
+    {
+      "mutation": "comparison",
+      "test": "partition_stale_comparison_and_lost_publication_reply",
+      "detected": true
+    }
+  ]
 }

@@ -9,7 +9,7 @@
 <p>The first production release needs automatic, independently stored backups with a declared backup interval, retention bound and measured restore time. Continuous point-in-time recovery and a 30-day history are optional later features, not requirements of the original brief. Neither is currently implemented or promised.</p>
 <h2 id="remaining-production-gates-in-order">Remaining production gates, in order<a class="anchor" href="#remaining-production-gates-in-order" aria-label="Link to this section">#</a></h2>
 <p>The critical path is the fast clustered engine. Accounting patches and additional tests of the old cloud engine cannot substitute for that cutover. A release number is not a readiness measure. Close usable end-to-end capabilities, use focused checks during development, and run full qualification when a capability is ready.</p>
-<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. Gate 1 now changes the ownership mechanism instead of waiting for specialized timing hardware.</p>
+<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. Gate 1 now connects clock-independent ownership and independent partition control to an automatic cluster controller.</p>
 <table>
 <thead>
 <tr>
@@ -21,7 +21,7 @@
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td><strong>Native clustered serving — large, ownership replacement in progress</strong></td>
+<td><strong>Native clustered serving — large, native integration in progress</strong></td>
 <td>Qualify timing-independent ownership on the existing Kubernetes hosts, implement placement and transfer, then switch the cloud CLI. Cached data must remain safe after pauses, takeover and total process replacement. Add/remove pods and return to one node without lost acknowledged writes or manual data movement. Clock-independent permits are integrated in the native library. Live B2/MinIO takeover passes. Independent partition control now reuses the shared directory. Automatic election/routing/placement, collection composition and the CLI cutover remain.</td>
 </tr>
 <tr>
@@ -52,7 +52,7 @@
 </tbody>
 </table>
 <p>Gate 1 now follows <a href="design-owned-partitions.html#revocable-writer-permits">revocable writer permits</a>: fresh per-writer object validation, permanent revocation before journal recovery, no bounded-clock assumption and no bucket-wide conditional update for ordinary requests. Its small one-handoff model is evidence for the ordering rule, not a finished clustered engine. Provider read-after-revocation semantics, GET latency/concurrency, placement and automated cluster handoff are the next decisive checks. Restricted-profile and ClockBound findings remain <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">fallback evidence</a>; they do not narrow the required hosts.</p>
-<p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with logical clocks, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
+<p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with revocable permits and independent partitions, historical clock experiments, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
 <h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>
 <p>These are recommended deferrals within the original brief, not claims that they are implemented:</p>
 <ul>
