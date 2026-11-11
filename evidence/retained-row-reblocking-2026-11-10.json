@@ -25,7 +25,7 @@
   },
   "local": {
     "rust_tests_passed": 295,
-    "capacity_test": "reserved for optimized Woodpecker check",
+    "capacity_test": "optimized musl Woodpecker #150; 10,005 databases",
     "fmt": true,
     "strict_clippy": true,
     "reblocking_regression_seconds": 0.14,
@@ -80,7 +80,8 @@
     "suite": "15226070dc97a8f5006924a256c3da40f178c1794251f223d333d8654655fad3",
     "clippy": "41b010151db28962827a71b3b14abc8857213e55dec78b3d3bfd38ce40af179d",
     "client-native": "4101feebda37bf302cacb560913f53db1119a89fa6492311d9c13e1aed8bca34",
-    "client-local": "1183c915603e1526014f57d541807c0a60cc02bece73598d02e7caa68c1a86e3"
+    "client-local": "1183c915603e1526014f57d541807c0a60cc02bece73598d02e7caa68c1a86e3",
+    "release_checks": "23f4172a868bb523e97e7ca8df2ac62ea8f2ded38b79da3527f9f4b4ebdb765f"
   },
   "cloud": {
     "b2": {
@@ -275,5 +276,112 @@
     "local_cli_seconds": 9.21,
     "opt_in_skipped_per_suite": 1,
     "cleanup": "Consolidated repeated database creation, credential loading and retry loops into one test fixture."
+  },
+  "release": {
+    "source_commit": "c9ed530cc21b4cd7f134b0d12ca6e2f6f47d046e",
+    "woodpecker_pipeline": 150,
+    "artifact_image_digest": "sha256:25b6124d4ff4681847f3fb3bab3e3af10a45d8329f143306d289ed7671cfa5b4",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.13.0",
+      "archive_sha256": "e211faa5a12a4dc7c8849ec4dd1aff93d2733f066f9dbee0cd89439a68425a09",
+      "binary_sha256": "4bc41f69e4eeab2ee6ed5be72036023eac2ce2f76675b9e5e1aadbe122cab4fd",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6193936,
+    "version": "v0.13.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 150,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/150/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.13.0",
+    "published_at": "2026-11-11T01:26:15Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.13.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "capacity_seconds": 198.68,
+    "tag_pipeline": {
+      "number": 151,
+      "status": "success"
+    }
+  },
+  "compatibility": {
+    "version": "0.13.0",
+    "archive_sha256": "e211faa5a12a4dc7c8849ec4dd1aff93d2733f066f9dbee0cd89439a68425a09",
+    "binary_sha256": "4bc41f69e4eeab2ee6ed5be72036023eac2ce2f76675b9e5e1aadbe122cab4fd",
+    "previous_binary_sha256": "c53e3113d873cc9fd515531024fdcf8bfe37bc8fe2f92b24e5c33ea6064190f4",
+    "checkpoint_and_suffix_upgrade": true,
+    "downgrade_with_new_write_and_receipt": true,
+    "scope": "Sequential local v0.12.0 -> v0.13.0 -> v0.12.0, with forced stops; no mixed-version clustered serving claim.",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true
+  },
+  "iteration": {
+    "removed_dependency": "client contracts waiting for the optimized build and capacity sweep",
+    "replacement": "debug Rust checks feed parallel client and release/capacity branches; both gate artifact assembly",
+    "docker_build_check": true,
+    "new_runtime_code_or_dependencies": false,
+    "claim": "Pipeline dependency change, not a measured end-to-end speedup."
+  },
+  "cleanup": {
+    "cloud_resources_removed": true,
+    "old_release_download_removed": true,
+    "qualification_logs_and_harnesses_removed": true,
+    "generated_model_states_removed": true,
+    "kept": "Latest release archive/checksums and reusable compilation/tool caches."
   }
 }
