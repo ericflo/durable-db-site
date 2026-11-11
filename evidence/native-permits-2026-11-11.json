@@ -1,0 +1,407 @@
+{
+  "schema": 1,
+  "date_utc": "2026-11-11",
+  "milestone": "clock-independent native ownership",
+  "source_commit": "50b165581f907f3824f8972fda397c3d870c922f",
+  "implementation_commit": "6a00bbb8ae910716f4623d5b1a95c024088ce3a8",
+  "scope": "Native library and HTTP backend; cloud CLI election/routing and partition placement remain open. No Rust-refinement, arbitrary live-memory rollback, AWS, sustained-load or production-readiness claim.",
+  "formats": {
+    "budgeted_remote": "owned-candidate-23",
+    "unbudgeted_remote": "owned-candidate-23-unbudgeted",
+    "local": "owned-candidate-15",
+    "older_remote_formats_refused": true
+  },
+  "local": {
+    "enabled_rust_tests": 291,
+    "fmt": true,
+    "strict_clippy_all_targets": true,
+    "permit_regressions": 6,
+    "permit_test_seconds": 0.0,
+    "rust_negative_controls": [
+      "ignore_negative_permit_result",
+      "revoke_only_immediate_predecessor"
+    ],
+    "vm_capability_helper_tests": 3
+  },
+  "models": {
+    "RevocableOwner": {
+      "distinct": 856,
+      "generated": 1690,
+      "depth": 15,
+      "unsafe_controls": 7,
+      "coverage_controls": 2
+    },
+    "RootRegistration": {
+      "distinct": [
+        34061,
+        281563
+      ],
+      "generated": [
+        110381,
+        1032703
+      ],
+      "depth": [
+        23,
+        27
+      ],
+      "unsafe_controls": 4,
+      "coverage_controls": 2,
+      "checkpoint_cut_requires_previously_completed_revocation": true
+    },
+    "PublicationSafety": {
+      "distinct": 175546,
+      "unsafe_controls": 4,
+      "permit_instantiation": "list before fresh fence; protect current identity; unpublished claims captured comparison before permit PUT"
+    },
+    "LiveTransactions": {
+      "distinct": 1532,
+      "unsafe_controls": 8
+    },
+    "LocalExclusive": {
+      "distinct": 57,
+      "unsafe_controls": 2
+    }
+  },
+  "local_upgrade": {
+    "source_commit": "50b165581f907f3824f8972fda397c3d870c922f",
+    "old_release": "v0.18.1",
+    "new_binary_sha256": "391a9494b7a61b9d1d7e084f23cd42a0de68beb5894f0d5c2be46ef792adafac",
+    "checks": [
+      "old_write",
+      "new_recovery_retry_write",
+      "old_reopen_new_data_and_retries"
+    ],
+    "old_binary_sha256": "8c287d9369ba9bdc29c0633746fe6a31ed6c571a9a6b333fbcae6188c2606086",
+    "temporary_servers_data_credentials_removed": true
+  },
+  "cloud": {
+    "date_utc": "2026-11-11",
+    "source_commit": "50b165581f907f3824f8972fda397c3d870c922f",
+    "clean_worktree": true,
+    "native_format": "owned-candidate-23",
+    "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture",
+    "scope": "Debug native HTTP; 4 MiB cache; clock-independent permits; live predecessor refused after takeover. Real B2 and versioned MinIO, not AWS, Kubernetes placement, arbitrary memory rollback, sustained load or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "admission_bytes_per_write": [
+            103670,
+            107362
+          ],
+          "automatic_collection": true,
+          "automatic_table_and_manifest_collection": true,
+          "base_table_and_manifest_allowance_per_write": [
+            45550,
+            47396
+          ],
+          "catalog_admission_bytes": 18596,
+          "catalog_survived_collection_after_takeover": true,
+          "checkpoint_objects_after_first_sweep": 3,
+          "checkpoint_objects_after_takeover_sweep": 3,
+          "checkpoint_objects_before_first_sweep": 6,
+          "checkpoint_row_bytes_per_write": 174,
+          "cleanup_wait_ms": 41398.408527,
+          "closed_journal_epochs_reclaimed": true,
+          "cold_receipts_and_values_verified": true,
+          "cold_recovery_ms": 3789.097477,
+          "complete_reopens": 2,
+          "directory_objects_after": 1,
+          "exhausted_tenant_did_not_stall_neighbor": true,
+          "inline_checkpoint_descriptors": true,
+          "journal_bytes_per_write": 254,
+          "journal_objects_after_first_sweep": 1,
+          "journal_objects_after_takeover_sweep": 0,
+          "journal_objects_before": 5,
+          "journal_only_funding_refused": true,
+          "ledger_objects_after": 2,
+          "ledger_objects_before": 11,
+          "live_predecessor_refused_after_takeover": true,
+          "maintenance_funding": {
+            "after_recovery": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            },
+            "before_recovery": {
+              "allocated": {
+                "attempts": 1,
+                "bytes": 51581
+              },
+              "funded_bytes": 114814
+            },
+            "cold_recovery_claimed_preserved_reserve": true,
+            "no_new_admission_allocation_for_recovery": true,
+            "second_cold_reopen_preserved_counters": true
+          },
+          "namespace": "native-http-cc1c184a-7de6-4c16-8c6e-4e96b762f4af",
+          "namespace_budget": {
+            "allocated": {
+              "attempts": 128,
+              "bytes": 25165824
+            },
+            "configuration_revision": 0,
+            "limits": {
+              "attempts": 256,
+              "bytes": 33554432
+            }
+          },
+          "new_rows_only_funding_refused": true,
+          "provider": "b2",
+          "refusal_and_retry_immutable_puts": 0,
+          "retained_export": {
+            "databases": 2,
+            "identical_restore_repeated": true,
+            "immutable_puts": 0,
+            "independent_local_destination": true,
+            "restored_after_source_image_collection": true,
+            "source_revision": 1
+          },
+          "retention": {
+            "cold_reopen_and_collection": true,
+            "exact_cut_values": true,
+            "immutable_puts": 0,
+            "release_reclaimed_old_checkpoint": true
+          },
+          "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; clock-independent permits; live predecessor refused reads and receipt retries after takeover. Not AWS, Kubernetes placement, arbitrary memory rollback or performance-SLO qualification.",
+          "setup_seconds": 24.338814505,
+          "tenant_budget": {
+            "allocated": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "configuration_revision": 4,
+            "limits": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "maintenance": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            }
+          },
+          "total_seconds": 202.185063785,
+          "warm_http_reads": 100,
+          "warm_read_control_calls": 0,
+          "warm_read_ms": {
+            "p50": 25.500017,
+            "p95": 48.696115999999996,
+            "p99": 80.609182
+          },
+          "warm_read_object_gets": 100,
+          "warm_read_paths": [
+            "checkpoint",
+            "recovered_suffix"
+          ]
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 20
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "admission_bytes_per_write": [
+            103670,
+            107362
+          ],
+          "automatic_collection": true,
+          "automatic_table_and_manifest_collection": true,
+          "base_table_and_manifest_allowance_per_write": [
+            45550,
+            47396
+          ],
+          "catalog_admission_bytes": 18596,
+          "catalog_survived_collection_after_takeover": true,
+          "checkpoint_objects_after_first_sweep": 3,
+          "checkpoint_objects_after_takeover_sweep": 3,
+          "checkpoint_objects_before_first_sweep": 6,
+          "checkpoint_row_bytes_per_write": 174,
+          "cleanup_wait_ms": 60394.236036,
+          "closed_journal_epochs_reclaimed": true,
+          "cold_receipts_and_values_verified": true,
+          "cold_recovery_ms": 146.917634,
+          "complete_reopens": 2,
+          "directory_objects_after": 1,
+          "exhausted_tenant_did_not_stall_neighbor": true,
+          "inline_checkpoint_descriptors": true,
+          "journal_bytes_per_write": 254,
+          "journal_objects_after_first_sweep": 1,
+          "journal_objects_after_takeover_sweep": 0,
+          "journal_objects_before": 5,
+          "journal_only_funding_refused": true,
+          "ledger_objects_after": 2,
+          "ledger_objects_before": 11,
+          "live_predecessor_refused_after_takeover": true,
+          "maintenance_funding": {
+            "after_recovery": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            },
+            "before_recovery": {
+              "allocated": {
+                "attempts": 1,
+                "bytes": 51581
+              },
+              "funded_bytes": 114814
+            },
+            "cold_recovery_claimed_preserved_reserve": true,
+            "no_new_admission_allocation_for_recovery": true,
+            "second_cold_reopen_preserved_counters": true
+          },
+          "namespace": "native-http-3b36c7e6-dae2-42b1-ae6d-ea1d8f3dc58d",
+          "namespace_budget": {
+            "allocated": {
+              "attempts": 128,
+              "bytes": 25165824
+            },
+            "configuration_revision": 0,
+            "limits": {
+              "attempts": 256,
+              "bytes": 33554432
+            }
+          },
+          "new_rows_only_funding_refused": true,
+          "provider": "s3",
+          "refusal_and_retry_immutable_puts": 0,
+          "retained_export": {
+            "databases": 2,
+            "identical_restore_repeated": true,
+            "immutable_puts": 0,
+            "independent_local_destination": true,
+            "restored_after_source_image_collection": true,
+            "source_revision": 1
+          },
+          "retention": {
+            "cold_reopen_and_collection": true,
+            "exact_cut_values": true,
+            "immutable_puts": 0,
+            "release_reclaimed_old_checkpoint": true
+          },
+          "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; clock-independent permits; live predecessor refused reads and receipt retries after takeover. Not AWS, Kubernetes placement, arbitrary memory rollback or performance-SLO qualification.",
+          "setup_seconds": 0.364510354,
+          "tenant_budget": {
+            "allocated": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "configuration_revision": 4,
+            "limits": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "maintenance": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            }
+          },
+          "total_seconds": 182.440884914,
+          "warm_http_reads": 100,
+          "warm_read_control_calls": 0,
+          "warm_read_ms": {
+            "p50": 2.693055,
+            "p95": 2.9681569999999997,
+            "p99": 3.095783
+          },
+          "warm_read_object_gets": 100,
+          "warm_read_paths": [
+            "checkpoint",
+            "recovered_suffix"
+          ]
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 30,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "preceding_campaign": {
+    "source_commit": "6a00bbb8ae910716f4623d5b1a95c024088ce3a8",
+    "b2": "failed after 13.04 seconds: fixture saw two of three replacement checkpoint objects without waiting for publication",
+    "correction": "bounded wait for a changed published checkpoint before pricing its files; no runtime safety assertions weakened",
+    "minio_seconds": 182.36,
+    "cleanup": [
+      {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 28
+      },
+      {
+        "bucket_removed": true,
+        "physical_versions_deleted": 30,
+        "container_removed": true
+      }
+    ]
+  },
+  "deletions": [
+    "timing interval runtime and tests",
+    "native clock/VM test adapter",
+    "lease renewal worker and local logical startup clock",
+    "15 timed/delegated model and proof release-build stages"
+  ],
+  "assumptions": [
+    "fresh unique process/permit identities and single-attempt physical permit PUT before publication",
+    "GET begun after confirmed physical revocation never returns stale positive permit bytes",
+    "durable immutable journal bytes and fresh point recovery reads",
+    "exact conditional authority comparisons and no reuse of successful response validation",
+    "arbitrary restoration/cloning of live process memory is unsupported"
+  ],
+  "hashes": {
+    "spec/candidates/RevocableOwner.cfg": "6409bfa4643e7b221b2c12148c60dd1da0e3058cd6a3e3f8913de059e1dd5be5",
+    "spec/candidates/RevocableOwner.checks": "9b38bab072a1273e356d6ab1f454582222f12dd014ba390707fffa812900c0b7",
+    "spec/candidates/RevocableOwner.tla": "39dc05bc6e01d36055e8fa8854035c7ccc1c7456d6ff85debfd35ddb8d7d4e9b",
+    "spec/candidates/RevocableOwnerDelayedReply.cfg": "49c1fa5d478cfc1b991e7a176fc2f6f31078ed553acad84a24ef6ff1da0d774e",
+    "spec/candidates/RevocableOwnerLateUpload.cfg": "9b0ce1b412557d7d7ebd91b2094c2fdece4b5a17612f416c868b102a4419f3bf",
+    "spec/candidates/RevocableOwnerUnsafeEarlyAck.cfg": "25c398c62d19baec3cffed356b1b7498f4f84d49696c0a43370710082aaad5b4",
+    "spec/candidates/RevocableOwnerUnsafeGap.cfg": "2822a71145be1a9e59d17454fdb0de121129b03f5bcd3e15a4ac9423ed8c7037",
+    "spec/candidates/RevocableOwnerUnsafeLateJoin.cfg": "532785e516455cdfa6075f49349e154955130bae3b7af4added7ecf1bf857b4e",
+    "spec/candidates/RevocableOwnerUnsafePublishEarly.cfg": "f1c8e3c6554747e33807ba5304063223bf1fe12e4bd3b9723fbc2868c56985df",
+    "spec/candidates/RevocableOwnerUnsafeRecreate.cfg": "0932ad8cead7679a0c810c79fbbb47648fa9e07b54f4f5904531ff16e82d9a67",
+    "spec/candidates/RevocableOwnerUnsafeScanEarly.cfg": "bba2a9ec625a7c129eebe2cff2793ca2fcd07f39c971450fe56d4a66a394daca",
+    "spec/candidates/RevocableOwnerUnsafeStaleGet.cfg": "163f882eff35f18a30559a2049c0771a4c842f43b77352d72c30db0ce90a4355",
+    "spec/candidates/RootRegistration.cfg": "0fd9afb4cf1fb60702189ac804644d09aec3ea9604af1d7c9d7e3969dd9844b7",
+    "spec/candidates/RootRegistration.checks": "7ecaa7c0e95b2c1bd38a0529dedd967f18d3db3e4445f2a30680d64d2e789888",
+    "spec/candidates/RootRegistration.tla": "5f6a2aff707e44cebe8ec84e318ed7d5da18683f1873b94aedf9c6515b4f6d6e",
+    "spec/candidates/RootRegistrationInterrupted.cfg": "11d21abe0388a5271b729bd4756e0a361953bbb026fcd961f7303848b1979bc4",
+    "spec/candidates/RootRegistrationRecovered.cfg": "6d4a2e79922f5282ab43b7230684a9ba65f825f5361d0bbf5742b54733508b44",
+    "spec/candidates/RootRegistrationThree.cfg": "d85db5ac16485e287c0e26e3f2542c9f1f806689cd9f2dbf4324f89fac8a0cb1",
+    "spec/candidates/RootRegistrationUnsafeCheckpoint.cfg": "8defc607e7bae2f60fe830d784441331942a6c9fef53d20583ba1d16aab0eb1e",
+    "spec/candidates/RootRegistrationUnsafeEarly.cfg": "f883f70e532402c2c46e2f1e5cb1fcf51a0c6444a4b5a0dd409f7a4bc9969d20",
+    "spec/candidates/RootRegistrationUnsafeImmediate.cfg": "568a27d1d17ab21310e72b2c86ac4cdf9e3e2732689677f062d87ac464a0ad50",
+    "spec/candidates/RootRegistrationUnsafeParent.cfg": "835309863108eeea805e8b1d1d8faf0fc3df5ec241db2d799be994c269746cea",
+    "src/api/native.rs": "5b484e3b9609a0459e9a249783509d325acdd349a7105b180b270890b02aba96",
+    "src/ownership/root/collection.rs": "bad492449739d6f38b8249526b38ee8f8636167dde0537b093adf55f89aadd0d",
+    "src/ownership/root/permit.rs": "78b235c0ed83dba1178aec8f4b232b74d4fda0da40444f361bc94c904abeb2ba",
+    "src/ownership/root.rs": "f8b10d85da8cb959bc9a77d63852bc89b3e056c9e872075798691e0edc3e42e5",
+    "src/transactions/live/control.rs": "dbcd7524d803f206b495a87d78809e969ee24770194c1c99f28eeb1325a8225b",
+    "tests/checkpoint_cloud/native_http.rs": "99b532abe157090572a62bf2105a541c4204a2c44de7cccaddd468803104e86a"
+  },
+  "logs_sha256": {
+    "durable-clockfree-all.log": "d1696946c2dcf7a6becd3d80e509231e9969362192a57dfa71fdb26534d5b75d",
+    "durable-clockfree-clippy.log": "de0a1e662b578cac9d0bcf61e910f16be5f164bf62e0c2a8029289fb6c36a593",
+    "durable-clockfree-model.log": "a8e5a586ba83705c5f4295d91cc1f3d76cddd7af26871985bffe62603c6a214f",
+    "durable-clockfree-permit-model.log": "bce231010d89b04bdc2945738c58a7eec6cde0f9f30bc20946b45b4738dd1f99",
+    "durable-clockfree-collection-model.log": "0681e6c61b32e636e0279fad7e4b14fdc8b086fa0d948e1514f0a46da796f31a",
+    "durable-clockfree-local-model.log": "129470a5dfd37cc604abe5860aea29ee63542bcbc6aa9130559107c65ee46ff8",
+    "durable-clockfree-live-model.log": "d00bde5d483bc183affc6f8341b7c86e6644090c50e3b0128d64e084096201d0",
+    "durable-clockfree-negative-missing-validation.log": "3b8bbc7af9470a0992a8e180894bd30048e181ce69a7d7607a67bafec279915c",
+    "durable-clockfree-negative-immediate-only.log": "bdb9cb6f6fc8e12e1a401220d60b108c4ee1167922c677fd954d577684b41cb3"
+  }
+}
