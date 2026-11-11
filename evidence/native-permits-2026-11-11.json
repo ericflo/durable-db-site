@@ -403,5 +403,82 @@
     "durable-clockfree-live-model.log": "d00bde5d483bc183affc6f8341b7c86e6644090c50e3b0128d64e084096201d0",
     "durable-clockfree-negative-missing-validation.log": "3b8bbc7af9470a0992a8e180894bd30048e181ce69a7d7607a67bafec279915c",
     "durable-clockfree-negative-immediate-only.log": "bdb9cb6f6fc8e12e1a401220d60b108c4ee1167922c677fd954d577684b41cb3"
+  },
+  "release": {
+    "source_commit": "336472889d17e658aefff2e1e3e5b897ff82ce13",
+    "woodpecker_pipeline": 188,
+    "artifact_image_digest": "sha256:011e06641077fb87f4a60b9cfa5bf7a17c32dafec96189d3cbac040d17a05980",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.19.0",
+      "archive_sha256": "ae4dba8d98d065207e6c469098a452631d370515bc8c67f18fb8871d3991b55f",
+      "binary_sha256": "9e18be70c4922fb53ab7f9854a5ace5262a28bd7907e7ca7c92bf829818a43b5",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6191056,
+    "version": "v0.19.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 188,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/188/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.19.0",
+    "published_at": "2026-11-11T10:31:36Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_release_source": true,
+      "default_version": "v0.19.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "tag_pipeline": {
+      "number": 189,
+      "status": "success"
+    },
+    "capacity_test_seconds": 197.08
   }
 }
