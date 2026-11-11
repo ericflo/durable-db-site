@@ -3556,6 +3556,33 @@
       "opt_in_skipped": 1
     },
     "capacity_test_passed": true,
-    "github_actions_disabled": true
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.0",
+    "published_at": "2026-11-11T16:55:12Z",
+    "github_asset_digest_matches": true,
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "a60915f0ffd3c0580d5d47bb277128b03a919de7",
+      "default_version": "v0.23.0",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "tag_pipeline": {
+      "number": 208,
+      "status": "success"
+    },
+    "pages": {
+      "source_commit": "a60915f0ffd3c0580d5d47bb277128b03a919de7",
+      "woodpecker_pipeline": 209,
+      "status": "success",
+      "public_pages_verified": [
+        "index.html",
+        "verification-results.html",
+        "production-readiness.html"
+      ],
+      "preserved_overrides": []
+    }
   }
 }
