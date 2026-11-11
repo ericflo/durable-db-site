@@ -2865,5 +2865,697 @@
     "pods": 3,
     "container_restarts": 0,
     "limitation": "Failed scale-one-to-three readiness with 1 GiB tenant funding, after 317 acknowledgements and immediate readbacks. No completed failure/recovery history check; server acquisition diagnostics were not retained. This is not a correctness or liveness pass."
+  },
+  "concurrent_default_layout_startup": {
+    "date_utc": "2026-11-11",
+    "source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "clean_worktree": true,
+    "native_format": "owned-candidate-23",
+    "command": "cargo test --locked --test cluster_cli -- --ignored --exact native_default_cli_starts_sixteen_partitions --nocapture",
+    "scope": "Debug native cloud CLI; sixteen partitions, 4 MiB cache, 128 MiB aggregate resident allowance. Default-layout startup with scheduled maintenance and fixed-stage diagnostics. Real B2 and versioned MinIO, not AWS, Kubernetes placement, RSS, sustained load or an SLO.",
+    "results": [
+      {
+        "provider": "B2",
+        "test": {
+          "native_default_cli_ready": true,
+          "partitions": 16,
+          "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+          "startup_seconds": 78.609773296
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 118
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "native_default_cli_ready": true,
+          "partitions": 16,
+          "scope": "One debug process, default partition count and resident allowance, automatic maintenance, 1 GiB / 100,000 PUT ceiling; startup only, not Kubernetes or a throughput/RSS claim.",
+          "startup_seconds": 1.218331109
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 255,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "concurrent_acquisition_checks": {
+    "source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "enabled_rust_tests_passed": 320,
+    "focused_controller_tests_passed": 11,
+    "focused_controller_seconds": 6.14,
+    "fmt": "passed",
+    "clippy": "all-targets -D warnings passed",
+    "resident_model": "19 states, both existing negative controls pass; overlapping acquisitions already permitted",
+    "negative_control": "serialized acquisition fails paused-partition progress check in 0.08 seconds"
+  },
+  "concurrent_acquisition_kubernetes_debug": {
+    "binary_source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "image_digest": "sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d",
+    "namespace_removed": true,
+    "cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 728
+    },
+    "complete": false,
+    "build": {
+      "source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+      "debug_binary_sha256": "9eecc0a90dee262f98fb2ff2cba7f6a498b4e70d6866220c7aa4d24595826a5b",
+      "stripped_debug_binary_sha256": "c9d3a44375a2e37945f5ae6840df72552e24bda2905c1b540f70ed078efbb7a9",
+      "tag": "127.0.0.1:19092/durable-db:debug-74a6c83308e18d259b58700987f2b8c691a7241c",
+      "scope": "Temporary locally-built debug image, not a release artifact"
+    },
+    "harness_source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "harness_sha256": "4afd7580a4dfd08316ed661cd38a5c4a6f41da93ac9447b1480f36c3e983c8da",
+    "workload_sha256": "66c1d8c759963d588d53619936ca9ff9d7da0c42ca3c70e7d18e04a5b853c2b8",
+    "started_at": "2026-11-11T16:40:58.620779+00:00",
+    "finished_at": "2026-11-11T16:56:43.907934+00:00",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 120,
+      "memory_observation": true,
+      "maximum_write_intents": 100000
+    },
+    "phases": [
+      {
+        "name": "initial-one",
+        "time_utc": "2026-11-11T16:42:29.744909+00:00",
+        "placement": [
+          "epsilon-3"
+        ]
+      },
+      {
+        "name": "provider-reachable",
+        "time_utc": "2026-11-11T16:42:41.957639+00:00",
+        "probe": "CONNECTED"
+      },
+      {
+        "name": "one-progress",
+        "time_utc": "2026-11-11T16:43:48.016030+00:00",
+        "writes_acknowledged": 18
+      },
+      {
+        "name": "scale-3",
+        "time_utc": "2026-11-11T16:46:20.038884+00:00",
+        "placement": [
+          {
+            "pod": "durable-db-6bcd8f5496-dhvl4",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-pz6qp",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-qp7lw",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          }
+        ],
+        "writes_acknowledged": 261
+      },
+      {
+        "name": "scale-6",
+        "time_utc": "2026-11-11T16:48:19.065843+00:00",
+        "placement": [
+          {
+            "pod": "durable-db-6bcd8f5496-dhvl4",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-jqwf7",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-pxzvf",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-pz6qp",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-qp7lw",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-r4qsn",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          }
+        ],
+        "writes_acknowledged": 506
+      },
+      {
+        "name": "steady-start",
+        "time_utc": "2026-11-11T16:48:20.165991+00:00",
+        "seconds": 120,
+        "writes_acknowledged": 506
+      },
+      {
+        "name": "steady-complete",
+        "time_utc": "2026-11-11T16:50:38.547966+00:00",
+        "elapsed_seconds": 138.8969904759433,
+        "writes_acknowledged": 771
+      },
+      {
+        "name": "forced-api-pod-loss",
+        "time_utc": "2026-11-11T16:51:24.202811+00:00",
+        "victim_node": "epsilon-2",
+        "placement": [
+          {
+            "pod": "durable-db-6bcd8f5496-7nh2l",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-jqwf7",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-pxzvf",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-pz6qp",
+            "node": "epsilon-3",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-qp7lw",
+            "node": "epsilon-1",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          },
+          {
+            "pod": "durable-db-6bcd8f5496-r4qsn",
+            "node": "epsilon-2",
+            "image_id": "localhost:32000/durable-db@sha256:6323a43f0ed5ddacbbada6e925bcdbaf8e9238bbc76702fd5f79fd455412a08d"
+          }
+        ],
+        "writes_acknowledged": 812
+      }
+    ],
+    "failure": {
+      "type": "RuntimeError",
+      "reason": "Synthetic workload failed"
+    },
+    "partial_workload": {
+      "schema": 1,
+      "state": "running",
+      "writes_acknowledged": 924,
+      "reads_verified": 923,
+      "http_attempt_statuses": {
+        "200": 1879,
+        "429": 240,
+        "503": 182,
+        "transport_or_decode_error": 70
+      },
+      "failures": [
+        {
+          "worker": 2,
+          "reason": "Identical-request recovery deadline exceeded"
+        }
+      ],
+      "expected": [
+        265,
+        193,
+        289,
+        177
+      ],
+      "route_count": 6
+    },
+    "budget_observations": [
+      {
+        "stage": "initial-one",
+        "status": {
+          "configuration_revision": 0,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 8388608,
+            "attempts": 416
+          }
+        },
+        "tenants": [
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 32
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "scale-3",
+        "status": {
+          "configuration_revision": 0,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 25165824,
+            "attempts": 992
+          }
+        },
+        "tenants": [
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 64
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 96
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 16777216,
+              "attempts": 96
+            },
+            "maintenance": {
+              "funded_bytes": 8388608,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 64
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "scale-6",
+        "status": {
+          "configuration_revision": 0,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 50331648,
+            "attempts": 1664
+          }
+        },
+        "tenants": [
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 33554432,
+              "attempts": 160
+            },
+            "maintenance": {
+              "funded_bytes": 16777216,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 128
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 192
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 770051,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 128
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 0,
+                "attempts": 0
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stage": "steady-74",
+        "status": {
+          "configuration_revision": 0,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 50331648,
+            "attempts": 2112
+          }
+        },
+        "tenants": [
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 256
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 819519,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 192
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 739831,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 83886080,
+              "attempts": 256
+            },
+            "maintenance": {
+              "funded_bytes": 41943040,
+              "allocated": {
+                "bytes": 770051,
+                "attempts": 1
+              }
+            }
+          },
+          {
+            "configuration_revision": 1,
+            "limits": {
+              "bytes": 1073741824,
+              "attempts": 100000
+            },
+            "allocated": {
+              "bytes": 50331648,
+              "attempts": 192
+            },
+            "maintenance": {
+              "funded_bytes": 25165824,
+              "allocated": {
+                "bytes": 709611,
+                "attempts": 1
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "acquisition_failures": {
+      "durable-db-67897bf8b-58f42": [],
+      "durable-db-67897bf8b-7nfsb": [],
+      "durable-db-67897bf8b-cwt8n": [],
+      "durable-db-67897bf8b-kh4zw": [],
+      "durable-db-67897bf8b-mnftz": [],
+      "durable-db-67897bf8b-z8cp2": [
+        {
+          "partition": 5,
+          "stage": "claim"
+        },
+        {
+          "partition": 14,
+          "stage": "select_journals"
+        }
+      ]
+    },
+    "memory": {
+      "samples": 5,
+      "peak_rss_bytes": 6737920,
+      "peak_working_set_bytes": 7557120,
+      "observed_restarts": 0
+    },
+    "limitation": "Temporary debug image, not the release artifact. Passed one/three/six readiness, 120-second requested steady phase and pod-loss replacement; client deadline failed during rollout. Fixture kept original pod IPs until rollout finished. No completed recovery-history verification, provider partition, scale-down, cold recovery, AWS, HPA, RSS bound or sustained-load claim."
+  },
+  "release": {
+    "source_commit": "74a6c83308e18d259b58700987f2b8c691a7241c",
+    "woodpecker_pipeline": 207,
+    "artifact_image_digest": "sha256:5ccaafe545fba7ae3d400996c984d9a122701022652dc6bce1365cb715f950bf",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.0",
+      "archive_sha256": "634de98884d0a0c0bec6cf1a70798f8405106c48bc7705ff9f22cf795f4cf202",
+      "binary_sha256": "5d9a21accb82b704f5de3aedb5d80b985f8f76b28dcb27b52abb92bcffac8acb",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6260547,
+    "version": "v0.23.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 207,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/207/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true
   }
 }
