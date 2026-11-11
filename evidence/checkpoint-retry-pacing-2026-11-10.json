@@ -1,0 +1,106 @@
+{
+  "milestone": "checkpoint reconstruction retry pacing",
+  "date": "2026-11-10",
+  "base_commit": "022990d3a27a4b177706a9844be6aa8f026d6549",
+  "scope": {
+    "runtime_net_rust_lines": 18,
+    "new_dependencies": false,
+    "new_persisted_fields": 0,
+    "storage_and_admission_formats_unchanged": true,
+    "budgeted_format": "owned-candidate-20",
+    "unbudgeted_format": "owned-candidate-15",
+    "compatible_with_v0_16_0": true,
+    "tenant_retry_attribution_complete": false
+  },
+  "policy": {
+    "delay_between_attempt_starts_seconds": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      30
+    ],
+    "maximum_delay_seconds": 30,
+    "armed_before_first_await": true,
+    "request_driven_maintenance_uses_same_gate": true,
+    "staged_publication_resolution_does_not_wait_or_rebuild": true,
+    "confirmed_publication_resets_pacing": true,
+    "restart_discards_pacing_but_not_durable_upload_allocation": true,
+    "ownership_clock_unchanged": true
+  },
+  "regressions": {
+    "paused_time_exact_deadline_checks": true,
+    "failed_retries": 7,
+    "immediate_maintenance_calls": 700,
+    "cancel_after_applied_put": true,
+    "collection_rebuild_paced": true,
+    "publication_cancellation_resolved_without_new_put": true,
+    "success_reset": true,
+    "tcp_new_writes_refused_during_failure": 32,
+    "tcp_exact_retries_resolved_during_failure": 32,
+    "tcp_tenant_allocation_unchanged": true,
+    "idle_recovery_after_provider_heals": true,
+    "cold_recovery_preserved": true
+  },
+  "local": {
+    "rust_tests_passed": 299,
+    "fmt": true,
+    "strict_clippy": true,
+    "focused_checkpoint_tests": 4,
+    "focused_checkpoint_test_seconds": 0.01,
+    "tcp_test_seconds": 1.11,
+    "native_client_tests_passed": 99,
+    "native_client_seconds": 28.31,
+    "local_client_tests_passed": 99,
+    "local_client_seconds": 9.08,
+    "opt_in_client_tests_skipped_per_suite": 1,
+    "capacity_test": "optimized musl Woodpecker release gate"
+  },
+  "negative_controls": [
+    "Removing the deadline check fails the paused-time test and real TCP refusal/retry test.",
+    "Arming after construction fails cancellation coverage.",
+    "Removing the 30-second cap fails its exact deadline.",
+    "Failing to clear pacing after success delays the next normal checkpoint."
+  ],
+  "model": {
+    "name": "Checkpoint",
+    "distinct_states": 65664,
+    "generated_states": 147744,
+    "depth": 12,
+    "negative_controls": 9,
+    "new_states_or_transitions": 0,
+    "scope": "Pacing removes construction opportunities; waiting is stuttering. This finite model does not prove runtime retry rates, physical clocks, tenant cost attribution or Rust refinement."
+  },
+  "deleted": [
+    "Unpaced request-driven reconstruction path replaced by one owner-local gate.",
+    "Stale live-test count/timing removed; outdated homepage manifest-accounting status corrected.",
+    "Existing fault regressions extended instead of adding duplicate fixtures or models."
+  ],
+  "remaining": [
+    "Per-tenant maintenance retry/recovery attribution and administrative/request/egress isolation.",
+    "Retained-image export/restore and scheduled backups.",
+    "Physical ownership timing/placement qualification and cloud native CLI cutover.",
+    "Large-image cleanup and sustained cloud performance/failure qualification."
+  ],
+  "source_sha256": {
+    "src/transactions/live/checkpoint.rs": "8651e0bd72452bf9db2b6623d4a59073994c576317356c710897dd6cef290b4d",
+    "src/ownership/root/tests/live.rs": "debba163ec4b55fb3f64e932c67516890fbf768895819b06cc506e4e4b3b74d7",
+    "src/ownership/root/tests/http.rs": "321066d40cd3f6873e044a36a0f9cfba1343e70e55cd91c71a5a168629ac0d58",
+    "spec/Checkpoint.tla": "7beb04073ff8a22654fc37d43b294bd3be1839bf1914bbf0d731d113ba3e280b"
+  },
+  "log_sha256": {
+    "focused": "2a8889a3ab26857c4eb9966ee1144e81bc54b7fcd2e86dd6c4e5a12155cd6656",
+    "http": "3993436b8a6cd811b27e1548a434a246c08adcd96a30c479723f252be5e2c31d",
+    "clippy": "55060927f895dc98ca2864c43a2077252e3599584d7f6ef5bcfccf52618e72f3",
+    "suite": "b858cd43bd1e7363b47b0b71de4602374892a648f8c95b3b77e497b7ed70432a",
+    "native-client": "c8768903df1ece71eb3be1a5f7c4c25c7eeaa121bb3dd4eb75b77a1e790d7638",
+    "local-client": "758bcc0cdff3b28ff4d7d48e8176de01d8fdc2a7f90524ad2741476343146410",
+    "model": "7771591c4136b98d027d1d1d4c2c38cdbbe0abff99c1819b7a059ed28244ce32",
+    "negative-gate": "ad20ed12f4c87b7c172a3cb281efa25bb8702cca97c185c5e11f1f917a6ac7be",
+    "negative-http": "3b7b136b97b859e5207ac6934a2dfcd7e12d61167353a908cfa0f2c8c85ddb41",
+    "negative-late": "f2b7562e548e4cb7ffe274bde3639e51c6888ce44d7b13beab15448a188a3c59",
+    "negative-cap": "422f084b9e2e9a2d059e3efbe9b3fafd56d43c15d098ea455651fb47f6c9c9e2",
+    "negative-reset": "ce032b5a70d0fd86f8a9e8102cc6afb7a32a571057370742a9787d2584eef2dc"
+  }
+}
