@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "scope": "One timing-independent ownership handoff; no runtime adoption or provider qualification.",
+  "bounds": {
+    "old_frames": 2,
+    "old_writers": 1,
+    "selected_successors": 1,
+    "new_writes": 1,
+    "read_groups": 1,
+    "ack_groups": 1
+  },
+  "result": {
+    "distinct_states": 856,
+    "generated_states": 1690,
+    "depth": 15,
+    "unsafe_controls": 7,
+    "delayed_event_coverage_controls": 2,
+    "tlc_seconds_less_than": 1
+  },
+  "files": {
+    "spec/candidates/RevocableOwnerUnsafeLateJoin.cfg": "532785e516455cdfa6075f49349e154955130bae3b7af4added7ecf1bf857b4e",
+    "spec/candidates/RevocableOwnerUnsafeGap.cfg": "2822a71145be1a9e59d17454fdb0de121129b03f5bcd3e15a4ac9423ed8c7037",
+    "spec/candidates/RevocableOwnerDelayedReply.cfg": "49c1fa5d478cfc1b991e7a176fc2f6f31078ed553acad84a24ef6ff1da0d774e",
+    "spec/candidates/RevocableOwner.checks": "9b38bab072a1273e356d6ab1f454582222f12dd014ba390707fffa812900c0b7",
+    "spec/candidates/RevocableOwner.cfg": "6409bfa4643e7b221b2c12148c60dd1da0e3058cd6a3e3f8913de059e1dd5be5",
+    "spec/candidates/RevocableOwnerUnsafeStaleGet.cfg": "163f882eff35f18a30559a2049c0771a4c842f43b77352d72c30db0ce90a4355",
+    "spec/candidates/RevocableOwnerUnsafeScanEarly.cfg": "bba2a9ec625a7c129eebe2cff2793ca2fcd07f39c971450fe56d4a66a394daca",
+    "spec/candidates/RevocableOwnerUnsafeRecreate.cfg": "0932ad8cead7679a0c810c79fbbb47648fa9e07b54f4f5904531ff16e82d9a67",
+    "spec/candidates/RevocableOwnerLateUpload.cfg": "9b0ce1b412557d7d7ebd91b2094c2fdece4b5a17612f416c868b102a4419f3bf",
+    "spec/candidates/RevocableOwnerUnsafeEarlyAck.cfg": "25c398c62d19baec3cffed356b1b7498f4f84d49696c0a43370710082aaad5b4",
+    "spec/candidates/RevocableOwner.tla": "39dc05bc6e01d36055e8fa8854035c7ccc1c7456d6ff85debfd35ddb8d7d4e9b",
+    "spec/candidates/RevocableOwnerUnsafePublishEarly.cfg": "f1c8e3c6554747e33807ba5304063223bf1fe12e4bd3b9723fbc2868c56985df",
+    "scripts/check-candidate.sh": "543d0c530bd87b78301e1e88302f261db7cce2b901afe46c9b7fb987bd85ec71",
+    "scripts/check-model.sh": "16e680c21c7ffc4e44175ca50e51e2e75a1bd4799cdaf6d075e9d1f186391640"
+  },
+  "logs": {
+    "model-candidate-revocable-latejoin.log": "cede7ccc8ba525ba4c8767a6b23b28b49b6eca093d05513499b93ced3b62e605",
+    "model-candidate-revocable-scanearly.log": "85aaf1dce4c1a014b586949334a4f3b620e3ef8f1baa3eed445dc7edb1c1cf4e",
+    "model-candidate-revocable-owner.log": "a19c1ddb7b8fae46c6e9a7e7edb388aaa27b19b34c7acba55fca19a85650d5b3",
+    "model-candidate-revocable-earlyack.log": "ce915b04824d3f545ff733e693d44123c0d7619449703320fa2de4fe3a3efead",
+    "model-candidate-revocable-lateupload.log": "d3884e4c6c677cb29a8c796ad042965edc000ff5b119210c315ab3cf16db24ba",
+    "model-candidate-revocable-recreate.log": "d17ed556a0da64650880768e48ab3a861986c8b7bd81f663a557ad261e4218cc",
+    "model-candidate-revocable-publishearly.log": "84673b6bfa0a6fdfa039e07d58b5ba70f034f8233a79a13e567e1101f4bbefa6",
+    "model-candidate-revocable-delayedreply.log": "ed4eb5d93665ba4183d5c8ee4795314b6813ffe8b377c01564871d6ce86b1376",
+    "model-candidate-revocable-staleget.log": "b47affd1669fe98aebeb52574ec872c603000837f0d22d29a26fd56362374b71",
+    "model-candidate-revocable-gap.log": "58ee4f2802795804ca3b5e697d1d07fa45a27857b295f5d849d08c9a6f8a215b"
+  },
+  "limitations": [
+    "Fresh permit GETs after revocation cannot return old positive bytes.",
+    "Exactly one physical permit PUT completes positively before identity publication.",
+    "Conditional acquisition, fresh identities, journal durability and atomic durable selection are assumptions.",
+    "No repeated-root/placement/collection composition, liveness or Rust proof.",
+    "Ordinary group validation retains a provider GET latency/cost floor."
+  ]
+}
