@@ -6,14 +6,14 @@ export KACHE_CONFIG=&quot;$PWD/.kache.toml&quot;
 
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
-cargo test --locked --all-targets -- --skip ten_thousand_databases_split_page_recover_and_collect
-cargo test --locked --release --test publication ten_thousand_databases_split_page_recover_and_collect
+cargo test --locked --all-targets
+cargo test --locked --release --test publication ten_thousand_databases_split_page_recover_and_collect -- --ignored --exact
 scripts/check-model.sh
 scripts/check-proof.sh
 </code></pre>
 <p>Native client contract checks explicitly provision 1 GiB per database with <code>DURABLE_DB_TEST_ADMISSION_BYTES=1073741824</code>; half funds admission and half prepays durable maintenance. The long document-tail and receipt-eviction cases exceed the default 64 MiB under conservative shared-table pricing; the fixture retains the previous 512 MiB admission allowance. The common JavaScript fixture uses the existing administrator budget endpoint. Runtime defaults and dedicated refusal tests are unchanged. Run this contract locally after admission-pricing changes, before waiting for the release build.</p>
 <p>The backup recovery fixture uses a larger bounded request budget so its 16,641-key interrupted restore tests recovery rather than waiting for the default four-commit-per-second allowance. Admission tests retain default-policy coverage and use a controlled clock for exact refill and eviction checks.</p>
-<p>The two Rust test commands run the complete required suite: use release mode for the capacity regression to avoid its large directory sweep in debug mode. The local command uses your host target. Woodpecker runs that same regression on musl, sharing the target used by the shipped static binary instead of building a separate optimized GNU target.</p>
+<p>The two Rust test commands run the complete required suite: the capacity regression is opt-in so ordinary <code>cargo test</code> does not run its large directory sweep in debug mode. CI runs it explicitly in release mode. The local command uses your host target. Woodpecker runs that same regression on musl, sharing the target used by the shipped static binary instead of building a separate optimized GNU target.</p>
 <p>The model command checks every current-engine model and its required controls. The proof command above checks abstract publication safety; journal and research proofs have separate commands below. These checks do not establish that the Rust implementation refines the models. See <a href="verification.html">verification</a> for each theorem’s assumptions and scope.</p>
 <h2 id="work-on-one-component">Work on one component<a class="anchor" href="#work-on-one-component" aria-label="Link to this section">#</a></h2>
 <p>Run the checks affected by a change while iterating. Woodpecker retains the complete required suite.</p>

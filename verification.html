@@ -318,16 +318,32 @@ scripts/check-vm-clock.py --test-binary /path/to/6688d47-test-binary --kernel no
 <p>The model assumes unique immutable identities and exact register comparisons. Its acknowledgement markers overapproximate eligibility and only assert discoverability. It does not prove data-byte durability, selected-prefix preservation, permission/clock composition, implementation refinement or liveness. The native controller now creates and revokes permits; the timed runtime is removed. Checkpoint/recovery and native HTTP integration are described below. Native physical uploads use the allocator described above; registration collection remains open.</p>
 <h2 id="durable-prefix-catalog">Durable prefix catalog<a class="anchor" href="#durable-prefix-catalog" aria-label="Link to this section">#</a></h2>
 <p><code>RootCatalog.tla</code> models captured conditional requests, immutable catalog uploads, positive knowledge, provider send, delayed application, timeouts and replies separately. A claim must inherit all selected prefixes. A complete scan can refresh its comparison after renewal only if the catalog is unchanged. Exact comparison prevents a stale publication from dropping or replacing a decision. Late journal uploads remain possible after selection.</p>
-<p>After a directly confirmed prefix publication, the implementation retains its
-immutable registration cursor and reloads the newly confirmed catalog. Identity,
-checkpoint and collection generation must still match; uncertain outcomes validate
-and restart from the confirmed catalog. Each new prefix still requires completed
-discovery and the original exact comparison. The eight-journal regression reduces
-registration GETs from 53 to nine and reads every selected frame. Existing lost-
-reply, takeover, stale-scan and failed-upload tests still pass. This optimization
-removes repeated ancestry scans; it does not bound the total retained ancestry or
-change the model’s publication actions.</p>
-<p>The routine checks use two epochs, three invocations and one frame (<strong>393,513</strong> states, depth 33; 8 seconds locally), plus three epochs and three invocations with empty journals (<strong>102,525</strong> states, depth 26; 3 seconds). Empty selected prefixes still require durable catalog publication and inheritance. The nonempty two-epoch case and fault controls cover frame preservation; the former larger routine instances are removed. Five mandatory unsafe controls detect missing comparison, dropped inheritance, reselection, publication before durable upload and discovery before drain. Two coverage controls witness selection applying after timeout and a third epoch inheriting a prior decision. No symmetry reduction or guided constraint is used. Run <code>scripts/check-candidate.sh RootCatalog</code>.</p>
+<p>Recovery groups at most eight complete, unselected journals from the same
+confirmed catalog into one publication. Every prefix upload and the shared
+index/header must complete before the exact conditional write. Mixed snapshots,
+incomplete or duplicate journals and oversized batches are rejected before
+upload. Single-prefix callers use the same implementation. Direct confirmation
+retains the immutable ancestry cursor and loads the new catalog; uncertainty
+validates the same owner and restarts discovery. Checkpoint and collection
+identity checks remain unchanged.</p>
+<p>The eight-journal regression reduces catalog publications from eight to one,
+with ten immutable PUTs and at most nine registration GETs. Seventeen journals
+require three publications, 23 PUTs and at most eighteen registration GETs.
+Tests recover every selected frame, cross an index split, lose a two-journal
+publication reply, deliver late journal bytes, race takeover and fail uploads.
+This removes per-journal catalog/index publication; it does not bound retained
+ancestry, eliminate placement contention or establish a cloud latency speedup.</p>
+<p>The model now captures a set of completed scans from one source catalog in each
+seal. Routine checks use two epochs, three invocations and one frame (<strong>393,513</strong>
+states, depth 33; 8 seconds locally), plus three epochs and three invocations with
+empty journals (<strong>156,345</strong> states, depth 26; 5 seconds). The latter includes
+multi-journal publication; the former covers nonempty-prefix preservation.
+Five mandatory unsafe controls detect missing comparison, dropped inheritance,
+reselection, publication before durable upload and discovery before drain.
+Three coverage controls witness a delayed selection, inherited selection and a
+two-journal batch. The eight-entry implementation bound and mixed-snapshot
+validation are checked in Rust. These bounded instances do not prove Rust or
+all nonempty batch interleavings.</p>
 <p>The Rust <code>owned-candidate-3</code> record carries an immutable catalog identity and rejects earlier candidate formats. Catalogs reuse the existing bounded-page B+tree, with a checksummed header of at most 4 KiB and 112-byte prefixes. <code>recovery()</code> requires confirmed activation and drain. Opaque scans bind to that owner and catalog; only a completed unselected scan can be published. The controller captures the exact comparison before any immutable upload. An upload failure prevents publication; a lost publication reply requires exact validation or a winning claim to recover the durable decision. Existing selections replay only their fixed prefix. Missing or corrupt referenced objects never become absent entries.</p>
 <p>Eight additional tests cover lost replies and complete reopening, both selection/claim orders, stale parallel scans, activation/identity/expiry checks, missing/corrupt/oversized catalog objects, failures at all three upload stages, a split index with 130 selected journals, and renewals during a long scan. B2’s real HTTP control fixture loses an applied selection reply; S3’s HTTP fixture also uploads and reads the journal, index, prefix and catalog and excludes a late second frame after recovery. These are loopback fixtures with controlled clocks, not cloud qualification. <a href="evidence/root-catalog-2026-11-09.json">Evidence</a>.</p>
 <p>The model assumes ordered winning epochs, durable immutable bytes and exact register comparisons. Drain completion abstracts the ending of every earlier acknowledgement interval. The separate acquisition, registration, timing and journal results are not a complete composition or Rust-refinement theorem. Later sections describe transaction/receipt recovery, checkpoints and native HTTP integration. Collection, physical upload admission, election and placement are outside this component model. History traversal still grows with ownership changes.</p>

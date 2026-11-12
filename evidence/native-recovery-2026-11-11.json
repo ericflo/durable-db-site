@@ -6307,5 +6307,60 @@
     },
     "capacity_test_passed": true,
     "github_actions_disabled": true
+  },
+  "batched_selection": {
+    "maximum_prefixes_per_publication": 8,
+    "shared_catalog_snapshot_required": true,
+    "conditional_publications": {
+      "eight_journals_before": 8,
+      "eight_journals_after": 1,
+      "seventeen_journals_after": 3
+    },
+    "immutable_puts": {
+      "eight_journals_after": 10,
+      "seventeen_journals_after": 23
+    },
+    "registration_get_limits": {
+      "eight_journals": 9,
+      "seventeen_journals": 18
+    },
+    "model": {
+      "distinct_states": [
+        393513,
+        156345
+      ],
+      "unsafe_controls": 5,
+      "coverage_controls": 3,
+      "scope": "One nonempty ancestral journal or two empty ancestral journals; not Rust refinement or all nonempty batch interleavings."
+    },
+    "qualification": "Eleven catalog regressions and strict clippy pass; full suite and cloud qualification pending",
+    "input_sha256": {
+      "src/ownership/root.rs": "e801aebf5286add82a02b96c91bb7e8d0e5698638c3915423670964b103f1cba",
+      "src/ownership/root/catalog.rs": "ccfb21f9f41e414527a91ff82fe1b5f5295bb755cca540be2f6e55f4e33e3689",
+      "src/ownership/root/tests/catalog.rs": "6e8bb3ff2c3b751423a2d214e5215a0cd95401a1fde22fd74bec39375ef8471e",
+      "spec/candidates/RootCatalog.tla": "d6cd3cf9333e22f6222cffb3b89b5c62d0cd7a3a21c02906d01d0d841685a324",
+      "spec/candidates/RootCatalogBatch.cfg": "90dbe0ae8c0ceee39cc93d80fc99e4175800bda35a35a62becca84d5443487a5",
+      "Dockerfile": "2745a37bdaa321678d7b16c3b13e6f455f3d9f8286568201c33e85cd767ffe94",
+      "tests/publication.rs": "f61fc49605af7b94f9d7e2100529293e63010af30a4c3975f6488f952e064f61"
+    },
+    "motivation": {
+      "campaign_report_sha256": "a973c608f5083526219fff3208cc75415ff29b6906f6a6f567f0c5f260c6757c",
+      "longest_selection": {
+        "partition": 10,
+        "milliseconds": 90300,
+        "has_fixture_writer": false
+      },
+      "active_partition_selection": {
+        "partition": 2,
+        "milliseconds": 45906
+      },
+      "two_way_hold_claimant_counts": {
+        "2": 2,
+        "12": 2,
+        "14": 2
+      },
+      "limitation": "Stage timings and competing claim attempts do not establish a causal provider-cost breakdown."
+    },
+    "iteration": "Capacity sweep is opt-in in cargo test and mandatory via --ignored --exact in release-mode Woodpecker checks; no capacity check removed."
   }
 }
