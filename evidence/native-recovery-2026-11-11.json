@@ -951,6 +951,172 @@
         "No AWS, HPA, whole-host loss, stale-DNS/unreachable-peer failure or sustained-load qualification.",
         "CI runtime image retained as a release artifact; the local pull, task registry forward, private runner inputs and disposable cloud resources were removed."
       ]
+    },
+    {
+      "binary_source_commit": "689cfcf798e916a4d9cdf6fd30b4af00308a22ee",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.6",
+      "binary_sha256": "694523ed746c31f34175dfce12c90964a2f33b62831544e85fe3a244dc03962b",
+      "image_digest": "sha256:350fede6ed06f16d14819358ecbcb8b39c6fc476688182f23dc6da3b68a467eb",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 554
+      },
+      "started_at": "2026-11-12T01:36:23.903935+00:00",
+      "finished_at": "2026-11-12T01:48:08.411103+00:00",
+      "source_commit": "689cfcf798e916a4d9cdf6fd30b4af00308a22ee",
+      "harness_sha256": "d7b604ed423c776d35aa267075d90f30c2261509e5124128513866d705649599",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "controller_failure": {
+        "type": "HTTPError",
+        "reason": "HTTP Error 500: Internal Server Error"
+      },
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T01:36:45.019738+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T01:36:58.648820+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T01:39:15.763709+00:00",
+          "writes_acknowledged": 23
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T01:42:19.269063+00:00",
+          "writes_acknowledged": 157
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 219,
+        "reads_verified": 219,
+        "verified": [
+          50,
+          49,
+          56,
+          64
+        ],
+        "failures": [
+          {
+            "worker": 0,
+            "reason": "Identical-request recovery deadline exceeded (commit, last HTTP status 503)"
+          },
+          {
+            "worker": 1,
+            "reason": "Identical-request recovery deadline exceeded (commit, last HTTP status transport_or_decode_error)"
+          }
+        ],
+        "http_attempt_statuses": {
+          "200": 461,
+          "429": 627,
+          "503": 165,
+          "transport_or_decode_error": 37
+        }
+      },
+      "stale_dns_fault_reached": false,
+      "failure_metrics": [
+        {
+          "http_status": 429
+        },
+        {
+          "http_status": 200,
+          "native_list_buckets": {
+            "count": 23.0,
+            "sum": 2.357965
+          },
+          "native_update_bucket": {
+            "count": 22.0,
+            "sum": 207.822137
+          }
+        },
+        {
+          "http_status": 429
+        },
+        {
+          "http_status": 200,
+          "native_list_buckets": {
+            "count": 120.0,
+            "sum": 11.611627
+          },
+          "native_update_bucket": {
+            "count": 63.0,
+            "sum": 313.496529
+          }
+        },
+        {
+          "http_status": 200,
+          "native_list_buckets": {
+            "count": 424.0,
+            "sum": 37.49815
+          },
+          "native_update_bucket": {
+            "count": 229.0,
+            "sum": 480.080285
+          }
+        },
+        {
+          "http_status": 200,
+          "native_list_buckets": {
+            "count": 923.0,
+            "sum": 79.792687
+          },
+          "native_update_bucket": {
+            "count": 601.0,
+            "sum": 438.424498
+          }
+        }
+      ],
+      "limitations": [
+        "Failed during scale-to-six tenant-budget observation, before the process-pause fault. No full history or cold data recovery verification was completed.",
+        "The partial workload snapshot records 219 acknowledgements/readbacks; pending work could complete afterward, so this is not a final count or a data-loss finding.",
+        "Four of six auxiliary metric reads succeeded; two were refused by administrator admission. Durations include complete provider requests, not only remote server processing.",
+        "Native bucket update calls were much slower than list-bucket observations in the sampled new pods; this does not establish a provider rate-limit cause.",
+        "All disposable resources and local pulled images were removed. No new release was published from this candidate."
+      ]
     }
   ],
   "release": {
@@ -1449,5 +1615,90 @@
       "number": 229,
       "status": "success"
     }
+  },
+  "raw_control_observations": {
+    "enabled_rust_checks": 329,
+    "strict_clippy": true,
+    "regression_failed_prior_implementation": true,
+    "raw_stale_partition_observation_authority_writes": 0,
+    "stale_exact_validation_refused": true,
+    "revoked_predecessor_cannot_serve": true,
+    "common_manifest_reader_reused": true,
+    "data_read_barrier_preserved": true,
+    "root_acquisition_model": {
+      "main_distinct_states": 117741,
+      "three_candidate_distinct_states": 30349,
+      "mandatory_negative_controls": 6
+    },
+    "cloud_followup": "pending",
+    "scope": "Raw observations are hints; exact comparisons, public budget freshness and serving-permit validation are unchanged.",
+    "provider_checks": [
+      {
+        "provider": "B2",
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 7
+        },
+        "source_commit": "9b6875dbf934eec3617f2b183fab3ac87588e409",
+        "failure": "Old instrumentation assertion expected [read, replace, barrier] = [1,1,1]; raw observations correctly produced [1,0,0]. The assertion was corrected; no handoff phase was reached."
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 15,
+          "container_removed": true
+        },
+        "source_commit": "9b6875dbf934eec3617f2b183fab3ac87588e409",
+        "failure": "Old instrumentation assertion expected [read, replace, barrier] = [1,1,1]; raw observations correctly produced [1,0,0]. The assertion was corrected; no handoff phase was reached."
+      },
+      {
+        "provider": "B2",
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 71
+        },
+        "source_commit": "6ee7807",
+        "failure": "Single-attempt POST /v1/databases/app-0/commit returned HTTP 503; fixture performs no implicit retries. Full deadline-bounded Kubernetes qualification remains pending."
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "automatic_acquisition_and_placement": true,
+          "ceilings_preserved": true,
+          "checkpoint_and_cold_recovery": true,
+          "independent_node_transports_and_caches": true,
+          "layout_mismatch_refused": true,
+          "live_removed_owner_refused": true,
+          "maximum_live_servers": 2,
+          "membership_sequence": [
+            1,
+            2,
+            1,
+            0,
+            1
+          ],
+          "partitions": 2,
+          "provider_metrics_count_once": true,
+          "receipts_preserved": true,
+          "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+          "seconds": 2.607750431,
+          "shared_metadata_collection": true,
+          "unmoved_owner_preserved": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 80,
+          "container_removed": true
+        },
+        "source_commit": "6ee7807"
+      }
+    ]
   }
 }
