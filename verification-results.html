@@ -19,7 +19,7 @@ default ten retries and three-minute retry budget could occupy an acquisition
 slot through the client’s entire recovery window. B2 and S3 now share at most
 three read attempts and a ten-second whole-observation deadline covering GET,
 range and listing bodies. Expiration returns an error, never confirmed absence;
-mutation retries remain disabled. The stalled-body TCP regression fails on the
+conditional writes and immutable uploads remain single-attempt. The stalled-body TCP regression fails on the
 previous reader. All 332 enabled Rust checks, formatting, strict clippy and the
 site build pass. The unchanged 856-state revocable-owner model passes its nine
 negative controls. These bounded checks do not prove Rust or liveness.
@@ -50,6 +50,18 @@ checks pass in 0.19 seconds, including cancellation and delayed failures; the
 checks, formatting, strict clippy and the documentation build pass. These bounded checks
 are not a Rust proof or confirmation of the cloud stall’s cause. A complete new
 campaign remains required before release.</p>
+<p>Versioned MinIO passes the complete native HTTP budget/retention fixture with
+the observation deadline: two cold reopens, live predecessor refusal, automatic
+journal/table/manifest collection, preserved maintenance funding, retained-image
+export and restoration after source collection. Its 100 warm reads perform 100
+permit GETs and zero authority operations. This is local loopback, not AWS or a
+cloud latency SLO. The 182-second run includes three normal collection intervals.</p>
+<p>Two failed fixture attempts are retained. The fixture now waits for the handoff
+checkpoint, allows its claim of preserved reserve, and writes two new frames
+before demanding their collection. It still checks the exact final charge,
+unchanged admission ceilings and reclamation; it no longer expects a valid live
+suffix to disappear. All three MinIO buckets/containers and 86 physical versions
+were removed. B2/Kubernetes qualification of this runtime is still pending.</p>
 <p>The earlier candidate and provider checks below remain part of the record.</p>
 <p>Candidate <code>689cfcf</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/231/1">Woodpecker #231</a>
 and the independently downloaded static executable checks, but <strong>fails the fresh

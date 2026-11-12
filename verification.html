@@ -566,7 +566,7 @@ namespace, bucket, key and 611 physical versions were removed. See the
 <h2 id="bounded-remote-observations">Bounded remote observations<a class="anchor" href="#bounded-remote-observations" aria-label="Link to this section">#</a></h2>
 <p>B2 and S3 share a ten-second deadline for each object GET, bounded range and
 listing, including retries and streamed bytes. Read retries have at most three
-physical attempts; mutation transports remain single-attempt. A timeout is an
+physical attempts; conditional writes and immutable uploads remain single-attempt. A timeout is an
 error, never a missing permit or a successful comparison. These are scheduling
 bounds checked when the process runs, not leases or real-time guarantees during
 process suspension. Slow transfers can fail and require an explicit retry.</p>
