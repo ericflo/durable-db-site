@@ -13414,5 +13414,55 @@
     "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.3",
     "published_at": "2026-11-12T19:13:05Z",
     "prerelease": true
+  },
+  "control_publication_receipts": {
+    "baseline_source_commit": "4fc6266108c937f8946928a2c10b593a407d5be5",
+    "change": "The directory returns its exact confirmed immutable pointer. The partition adapter returns its captured record without a post-publication metadata read. Historical success is not continuing serving authority.",
+    "routine_rust_checks_passed": 355,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_partition_checks": 11,
+    "focused_seconds": 0.24,
+    "negative_control": {
+      "previous_implementation": "metadata reads blocked immediately after a successful publication",
+      "result": "expected simulated-time timeout",
+      "seconds": 0.0
+    },
+    "model": {
+      "module": "PublicationCombining",
+      "distinct_states": 1722773,
+      "generated_states": 10689765,
+      "seconds": 43,
+      "fault_controls": 5,
+      "reachability_controls": 1,
+      "bounds": {
+        "jobs": 2,
+        "targets": 2,
+        "helpers": 2,
+        "revision_advances": 2
+      },
+      "scope": "Finite publication receipt safety; no Rust, provider or composed serving proof."
+    },
+    "acquisition_model": "Existing RootAcquisition bounds and all controls pass unchanged.",
+    "regressions": [
+      "receipt after successful CAS with subsequent metadata reads unavailable",
+      "delayed success retains its pointer after a newer publication",
+      "stale returned token cannot overwrite the successor",
+      "existing lost publication reply remains uncertain"
+    ],
+    "local_log_sha256": {
+      "receipts-negative.log": "e72bfd1023061ee0fcec136a42cef1cec9d6bbe977ec4487963fed54cc49a292",
+      "receipts-focused.log": "afe112539dfafb435de8e44eb8d1362d18e2e9ffc55c54d9398178fb1cae6779",
+      "receipts-tests.log": "1e7117c1526dfded47469e4faa4ff0f75700100a7a387ec8d3b88c543d02e36b",
+      "receipts-clippy.log": "7700028286c7591388d95d6318cecdfe24117879614e14260bd2b6655ce910d6",
+      "receipts-model.log": "ae08a9652d74ec8022d986ab379f664c1e24494ddd286334c6d68c2b7b88a320",
+      "receipts-acquisition-model.log": "89126d4886d85a12e9161c8cc0075e058695255af6690fbe13ec528e56660579"
+    },
+    "removed": [
+      "post-publication control readback",
+      "readback-only uncertainty error classification",
+      "duplicate version-token encoding",
+      "obsolete address-based placement and unconditional candidate-abandonment descriptions"
+    ],
+    "cloud_qualification": "pending"
   }
 }

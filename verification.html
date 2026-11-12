@@ -100,6 +100,16 @@
 <h2 id="cross-replica-publication-combining">Cross-replica publication combining<a class="anchor" href="#cross-replica-publication-combining" aria-label="Link to this section">#</a></h2>
 <p><code>PublicationCombining.tla</code> was checked before implementing durable proposals. It models two fresh jobs, two database targets, two helpers, and two authority revision advances in the default check. Jobs can use genuine stale observations, upload, submit, disappear with an unknown outcome, receive success, or be definitely aborted before submission. Helpers select independent targets and race a conditional group publication. Original unbatched publishers, read barriers, collection candidate snapshots, fence publication, manifest/proposal deletion, and abandonment are included. A committed proposal may be cleaned up without advancing the fence; already loaded proposals remain subject to the original target comparison.</p>
 <p>The default two-revision instance checks 1,722,773 distinct states (10,689,765 generated, depth 25) in 43 seconds on the development host. All four unsafe controls still fail as required. This replaces the larger three-revision default to shorten iteration; it does not extend the proof scope.</p>
+<p>Publication receipts now return the directory’s exact published pointer, including
+when another helper confirmed it. They do not require a subsequent metadata
+read. The default model still checks <strong>1,722,773 states</strong> in 43 seconds; five
+fault controls pass, including a new premature-receipt fault. A two-job,
+one-database, one-helper coverage check reaches a successful receipt whose target
+has since changed. This does not grant serving authority: <code>RootAcquisition</code>
+binds the delayed result to its invocation, and response permission remains
+separate. Rust regressions block all metadata reads after a successful CAS and
+race a newer publication against delayed success delivery; stale tokens must
+still fail their next comparison. Lost publication replies remain uncertain.</p>
 <p>The historical three-revision run checked all 13,049,720 symmetry-reduced states (84,918,974 generated, depth 29) against the seven checked invariants: types, referenced-manifest existence, original target comparison, unrelated-write preservation, no duplicate publication, acknowledged history, and no commit after a definite abort. Symmetry renames only jobs among jobs and helpers among helpers. A separate run without symmetry also passed: 42,716,288 states, 279,275,713 generated, depth 29. Reproduce that larger run with <code>PublicationCombiningNoSymmetry.cfg</code>. TLC uses probabilistic state fingerprints; these runs are finite model-checking evidence, not a mechanized proof. Four intentionally unsafe configurations omit the collection fence, expected target, current-root merge, or post-submission uncertainty rule.</p>
 <table>
 <thead>
