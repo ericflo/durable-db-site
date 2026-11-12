@@ -103,8 +103,8 @@
 metadata from any previously submitted proposal, even after proposal deletion.
 This overapproximates the runtime’s one bounded discovery batch per invocation;
 every selection still rechecks the target and original collection fence. It
-checks <strong>1,736,213 distinct states</strong> (11,377,184 generated, depth 25) in 47 seconds
-on the development host. Five fault controls and the superseded-receipt coverage
+checks <strong>1,736,213 distinct states</strong> (15,818,936 generated, depth 25) in 60 seconds
+on the development host. Six fault controls and the superseded-receipt coverage
 control still produce their expected counterexamples. A one-revision coverage
 check restricts receipt delivery to when a helper is already busy. Its one-job,
 one-database instance reaches that interleaving in 582 states (depth 9). <code>Ack</code>
@@ -115,10 +115,18 @@ latency, fairness or whole-deployment behavior.</p>
 comparison conflict no longer repeats listing and proposal downloads, or the
 duplicate authority read and target lookup after reusing that batch. Current
 heads, collection fences and manifest availability are rechecked before each
-fresh directory rewrite and exact comparison; neither target eligibility nor
-uncertain PUTs are replayed. Proposals arriving after discovery can be helped by
-a later invocation. The regression forces two conflicts and checks one LIST and
-one proposal GET, with both acknowledged and applied-but-lost final responses.
+fresh directory rewrite and exact comparison. If a definite conflict changed
+only register metadata, retries retain the completed directory and selected
+pointers while the exact directory root and original fence remain unchanged.
+They preserve the new metadata and compare its exact revision. A changed root
+requires selection and path copying again; a changed fence refuses publication.
+No uncertain PUT is replayed. <code>Refresh</code> models this same-heads/same-fence step
+without adding protocol state. A one-helper fault configuration omits the
+directory equality and detects lost unrelated writes. The regression forces two conflicts and checks
+one LIST, one proposal GET and one directory upload, with both acknowledged and
+applied-but-lost final responses. The previous code uploads three directory
+pages. Omitting the root comparison fails the strengthened competing-directory
+regression. Proposals arriving after discovery can be helped by a later invocation.
 The existing suite covers competing writes, collected selections, abandoned
 origins, bounded batches and subsequent progress. Fixed diagnostic fields split
 initial work, local helper queueing, preparation and comparison duration without
@@ -165,6 +173,10 @@ still fail their next comparison. Lost publication replies remain uncertain.</p>
 <tr>
 <td>Select</td>
 <td>Bounded listing, strict proposal namespace/schema checks, target/fence comparison, and manifest existence/digest checks</td>
+</tr>
+<tr>
+<td>Refresh</td>
+<td>Retain the completed directory across a metadata-only conflict; recheck the original fence and exact base root before comparing fresh metadata</td>
 </tr>
 <tr>
 <td>Publish</td>

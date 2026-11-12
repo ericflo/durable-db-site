@@ -73,6 +73,10 @@ index and header, independently of the subsequent conditional publication.</li>
 calculation, funding, staging and publication. <code>completed</code> and <code>deferred</code>
 records retain the final stage and whole-call duration. No-op polls emit none.</li>
 </ul>
+<p>Shared-publication logs additionally record <code>reused_pages</code> on helper attempts.
+It means a completed directory upload survived a metadata-only comparison
+conflict; it does not mean the comparison was skipped. Queued-receipt events
+have no staged directory. Older samples omit this field.</p>
 <p>Progress timestamps are cumulative monotonic elapsed milliseconds within one
 call; subtract adjacent values from that call for stage duration. Catalogue
 completion has its own interval. A failed or cancelled call may have no terminal
