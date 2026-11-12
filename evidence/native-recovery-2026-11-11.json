@@ -12518,7 +12518,368 @@
     "limitations": [
       "The first diagnostic candidate emitted owner binding before activation, when identity is unavailable. The followup moves it after activation; baseline cluster details cannot directly bind owner IDs to partitions.",
       "Baseline instrumentation does not change control or storage semantics. Paired table uploads are a separate subsequent change."
-    ]
+    ],
+    "kubernetes_b2": {
+      "binary_source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.3",
+      "binary_sha256": "6718d12c29974ddebe57d9cc9ea26f4332f39945785302d02dd5cada7786228b",
+      "image_digest": "sha256:581941df3da20ebf99d793e5f9abdd25409abb0ee72cc9edf5cf4beb16bbae97",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 848,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1221
+      },
+      "started_at": "2026-11-12T18:32:54.860160+00:00",
+      "finished_at": "2026-11-12T18:44:24.910881+00:00",
+      "source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+      "harness_sha256": "86b343051c6112a09a36d168c42766a47f28f3b40888757966edefc0f0b57f02",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 848,
+      "reads_verified": 848,
+      "verified_keys": 848,
+      "history_sha256": "a5d18770378d9d07ed92dd9682919cb8f345f3eaf054efe313b821a1c7aaf323",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T18:34:40.597005+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.27964488195721,
+            19.85184851102531,
+            16.27964488195721,
+            16.27964488195721
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T18:35:48.953602+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.161102304933593,
+            13.704283658997156,
+            13.704283658997156,
+            17.161102304933593
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T18:36:44.419990+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            96.11946465796791,
+            135.23920547100715,
+            96.11946465796791,
+            96.11946465796791
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T18:39:04.113409+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            105.20756815094501,
+            141.47836886893492,
+            112.51374900096562,
+            105.20756815094501
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T18:42:01.781599+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            48.29134331108071,
+            33.785265980055556,
+            80.17581070400774,
+            48.29134331108071
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "purpose": "Diagnostic baseline before paired table uploads; pre-activation owner binding is absent.",
+      "report_sha256": "6a68eafb6997a76f41a338fe140d79a6781b7ab629ae5e70f055694e0b3a316e",
+      "cost_samples": {
+        "trace_event_counts": {
+          "acquisition_owners": 0,
+          "activation_events": 266,
+          "selection_events": 439,
+          "catalog_events": 68,
+          "checkpoint_events": 488
+        },
+        "longest_complete_calls": {
+          "activation_events": {
+            "complete_calls_sampled": 87,
+            "longest": {
+              "pod": "durable-db-3/8ec1d9d3-384e-43ca-aebc-570e1ec0d041",
+              "elapsed_ms": 6792,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T18:36:00.773057Z",
+                  "owner": "d06327fd-4a28-45d6-9bfd-c3f872c7474b",
+                  "stage": "revocation",
+                  "predecessors": 0,
+                  "elapsed_ms": 87
+                },
+                {
+                  "time_utc": "2026-11-12T18:36:01.210181Z",
+                  "owner": "d06327fd-4a28-45d6-9bfd-c3f872c7474b",
+                  "stage": "publication",
+                  "predecessors": 1,
+                  "elapsed_ms": 524
+                },
+                {
+                  "time_utc": "2026-11-12T18:36:07.477279Z",
+                  "owner": "d06327fd-4a28-45d6-9bfd-c3f872c7474b",
+                  "stage": "submitted",
+                  "predecessors": 1,
+                  "elapsed_ms": 6792
+                }
+              ]
+            }
+          },
+          "selection_events": {
+            "complete_calls_sampled": 80,
+            "longest": {
+              "pod": "durable-db-4/f8e1333d-ef78-4b17-ad4f-89dd025b31dc",
+              "elapsed_ms": 17917,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T18:40:14.198215Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "discovery",
+                  "journals": 0,
+                  "frames": 0,
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:24.987755Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "publication",
+                  "journals": 2,
+                  "frames": 87,
+                  "elapsed_ms": 10789
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:32.031469Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "validation",
+                  "journals": 2,
+                  "frames": 87,
+                  "elapsed_ms": 17833
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:32.031514Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "advance",
+                  "journals": 2,
+                  "frames": 87,
+                  "elapsed_ms": 17833
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:32.115722Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "discovery",
+                  "journals": 2,
+                  "frames": 87,
+                  "elapsed_ms": 17917
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:32.115773Z",
+                  "owner": "48b1df8b-83b4-46b7-9075-9720e5454d25",
+                  "stage": "complete",
+                  "journals": 2,
+                  "frames": 87,
+                  "elapsed_ms": 17917
+                }
+              ]
+            }
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 63,
+            "longest": {
+              "pod": "durable-db-5/7d64dd7f-aa75-4130-a3ab-e74c14762b65",
+              "elapsed_ms": 13208,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T18:40:10.889555Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "permission",
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:10.973447Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "allowance",
+                  "elapsed_ms": 83
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:10.973620Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "funding",
+                  "elapsed_ms": 84
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:15.351081Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "staging",
+                  "elapsed_ms": 4461
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:16.616824Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "publication",
+                  "elapsed_ms": 5727
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:16.616994Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "publication",
+                  "elapsed_ms": 5727
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:16.782854Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "confirmation",
+                  "elapsed_ms": 5893
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:21.214133Z",
+                  "outcome": "progress",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "publication",
+                  "elapsed_ms": 10324
+                },
+                {
+                  "time_utc": "2026-11-12T18:40:24.098069Z",
+                  "outcome": "completed",
+                  "owner": "60a97486-c785-4671-9c6d-d6abe674ec77",
+                  "stage": "publication",
+                  "elapsed_ms": 13208
+                }
+              ]
+            }
+          }
+        }
+      },
+      "history_slices": [
+        {
+          "phase": "rolling-replacement-1",
+          "max_acknowledgement_gap_seconds": 80.229014952,
+          "max_request_seconds": 50.658504684000036,
+          "record_slice": [
+            197,
+            526
+          ]
+        },
+        {
+          "phase": "rolling-replacement-2",
+          "max_acknowledgement_gap_seconds": 96.90209143300001,
+          "max_request_seconds": 96.56977528200002,
+          "record_slice": [
+            526,
+            712
+          ]
+        }
+      ],
+      "history_scope": "Recorded phase slices include intervening diagnostics; acknowledgement gaps are not exact fault windows or readback latencies."
+    },
+    "unpublished_artifact": {
+      "version": "v0.24.3",
+      "source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+      "woodpecker_pipeline": 286,
+      "standalone": {
+        "version": "0.24.3",
+        "archive_sha256": "25012f6a6697806e73d1cd4f9ac598ba563addd0e3dfc4a90638c333beefe8b9",
+        "binary_sha256": "6718d12c29974ddebe57d9cc9ea26f4332f39945785302d02dd5cada7786228b",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "removed_bytes": 21109387
+    }
   },
   "paired_table_uploads": {
     "baseline_source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
@@ -12549,9 +12910,12 @@
     "removed": [
       "serial dependency between data and index uploads",
       "pre-activation owner diagnostic that could never emit a binding",
-      "single-object-only reference publication model"
+      "single-object-only reference publication model",
+      "obsolete proposed-serving and unfinished retained-export claims",
+      "obsolete renewal/grant-expiry wording in the current provider path",
+      "five completed model scratch directories"
     ],
-    "cloud_qualification": "pending",
+    "cloud_qualification": "Exact artifact passed selected histories and cold recovery; three of five recovery targets pass, both rollouts miss. No overall latency improvement or production SLO established.",
     "formatting_and_strict_clippy_passed": true,
     "local_log_sha256": {
       "costs-paired-negative.log": "4419a0470430d2eee672136bdd89991556039d8c29f2158ac5f0fd9c614f2301",
@@ -12560,6 +12924,495 @@
       "costs-paired-tests.log": "9746e5ff2c638f4f01cdd103c86a5ac1a204ef2741fda2e6caeefe3796367879",
       "costs-paired-clippy.log": "7cfd92815a918bc58961c05e7ddd3da412e0140736d9e8b7e6c29def4cde1cdf",
       "costs-paired-model.log": "a6c6d72b4346ab7a211a3d201deb086a52647dbdac65e04476eb5d4fba6e33e8"
+    },
+    "source_commit": "4fc6266108c937f8946928a2c10b593a407d5be5",
+    "woodpecker_pipeline": 287,
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.559653252,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 79,
+        "container_removed": true
+      }
+    },
+    "optimized_directory_capacity_seconds": 199.16,
+    "github_actions_disabled": {
+      "source": true,
+      "site": true
+    },
+    "repository_private": true,
+    "woodpecker_status": "success",
+    "kubernetes_b2": {
+      "binary_source_commit": "4fc6266108c937f8946928a2c10b593a407d5be5",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.3",
+      "binary_sha256": "e4686a88a79579ef305415f7f916a45d745ac65d4d58d1b0dd00446c681bdb07",
+      "image_digest": "sha256:0d8ce00c4cb672ccbbcac6a6ebd0d94578e2497c57a95a4620e3bf9c97fb1dfe",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 753,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1573
+      },
+      "started_at": "2026-11-12T18:58:10.121825+00:00",
+      "finished_at": "2026-11-12T19:09:07.029826+00:00",
+      "source_commit": "4fc6266108c937f8946928a2c10b593a407d5be5",
+      "harness_sha256": "86b343051c6112a09a36d168c42766a47f28f3b40888757966edefc0f0b57f02",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 753,
+      "reads_verified": 753,
+      "verified_keys": 753,
+      "history_sha256": "436ad2fbc23bda0efeb97997ebe28f8d339648ac37487817178d00be1138b12b",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T18:59:50.408995+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.359416235005483,
+            58.65906729409471,
+            16.359416235005483,
+            16.359416235005483
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T19:01:06.442430+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.602226802962832,
+            16.602226802962832,
+            20.166911929962225,
+            16.602226802962832
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T19:02:12.829359+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            94.63707443606108,
+            116.2269898490049,
+            98.28109214198776,
+            94.63707443606108
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T19:04:15.328027+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            110.28226360899862,
+            139.20620504789986,
+            110.28226360899862,
+            110.28226360899862
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T19:07:07.448689+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            51.67947475099936,
+            37.01953870197758,
+            51.67947475099936,
+            51.67947475099936
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "trace_event_counts": {
+          "acquisition_owners": 87,
+          "activation_events": 276,
+          "selection_events": 450,
+          "catalog_events": 72,
+          "checkpoint_events": 494
+        },
+        "longest_complete_calls": {
+          "activation_events": {
+            "complete_calls_sampled": 90,
+            "longest": {
+              "pod": "durable-db-5/1e4649f1-6659-461b-99b7-ccfedc934779",
+              "partition": 12,
+              "elapsed_ms": 9896,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T19:05:34.311643Z",
+                  "owner": "d8eb0fbb-1c9d-47a8-9a19-c63fe2a265ef",
+                  "stage": "revocation",
+                  "predecessors": 0,
+                  "elapsed_ms": 81
+                },
+                {
+                  "time_utc": "2026-11-12T19:05:34.727104Z",
+                  "owner": "d8eb0fbb-1c9d-47a8-9a19-c63fe2a265ef",
+                  "stage": "publication",
+                  "predecessors": 1,
+                  "elapsed_ms": 497
+                },
+                {
+                  "time_utc": "2026-11-12T19:05:44.126388Z",
+                  "owner": "d8eb0fbb-1c9d-47a8-9a19-c63fe2a265ef",
+                  "stage": "submitted",
+                  "predecessors": 1,
+                  "elapsed_ms": 9896
+                }
+              ]
+            }
+          },
+          "selection_events": {
+            "complete_calls_sampled": 82,
+            "longest": {
+              "pod": "durable-db-1/638927db-1e64-47f9-b749-d8ac93bf4472",
+              "partition": 1,
+              "elapsed_ms": 15647,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T19:03:35.755546Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "discovery",
+                  "journals": 0,
+                  "frames": 0,
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:36.297836Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "publication",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 542
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:39.647789Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "validation",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 3892
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:43.146488Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "advance",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 7390
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:43.146614Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "discovery",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 7391
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:43.645394Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "publication",
+                  "journals": 2,
+                  "frames": 0,
+                  "elapsed_ms": 7889
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:51.319783Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "validation",
+                  "journals": 2,
+                  "frames": 0,
+                  "elapsed_ms": 15564
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:51.319810Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "advance",
+                  "journals": 2,
+                  "frames": 0,
+                  "elapsed_ms": 15564
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:51.402696Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "discovery",
+                  "journals": 2,
+                  "frames": 0,
+                  "elapsed_ms": 15647
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:51.402749Z",
+                  "owner": "931fda58-4b43-43e2-bac4-e11a21001ae2",
+                  "stage": "complete",
+                  "journals": 2,
+                  "frames": 0,
+                  "elapsed_ms": 15647
+                }
+              ]
+            }
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 63,
+            "longest": {
+              "pod": "durable-db-4/907878b1-865b-4bca-b0d7-8a853200babf",
+              "partition": 14,
+              "elapsed_ms": 14365,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T19:03:07.695190Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "permission",
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:07.783177Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "allowance",
+                  "elapsed_ms": 87
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:07.783285Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "funding",
+                  "elapsed_ms": 88
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:12.319923Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "staging",
+                  "elapsed_ms": 4624
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:13.508895Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "publication",
+                  "elapsed_ms": 5813
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:13.509125Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "publication",
+                  "elapsed_ms": 5813
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:13.673630Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "confirmation",
+                  "elapsed_ms": 5978
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:17.066887Z",
+                  "outcome": "progress",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "publication",
+                  "elapsed_ms": 9371
+                },
+                {
+                  "time_utc": "2026-11-12T19:03:22.060817Z",
+                  "outcome": "completed",
+                  "owner": "0c7a7b33-874f-422e-8122-a8287eb4aef8",
+                  "stage": "publication",
+                  "elapsed_ms": 14365
+                }
+              ]
+            }
+          }
+        },
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "history_slices": [
+          {
+            "phase": "rolling-replacement-1",
+            "max_acknowledgement_gap_seconds": 99.32501395899999,
+            "max_request_seconds": 98.906905387,
+            "record_slice": [
+              249,
+              482
+            ]
+          },
+          {
+            "phase": "rolling-replacement-2",
+            "max_acknowledgement_gap_seconds": 92.28566822499994,
+            "max_request_seconds": 91.95340028800001,
+            "record_slice": [
+              482,
+              685
+            ]
+          }
+        ],
+        "history_scope": "Recorded phase slices include intervening diagnostics; these are acknowledgement gaps, not exact fault windows or readback latencies."
+      },
+      "report_sha256": "2d7d9fdb2b039e8c9bfe95bd54dad622358e7639dcf769fff28e20936ca06245"
     }
+  },
+  "release_0_24_3": {
+    "source_commit": "4fc6266108c937f8946928a2c10b593a407d5be5",
+    "woodpecker_pipeline": 287,
+    "artifact_image_digest": "sha256:1580368cda99073caea88bf9f448d16e9dee22725afb0ce14a1b9a2445c6f313",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.3",
+      "archive_sha256": "6ae1655c15e7237365c45684673da47c9bd1406e3cd290145a40debf2997b1ea",
+      "binary_sha256": "e4686a88a79579ef305415f7f916a45d745ac65d4d58d1b0dd00446c681bdb07",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6355286,
+    "version": "v0.24.3",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 287,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/287/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 288,
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/288/1"
+    },
+    "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.3",
+    "published_at": "2026-11-12T19:13:05Z",
+    "prerelease": true
   }
 }
