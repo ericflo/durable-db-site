@@ -7783,6 +7783,41 @@
       "status": "success"
     },
     "github_actions_disabled": true,
-    "capacity_test_passed": true
+    "capacity_test_passed": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.11",
+    "published_at": "2026-11-12T11:35:37Z",
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "cec112b863afe9660090fde89ed69a60f80d619a",
+      "default_version": "v0.23.11",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "github_asset_digest_matches": true
+  },
+  "challenge_scheduling": {
+    "maximum_active_acquisitions": 4,
+    "pending_wait_holds_acquisition_slot": false,
+    "pending_wait_holds_resident_slot": false,
+    "per_partition_hint": [
+      "incumbent",
+      "nonce",
+      "ready_at"
+    ],
+    "retry_interval_seconds": 3,
+    "unchanged_policy_model_distinct_states": 3518,
+    "new_test": "one_replacement_waits_for_all_partition_challenges_without_serial_waves",
+    "sixteen_partition_replacement_deadline_seconds": 25,
+    "negative_control_detected_in_seconds": 0.24,
+    "focused_checks": 5,
+    "focused_checks_seconds": 0.37,
+    "removed": [
+      "sleep/poll loop within an acquisition",
+      "duplicate placement-incomplete warning"
+    ],
+    "cloud_qualification": "pending",
+    "routine_rust_checks_passed": 343
   }
 }

@@ -495,7 +495,10 @@ metadata. It waits 15 seconds for that same owner and nonce to remain unanswered
 only then does it attempt the ordinary exact conditional claim. A response, changed
 incarnation/nonce or uncertain challenge publication defers takeover. A completed
 wait survives conflicts, provider errors and cancelled acquisitions only while
-the same owner and nonce remain. One bounded tuple per partition records it.
+the same owner and nonce remain. One bounded owner/nonce/deadline descriptor per
+partition records it. Pending waits release their acquisition and resident slots;
+the ordinary three-second scheduler revisits them. Four active acquisitions remain
+the limit. No sleeping future or one-second polling loop holds up later partitions.
 Known healthy peers can still rebalance; reuse of this process’s address takes the
 normal fenced recovery path directly.</p>
 <p>Each confirmed claimant polls once every three seconds, with one request in flight,
@@ -527,7 +530,13 @@ coalesced/uncertain challenges, stale comparisons, activating-owner responses,
 non-owner metadata work, malformed hints and old-writer preservation. An injected
 provider failure after the wait requires replacement within eight seconds after
 service returns; discarding the completed wait makes this check fail in 0.13
-seconds of real time. The first B2 campaign below preserves acknowledgements and
+seconds of real time. A second paused-time regression replaces one process owning
+all 16 partitions and requires all owners within 25 simulated seconds. The old
+four-slot sleeping path fails in 0.24 seconds of real time; deferring idle waits
+passes alongside the four challenge regressions in 0.37 seconds. This scheduling
+change implements the existing model’s separate Join/Wait/Prepare actions; the
+same 3,518 states and controls pass. It is not a cloud latency guarantee.
+The first B2 campaign below preserves acknowledgements and
 avoids claims during peer isolation, but misses the cold-recovery target. The
 corrected v0.23.11 campaign recovers all 558 acknowledgements with zero claims
 in either hold and all three targets met; broader failure qualification remains
