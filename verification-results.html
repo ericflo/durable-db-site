@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.13 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.14 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
 <h2 id="v02314-confirmed-recovery-retention-2026-11-12">v0.23.14 confirmed recovery retention (2026-11-12)<a class="anchor" href="#v02314-confirmed-recovery-retention-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p>A confirmed claimant is already the incumbent. It now finishes activation and
 recovery while it remains a member, even if placement preference changes first.
@@ -10,24 +10,86 @@ old permit. The same bounded acquisition and resident slots cover this work.</p>
 an actual HTTP create through the retained owner. It detects the previous
 cancellation in 0.03 seconds and passes in 0.06 seconds. OwnerRouting now starts
 with a confirmed, pre-activation claimant and checks 728 states with eight
-negative controls. These bounded checks do not prove the Rust implementation or
-production liveness.</p>
+negative controls. All 344 routine Rust checks, formatting and strict clippy pass.
+These bounded checks do not prove the Rust implementation or production liveness.</p>
+<p><a href="https://ci.eflorenzano.com/repos/18/pipeline/272/1">Woodpecker #272</a> passes at
+<code>878a3c5</code>, including optimized capacity and native JavaScript/Pi checks. Versioned
+MinIO passes membership, receipt replay, fencing and cold recovery in 40.27 seconds;
+its container, bucket and 79 remaining versions were removed.</p>
+<p>The exact release executable recovers <strong>all 952 acknowledged B2 writes</strong>, checked
+independently across four histories. Three of five targets pass:</p>
+<table>
+<thead>
+<tr>
+<th>Recovery</th>
+<th style="text-align:right">Every writer progresses within</th>
+<th style="text-align:right">Target</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scale to three</td>
+<td style="text-align:right">16.12 s</td>
+<td style="text-align:right">60 s</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>Scale to six</td>
+<td style="text-align:right">59.13 s</td>
+<td style="text-align:right">60 s</td>
+<td>Pass</td>
+</tr>
+<tr>
+<td>First rolling replacement</td>
+<td style="text-align:right">141.84 s</td>
+<td style="text-align:right">60 s</td>
+<td>Miss</td>
+</tr>
+<tr>
+<td>Second rolling replacement</td>
+<td style="text-align:right">157.77 s</td>
+<td style="text-align:right">60 s</td>
+<td>Miss</td>
+</tr>
+<tr>
+<td>Cold API readiness</td>
+<td style="text-align:right">93.44 s</td>
+<td style="text-align:right">120 s</td>
+<td>Pass</td>
+</tr>
+</tbody>
+</table>
+<p>Those upper bounds include rollout/readiness completion and the subsequent
+per-writer readback barrier. The largest acknowledgement gaps in the corresponding
+history slices are <strong>77.54 / 70.13 seconds</strong>, compared with <strong>95.10 / 123.08 seconds</strong>
+for v0.23.13 in the same focused harness. The slices include preceding-phase
+budget/diagnostic time; these are neither exact outage windows nor readback
+latencies. Different pod placements and short sequential runs prevent a controlled
+latency claim. Repeated ownership completions remain visible in both rollouts.</p>
 <p>A prior experiment at <code>b7d5073</code> waited 15 seconds for membership to settle before
-moving a reachable incumbent. In the same focused B2 harness, v0.23.13 rolls in
-121.70 / 154.78 seconds; that candidate rolls in 123.41 / 141.84 seconds, while
-scale-to-six rises from 57.91 to 77.02 seconds. The largest acknowledgement gaps were shorter in that sample
-(80.56 / 91.94 seconds versus 95.10 / 123.08), but both rollout targets still
-missed. The final change instead fixes the confirmed-recovery cancellation;
-the timer, its dedicated regression and two model configurations were removed. Both runs recover every acknowledgement (746 / 754 respectively).
-These are small sequential runs with different placements, not a controlled
-latency estimate or production SLO.</p>
-<p>The reusable <code>--scenario rollout</code> fixture remains: 1→3→6 scaling, two consecutive
+moving a reachable incumbent. It recovered all 754 acknowledgements, with shorter
+acknowledgement gaps than the 746-write baseline, but mixed overall timings:
+123.41 / 141.84-second rollouts versus 121.70 / 154.78 seconds, and slower scale-to-six
+(77.02 versus 57.91 seconds). The final change instead fixes the confirmed-recovery
+cancellation. The timer, its dedicated regression and two model configurations
+were removed; the bounded routing model shrank from 1,888 to 728 states.</p>
+<p>The reusable <code>--scenario rollout</code> fixture exercises 1→3→6 scaling, two consecutive
 six-pod replacements, then zero-compute cold recovery. It shares the four writers,
 budget checks, two-readback barriers and independent history verification with
 the broader campaign. Two existing controller checks retain their TCP assertions
 but use simulated time, reducing the controller suite from about 57 to 6 seconds.
-All 344 routine Rust checks, formatting and strict clippy pass.
-Final-source cloud qualification is pending.</p>
+The duplicated rollout sequence was replaced by one shared function.</p>
+<p>All three B2 namespaces, buckets and scoped keys were removed, including
+1,574 / 1,460 / 1,643 remaining versions for baseline / discarded experiment /
+final source. <a href="evidence/native-recovery-2026-11-11.json">Exact sources, artifacts, histories, timing bounds and cleanup</a>
+retain all three runs. <a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.14">v0.23.14</a>
+ships the final static executable, also checked by the standalone install,
+transaction, backup and crash-recovery smoke test.</p>
+<p>Pod addresses still determine placement scores. Next evaluate stable logical
+member identities across replacements, then repeat rollout continuity and the
+broader failure matrix. Physical-host loss, sustained load, AWS, peak memory and
+a production operating envelope remain unqualified.</p>
 <h2 id="v02313-incumbent-retention-2026-11-12">v0.23.13 incumbent retention (2026-11-12)<a class="anchor" href="#v02313-incumbent-retention-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p>A preference change no longer drops a healthy serving backend before a successor
 claims ownership. Local removal and confirmed retirement still clear it; fresh
@@ -162,10 +224,7 @@ an explicit unresolved-journal-upload retirement, rather than a placement change
 The conservative uncertain-upload recovery rule is unchanged. The trace does
 not establish that checkpoint time alone explains the client-progress delay.</p>
 <p>Rolling replacement remains <strong>151.27 seconds</strong>, close to the prior 153.30-second
-run; this change has not established a material rollout improvement. The next
-placement experiment is coalescing transient healthy-owner moves without delaying
-failed-owner recovery. Checkpoint work on the serving path and uncertain-upload
-recovery also remain targets.</p>
+run; this change did not establish a material rollout improvement.</p>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.13">v0.23.13</a> ships this
 exact static executable. <a href="evidence/native-recovery-2026-11-11.json">Source hashes, configuration, samples and cleanup</a>
 retain both campaigns. Physical-host loss, AWS, sustained load and a production
