@@ -1474,6 +1474,256 @@
         "Neither the local cancellation fix nor the proposed observation deadline has been shown to resolve this cloud failure.",
         "Namespace, key, bucket, 788 physical versions, private temporary inputs and local pulled images were removed. No release was published from this candidate."
       ]
+    },
+    {
+      "binary_source_commit": "0e31829994280a663231e107b8049ce516abcb74",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.6",
+      "binary_sha256": "1d7e8f4a58992055d8f888f357efed4e44bcddce59ac5f3175b1cf4f38adaa9a",
+      "image_digest": "sha256:5f090a75dedad1ffdabcd76fdf80d5ba497d1ee710279f75f75b9bdcf8fcaf42",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 625
+      },
+      "started_at": "2026-11-12T03:48:00.014402+00:00",
+      "finished_at": "2026-11-12T03:59:17.394218+00:00",
+      "source_commit": "0e31829994280a663231e107b8049ce516abcb74",
+      "harness_sha256": "263ad905e3f0b764969821e55463b00de3bdefe7491f15a2b3da518c24bd2f17",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "controller_failure": {
+        "type": "RuntimeError",
+        "reason": "Synthetic workload failed"
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T03:50:33.340891+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            60.8193455550354,
+            82.10168479208369,
+            121.72735931002535,
+            60.8193455550354
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T03:52:50.517024+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            19.255167555995286,
+            15.861359309055842,
+            61.82642338098958,
+            19.255167555995286
+          ],
+          "observed_within_target": false
+        }
+      ],
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T03:48:22.731042+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T03:48:36.042672+00:00"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T03:50:33.340379+00:00",
+          "writes_acknowledged": 16
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T03:52:37.468744+00:00",
+          "writes_acknowledged": 171
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T03:53:56.628515+00:00",
+          "writes_acknowledged": 332
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T03:54:12.528874+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 377
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 787,
+        "reads_verified": 787,
+        "http_attempt_statuses": {
+          "200": 1606,
+          "429": 521,
+          "503": 148,
+          "transport_or_decode_error": 3
+        },
+        "failures": [
+          {
+            "worker": 0,
+            "reason": "Identical-request recovery deadline exceeded (commit, last HTTP status 429)"
+          },
+          {
+            "worker": 3,
+            "reason": "Identical-request recovery deadline exceeded (commit, last HTTP status 429)"
+          }
+        ],
+        "expected": [
+          136,
+          274,
+          239,
+          138
+        ],
+        "verified": [
+          136,
+          274,
+          239,
+          138
+        ]
+      },
+      "stalled_writers": {
+        "indexes": [
+          0,
+          3
+        ],
+        "partition": 11,
+        "writer_partitions": [
+          11,
+          2,
+          15,
+          11
+        ],
+        "last_owner_ready_at": "2026-11-12T03:51:11.069392Z",
+        "later_acquisition_observed": false,
+        "cause": "Unresolved; both commit retries expired during steady workload before fault injection."
+      },
+      "final_tenant_budgets": [
+        {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 67108864,
+            "attempts": 160
+          },
+          "maintenance": {
+            "funded_bytes": 33554432,
+            "allocated": {
+              "bytes": 506833,
+              "attempts": 2
+            }
+          }
+        },
+        {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 117440512,
+            "attempts": 288
+          },
+          "maintenance": {
+            "funded_bytes": 58720256,
+            "allocated": {
+              "bytes": 1991291,
+              "attempts": 3
+            }
+          }
+        },
+        {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 117440512,
+            "attempts": 288
+          },
+          "maintenance": {
+            "funded_bytes": 58720256,
+            "allocated": {
+              "bytes": 1241199,
+              "attempts": 3
+            }
+          }
+        },
+        {
+          "configuration_revision": 1,
+          "limits": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "allocated": {
+            "bytes": 67108864,
+            "attempts": 192
+          },
+          "maintenance": {
+            "funded_bytes": 33554432,
+            "allocated": {
+              "bytes": 557199,
+              "attempts": 2
+            }
+          }
+        }
+      ],
+      "failure_metrics": {
+        "captured": false,
+        "reason": "Manual collection ran after disposable pods were removed."
+      },
+      "limitations": [
+        "Failed before process-pause and other fault phases.",
+        "No complete cold recovery or independent full history check.",
+        "787 acknowledgements and readbacks are a partial snapshot, not a completed durability qualification.",
+        "A two-tenant production-directory regression with 400 writes passes locally; it does not explain the cloud failure."
+      ]
     }
   ],
   "release": {
@@ -2077,7 +2327,7 @@
     "maximum_physical_read_attempts": 3,
     "scope": "Same B2/S3 Remote GET, bounded range and listing policy; includes streamed bodies and retries. Timeout is an error, never confirmed absence or ownership permission. Mutation single-attempt policy unchanged.",
     "stalled_body_regression_failed_prior_implementation": true,
-    "cloud_followup": "pending",
+    "cloud_followup": "Failed B2/Kubernetes steady phase on 0e31829 before fault injection; both writers sharing partition 11 exceeded 180-second commit retry limit. Cause unresolved; candidate remains unreleased.",
     "enabled_rust_checks": 332,
     "strict_clippy": true,
     "focused_transport_tests": 5,
@@ -2238,6 +2488,24 @@
         "fixture_correction": "Wait for the handoff checkpoint, allow its preserved-reserve claim, and commit two new frames before requiring their collection. Exact final maintenance charge, admission ceilings, no-refund and physical reclamation assertions remain.",
         "fixture_sha256": "7e1804ce43a504fe91ac0cffa0718335f82b9279115a280bbd9a85c0f8d673d8"
       }
+    ]
+  },
+  "checkpoint_diagnostics": {
+    "test": "shared_partition_checkpoints_keep_both_writers_progressing",
+    "tenants": 2,
+    "same_partition": true,
+    "http_commits": 400,
+    "concurrent_collection": true,
+    "local_seconds": 2.06,
+    "reproduced_cloud_stall": false,
+    "enabled_rust_checks": 333,
+    "strict_clippy": true,
+    "changes": [
+      "Fixed checkpoint-stage warnings without provider error text.",
+      "Capture bounded metrics before failed cluster cleanup."
+    ],
+    "removed": [
+      "Replaced generic duplicate background-checkpoint warning."
     ]
   }
 }
