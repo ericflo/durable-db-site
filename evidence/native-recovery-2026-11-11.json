@@ -3417,6 +3417,457 @@
         "max_rss_bytes": 4886528,
         "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
       }
+    },
+    {
+      "binary_source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.8",
+      "artifact_verification_reused": true,
+      "binary_sha256": "2433c58f78754f6ba40c7ca33b086e87722a9a27d67014eceadf7afaa4c89e2d",
+      "image_digest": "sha256:f0add54ba2232cc9afde9f43c2ce8a0f376bcc85decd2d437a5231883b7a2d1a",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 2018,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 2008
+      },
+      "started_at": "2026-11-12T06:37:24.325962+00:00",
+      "finished_at": "2026-11-12T07:03:48.751910+00:00",
+      "source_commit": "0ccb07129abaae57cef3fd1db2336fbcc9a80075",
+      "harness_sha256": "9c9326a44fdf09ecc44368284bc9d3ef662a88f12e6124cc81de65e3d62dc644",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T06:39:51.648281+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            64.95895100594498,
+            15.921304581919685,
+            47.690428733010776,
+            64.95895100594498
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T06:41:16.091090+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            101.74758609908167,
+            19.104307061061263,
+            19.104307061061263,
+            101.74758609908167
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "one-host-process-pause",
+          "started_at": "2026-11-12T06:45:28.834970+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            60.61552724102512,
+            89.03499606403057,
+            35.826255970983766,
+            60.61552724102512
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "one-host-processes-resumed",
+          "started_at": "2026-11-12T06:47:07.908345+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            61.14762050600257,
+            39.82420158502646,
+            11.208805465954356,
+            61.14762050600257
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "paused-dns-replacement",
+          "started_at": "2026-11-12T06:48:45.983941+00:00",
+          "basis": "after sole replacement API readiness with old peers stopped",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            29.83348776609637,
+            72.45995678007603,
+            104.9803228500532,
+            29.83348776609637
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "paused-processes-resumed",
+          "started_at": "2026-11-12T06:50:50.946392+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            92.38672124000732,
+            56.91238275391515,
+            46.347071668016724,
+            92.38672124000732
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "resume-scale-six",
+          "started_at": "2026-11-12T06:52:29.747490+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            81.80068818992004,
+            6.5433974280022085,
+            6.5433974280022085,
+            56.66998268500902
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "started_at": "2026-11-12T06:53:57.784987+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.164240192971192,
+            17.164240192971192,
+            34.59687029197812,
+            17.164240192971192
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement",
+          "started_at": "2026-11-12T06:54:38.020542+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            129.32385904307012,
+            125.77012117300183,
+            136.54656566504855,
+            129.32385904307012
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "provider-restored",
+          "started_at": "2026-11-12T06:58:12.709943+00:00",
+          "basis": "before restoring provider egress",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            41.109620369039476,
+            19.420953972963616,
+            19.420953972963616,
+            41.109620369039476
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "started_at": "2026-11-12T06:58:59.546589+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            110.9020497680176,
+            92.8322722039884,
+            100.01918927999213,
+            110.9020497680176
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T07:01:28.922935+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            51.80698792007752,
+            69.5961837740615,
+            69.5961837740615,
+            51.80698792007752
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "writes_acknowledged": 2018,
+      "reads_verified": 2018,
+      "http_attempt_statuses": {
+        "200": 4084,
+        "429": 476,
+        "503": 638,
+        "transport_or_decode_error": 73
+      },
+      "expected": [
+        351,
+        597,
+        708,
+        362
+      ],
+      "verified": [
+        351,
+        597,
+        708,
+        362
+      ],
+      "verified_keys": 2018,
+      "history_sha256": "98d028bbbf6e525b32cb871095f6171c23d4d89933ea8727f287754ad50a2bb8",
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "All database processes on one host paused while other hosts remain available, then all-process pause, pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure, peer-only network partition or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Eight of twelve transitions miss their engineering target; lower ancestry GET counts do not establish a cloud latency improvement."
+      ],
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T06:37:46.749260+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T06:38:00.492442+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T06:39:51.647537+00:00",
+          "writes_acknowledged": 21
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T06:40:59.172786+00:00",
+          "writes_acknowledged": 131
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T06:43:02.827235+00:00",
+          "writes_acknowledged": 344
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T06:43:21.648038+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 385
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-12T06:45:28.294681+00:00",
+          "elapsed_seconds": 120.00008322997019,
+          "writes_acknowledged": 676
+        },
+        {
+          "name": "one-host-processes-paused",
+          "time_utc": "2026-11-12T06:45:41.952076+00:00",
+          "node": "epsilon-3",
+          "preferred_partition": 2,
+          "preferred_pod": "durable-db-66c7847f4-hv289"
+        },
+        {
+          "name": "one-host-pause-recovered",
+          "time_utc": "2026-11-12T06:47:07.906737+00:00",
+          "writes_acknowledged": 805
+        },
+        {
+          "name": "one-host-processes-resumed",
+          "time_utc": "2026-11-12T06:48:13.636989+00:00",
+          "writes_acknowledged": 907
+        },
+        {
+          "name": "prior-api-processes-paused",
+          "time_utc": "2026-11-12T06:48:45.376120+00:00"
+        },
+        {
+          "name": "paused-dns-replacement",
+          "time_utc": "2026-11-12T06:50:50.944607+00:00",
+          "writes_acknowledged": 1085
+        },
+        {
+          "name": "paused-processes-resumed",
+          "time_utc": "2026-11-12T06:52:29.745392+00:00",
+          "writes_acknowledged": 1239
+        },
+        {
+          "name": "resume-scale-six",
+          "time_utc": "2026-11-12T06:53:57.187844+00:00",
+          "writes_acknowledged": 1427
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-12T06:54:38.018160+00:00",
+          "victim_node": "epsilon-2",
+          "writes_acknowledged": 1509
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-12T06:57:00.573598+00:00",
+          "writes_acknowledged": 1694
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-12T06:57:25.727879+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-held",
+          "time_utc": "2026-11-12T06:58:12.706993+00:00",
+          "no_progress": true,
+          "before": {
+            "expected": [
+              300,
+              509,
+              634,
+              315
+            ],
+            "verified": [
+              300,
+              508,
+              633,
+              315
+            ]
+          },
+          "after": {
+            "expected": [
+              300,
+              509,
+              634,
+              315
+            ],
+            "verified": [
+              300,
+              508,
+              633,
+              315
+            ]
+          }
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-12T06:58:59.543620+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 1829
+        },
+        {
+          "name": "scale-one",
+          "time_utc": "2026-11-12T07:00:51.682472+00:00",
+          "writes_acknowledged": 1908
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T07:01:12.604801+00:00",
+          "writes_acknowledged": 1960
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T07:02:41.373258+00:00",
+          "writes_acknowledged": 2006
+        }
+      ],
+      "paused_peer_checks": [
+        {
+          "phase": "one-host-processes-paused",
+          "stopped_processes": 2,
+          "dns_addresses": 6,
+          "states": [
+            "T",
+            "T"
+          ]
+        },
+        {
+          "phase": "one-host-pause-recovered",
+          "stopped_processes": 2,
+          "dns_addresses": 6,
+          "states": [
+            "T",
+            "T"
+          ]
+        },
+        {
+          "phase": "prior-api-processes-paused",
+          "stopped_processes": 6,
+          "dns_addresses": 7,
+          "states": [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ]
+        },
+        {
+          "phase": "paused-dns-replacement",
+          "stopped_processes": 6,
+          "dns_addresses": 7,
+          "states": [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ]
+        }
+      ],
+      "writer_partitions": [
+        2,
+        12,
+        14,
+        2
+      ],
+      "report_sha256": "74a755ad5bb8fa35cb8b48b088f1664f25f605e38b63665d00dc9285051220a3",
+      "sampled_memory": {
+        "samples": 5,
+        "max_rss_bytes": 4780032,
+        "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
+      }
     }
   ],
   "release": {
@@ -4774,6 +5225,29 @@
     "tag_pipeline": {
       "number": 248,
       "status": "success"
+    },
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "d119a364f7c7635a2f1fb998807a2bd1816e99f9",
+      "default_version": "v0.23.8",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
+    },
+    "documentation_pipeline": {
+      "number": 249,
+      "status": "success",
+      "source_commit": "d119a364f7c7635a2f1fb998807a2bd1816e99f9",
+      "public_marker_verified": true
+    },
+    "qualification": {
+      "baseline_acknowledgements": 1969,
+      "stronger_fault_acknowledgements": 2018,
+      "same_verified_executable": true,
+      "buckets_removed": 2,
+      "workload_keys_revoked": 2,
+      "remaining_physical_versions_deleted": 3243
     }
   }
 }

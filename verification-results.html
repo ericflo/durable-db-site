@@ -16,76 +16,109 @@ in 182.76 seconds, including zero warm cache misses and automatic collection.
 The disposable bucket/container and 31 physical versions were removed.</p>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.8">v0.23.8</a> packages
 <code>43d9ea4</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/242/1">Woodpecker #242</a>.
-The exact executable passes the complete B2/Kubernetes campaign with <strong>1,969
-acknowledged writes recovered and independently checked</strong>. The namespace, scoped
-key, bucket and 1,235 remaining physical versions were removed. This baseline
-uses the preceding harness: writers occupy partitions 2, 7, 14 and 6.</p>
+The exact executable passes two complete B2/Kubernetes campaigns: <strong>1,969
+acknowledged writes</strong> in the baseline and <strong>2,018</strong> in the strengthened fault
+campaign, all recovered and independently checked. Both disposable namespaces
+were removed, along with both buckets, scoped keys and 3,243 remaining physical
+versions (1,235 baseline / 2,008 stronger run). The baseline uses partitions 2, 7,
+14 and 6. The maintained harness
+now fixes writer names within each fresh bucket, giving partitions 2, 12, 14 and
+2 instead of letting the random namespace change contention.</p>
+<p>In the stronger run, both database processes on one selected host stay stopped
+while the other hosts recover every writer without replacement pods. Process
+identities, restart counts, stopped states and retained DNS entries are checked
+before and after progress. Rejoin then passes. During provider isolation, a fresh
+connection probe fails and all four writers’ acknowledgement/readback counters
+remain unchanged for ten seconds after thirty seconds of settling. This replaces
+the blind sleep and detects policies that leave the workload connected. All-process
+pause, replacement, pod loss, rolling replacement, scale-down and cold recovery
+also pass. These are process faults on existing hosts and a provider-egress fault;
+physical host shutdown and peer-only/asymmetric network isolation remain open.</p>
+<p>Every-writer recovery upper bounds, in seconds:</p>
 <table>
 <thead>
 <tr>
 <th>Transition</th>
-<th style="text-align:right">Every writer’s recovery upper bound</th>
-<th style="text-align:right">Engineering target</th>
+<th style="text-align:right">Baseline</th>
+<th style="text-align:right">Stronger fault campaign</th>
+<th style="text-align:right">Target</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Scale to three / six</td>
-<td style="text-align:right">65.68 / 68.36 s</td>
-<td style="text-align:right">60 s — missed</td>
+<td style="text-align:right">65.68 / 68.36</td>
+<td style="text-align:right">64.96 / 101.75</td>
+<td style="text-align:right">60</td>
+</tr>
+<tr>
+<td>One-host process pause</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">89.03</td>
+<td style="text-align:right">60</td>
+</tr>
+<tr>
+<td>Resume that host’s processes</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">61.15</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Stopped-peer replacement after API readiness</td>
-<td style="text-align:right">151.05 s</td>
-<td style="text-align:right">120 s — missed</td>
+<td style="text-align:right">151.05</td>
+<td style="text-align:right">104.98</td>
+<td style="text-align:right">120</td>
 </tr>
 <tr>
-<td>Resume old peers / return to six</td>
-<td style="text-align:right">70.15 / 92.06 s</td>
-<td style="text-align:right">60 s — missed</td>
+<td>Resume all old peers</td>
+<td style="text-align:right">70.15</td>
+<td style="text-align:right">92.39</td>
+<td style="text-align:right">60</td>
+</tr>
+<tr>
+<td>Return to six</td>
+<td style="text-align:right">92.06</td>
+<td style="text-align:right">81.80</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Forced pod loss</td>
-<td style="text-align:right">94.37 s</td>
-<td style="text-align:right">60 s — missed</td>
+<td style="text-align:right">94.37</td>
+<td style="text-align:right">34.60</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Rolling replacement</td>
-<td style="text-align:right">120.60 s</td>
-<td style="text-align:right">60 s — missed</td>
+<td style="text-align:right">120.60</td>
+<td style="text-align:right">136.55</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Restore provider egress</td>
-<td style="text-align:right">56.99 s</td>
-<td style="text-align:right">60 s — met</td>
+<td style="text-align:right">56.99</td>
+<td style="text-align:right">41.11</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Scale to one</td>
-<td style="text-align:right">94.73 s</td>
-<td style="text-align:right">60 s — missed</td>
+<td style="text-align:right">94.73</td>
+<td style="text-align:right">110.90</td>
+<td style="text-align:right">60</td>
 </tr>
 <tr>
 <td>Cold recovery after API readiness</td>
-<td style="text-align:right">59.73 s</td>
-<td style="text-align:right">120 s — met</td>
+<td style="text-align:right">59.73</td>
+<td style="text-align:right">69.60</td>
+<td style="text-align:right">120</td>
 </tr>
 </tbody>
 </table>
 <p>These include readiness/polling and two further readbacks per writer; replacement
-and cold timers start after API readiness. Eight of ten transitions miss their
-target. The lower metadata-read count does <strong>not</strong> demonstrate a cloud latency
-speedup. Sampled steady-phase peak RSS is 4,886,528 bytes, not a worst-case bound.
+and cold timers start after API readiness. Eight of ten baseline transitions and
+eight of twelve stronger-campaign transitions miss their targets. The lower
+metadata-read count does <strong>not</strong> demonstrate a cloud latency speedup. Sampled
+steady-phase peak RSS is 4,886,528 / 4,780,032 bytes, not a worst-case bound.
 <a href="evidence/native-recovery-2026-11-11.json">Exact sources, hashes, timings and cleanup</a>.</p>
-<p>The maintained fault harness now adds a targeted one-host process pause before
-the all-process fault: surviving hosts must recover every writer without adding
-pods, while stopped process identities and DNS entries remain unchanged. This
-new phase is not yet qualified; it does not simulate a peer-only network partition.
-The provider-egress phase also replaces its blind forty-second sleep with thirty
-seconds to settle responses and ten seconds requiring unchanged acknowledgement
-and readback counters. A fresh connection probe alone cannot establish that an
-existing provider connection was blocked. The stronger check remains unqualified. Writer names in future runs are fixed
-inside the fresh bucket, giving partitions 2, 12, 14 and 2; prior campaigns let
-the random namespace change that workload characteristic.</p>
 <h2 id="v0237-idle-owner-rejoin-recovery-2026-11-12">v0.23.7 idle-owner rejoin recovery (2026-11-12)<a class="anchor" href="#v0237-idle-owner-rejoin-recovery-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.7">v0.23.7</a> packages
 <code>5606aff</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/241/1">Woodpecker #241</a>.</p>
