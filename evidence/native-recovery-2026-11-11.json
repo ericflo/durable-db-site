@@ -8681,5 +8681,38 @@
     },
     "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.12",
     "published_at": "2026-11-12T12:33:31Z"
+  },
+  "incumbent_retention": {
+    "preference_alone_retires_healthy_backend": false,
+    "membership_removal_retires_backend": true,
+    "revoked_backend_reaped": true,
+    "resident_reservation_held_until_last_reference": true,
+    "challenge_answers_only_while_locally_preferred": true,
+    "ordinary_publications_answer_challenges": false,
+    "response_permission_protocol_unchanged": true,
+    "new_timers_workers_or_storage_fields": 0,
+    "test": "placement_hint_keeps_incumbent_until_takeover_or_removal",
+    "negative_controls_seconds": {
+      "early_retirement": 0.05,
+      "always_answering_yielded_owner": 0.73
+    },
+    "positive_test_seconds": 0.55,
+    "existing_challenge_checks": 5,
+    "existing_challenge_checks_seconds": 0.48,
+    "model_states": {
+      "OwnerRouting": 472,
+      "OwnerResidency": 19,
+      "OwnerChallenge": 3518
+    },
+    "routing_negative_controls": 8,
+    "diagnostics": "Bounded completed/deferred checkpoint events record whole-call elapsed time, not final-stage duration; no-op polls and warm-cache discard excluded.",
+    "removed": [
+      "preference-based serving retirement",
+      "duplicate controller health pass",
+      "implicit challenge answers in ordinary owner metadata publication",
+      "failure-only checkpoint parser"
+    ],
+    "cloud_qualification": "pending",
+    "routine_rust_checks_passed": 344
   }
 }
