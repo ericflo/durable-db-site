@@ -8297,6 +8297,199 @@
         }
       ],
       "history_scope": "Acknowledgements completed between preceding phase and rollout progress barrier; includes intervening budget/diagnostic time. Gaps use the single workload process monotonic clock, including the preceding acknowledgement per writer. Not exact fault-window outage or readback latency. Ready counts are retained acquisition-completion events, not an exhaustive ownership trace."
+    },
+    {
+      "binary_source_commit": "6d6b76e8c5d3e65d32aa0ff577e64e7305a5da5c",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.0",
+      "binary_sha256": "273340d3ba82164b44a8be0514fb596b1cd090af7cb5921d4f3b961b613ca958",
+      "image_digest": "sha256:0711df36216b7b97cbca393bc37ac96ea5349ebb81dc262c734438e97880dc11",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 833,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1453
+      },
+      "started_at": "2026-11-12T15:39:21.045314+00:00",
+      "finished_at": "2026-11-12T15:51:33.916392+00:00",
+      "source_commit": "6d6b76e8c5d3e65d32aa0ff577e64e7305a5da5c",
+      "harness_sha256": "6941ddcd7532e9e314e2d1fdbffb619170a5ab1ebad4a6372d2fec6c35dd6437",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 833,
+      "reads_verified": 833,
+      "verified_keys": 833,
+      "history_sha256": "a65148a520ed0f3f1f748c2fb9a791a15227490080573c89a7ca9c84a2615eba",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T15:41:16.556680+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.616754224989563,
+            15.616754224989563,
+            22.764234239934012,
+            15.616754224989563
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T15:42:11.388319+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.783522803918459,
+            19.38367367000319,
+            19.38367367000319,
+            15.783522803918459
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T15:43:10.177213+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            146.72406607400626,
+            136.03114571294282,
+            100.44042198592797,
+            146.72406607400626
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T15:45:41.838571+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            133.97875655000098,
+            174.43518360098824,
+            133.97875655000098,
+            133.97875655000098
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T15:49:03.824232+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            68.9304316820344,
+            58.31018794502597,
+            83.28646226006094,
+            72.5035893280292
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "purpose": "Stable identity with StatefulSet repeated rollouts",
+      "report_sha256": "bbd559b5cda3f0a972bb319bb0b6995c9d1c0dbe918dc8eac88f1be3adc9070b",
+      "rollout_history": [
+        {
+          "name": "rolling-replacement-1",
+          "history_interval": [
+            163,
+            443
+          ],
+          "max_ack_gap_seconds": {
+            "0": 63.36944395000003,
+            "1": 94.070303462,
+            "2": 65.37984120600004,
+            "3": 71.97268280700001
+          },
+          "max_commit_seconds": {
+            "0": 44.74530782400001,
+            "1": 5.008256610000018,
+            "2": 65.04890422700001,
+            "3": 71.46994924000003
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "history_interval": [
+            443,
+            736
+          ],
+          "max_ack_gap_seconds": {
+            "0": 86.78994119100003,
+            "1": 85.44459259399991,
+            "2": 91.37758043999997,
+            "3": 62.98643941
+          },
+          "max_commit_seconds": {
+            "0": 9.84920602599999,
+            "1": 8.512870101999965,
+            "2": 91.04972902899999,
+            "3": 62.65780446399998
+          }
+        }
+      ],
+      "history_scope": "Acknowledgements completed between preceding phase and rollout progress barrier; includes intervening budget/diagnostic time. Gaps use the single workload monotonic clock and preceding acknowledgement per writer. Not exact fault-window outage or readback latency."
     }
   ],
   "release": {
@@ -10659,6 +10852,195 @@
     "tag_pipeline": {
       "pipeline": 273,
       "url": "https://ci.eflorenzano.com/repos/18/pipeline/273/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        }
+      ]
+    }
+  },
+  "stable_member_identity": {
+    "source_commit": "6d6b76e8c5d3e65d32aa0ff577e64e7305a5da5c",
+    "woodpecker_pipeline": 275,
+    "placement_input": "bounded logical member ID; socket address used only for transport",
+    "discovery": "x-durable-db-member header on the existing health probe; missing headers retain address identity",
+    "duplicate_ids": "exclude all ambiguous destinations without excluding unrelated peers",
+    "kubernetes": {
+      "controller": "StatefulSet",
+      "member_id": "metadata.name",
+      "pod_management": "Parallel",
+      "update_strategy": "RollingUpdate",
+      "persistent_volume_claims": 0
+    },
+    "new_timers_workers_or_provider_requests": 0,
+    "ownership_format_unchanged": true,
+    "routine_rust_checks_passed": 347,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_http_regression": {
+      "replacements": 3,
+      "seconds": 0.36,
+      "old_process_retained_and_fenced": true,
+      "unrelated_owner_incarnation_unchanged": true,
+      "values_and_identical_retry_receipts_preserved": true
+    },
+    "placement_regression": {
+      "partitions": 1024,
+      "logical_members": 6,
+      "every_address_replaced": true,
+      "input_order_reversed": true
+    },
+    "cluster_layout_model": {
+      "distinct_states": 112,
+      "generated_states": 793,
+      "depth": 7,
+      "negative_controls": 3,
+      "scope": "Two logical members with fixed ranking, endpoint replacement and arbitrary membership subsets; not hashing, discovery agreement, Rust refinement or liveness."
+    },
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.465927583,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 79,
+        "container_removed": true
+      }
+    },
+    "removed": [
+      "Deployment controller template replaced by StatefulSet, including HPA target",
+      "socket address as the placement score when a stable identity is advertised"
+    ],
+    "scope": "Exact static executable recovered all 833 B2 acknowledgements. Scale-up and cold targets passed; both repeated rollout targets missed. This does not establish a rollout-latency improvement or production readiness.",
+    "identity_observations": [
+      {
+        "time_utc": "2026-11-12T15:40:57.958526+00:00",
+        "pod": "durable-db-0",
+        "uid": "953b65dd-07d2-4207-ace7-a0a3a0507c3f",
+        "ip": "10.1.113.139",
+        "status": 200,
+        "id": "durable-db-0"
+      },
+      {
+        "time_utc": "2026-11-12T15:45:16.379540+00:00",
+        "pod": "durable-db-0",
+        "uid": "589b6419-38dd-4e06-88f8-a9d7fd69be40",
+        "ip": "10.1.113.132",
+        "status": 200,
+        "id": "durable-db-0"
+      }
+    ],
+    "remaining_reacquisition_sample": {
+      "pod": "durable-db-5",
+      "uid": "7905be43-4815-4e7f-b0e3-e6a6adc7e7dd",
+      "partition": 2,
+      "ready_utc": [
+        "2026-11-12T15:43:53.272733Z",
+        "2026-11-12T15:45:08.445711Z"
+      ],
+      "scope": "Same process completed acquisition twice during the first rollout. Retained logs are not an exhaustive ownership trace and do not identify the retirement cause."
+    }
+  },
+  "release_0_24_0": {
+    "source_commit": "6d6b76e8c5d3e65d32aa0ff577e64e7305a5da5c",
+    "woodpecker_pipeline": 275,
+    "artifact_image_digest": "sha256:0be51533cc9a4c09c7b47f182e294a227e2a3420630e8d7fa886dcd5179bdd1a",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.0",
+      "archive_sha256": "2cb74a5f8aa20ffba5bfcb0555b5f7a92535b5e2a7a6bc00195c9a65ed38c928",
+      "binary_sha256": "273340d3ba82164b44a8be0514fb596b1cd090af7cb5921d4f3b961b613ca958",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6333238,
+    "version": "v0.24.0",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 275,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/275/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.0",
+    "tag_pipeline": {
+      "pipeline": 276,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/276/1",
       "status": "success",
       "steps": [
         {
