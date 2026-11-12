@@ -15209,5 +15209,853 @@
     "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.6",
     "published_at": "2026-11-12T21:33:07Z",
     "prerelease": true
+  },
+  "shared_publication_discovery": {
+    "baseline_source_commit": "de9dff3edf2020fa6c54dedd52ef0062a25ceecc",
+    "source_commit": "366b2f37bcc1b57f14cfeb12bb97e6c37e6006c5",
+    "change": "Retain at most 64 loaded proposals within an invocation across definite comparison conflicts. Recheck current targets, original fences and manifest availability, stage fresh directory objects and compare exactly. Capture fixed queue/preparation/comparison timings without data fields.",
+    "routine_rust_checks_passed": 360,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_publication_checks": 20,
+    "focused_seconds": 1.33,
+    "focused_regression_seconds": 0.06,
+    "negative_control": {
+      "previous_implementation": "Redownloads the same abandoned proposal after the first injected comparison conflict.",
+      "proposal_gets_after_first_conflict": 2,
+      "expected": 1
+    },
+    "regression": {
+      "forced_comparison_conflicts": 2,
+      "proposal_lists_per_invocation": 1,
+      "proposal_gets_per_invocation": 1,
+      "final_outcomes": [
+        "acknowledged success",
+        "applied but lost comparison response"
+      ],
+      "immutable_manifests": 2
+    },
+    "model": {
+      "module": "PublicationCombining",
+      "jobs": 2,
+      "databases": 2,
+      "helpers": 2,
+      "revision_advances": 2,
+      "distinct_states": 1736213,
+      "generated_states": 11377184,
+      "depth": 25,
+      "seconds": 47,
+      "fault_controls": 5,
+      "reachability_controls": 1,
+      "scope": "Retained observations overapproximated by any previously submitted proposal, including after deletion. Each selection still checks target/fence. Finite component safety, not Rust refinement, fairness, latency or composed deployment proof."
+    },
+    "local_log_sha256": {
+      "publication-discovery-negative.log": "d9fb1476b08e9db7b941a2287eb4773d6936808c81e64dbdd633498ed44f7af0",
+      "publication-discovery-focused.log": "ff270ab8af93392782d5997d5d14a0577cd1be30069d228f6d6008e2a14e3380",
+      "publication-discovery-tests.log": "6de8df4b11a19e042dea8ac2ce6b7f12e0d9f90f9c123ca2a949d88a6d549849",
+      "publication-discovery-all.log": "808d26cb9c8d9aa1e73fbf97f34d6c0f24fdbee9c9d8ec768ced9f8723334178",
+      "publication-discovery-clippy.log": "17b2a576841fc6ef737a67d9e00505e0bdf1b51e2cd152aeaf10c8c4294e6820",
+      "publication-discovery-model.log": "2e82672459064259397b83e864e7657ed16b39fcb6d006071f8a94f6bb33f88e"
+    },
+    "removed": [
+      "repeated proposal listing and downloads after a definite comparison conflict",
+      "duplicate authority read and target lookup when retrying a retained batch",
+      "redundant previous model-count prose",
+      "duplicate homepage evidence links and outdated release status"
+    ],
+    "woodpecker_pipeline": 300,
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.410988509,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 80,
+        "container_removed": true
+      }
+    },
+    "woodpecker_status": "success",
+    "optimized_directory_capacity_seconds": 200.31,
+    "repository_private": true,
+    "github_actions_disabled": true,
+    "kubernetes_b2": {
+      "binary_source_commit": "366b2f37bcc1b57f14cfeb12bb97e6c37e6006c5",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.7",
+      "binary_sha256": "2609420ddedc55b5c70de39c419e7e45e554cf924cdc6a5a4381402b455387ee",
+      "image_digest": "sha256:3cb784cb2f1e86075344fec8cf1e8580f5330f3f17513129aa1093bfef1faa08",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 682,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1663
+      },
+      "started_at": "2026-11-12T22:06:39.655923+00:00",
+      "finished_at": "2026-11-12T22:17:16.994675+00:00",
+      "source_commit": "366b2f37bcc1b57f14cfeb12bb97e6c37e6006c5",
+      "harness_sha256": "7177322178b1ca37d8d1d74ce95246eb1995ad84cd8bca6c8ff0e30c62720af0",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 682,
+      "reads_verified": 682,
+      "verified_keys": 682,
+      "history_sha256": "6d41d6c15e0cb8a4f7b8c424f801a2c173fad7f04b32ed4878e5f3473d7c9224",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T22:08:24.734462+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.927462247898802,
+            15.927462247898802,
+            15.927462247898802,
+            15.927462247898802
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T22:09:11.312964+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.554195033968426,
+            20.17808366904501,
+            38.06074693996925,
+            16.554195033968426
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T22:10:01.032289+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            91.5175987710245,
+            119.85146801604424,
+            91.5175987710245,
+            91.5175987710245
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T22:12:05.471670+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            100.81164333492052,
+            161.7195947539294,
+            107.97493567399215,
+            100.81164333492052
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T22:15:23.514275+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            43.94243730697781,
+            58.215856887050904,
+            43.94243730697781,
+            43.94243730697781
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "trace_event_counts": {
+          "acquisition_owners": 85,
+          "activation_events": 255,
+          "selection_events": 455,
+          "catalog_events": 71,
+          "checkpoint_events": 487
+        },
+        "longest_complete_calls": {
+          "activation_events": {
+            "complete_calls_sampled": 85,
+            "longest": {
+              "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+              "partition": 2,
+              "elapsed_ms": 8162,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:12:51.837500Z",
+                  "owner": "5cd5bbdb-c07b-41fd-9593-df740b5afd13",
+                  "stage": "revocation",
+                  "predecessors": 0,
+                  "elapsed_ms": 123
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:52.337688Z",
+                  "owner": "5cd5bbdb-c07b-41fd-9593-df740b5afd13",
+                  "stage": "publication",
+                  "predecessors": 2,
+                  "elapsed_ms": 623
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:59.876708Z",
+                  "owner": "5cd5bbdb-c07b-41fd-9593-df740b5afd13",
+                  "stage": "submitted",
+                  "predecessors": 2,
+                  "elapsed_ms": 8162
+                }
+              ]
+            }
+          },
+          "selection_events": {
+            "complete_calls_sampled": 85,
+            "longest": {
+              "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+              "partition": 15,
+              "elapsed_ms": 19602,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:12:29.644375Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "discovery",
+                  "journals": 0,
+                  "frames": 0,
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:30.194864Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "publication",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 550
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:49.114267Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "validation",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 19469
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:49.114296Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "advance",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 19469
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:49.246493Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "discovery",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 19602
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:49.246533Z",
+                  "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+                  "stage": "complete",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 19602
+                }
+              ]
+            }
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 69,
+            "longest": {
+              "pod": "durable-db-1/105d4fc9-52c4-4b08-8ff8-bfa50ff546a8",
+              "partition": 12,
+              "elapsed_ms": 22412,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:14:02.247796Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "permission",
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:02.339976Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "allowance",
+                  "elapsed_ms": 92
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:02.340299Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "funding",
+                  "elapsed_ms": 92
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:06.068598Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "staging",
+                  "elapsed_ms": 3820
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:06.958937Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "publication",
+                  "elapsed_ms": 4711
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:06.958976Z",
+                  "outcome": "progress",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "publication",
+                  "elapsed_ms": 4711
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:24.660262Z",
+                  "outcome": "completed",
+                  "owner": "1db09dd0-1a41-4f14-88da-579af0e7f2d0",
+                  "stage": "publication",
+                  "elapsed_ms": 22412
+                }
+              ]
+            }
+          }
+        },
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "retained_scan_retries": {
+          "sampled_retries": 3,
+          "scope": "Same completed call, no intervening discovery, unchanged frame/journal counters. Frame counts exclude end-of-journal GETs; bounded logs can omit retries.",
+          "largest_frame_batch": {
+            "pod": "durable-db-1/4979dfe8-ae68-4ba0-af5a-69c6077b31ef",
+            "partition": 1,
+            "retained_frame_reads": 0,
+            "first_publication": {
+              "time_utc": "2026-11-12T22:11:22.717407Z",
+              "owner": "7beeedc0-2b9b-4dc5-9ae0-7d769e0f0b46",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 519
+            },
+            "retry_publication": {
+              "time_utc": "2026-11-12T22:11:29.661275Z",
+              "owner": "7beeedc0-2b9b-4dc5-9ae0-7d769e0f0b46",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 7462
+            }
+          }
+        },
+        "longest_empty_selection": {
+          "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+          "partition": 15,
+          "elapsed_ms": 19602,
+          "events": [
+            {
+              "time_utc": "2026-11-12T22:12:29.644375Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "discovery",
+              "journals": 0,
+              "frames": 0,
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-12T22:12:30.194864Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 550
+            },
+            {
+              "time_utc": "2026-11-12T22:12:49.114267Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "validation",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 19469
+            },
+            {
+              "time_utc": "2026-11-12T22:12:49.114296Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "advance",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 19469
+            },
+            {
+              "time_utc": "2026-11-12T22:12:49.246493Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "discovery",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 19602
+            },
+            {
+              "time_utc": "2026-11-12T22:12:49.246533Z",
+              "owner": "428e6853-ee9e-4c6d-bcc0-ae79a4fe98d2",
+              "stage": "complete",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 19602
+            }
+          ]
+        },
+        "checkpoint_control_work": {
+          "complete_calls_sampled": 69,
+          "calls_with_confirmation": 1,
+          "confirmation_events": 1,
+          "longest_funding_ms": 5875,
+          "scope": "Complete sampled checkpoint calls; confirmation may resolve a real race or unknown response. Counts are not population rates."
+        },
+        "history_slices": [
+          {
+            "phase": "rolling-replacement-1",
+            "max_acknowledgement_gap_seconds": 69.51508029800002,
+            "max_request_seconds": 53.73803346700001,
+            "record_slice": [
+              181,
+              407
+            ]
+          },
+          {
+            "phase": "rolling-replacement-2",
+            "max_acknowledgement_gap_seconds": 91.61718177200004,
+            "max_request_seconds": 27.00780982699996,
+            "record_slice": [
+              407,
+              598
+            ]
+          }
+        ],
+        "history_scope": "Recorded phase slices include intervening diagnostics; these are acknowledgement gaps, not exact fault windows or readback latencies.",
+        "shared_publication": {
+          "complete_calls_sampled": 521,
+          "partial_calls_sampled": 45,
+          "conflicted_calls": 120,
+          "outcomes": {
+            "confirmed": 253,
+            "helped": 268,
+            "uncertain": 0
+          },
+          "comparison_attempts": 388,
+          "conflicts": 135,
+          "scope": "Complete bounded log samples, not rates or a population distribution. Initial includes observation/uploads before helper admission. Preparation includes discovery, target checks and directory uploads; comparison is the conditional provider call. Separate maxima are not one critical path.",
+          "longest_elapsed": {
+            "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+            "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+            "outcome": "helped",
+            "elapsed_ms": 18713,
+            "initial_ms": 12807,
+            "queue_ms": 3307,
+            "prepare_total_ms": 1509,
+            "compare_total_ms": 1083,
+            "longest_single_comparison_ms": 1083,
+            "comparison_attempts": 1,
+            "conflicts": 1
+          },
+          "longest_initial": {
+            "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+            "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+            "outcome": "helped",
+            "elapsed_ms": 18713,
+            "initial_ms": 12807,
+            "queue_ms": 3307,
+            "prepare_total_ms": 1509,
+            "compare_total_ms": 1083,
+            "longest_single_comparison_ms": 1083,
+            "comparison_attempts": 1,
+            "conflicts": 1
+          },
+          "longest_queue": {
+            "pod": "durable-db-2/17909ae5-c369-4c69-900f-563df1eff0d8",
+            "publication": "efdffa4c-7bcd-4819-bebf-9d78590ebed2",
+            "outcome": "helped",
+            "elapsed_ms": 14783,
+            "initial_ms": 796,
+            "queue_ms": 13814,
+            "prepare_total_ms": 173,
+            "compare_total_ms": 0,
+            "longest_single_comparison_ms": 0,
+            "comparison_attempts": 0,
+            "conflicts": 0
+          },
+          "longest_preparation": {
+            "pod": "durable-db-1/36e9611f-56cc-4925-beb4-bbbcf1710c35",
+            "publication": "f1bdf01b-f6de-4256-bd1c-7af4a33b7e15",
+            "outcome": "helped",
+            "elapsed_ms": 5968,
+            "initial_ms": 776,
+            "queue_ms": 0,
+            "prepare_total_ms": 4086,
+            "compare_total_ms": 1099,
+            "longest_single_comparison_ms": 1099,
+            "comparison_attempts": 1,
+            "conflicts": 1
+          },
+          "longest_comparison": {
+            "pod": "durable-db-1/105d4fc9-52c4-4b08-8ff8-bfa50ff546a8",
+            "publication": "014b8920-5b50-4ca7-a594-83d26a866843",
+            "outcome": "confirmed",
+            "elapsed_ms": 17549,
+            "initial_ms": 1102,
+            "queue_ms": 0,
+            "prepare_total_ms": 1345,
+            "compare_total_ms": 15101,
+            "longest_single_comparison_ms": 15101,
+            "comparison_attempts": 1,
+            "conflicts": 0
+          },
+          "extreme_calls": [
+            {
+              "pod": "durable-db-5/4419b358-7f86-4434-823a-2999e83bb9dd",
+              "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+              "outcome": "helped",
+              "elapsed_ms": 18713,
+              "initial_ms": 12807,
+              "queue_ms": 3307,
+              "prepare_total_ms": 1509,
+              "compare_total_ms": 1083,
+              "longest_single_comparison_ms": 1083,
+              "comparison_attempts": 1,
+              "conflicts": 1,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:12:49.114617Z",
+                  "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+                  "outcome": "admitted",
+                  "attempt": 0,
+                  "queue_ms": 3307,
+                  "prepare_ms": 0,
+                  "compare_ms": 0,
+                  "elapsed_ms": 16114
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:51.630312Z",
+                  "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+                  "outcome": "conflict",
+                  "attempt": 1,
+                  "queue_ms": 3307,
+                  "prepare_ms": 1432,
+                  "compare_ms": 1083,
+                  "elapsed_ms": 18629
+                },
+                {
+                  "time_utc": "2026-11-12T22:12:51.713526Z",
+                  "publication": "0294e692-04c4-49cf-a2d0-dd58f1267fb8",
+                  "outcome": "helped",
+                  "attempt": 1,
+                  "queue_ms": 3307,
+                  "prepare_ms": 77,
+                  "compare_ms": 0,
+                  "elapsed_ms": 18713
+                }
+              ]
+            },
+            {
+              "pod": "durable-db-2/17909ae5-c369-4c69-900f-563df1eff0d8",
+              "publication": "efdffa4c-7bcd-4819-bebf-9d78590ebed2",
+              "outcome": "helped",
+              "elapsed_ms": 14783,
+              "initial_ms": 796,
+              "queue_ms": 13814,
+              "prepare_total_ms": 173,
+              "compare_total_ms": 0,
+              "longest_single_comparison_ms": 0,
+              "comparison_attempts": 0,
+              "conflicts": 0,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:14:49.508950Z",
+                  "publication": "efdffa4c-7bcd-4819-bebf-9d78590ebed2",
+                  "outcome": "admitted",
+                  "attempt": 0,
+                  "queue_ms": 13814,
+                  "prepare_ms": 0,
+                  "compare_ms": 0,
+                  "elapsed_ms": 14610
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:49.682067Z",
+                  "publication": "efdffa4c-7bcd-4819-bebf-9d78590ebed2",
+                  "outcome": "helped",
+                  "attempt": 0,
+                  "queue_ms": 13814,
+                  "prepare_ms": 173,
+                  "compare_ms": 0,
+                  "elapsed_ms": 14783
+                }
+              ]
+            },
+            {
+              "pod": "durable-db-1/36e9611f-56cc-4925-beb4-bbbcf1710c35",
+              "publication": "f1bdf01b-f6de-4256-bd1c-7af4a33b7e15",
+              "outcome": "helped",
+              "elapsed_ms": 5968,
+              "initial_ms": 776,
+              "queue_ms": 0,
+              "prepare_total_ms": 4086,
+              "compare_total_ms": 1099,
+              "longest_single_comparison_ms": 1099,
+              "comparison_attempts": 1,
+              "conflicts": 1,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:15:42.157216Z",
+                  "publication": "f1bdf01b-f6de-4256-bd1c-7af4a33b7e15",
+                  "outcome": "admitted",
+                  "attempt": 0,
+                  "queue_ms": 0,
+                  "prepare_ms": 0,
+                  "compare_ms": 0,
+                  "elapsed_ms": 776
+                },
+                {
+                  "time_utc": "2026-11-12T22:15:47.256782Z",
+                  "publication": "f1bdf01b-f6de-4256-bd1c-7af4a33b7e15",
+                  "outcome": "conflict",
+                  "attempt": 1,
+                  "queue_ms": 0,
+                  "prepare_ms": 4000,
+                  "compare_ms": 1099,
+                  "elapsed_ms": 5875
+                },
+                {
+                  "time_utc": "2026-11-12T22:15:47.349810Z",
+                  "publication": "f1bdf01b-f6de-4256-bd1c-7af4a33b7e15",
+                  "outcome": "helped",
+                  "attempt": 1,
+                  "queue_ms": 0,
+                  "prepare_ms": 86,
+                  "compare_ms": 0,
+                  "elapsed_ms": 5968
+                }
+              ]
+            },
+            {
+              "pod": "durable-db-1/105d4fc9-52c4-4b08-8ff8-bfa50ff546a8",
+              "publication": "014b8920-5b50-4ca7-a594-83d26a866843",
+              "outcome": "confirmed",
+              "elapsed_ms": 17549,
+              "initial_ms": 1102,
+              "queue_ms": 0,
+              "prepare_total_ms": 1345,
+              "compare_total_ms": 15101,
+              "longest_single_comparison_ms": 15101,
+              "comparison_attempts": 1,
+              "conflicts": 0,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T22:14:28.211992Z",
+                  "publication": "014b8920-5b50-4ca7-a594-83d26a866843",
+                  "outcome": "admitted",
+                  "attempt": 0,
+                  "queue_ms": 0,
+                  "prepare_ms": 0,
+                  "compare_ms": 0,
+                  "elapsed_ms": 1102
+                },
+                {
+                  "time_utc": "2026-11-12T22:14:44.658636Z",
+                  "publication": "014b8920-5b50-4ca7-a594-83d26a866843",
+                  "outcome": "confirmed",
+                  "attempt": 1,
+                  "queue_ms": 0,
+                  "prepare_ms": 1345,
+                  "compare_ms": 15101,
+                  "elapsed_ms": 17549
+                }
+              ]
+            }
+          ],
+          "longest_queue_holder": {
+            "pod": "durable-db-2/17909ae5-c369-4c69-900f-563df1eff0d8",
+            "waiting_publication": "efdffa4c-7bcd-4819-bebf-9d78590ebed2",
+            "holder_publication": "b4a5da70-5ae2-49af-8a1b-924156819af5",
+            "events": [
+              {
+                "time_utc": "2026-11-12T22:14:32.993531Z",
+                "publication": "b4a5da70-5ae2-49af-8a1b-924156819af5",
+                "outcome": "admitted",
+                "attempt": 0,
+                "queue_ms": 0,
+                "prepare_ms": 0,
+                "compare_ms": 0,
+                "elapsed_ms": 1488
+              },
+              {
+                "time_utc": "2026-11-12T22:14:49.508803Z",
+                "publication": "b4a5da70-5ae2-49af-8a1b-924156819af5",
+                "outcome": "confirmed",
+                "attempt": 1,
+                "queue_ms": 0,
+                "prepare_ms": 1419,
+                "compare_ms": 15096,
+                "elapsed_ms": 18003
+              }
+            ],
+            "scope": "Same-pod timestamp overlap places the complete 13.814s queue interval within this helper, whose first successful conditional call takes 15.096s. Correlation of bounded logs; no claim about the earlier release or when the waiting proposal became visible."
+          }
+        }
+      },
+      "report_sha256": "0b39534c2a1ed130113ae9815af83cedd5983508d9f1a08983f7e09405315a47"
+    },
+    "cloud_qualification": "Exact static B2/Kubernetes runtime passes four independent histories and cold recovery; scaling and cold targets pass, both rollout targets miss. Complete publication samples expose helper queueing, preparation/conflict work and slow conditional provider calls. Lower sampled activation and higher sampled checkpoint maxima do not establish overall recovery improvement or explain the previous call causally."
+  },
+  "release_0_24_7": {
+    "source_commit": "366b2f37bcc1b57f14cfeb12bb97e6c37e6006c5",
+    "woodpecker_pipeline": 300,
+    "artifact_image_digest": "sha256:27fe3b6061534623d959e485fd5a04edfac4dacfb67b721063aab34a4e9e67a6",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.7",
+      "archive_sha256": "05529f9547db5ed0fb3ea7eec3ef21eb85877cfbb429806553fdc8ebe3bb88d4",
+      "binary_sha256": "2609420ddedc55b5c70de39c419e7e45e554cf924cdc6a5a4381402b455387ee",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6355890,
+    "version": "v0.24.7",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 300,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/300/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 301,
+      "status": "success",
+      "source_commit": "366b2f37bcc1b57f14cfeb12bb97e6c37e6006c5"
+    },
+    "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.7",
+    "published_at": "2026-11-12T22:20:41Z",
+    "prerelease": true
   }
 }
