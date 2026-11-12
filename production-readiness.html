@@ -21,8 +21,8 @@
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td><strong>Native clustered serving — medium to large, integrated campaign passed</strong></td>
-<td>The exact v0.23.5 executable passes the complete B2 campaign on the existing hosts: 1→3→6→1, pod loss, rolling replacement, provider interruption and total compute replacement. Every writer must progress before the next fault; all 1,350 acknowledged writes were recovered. Independent recovery slots and preservation of unchanged placement remove unnecessary waiting. Observed rolling recovery fell from 165 to 141 seconds, scale-down from 177 to 134 seconds and cold replacement from 127 to 106 seconds; initial setup rose from 121 to 184 seconds. Different placements, histories, provider conditions and the included health patch prevent an isolated performance attribution. The next candidate failed scale-to-six before its stopped-peer/DNS fault: two writers exhausted their 180-second retry limit. Raw partition observations now avoid redundant bucket-metadata updates; fresh qualification is pending. Next: repeatability and declared recovery targets, worst-case memory, exhausted-credit administration during churn, and host failures, including unreachable peers still advertised by DNS.</td>
+<td><strong>Native clustered serving — medium to large, recovery not yet repeatable</strong></td>
+<td>v0.23.5 passes the complete existing-host B2 campaign; the next candidate passes stopped-peer/DNS replacement and rejoin, then fails later pod-loss progress. Raw control reads avoid redundant updates, and cancelled forwarding now invalidates stale routes; complete fresh qualification is pending. Meet the recovery targets below, qualify unreachable advertised peers and network/host faults, measure worst-case memory, and keep funded administration available during churn. <a href="verification-results.html">Measurements and failed runs</a>.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
@@ -51,6 +51,24 @@
 </tr>
 </tbody>
 </table>
+<p>The next engineering targets for the existing four-writer failure fixture are
+<strong>60 seconds for every writer to resume acknowledged/read-back progress after
+single-process loss or a replica change</strong>, and <strong>120 seconds after a cold API
+process becomes ready following total compute loss</strong>. These are targets to test,
+not achieved SLOs. Measure from fault injection or readiness to each writer’s
+progress, separately from budget inspection and diagnostic collection. Provider
+outage recovery starts when connectivity is restored; the outage duration must
+also remain visible. Broader production targets still need a declared workload,
+region, provider conditions and repeatability.</p>
+<p>The current harness retains its outer 180-second identical-request retry limit
+and 240-second readiness/progress checks, with two further verified readbacks
+from every writer before each next fault. Passing those ceilings alone does not
+meet the engineering targets. New reports record controller-monotonic upper bounds from the fault command
+(or cold readiness) to two further readbacks per writer after readiness. They
+include readiness and polling delay, exclude subsequent budget/diagnostic work,
+and report target attainment separately from campaign success. Earlier
+phase-to-phase durations include diagnostics and are not direct measurements
+of the new targets.</p>
 <p>Gate 1 now follows <a href="design-owned-partitions.html#revocable-writer-permits">revocable writer permits</a>: fresh per-writer object validation, permanent revocation before journal recovery, no bounded-clock assumption and no bucket-wide conditional update for ordinary requests. The ownership, routing, layout and residency models establish separate bounded properties; their composition and implementation correspondence remain open. The integrated CLI has completed per-writer handoff, provider-interruption and cold-replacement checks on B2. Repeatability, host failures and declared latency/concurrency targets remain decisive checks. Restricted-profile and ClockBound findings remain <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">fallback evidence</a>; they do not narrow the required hosts.</p>
 <p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with revocable permits and independent partitions, historical clock experiments, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
 <h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>

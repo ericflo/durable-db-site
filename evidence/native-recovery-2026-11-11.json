@@ -1117,6 +1117,173 @@
         "Native bucket update calls were much slower than list-bucket observations in the sampled new pods; this does not establish a provider rate-limit cause.",
         "All disposable resources and local pulled images were removed. No new release was published from this candidate."
       ]
+    },
+    {
+      "binary_source_commit": "aa3996ffb6f0e21c0ef4e1fef38d604cc3fb1a6e",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.6 after raw-control correction",
+      "binary_sha256": "f950b663d89d8629a57558f857e7e9f11a81849acf168f61bb2c6f7f4e4a51fa",
+      "image_digest": "sha256:252008c0e85a93148e95347e5091655d2a3c6a04976399e36c999b3a7077c325",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 703
+      },
+      "started_at": "2026-11-12T02:15:14.876250+00:00",
+      "finished_at": "2026-11-12T02:32:00.516793+00:00",
+      "source_commit": "aa3996ffb6f0e21c0ef4e1fef38d604cc3fb1a6e",
+      "harness_sha256": "d7b604ed423c776d35aa267075d90f30c2261509e5124128513866d705649599",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "controller_failure": {
+        "type": "RuntimeError",
+        "reason": "Synthetic workload failed"
+      },
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T02:15:35.302634+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T02:15:48.732379+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T02:17:39.617891+00:00",
+          "writes_acknowledged": 22
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T02:18:59.832000+00:00",
+          "writes_acknowledged": 176
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T02:20:05.149781+00:00",
+          "writes_acknowledged": 319
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T02:20:10.335909+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 343
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-12T02:22:21.237156+00:00",
+          "elapsed_seconds": 120.00135457399301,
+          "writes_acknowledged": 738
+        },
+        {
+          "name": "prior-api-processes-paused",
+          "time_utc": "2026-11-12T02:22:50.141174+00:00"
+        },
+        {
+          "name": "paused-dns-replacement",
+          "time_utc": "2026-11-12T02:25:18.612132+00:00",
+          "writes_acknowledged": 890
+        },
+        {
+          "name": "paused-processes-resumed",
+          "time_utc": "2026-11-12T02:26:31.353530+00:00",
+          "writes_acknowledged": 1023
+        },
+        {
+          "name": "resume-scale-six",
+          "time_utc": "2026-11-12T02:27:06.699557+00:00",
+          "writes_acknowledged": 1104
+        }
+      ],
+      "partial_workload": {
+        "writes_acknowledged": 1540,
+        "reads_verified": 1540,
+        "http_attempt_statuses": {
+          "200": 3112,
+          "429": 423,
+          "503": 351,
+          "transport_or_decode_error": 20
+        },
+        "failures": [
+          {
+            "worker": 3,
+            "reason": "Identical-request recovery deadline exceeded (commit, last HTTP status transport_or_decode_error)"
+          }
+        ],
+        "verified": [
+          422,
+          390,
+          494,
+          234
+        ]
+      },
+      "stale_dns_fault": {
+        "passed": true,
+        "paused_processes": 6,
+        "same_process_identities_still_stopped": true,
+        "retained_dns_addresses": 7,
+        "same_dns_candidates": true,
+        "only_new_process_ready": true,
+        "seconds_between_pause_verification_and_progress_boundary": 148.470958,
+        "all_original_processes_resumed": true
+      },
+      "memory": {
+        "steady_samples": 6,
+        "pod_observations": 36,
+        "maximum_sampled_rss_bytes": 4669440
+      },
+      "stalled_writer": {
+        "index": 3,
+        "partition": 15,
+        "replacement_owner_ready_at": "2026-11-12T02:27:54.033594Z",
+        "replacement_acquisition_ms": 25455,
+        "failure": "Commit identical retry exceeded 180 seconds; last error was transport/decode. Other writers progressed."
+      },
+      "limitations": [
+        "Completed stale-DNS pause/rejoin, then failed forced-pod-loss progress. No final history checker or cold recovery; partial counts are not final acknowledgement totals or evidence of data loss.",
+        "Phase boundaries include readiness, diagnostics and readback barriers; they are not direct fault-to-progress latency measurements.",
+        "Replacement owner was ready before the stalled writer timed out. A separately reproduced routing cancellation defect is consistent with this trace; cloud causality is not established.",
+        "Process pause is not whole-host loss or an asymmetric network partition. Memory samples are steady observations, not recovery peaks.",
+        "Namespace, key, bucket, 703 physical versions, private temporary inputs and local pulled images were removed. No release was published from this candidate."
+      ]
     }
   ],
   "release": {
@@ -1630,7 +1797,7 @@
       "three_candidate_distinct_states": 30349,
       "mandatory_negative_controls": 6
     },
-    "cloud_followup": "pending",
+    "cloud_followup": "Candidate aa3996f passed stale-DNS pause/rejoin but failed later forced-pod-loss progress; campaign retained.",
     "scope": "Raw observations are hints; exact comparisons, public budget freshness and serving-permit validation are unchanged.",
     "provider_checks": [
       {
@@ -1700,5 +1867,15 @@
         "source_commit": "6ee7807"
       }
     ]
+  },
+  "cancelled_forwarding": {
+    "regression_failed_prior_implementation": true,
+    "focused_http_tests": 6,
+    "model_distinct_states": 138,
+    "mandatory_negative_controls": 6,
+    "cloud_followup": "pending",
+    "scope": "Cancellation invalidates only the attempted route instance; never replays a request or grants serving authority. Successful concurrent replies cannot revive an invalidated instance.",
+    "enabled_rust_checks": 330,
+    "strict_clippy": true
   }
 }

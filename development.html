@@ -176,7 +176,7 @@ scripts/check-proof.sh
 </tbody>
 </table>
 <p>Build the debug executable before running the client script. Its focused SDK mode still checks types, formatting, the application example and benchmark accounting. Its default mode runs the full client and Pi suite, including both adapters, the 32 upstream Pi cases, indexed-adapter fault/resource tests and real Harness workflows.</p>
-<p>Research models live in <code>spec/candidates/</code>. They are separate from the implemented serving protocol and do not authorize runtime assumption changes.</p>
+<p><code>spec/candidates/</code> retains both the ownership/control models used by native serving and unselected research alternatives. Its directory name is historical; <a href="verification.html">verification</a> identifies the implemented protocols and their assumptions. An unselected design does not authorize runtime assumption changes.</p>
 <pre><code class="language-sh">scripts/check-candidate.sh PartitionControl
 scripts/check-proof.sh PartitionControl
 scripts/check-candidate.sh PartitionJournal

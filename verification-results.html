@@ -1,5 +1,31 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.5 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
 <h2 id="peer-failure-and-raw-control-observations-2026-11-12-release-pending">Peer failure and raw control observations (2026-11-12, release pending)<a class="anchor" href="#peer-failure-and-raw-control-observations-2026-11-12-release-pending" aria-label="Link to this section">#</a></h2>
+<p>Candidate <code>aa3996f</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/233/1">Woodpecker #233</a>
+and the independent executable checks. Its fresh B2/Kubernetes campaign reaches
+all four writers’ progress while <strong>all six original database processes remain
+stopped and listed in DNS</strong>. Their process identities are checked before and
+after; only the new seventh process can serve. The original processes then
+resume, and every writer progresses through the return to six replicas.</p>
+<p>The subsequent forced pod loss <strong>fails</strong>: writer 3 exhausts its unchanged
+180-second commit-retry limit, although its replacement owner became ready
+about 47 seconds after the preceding phase boundary. The partial snapshot has
+1,540 acknowledgements/readbacks, without final cold recovery/history checking.
+This does not establish lost acknowledgements. The pause-to-replacement phase
+boundary takes 148 seconds; rejoin takes 73 seconds. These include diagnostics,
+not isolated recovery latencies. All disposable resources and 703 physical
+versions were removed; the failed run and exact hashes remain in the evidence.</p>
+<p>A local HTTP regression reproduces a routing defect consistent with that stall:
+cancelling a forwarded request before its peer timeout skipped cache invalidation,
+so the next explicit retry used the same dead destination. Invalidation now runs
+synchronously when the attempt ends or is dropped, affecting only that route
+instance. A late cancellation cannot erase a replacement or revive a failed peer.
+The interruptible asynchronous invalidation block was removed. Six HTTP routing
+checks pass in 0.19 seconds, including cancellation and delayed failures; the
+138-state routing model passes all six negative controls. All 330 enabled Rust
+checks, formatting, strict clippy and the documentation build pass. These bounded checks
+are not a Rust proof or confirmation of the cloud stall’s cause. A complete new
+campaign remains required before release.</p>
+<p>The earlier candidate and provider checks below remain part of the record.</p>
 <p>Candidate <code>689cfcf</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/231/1">Woodpecker #231</a>
 and the independently downloaded static executable checks, but <strong>fails the fresh
 B2/Kubernetes campaign</strong>. Two writers exhaust the unchanged 180-second retry
@@ -32,8 +58,8 @@ The corrected provider-cost assertion requires one raw read and zero updates or
 barriers. Versioned MinIO passes 1→2→1→0→1 handoff and cold recovery in 2.61 seconds.
 The B2 fixture stops on a single-attempt HTTP 503; its failure remains recorded.
 All four provider-fixture buckets, both B2 keys, both MinIO containers and 173
-remaining physical versions were removed. A fresh Kubernetes campaign with the
-existing bounded identical retries must qualify this correction before release.</p>
+remaining physical versions were removed. The later Kubernetes run above
+reached the stopped-peer fault but still failed its full availability check.</p>
 <h2 id="v0235-independent-recovery-scheduling-2026-11-12">v0.23.5 independent recovery scheduling (2026-11-12)<a class="anchor" href="#v0235-independent-recovery-scheduling-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.5">v0.23.5</a> packages
 <code>503faaa</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/228/1">Woodpecker #228</a>.
