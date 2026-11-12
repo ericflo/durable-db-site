@@ -2367,6 +2367,701 @@
         "max_rss_bytes": 5156864,
         "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
       }
+    },
+    {
+      "binary_source_commit": "5606aff3d044de54853169a38d0d03fe8d2cc9b8",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.7",
+      "binary_sha256": "e82e6967c3420749174b0382e40557339353f4616cca7e92e2bebc418751149c",
+      "image_digest": "sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 1593,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1463
+      },
+      "started_at": "2026-11-12T05:39:21.275176+00:00",
+      "finished_at": "2026-11-12T06:00:11.012787+00:00",
+      "source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "harness_sha256": "9f38396a6680e83f2ce4eda65634a75142275706e78c8c184e1d62dd461f2866",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T05:41:23.950946+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            54.710271543008275,
+            82.99034601799212,
+            79.5357520749094,
+            86.2541755560087
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T05:43:15.204608+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.221684491960332,
+            76.83435013098642,
+            16.221684491960332,
+            76.83435013098642
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "paused-dns-replacement",
+          "started_at": "2026-11-12T05:48:19.058770+00:00",
+          "basis": "after sole replacement API readiness with old peers stopped",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            55.01988373999484,
+            83.87614243500866,
+            87.65741324692499,
+            83.87614243500866
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "paused-processes-resumed",
+          "started_at": "2026-11-12T05:50:04.018450+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            60.327388694975525,
+            53.36782613291871,
+            35.58639877999667,
+            56.87216751091182
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "resume-scale-six",
+          "started_at": "2026-11-12T05:51:09.375192+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            5.848056088085286,
+            5.848056088085286,
+            5.848056088085286,
+            5.848056088085286
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "started_at": "2026-11-12T05:51:20.396999+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            19.62362607801333,
+            16.04468295897823,
+            16.04468295897823,
+            16.04468295897823
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement",
+          "started_at": "2026-11-12T05:51:44.530424+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            119.57263714401051,
+            112.41782588197384,
+            94.67502635996789,
+            108.92369091196451
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "provider-restored",
+          "started_at": "2026-11-12T05:54:53.320246+00:00",
+          "basis": "before restoring provider egress",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            39.623454275075346,
+            18.030537887010723,
+            18.030537887010723,
+            18.030537887010723
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "started_at": "2026-11-12T05:55:37.328841+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            77.04751058795955,
+            113.08158982801251,
+            59.22746947396081,
+            113.08158982801251
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T05:58:09.642087+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            51.782193438964896,
+            55.37393800902646,
+            51.782193438964896,
+            55.37393800902646
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T05:39:43.254430+00:00",
+          "placement": [
+            "epsilon-3"
+          ]
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T05:39:57.974086+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T05:41:23.950333+00:00",
+          "writes_acknowledged": 20
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T05:42:52.611153+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-xgrqg",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 122
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T05:44:36.753494+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-5pbnh",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-xgrqg",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 328
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T05:44:52.012715+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 377
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-12T05:47:49.256923+00:00",
+          "elapsed_seconds": 123.54123675799929,
+          "writes_acknowledged": 760
+        },
+        {
+          "name": "prior-api-processes-paused",
+          "time_utc": "2026-11-12T05:48:18.440183+00:00",
+          "processes": [
+            {
+              "pod": "durable-db-f44dcc4c7-5pbnh",
+              "pid": 7,
+              "started": "49843932",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "pid": 7,
+              "started": "50076617",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "pid": 7,
+              "started": "50087709",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "pid": 7,
+              "started": "49962658",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "pid": 7,
+              "started": "49951868",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-xgrqg",
+              "pid": 7,
+              "started": "49821574",
+              "state": "T"
+            }
+          ],
+          "dns_addresses": [
+            "10.1.113.166",
+            "10.1.77.120",
+            "10.1.113.134",
+            "10.1.77.4",
+            "10.1.113.158",
+            "10.1.77.10",
+            "10.1.77.123"
+          ]
+        },
+        {
+          "name": "paused-dns-replacement",
+          "time_utc": "2026-11-12T05:50:04.017005+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-6ld47",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 837,
+          "processes": [
+            {
+              "pod": "durable-db-f44dcc4c7-5pbnh",
+              "pid": 7,
+              "started": "49843932",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "pid": 7,
+              "started": "50076617",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "pid": 7,
+              "started": "50087709",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "pid": 7,
+              "started": "49962658",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "pid": 7,
+              "started": "49951868",
+              "state": "T"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-xgrqg",
+              "pid": 7,
+              "started": "49821574",
+              "state": "T"
+            }
+          ],
+          "dns_addresses": [
+            "10.1.113.158",
+            "10.1.77.10",
+            "10.1.77.120",
+            "10.1.77.4",
+            "10.1.113.166",
+            "10.1.77.123",
+            "10.1.113.134"
+          ]
+        },
+        {
+          "name": "paused-processes-resumed",
+          "time_utc": "2026-11-12T05:51:09.373231+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-5pbnh",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-6ld47",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-xgrqg",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 956
+        },
+        {
+          "name": "resume-scale-six",
+          "time_utc": "2026-11-12T05:51:19.825583+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-5pbnh",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-6ld47",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 990
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-12T05:51:44.528522+00:00",
+          "victim_node": "epsilon-3",
+          "placement": [
+            {
+              "pod": "durable-db-f44dcc4c7-6ld47",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-crqm9",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-mkknh",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-q582n",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-r8nfl",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-f44dcc4c7-w2tmn",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 1063
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-12T05:53:50.799998+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-5b5dc8b978-bl95v",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-mfmlg",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-nmxcp",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-qc28j",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-r2cjh",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-z8vv6",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 1263
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-12T05:54:13.317549+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-12T05:55:37.326519+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 1402
+        },
+        {
+          "name": "scale-one",
+          "time_utc": "2026-11-12T05:57:31.640560+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-5b5dc8b978-z8vv6",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 1504
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T05:57:53.512294+00:00",
+          "writes_acknowledged": 1557
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T05:59:07.468826+00:00",
+          "placement": [
+            {
+              "pod": "durable-db-5b5dc8b978-cnkxr",
+              "node": "epsilon-2",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-f7dtz",
+              "node": "epsilon-1",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            },
+            {
+              "pod": "durable-db-5b5dc8b978-x7pf2",
+              "node": "epsilon-3",
+              "image_id": "localhost:32000/durable-db@sha256:c5954a0ef9c16b61924255a13e62e320b589bdf1d3f71129d662d38df3db3398"
+            }
+          ],
+          "writes_acknowledged": 1577
+        }
+      ],
+      "checkpoint_failures": {
+        "durable-db-f44dcc4c7-xgrqg": [],
+        "durable-db-f44dcc4c7-crqm9": [
+          {
+            "time_utc": "2026-11-12T05:42:31.879575Z",
+            "owner": "b2ea49e0-5a89-464f-85ec-bd645d16193d",
+            "stage": "confirmation",
+            "elapsed_ms": 8886
+          },
+          {
+            "time_utc": "2026-11-12T05:42:34.698499Z",
+            "owner": "10062d4c-a48e-4a66-930f-d62bedcc6bec",
+            "stage": "confirmation",
+            "elapsed_ms": 13613
+          },
+          {
+            "time_utc": "2026-11-12T05:47:52.262754Z",
+            "owner": "cfa14f3a-1d8f-4164-a71f-a2e8990008c0",
+            "stage": "funding",
+            "elapsed_ms": 2566
+          },
+          {
+            "time_utc": "2026-11-12T05:50:07.675549Z",
+            "owner": "cfa14f3a-1d8f-4164-a71f-a2e8990008c0",
+            "stage": "funding",
+            "elapsed_ms": 135337
+          },
+          {
+            "time_utc": "2026-11-12T05:50:07.747656Z",
+            "owner": "cfa14f3a-1d8f-4164-a71f-a2e8990008c0",
+            "stage": "permission",
+            "elapsed_ms": 72
+          }
+        ],
+        "durable-db-f44dcc4c7-w2tmn": [],
+        "durable-db-f44dcc4c7-5pbnh": [],
+        "durable-db-f44dcc4c7-q582n": [],
+        "durable-db-f44dcc4c7-r8nfl": [
+          {
+            "time_utc": "2026-11-12T05:46:09.861829Z",
+            "owner": "f8b2e4d5-c0b4-4d46-98f9-0d245b3509e4",
+            "stage": "funding",
+            "elapsed_ms": 9230
+          }
+        ],
+        "durable-db-f44dcc4c7-6ld47": [],
+        "durable-db-f44dcc4c7-mkknh": [],
+        "durable-db-5b5dc8b978-bl95v": [],
+        "durable-db-5b5dc8b978-mfmlg": [],
+        "durable-db-5b5dc8b978-nmxcp": [],
+        "durable-db-5b5dc8b978-qc28j": [],
+        "durable-db-5b5dc8b978-r2cjh": [],
+        "durable-db-5b5dc8b978-z8vv6": [],
+        "durable-db-5b5dc8b978-cnkxr": [],
+        "durable-db-5b5dc8b978-f7dtz": [],
+        "durable-db-5b5dc8b978-x7pf2": []
+      },
+      "writes_acknowledged": 1593,
+      "reads_verified": 1593,
+      "http_attempt_statuses": {
+        "200": 3233,
+        "429": 591,
+        "503": 445,
+        "transport_or_decode_error": 75
+      },
+      "expected": [
+        494,
+        276,
+        545,
+        278
+      ],
+      "verified": [
+        494,
+        276,
+        545,
+        278
+      ],
+      "verified_keys": 1593,
+      "history_sha256": "792dd221c9d425fb81513b248675bfd108e5a4a7d692dec872ca9edf454efef4",
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Application-process pause, pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Two writers share partition 11; this passing campaign does not establish the causes of all earlier failures.",
+        "Several measured transitions miss the 60-second engineering target.",
+        "The later ancestry-cursor optimization is not included in this release."
+      ],
+      "writer_partitions": [
+        3,
+        11,
+        8,
+        11
+      ],
+      "sampled_memory": {
+        "samples": 4,
+        "max_rss_bytes": 4648960,
+        "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
+      }
     }
   ],
   "release": {
@@ -3243,6 +3938,15 @@
     "tag_pipeline": {
       "number": 240,
       "status": "success"
+    },
+    "installer": {
+      "public_installer_matches_docs_source": true,
+      "docs_source_commit": "5606aff3d044de54853169a38d0d03fe8d2cc9b8",
+      "default_version": "v0.23.6",
+      "downloaded_github_asset": true,
+      "checksum_verified": true,
+      "installed_binary_matches_smoke_test": true,
+      "temporary_installation_removed": true
     }
   },
   "idle_owner_rejoin": {
@@ -3262,7 +3966,7 @@
       "depth": 9,
       "negative_controls": 7
     },
-    "provider_qualification": "Versioned MinIO passed; exact release-runtime B2/Kubernetes campaign pending.",
+    "provider_qualification": "Exact release executable passed the complete B2/Kubernetes campaign with 1,593 independently verified acknowledgements; versioned MinIO passed separately.",
     "scope": "Bounded protocol and real TCP regression; scheduling liveness and Rust refinement are not proved.",
     "provider_checks": [
       {
@@ -3403,7 +4107,8 @@
           "container_removed": true
         }
       }
-    ]
+    ],
+    "release": "v0.23.7"
   },
   "ancestry_cursor": {
     "released": false,
@@ -3555,6 +4260,86 @@
           "container_removed": true
         }
       }
-    ]
+    ],
+    "woodpecker": {
+      "pipeline": 242,
+      "source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/242/1",
+      "pages_marker_verified": true,
+      "preserved_site_overrides": [],
+      "javascript_checks": 99,
+      "optimized_10005_database_check": true
+    }
+  },
+  "release_0_23_7": {
+    "source_commit": "5606aff3d044de54853169a38d0d03fe8d2cc9b8",
+    "pipeline_status_at_verification": "running",
+    "woodpecker_pipeline": 241,
+    "artifact_image_digest": "sha256:3dfa0c8e55242c414f3193f8d58da5356372663643b3f9d521f47811a1831e90",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.7",
+      "archive_sha256": "9bf1a75e29543b251a837a0fa07529e61600afd1b9132f598f19c3472e43b81a",
+      "binary_sha256": "e82e6967c3420749174b0382e40557339353f4616cca7e92e2bebc418751149c",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6293642,
+    "version": "v0.23.7",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 241,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/241/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "pipeline_status_at_release": "success",
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.7",
+    "published_at": "2026-11-12T06:03:00Z",
+    "github_asset_digest_matches": true,
+    "tag_pipeline": {
+      "number": 243,
+      "status": "success"
+    }
   }
 }
