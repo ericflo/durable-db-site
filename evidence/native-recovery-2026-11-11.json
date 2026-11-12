@@ -10893,9 +10893,10 @@
     "focused_http_regression": {
       "replacements": 3,
       "seconds": 0.36,
-      "old_process_retained_and_fenced": true,
       "unrelated_owner_incarnation_unchanged": true,
-      "values_and_identical_retry_receipts_preserved": true
+      "values_and_identical_retry_receipts_preserved": true,
+      "old_server_retained_and_fenced": true,
+      "transport": "Real loopback HTTP with independent server instances in one Rust test process"
     },
     "placement_regression": {
       "partitions": 1024,
