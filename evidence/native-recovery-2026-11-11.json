@@ -2507,5 +2507,29 @@
     "removed": [
       "Replaced generic duplicate background-checkpoint warning."
     ]
+  },
+  "checkpoint_origin_recovery": {
+    "failure": "A failed control refresh clears local confirmation but can leave the owner permit live. Checkpoint retries reused the absent origin indefinitely.",
+    "correction": "Repeat exact metadata validation under the existing control lock when the origin is unavailable, before staging.",
+    "negative_regressions": [
+      "live_checkpoint_recovers_after_control_confirmation_is_lost",
+      "native_http_recovers_checkpoint_after_funding_and_refresh_fail"
+    ],
+    "http_background_recovery_seconds": 1.12,
+    "root_acquisition_model": {
+      "distinct_states": [
+        117741,
+        30349
+      ],
+      "negative_controls": 6
+    },
+    "checkpoint_model": {
+      "distinct_states": 65664,
+      "negative_controls": 9
+    },
+    "cloud_qualification": "Pending; local regression does not prove the previous campaign failure had this cause.",
+    "enabled_rust_checks": 335,
+    "strict_clippy": true,
+    "old_http_regression_failed_after_seconds": 5
   }
 }

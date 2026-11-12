@@ -22,7 +22,7 @@
 <tr>
 <td><strong>1</strong></td>
 <td><strong>Native clustered serving — medium to large, recovery not yet repeatable</strong></td>
-<td>v0.23.5 passes the complete existing-host B2 campaign; newer candidates pass stopped-peer/DNS replacement but full qualification still fails, most recently with two writers sharing a partition stalled before fault injection. Raw control reads avoid redundant updates, cancelled routes are invalidated, and object observations have a shorter deadline; the steady-workload stall remains unresolved; complete fresh qualification is required. Meet the recovery targets below, qualify unreachable advertised peers and network/host faults, measure worst-case memory, and keep funded administration available during churn. <a href="verification-results.html">Measurements and failed runs</a>.</td>
+<td>v0.23.5 passes the complete existing-host B2 campaign; newer candidates pass stopped-peer/DNS replacement but full qualification still fails, most recently with two writers sharing a partition stalled before fault injection. Raw control reads avoid redundant updates, cancelled routes are invalidated, and object observations have a shorter deadline; a lost-control-confirmation checkpoint stall is now reproduced and corrected locally; complete fresh qualification is required to establish cloud recovery. Meet the recovery targets below, qualify unreachable advertised peers and network/host faults, measure worst-case memory, and keep funded administration available during churn. <a href="verification-results.html">Measurements and failed runs</a>.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
