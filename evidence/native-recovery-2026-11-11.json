@@ -762,6 +762,195 @@
         "minimum_ms": 6204,
         "maximum_ms": 90804
       }
+    },
+    {
+      "binary_source_commit": "503faaa9e23a38d08cc00f12ce4925a4be18868f",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.5",
+      "binary_sha256": "82d018c64a421c75a6d7ed32725c268b84145188939d4b9f3357207f020e47c4",
+      "image_digest": "sha256:a6c1f891aa61638f8491168e41aafbd993d1f1a78d799af0057ad2621abf8e0d",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": true,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1247
+      },
+      "started_at": "2026-11-12T00:21:05.168471+00:00",
+      "finished_at": "2026-11-12T00:41:10.917976+00:00",
+      "source_commit": "503faaa9e23a38d08cc00f12ce4925a4be18868f",
+      "harness_sha256": "39bfac962b1938ec1e29ad44cfd6b41319a79498beb35e4b6399e7bb1baacf75",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "writes_acknowledged": 1350,
+      "reads_verified": 1350,
+      "verified_keys": 1350,
+      "expected": [
+        375,
+        323,
+        317,
+        335
+      ],
+      "verified": [
+        375,
+        323,
+        317,
+        335
+      ],
+      "http_attempt_statuses": {
+        "200": 2746,
+        "429": 581,
+        "503": 340,
+        "transport_or_decode_error": 82
+      },
+      "history_sha256": "c634d7d1b7f1009c044b2ae10adf6e7dac14275afc19c973f13f37f5dc7ee7f1",
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T00:21:25.479263+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T00:21:39.122546+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T00:24:29.846019+00:00",
+          "writes_acknowledged": 22
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T00:25:49.640593+00:00",
+          "writes_acknowledged": 200
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T00:27:06.812124+00:00",
+          "writes_acknowledged": 375
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T00:27:12.179866+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 389
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-12T00:29:51.933607+00:00",
+          "elapsed_seconds": 120.00015273794997,
+          "writes_acknowledged": 702
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-12T00:31:45.425756+00:00",
+          "writes_acknowledged": 850
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-12T00:34:06.444912+00:00",
+          "writes_acknowledged": 971
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-12T00:34:26.737835+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-12T00:35:32.301270+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 1053
+        },
+        {
+          "name": "scale-one",
+          "time_utc": "2026-11-12T00:37:46.599600+00:00",
+          "writes_acknowledged": 1212
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T00:38:18.029667+00:00",
+          "writes_acknowledged": 1279
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T00:40:03.858130+00:00",
+          "writes_acknowledged": 1336
+        }
+      ],
+      "per_writer_recovery_barrier": true,
+      "sequential_history_checker": "Passed: four sequential append histories, unique request IDs, invocation/revision order, value hashes and recovered totals; not a general concurrent linearizability checker.",
+      "phase_to_phase_seconds": {
+        "one-progress": 184.367,
+        "scale-3": 79.795,
+        "scale-6": 77.172,
+        "forced-api-pod-loss": 113.492,
+        "rolling-replacement": 141.019,
+        "scale-one": 134.298,
+        "cold-three": 105.828
+      },
+      "per_writer_max_commit_seconds": [
+        52.193,
+        73.486,
+        122.914,
+        73.037
+      ],
+      "per_writer_max_write_start_gap_seconds": [
+        115.058,
+        103.087,
+        123.592,
+        122.765
+      ],
+      "memory": {
+        "steady_samples": 5,
+        "pod_observations": 30,
+        "peak_sampled_rss_bytes": 5283840,
+        "peak_sampled_working_set_bytes": 5271552,
+        "unplanned_restarts": 0,
+        "scope": "Steady small workload only; not recovery peaks, whole-node memory or a worst-case process bound."
+      },
+      "sampled_acquisition_failure_stages": {
+        "budget": 1,
+        "claim": 6
+      },
+      "sampled_completed_acquisitions": 87,
+      "limitations": [
+        "One run of the exact v0.23.5 executable, before its tag was published; not repeatability or a production SLO.",
+        "The comparison run uses v0.23.3. This candidate includes both the v0.23.4 health fix and the scheduling changes; it is not an isolated A/B experiment.",
+        "Placements, histories and provider conditions differ. The new run samples steady memory and includes one auxiliary acquisition-log inspection; the prior run also used direct-pod diagnostics.",
+        "Phase-to-phase durations include orchestration, diagnostics and required per-writer readbacks. Initial ready-node-to-progress setup was slower (184.367 vs 121.067 seconds).",
+        "No AWS, HPA, whole-host loss, stale-DNS/unreachable-peer failure or sustained-load qualification.",
+        "CI runtime image retained as a release artifact; the local pull, task registry forward, private runner inputs and disposable cloud resources were removed."
+      ]
     }
   ],
   "release": {
@@ -1163,6 +1352,101 @@
     "github_asset_digest_matches": true,
     "tag_pipeline": {
       "number": 225,
+      "status": "success"
+    }
+  },
+  "recovery_scheduling": {
+    "source_commit": "9d0eade",
+    "enabled_rust_checks": 325,
+    "strict_clippy": true,
+    "queued_partition_regression_failed_previous_scheduler": true,
+    "unrelated_placement_regression_failed_previous_scheduler": true,
+    "max_concurrent_acquisitions_per_process": 4,
+    "retry_seconds": 3,
+    "resident_model": {
+      "distinct_states": 19,
+      "generated_states": 46,
+      "depth": 5,
+      "negative_controls": 2
+    },
+    "layout_model": {
+      "distinct_states": 56,
+      "generated_states": 341,
+      "depth": 6,
+      "negative_controls": 2
+    },
+    "removed": [
+      "batch drain before refilling slots",
+      "whole-reconciliation cancellation on partial placement changes",
+      "eight-health-probe batch limit"
+    ],
+    "scope": "Scheduling only; authority and storage/wire formats unchanged. Bounded models are not a proof of Rust or of liveness under permanent disagreement."
+  },
+  "release_0_23_5": {
+    "source_commit": "503faaa9e23a38d08cc00f12ce4925a4be18868f",
+    "woodpecker_pipeline": 228,
+    "artifact_image_digest": "sha256:66bc55b45b451535e84d6db3efb71942d8be9637b8b72c4363a24f0dc3fe2605",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.5",
+      "archive_sha256": "0791b48e092f4100c7339270bb4a534f3818fff7e966ac6c062a58c850f8eb85",
+      "binary_sha256": "82d018c64a421c75a6d7ed32725c268b84145188939d4b9f3357207f020e47c4",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6267656,
+    "version": "v0.23.5",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 228,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/228/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.5",
+    "published_at": "2026-11-12T00:44:00Z",
+    "github_asset_digest_matches": true,
+    "tag_pipeline": {
+      "number": 229,
       "status": "success"
     }
   }
