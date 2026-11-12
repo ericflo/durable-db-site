@@ -14006,5 +14006,68 @@
     "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.4",
     "published_at": "2026-11-12T19:56:20Z",
     "prerelease": true
+  },
+  "completed_selection_reuse": {
+    "baseline_source_commit": "b78d3063d0de249db4a1cbfa0a5f6cf616e69c67",
+    "change": "Retain at most eight completed scans across unconfirmed selection attempts only after exact validation confirms an unchanged full recovery snapshot. Retry fresh immutable catalog uploads against a new comparison; never replay uncertain PUTs.",
+    "routine_rust_checks_passed": 357,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_catalog_checks": 13,
+    "focused_seconds": 0.52,
+    "negative_control": {
+      "previous_implementation": "conflict after completed scan, followed by a late unacknowledged frame",
+      "frame_gets": 5,
+      "expected_frame_gets": 2,
+      "seconds": 0.0
+    },
+    "regressions": [
+      "definite control conflict",
+      "unknown comparison outcome",
+      "lost applied and delayed catalog PUT replies",
+      "fresh catalog objects for every retry",
+      "late frames excluded from a retained cut",
+      "metadata sweep retains scan and stages fresh objects",
+      "data sweep invalidates scan",
+      "existing successful-lost-reply and successor tests"
+    ],
+    "model": {
+      "module": "RootCatalog",
+      "instances": [
+        {
+          "epochs": 2,
+          "invocations": 3,
+          "frames": 1,
+          "distinct_states": 455553,
+          "generated_states": 2026942,
+          "depth": 33,
+          "seconds": 10
+        },
+        {
+          "epochs": 3,
+          "invocations": 3,
+          "frames": 0,
+          "distinct_states": 173635,
+          "generated_states": 802058,
+          "depth": 27,
+          "seconds": 5
+        }
+      ],
+      "fault_controls": 5,
+      "reachability_controls": 4,
+      "scope": "Finite catalog selection safety, including reused scans. Collection is abstracted out and its snapshot boundary is checked in Rust; not a composed protocol or implementation proof."
+    },
+    "local_log_sha256": {
+      "selection-reuse-negative.log": "19fe1b7d3e970fb7ed63587789f1ecbdccbeb8211e7b6f5cef7f5813fb559404",
+      "selection-reuse-focused.log": "157237fe0f6c7bc1cd9d80352d09bf0048e09d42fa14faeaa32c796ec439c32d",
+      "selection-reuse-tests.log": "9b11ef1d98b5bb967715c8a71fc69896b851dfce4e061246b6fee93339f8a269",
+      "selection-reuse-clippy.log": "4f50fa44623156ec02d7ec20b6bc54932d3cfdc634c9c5b5c2aa11ea5189fc4e",
+      "selection-reuse-model.log": "af8c0d6c580f2b332d468df4a493d2b5c7fbd80d1a973b7cf4f519789d9d027b"
+    },
+    "removed": [
+      "unconditional rediscovery after validation of an unchanged snapshot",
+      "single-prefix temporary vector allocation",
+      "obsolete unconditional-restart descriptions"
+    ],
+    "cloud_qualification": "pending"
   }
 }
