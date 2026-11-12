@@ -14649,5 +14649,565 @@
     "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.5",
     "published_at": "2026-11-12T20:40:42Z",
     "prerelease": true
+  },
+  "checkpoint_publication_observation": {
+    "baseline_source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+    "source_commit": "de9dff3edf2020fa6c54dedd52ef0062a25ceecc",
+    "change": "Read the partition comparison after funding/staging, guard the full recovery origin, and confirm it with checkpoint publication itself. Preserve uncertain publication resolution and collection fencing.",
+    "routine_rust_checks_passed": 359,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_root_checks": 142,
+    "focused_seconds": 11.39,
+    "negative_control": {
+      "previous_implementation_replacements": 4,
+      "new_uncontended_replacements": 2,
+      "previous_failure": "Funding invalidates the cached comparison; stale checkpoint attempt plus standalone validation."
+    },
+    "regressions": [
+      "durable funding and original receipt",
+      "stale observation comparison conflict",
+      "backup retained after staging survives publication",
+      "applied-but-lost publication stays unknown",
+      "successor observed by former owner is rejected",
+      "existing cancelled publication, metadata/data collection and cold recovery cases"
+    ],
+    "model": {
+      "module": "Checkpoint",
+      "histories": 216,
+      "records": 3,
+      "keys": 2,
+      "values": 3,
+      "owners": 2,
+      "funding_updates": 1,
+      "distinct_states": 144288,
+      "generated_states": 386208,
+      "depth": 13,
+      "seconds": 1,
+      "negative_controls": 9,
+      "scope": "Finite checkpoint publication and replay safety with an unrelated register update. Collection-origin guard belongs to GlobalCollection and Rust races; not a composed protocol, implementation or liveness proof."
+    },
+    "local_log_sha256": {
+      "checkpoint-funding-regression.log": "6b68ce6940bd7fe75cd55d6e3c417486f6ad9fdb9d3ef4b8227cc1bf5a741832",
+      "checkpoint-funding-fixed.log": "b2283d9de3a358ce11122e6effe0f3ab13a0ec40c0aed88c8ea6766092e61472",
+      "checkpoint-root-tests.log": "2c32c8e7f31d7960578d396c9f25afbe06485283d039db03da69108ede7b8133",
+      "checkpoint-funding-all.log": "0b9b3a99a6a66c2d9265e0ec708bfb89dcb4702de6c1467d12160b23a5741add",
+      "checkpoint-funding-clippy.log": "2b094c6fd58ef99e145b8e537dc03e8694481227bec893d982f44c4027af2c1b",
+      "checkpoint-funding-model.log": "0de427ef8f30f0d91ee8db12c725d3e0c9de7ace77882f433a176ac225fe5512"
+    },
+    "removed": [
+      "predictable stale initial checkpoint CAS",
+      "standalone validation publication in the uncontended funded path",
+      "obsolete cached collection precheck; shared full-origin guard handles the fresh observation"
+    ],
+    "woodpecker_pipeline": 297,
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.383939578,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 80,
+        "container_removed": true
+      }
+    },
+    "repository_private": true,
+    "github_actions_disabled": true,
+    "baseline_checkpoint_samples": {
+      "source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+      "complete_calls_sampled": 70,
+      "calls_with_confirmation": 14,
+      "confirmation_events": 14,
+      "longest_funding_ms": 18812,
+      "scope": "Complete bounded log samples. Confirmations may resolve real races or unknown replies; counts are not population rates."
+    },
+    "woodpecker_status": "success",
+    "optimized_directory_capacity_seconds": 281.84,
+    "kubernetes_b2": {
+      "binary_source_commit": "de9dff3edf2020fa6c54dedd52ef0062a25ceecc",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.6",
+      "binary_sha256": "e69293443de7f8190fe959abf208c4878efc24c1b36e82f15fee5702421457c5",
+      "image_digest": "sha256:90bd19572726e7c8bd6b4c4aa1e15d8d852cf93b7ab839c16bc34253e8164d75",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 805,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1672
+      },
+      "started_at": "2026-11-12T21:18:32.681425+00:00",
+      "finished_at": "2026-11-12T21:29:49.217128+00:00",
+      "source_commit": "de9dff3edf2020fa6c54dedd52ef0062a25ceecc",
+      "harness_sha256": "86b343051c6112a09a36d168c42766a47f28f3b40888757966edefc0f0b57f02",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 805,
+      "reads_verified": 805,
+      "verified_keys": 805,
+      "history_sha256": "3ab6d843b55bcab3a9141b59da04d336225bc4e8228fe8db79be57bde5302438",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T21:20:14.166875+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.888248590985313,
+            21.49113420001231,
+            17.888248590985313,
+            17.888248590985313
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T21:21:17.086997+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            45.02614410803653,
+            16.44638625800144,
+            16.44638625800144,
+            41.43425141705666
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T21:22:16.824172+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            90.11317891499493,
+            125.61440504796337,
+            90.11317891499493,
+            90.11317891499493
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T21:24:26.803378+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            147.2697418630123,
+            178.65981941099744,
+            140.3490891508991,
+            150.63935383793432
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T21:27:58.081221+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            53.86316097306553,
+            32.865172407007776,
+            57.11954535602126,
+            53.86316097306553
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "trace_event_counts": {
+          "acquisition_owners": 87,
+          "activation_events": 264,
+          "selection_events": 458,
+          "catalog_events": 71,
+          "checkpoint_events": 562
+        },
+        "longest_complete_calls": {
+          "activation_events": {
+            "complete_calls_sampled": 88,
+            "longest": {
+              "pod": "durable-db-1/95fa5017-8ba6-430f-927e-c941a042027f",
+              "partition": 1,
+              "elapsed_ms": 31908,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T21:26:21.546412Z",
+                  "owner": "298e59bc-50d1-432a-8b61-58738e7e552a",
+                  "stage": "revocation",
+                  "predecessors": 0,
+                  "elapsed_ms": 237
+                },
+                {
+                  "time_utc": "2026-11-12T21:26:22.228366Z",
+                  "owner": "298e59bc-50d1-432a-8b61-58738e7e552a",
+                  "stage": "publication",
+                  "predecessors": 2,
+                  "elapsed_ms": 919
+                },
+                {
+                  "time_utc": "2026-11-12T21:26:53.218257Z",
+                  "owner": "298e59bc-50d1-432a-8b61-58738e7e552a",
+                  "stage": "submitted",
+                  "predecessors": 2,
+                  "elapsed_ms": 31908
+                }
+              ]
+            }
+          },
+          "selection_events": {
+            "complete_calls_sampled": 87,
+            "longest": {
+              "pod": "durable-db-2/0ce4c1bc-91c1-4ece-9592-657a797690f8",
+              "partition": 2,
+              "elapsed_ms": 15895,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T21:28:07.847130Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "discovery",
+                  "journals": 0,
+                  "frames": 0,
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T21:28:19.328759Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "publication",
+                  "journals": 1,
+                  "frames": 102,
+                  "elapsed_ms": 11481
+                },
+                {
+                  "time_utc": "2026-11-12T21:28:23.660051Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "validation",
+                  "journals": 1,
+                  "frames": 102,
+                  "elapsed_ms": 15812
+                },
+                {
+                  "time_utc": "2026-11-12T21:28:23.660092Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "advance",
+                  "journals": 1,
+                  "frames": 102,
+                  "elapsed_ms": 15813
+                },
+                {
+                  "time_utc": "2026-11-12T21:28:23.742834Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "discovery",
+                  "journals": 1,
+                  "frames": 102,
+                  "elapsed_ms": 15895
+                },
+                {
+                  "time_utc": "2026-11-12T21:28:23.742879Z",
+                  "owner": "901f828f-9252-4e19-937a-1ba0d7eba242",
+                  "stage": "complete",
+                  "journals": 1,
+                  "frames": 102,
+                  "elapsed_ms": 15895
+                }
+              ]
+            }
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 69,
+            "longest": {
+              "pod": "durable-db-5/6a238d9e-27bb-480f-92bd-e4932472e6ef",
+              "partition": 2,
+              "elapsed_ms": 10052,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T21:23:03.196287Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "permission",
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:03.277495Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "allowance",
+                  "elapsed_ms": 81
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:03.277699Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "funding",
+                  "elapsed_ms": 81
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:08.360813Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "staging",
+                  "elapsed_ms": 5164
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:11.353593Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "publication",
+                  "elapsed_ms": 8157
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:11.353621Z",
+                  "outcome": "progress",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "publication",
+                  "elapsed_ms": 8157
+                },
+                {
+                  "time_utc": "2026-11-12T21:23:13.248982Z",
+                  "outcome": "completed",
+                  "owner": "273378e6-925a-41d5-a8a6-f2d690cfd18a",
+                  "stage": "publication",
+                  "elapsed_ms": 10052
+                }
+              ]
+            }
+          }
+        },
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "retained_scan_retries": {
+          "sampled_retries": 0,
+          "scope": "Same completed call, no intervening discovery, unchanged frame/journal counters. Frame counts exclude end-of-journal GETs; bounded logs can omit retries."
+        },
+        "longest_empty_selection": {
+          "pod": "durable-db-3/b6a842f4-d7fd-4d0e-8845-4435679ec3d1",
+          "partition": 9,
+          "elapsed_ms": 10604,
+          "events": [
+            {
+              "time_utc": "2026-11-12T21:25:38.177200Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "discovery",
+              "journals": 0,
+              "frames": 0,
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-12T21:25:38.957239Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "publication",
+              "journals": 2,
+              "frames": 0,
+              "elapsed_ms": 780
+            },
+            {
+              "time_utc": "2026-11-12T21:25:48.698872Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "validation",
+              "journals": 2,
+              "frames": 0,
+              "elapsed_ms": 10521
+            },
+            {
+              "time_utc": "2026-11-12T21:25:48.698903Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "advance",
+              "journals": 2,
+              "frames": 0,
+              "elapsed_ms": 10521
+            },
+            {
+              "time_utc": "2026-11-12T21:25:48.781327Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "discovery",
+              "journals": 2,
+              "frames": 0,
+              "elapsed_ms": 10604
+            },
+            {
+              "time_utc": "2026-11-12T21:25:48.781357Z",
+              "owner": "28379e79-c076-4809-a1da-1c0747b236f6",
+              "stage": "complete",
+              "journals": 2,
+              "frames": 0,
+              "elapsed_ms": 10604
+            }
+          ]
+        },
+        "checkpoint_control_work": {
+          "complete_calls_sampled": 69,
+          "calls_with_confirmation": 2,
+          "confirmation_events": 2,
+          "longest_funding_ms": 5540,
+          "scope": "Complete sampled checkpoint calls; confirmation may resolve a real race or unknown response. Counts are not population rates."
+        },
+        "history_slices": [
+          {
+            "phase": "rolling-replacement-1",
+            "max_acknowledgement_gap_seconds": 65.013226771,
+            "max_request_seconds": 47.763191782999996,
+            "record_slice": [
+              250,
+              500
+            ]
+          },
+          {
+            "phase": "rolling-replacement-2",
+            "max_acknowledgement_gap_seconds": 104.925041383,
+            "max_request_seconds": 101.55341163899999,
+            "record_slice": [
+              500,
+              714
+            ]
+          }
+        ],
+        "history_scope": "Recorded phase slices include intervening diagnostics; these are acknowledgement gaps, not exact fault windows or readback latencies."
+      },
+      "report_sha256": "99f2003b01fae9094dee8a13fe33cc2ce118ab031b1b5e984a7907c5fe609448"
+    },
+    "cloud_qualification": "Exact static B2/Kubernetes runtime passes four independent histories and cold recovery; scale-to-three, scale-to-six and cold targets pass, both rollout targets miss. Fewer sampled checkpoint confirmations and a lower sampled checkpoint maximum do not establish overall recovery improvement."
+  },
+  "release_0_24_6": {
+    "source_commit": "de9dff3edf2020fa6c54dedd52ef0062a25ceecc",
+    "woodpecker_pipeline": 297,
+    "artifact_image_digest": "sha256:645fc2a6762b5e231dbacaae7c526a0cd26b0fb6c3f6f6be292b58acd661ffe2",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.6",
+      "archive_sha256": "fd0666ab1c31194e28880d4f805c54fc5b793baea4ed13d4cabaa6dee396da50",
+      "binary_sha256": "e69293443de7f8190fe959abf208c4878efc24c1b36e82f15fee5702421457c5",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6356172,
+    "version": "v0.24.6",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 297,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/297/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": 298,
+    "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.6",
+    "published_at": "2026-11-12T21:33:07Z",
+    "prerelease": true
   }
 }
