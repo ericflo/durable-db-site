@@ -533,7 +533,8 @@ existing exact register/permit protocol; it is neither Rust refinement nor a pro
 of arbitrary-round liveness. RootAcquisition and OwnerRouting remain separate
 checks of acquisition and response authority.</p>
 <p>The CLI now closes admission, aborts and joins the cluster scheduler and
-maintenance task, and conditionally withdraws the final resident routes. Four
+maintenance task, retires every local resident before storage I/O, and
+conditionally withdraws the final resident routes. Four
 hints can run concurrently within the CLI’s five-second deadline. Each hint
 checks the old incarnation and captures the exact metadata comparison; it neither
 activates that incarnation nor revokes its permit. If no withdrawal becomes
@@ -542,7 +543,10 @@ cancelled hints cannot authorize service. No format,
 object class or extra background worker is added. The real HTTP regression keeps
 the old backend alive and requires replacement within five simulated seconds,
 then checks actual permit fencing and identical receipt replay. Suppressing the
-hint fails in 0.10 seconds; both withdrawal regressions pass in 0.11 seconds.
+hint fails in 0.10 seconds; both initial withdrawal regressions pass in 0.11 seconds.
+A 16-partition shutdown regression blocks all metadata reads, expires the drain
+deadline, and requires every local resident to be retired. It detects the
+previous I/O-dependent retirement order in 0.11 seconds.
 The root regression covers refused writes, lost replies, stale comparisons and
 wrong incarnations. These are bounded policy and contract checks, not a
 production rollout SLO or a proof of the Rust implementation.</p>

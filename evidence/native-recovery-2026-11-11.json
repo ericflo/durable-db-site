@@ -8683,6 +8683,212 @@
         }
       ],
       "history_scope": "Acknowledgements completed between preceding phase and rollout progress barrier; includes intervening budget/diagnostic time. Gaps use the single workload monotonic clock and preceding acknowledgement per writer. Not exact fault-window outage or readback latency."
+    },
+    {
+      "binary_source_commit": "f7ed19394b6892b49a070665b2398097b55e4674",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.2",
+      "binary_sha256": "6f0f02dec13c28c4241e3bc610c7f00975acc1d27cc76320d84a9c2d3a588f93",
+      "image_digest": "sha256:3fafa1619fce424d90fb5f2a29ba9a8e5443125c5f5d3e4ddf4c64e238924df9",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 752,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1809
+      },
+      "started_at": "2026-11-12T17:20:44.424563+00:00",
+      "finished_at": "2026-11-12T17:31:48.046408+00:00",
+      "source_commit": "f7ed19394b6892b49a070665b2398097b55e4674",
+      "harness_sha256": "6941ddcd7532e9e314e2d1fdbffb619170a5ab1ebad4a6372d2fec6c35dd6437",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 752,
+      "reads_verified": 752,
+      "verified_keys": 752,
+      "history_sha256": "c71cbd372a452be1a3404be2e88e0085ed05340791a2b66d1b18ac239bcf4eb6",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T17:22:37.171519+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.519877067999914,
+            20.105979896965437,
+            16.519877067999914,
+            16.519877067999914
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T17:23:50.049375+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.034169632010162,
+            20.515382947050966,
+            17.034169632010162,
+            17.034169632010162
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T17:24:44.916999+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            98.93260605004616,
+            120.27208334906027,
+            98.93260605004616,
+            98.93260605004616
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T17:26:49.521845+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            110.93456330394838,
+            135.76298082398716,
+            107.35895139805507,
+            110.93456330394838
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T17:29:39.033783+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            65.39944604807533,
+            32.979857053025626,
+            50.58560344402213,
+            65.39944604807533
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "purpose": "First exact-artifact graceful-withdrawal campaign; interleaved local retirement and four conditional hints. Both rollout targets missed.",
+      "report_sha256": "1a2b2b1ab0f5e50c5f4b3a9e3e9c83a378307716c33b9573bd139ade6af8c246",
+      "rollout_history": [
+        {
+          "name": "rolling-replacement-1",
+          "history_interval": [
+            214,
+            417
+          ],
+          "max_ack_gap_seconds": {
+            "1": 65.95352709499997,
+            "2": 57.67472493200003,
+            "3": 49.110860363,
+            "0": 85.35132652199997
+          },
+          "max_commit_seconds": {
+            "1": 51.859043786,
+            "2": 27.813969232999966,
+            "3": 36.40647910199999,
+            "0": 54.871339243999984
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "history_interval": [
+            417,
+            650
+          ],
+          "max_ack_gap_seconds": {
+            "0": 68.69333740200005,
+            "3": 68.29012415300002,
+            "2": 85.12079784600002,
+            "1": 53.56294180100002
+          },
+          "max_commit_seconds": {
+            "0": 68.35563546900005,
+            "3": 67.95796644199999,
+            "2": 84.78563174500005,
+            "1": 53.234831180000015
+          }
+        }
+      ],
+      "history_scope": "Acknowledgements completed between preceding phase and rollout progress barrier; includes intervening budget/diagnostic time. Gaps use the single workload monotonic clock and preceding acknowledgement per writer. Not exact fault-window outage or readback latency.",
+      "shutdown_observation": {
+        "pod": "durable-db-1",
+        "uid": "eac038af-f673-43c4-8494-093589dbb142",
+        "began": "2026-11-12T17:28:29.732079+00:00",
+        "events": [
+          {
+            "time_utc": "2026-11-12T17:29:14.753616Z",
+            "event": "draining requests"
+          }
+        ],
+        "scope": "Sanitized live log follow of one pod, ending at stream EOF or a 180-second deadline. Not a complete cluster trace.",
+        "limitation": "This pod follow captured shutdown for the cold-restart phase, not the earlier rollout handoff. It does not explain the remaining challenge wait."
+      }
     }
   ],
   "release": {
@@ -11534,5 +11740,92 @@
       ]
     },
     "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.1"
+  },
+  "graceful_route_withdrawal": {
+    "source_commit": "f7ed19394b6892b49a070665b2398097b55e4674",
+    "woodpecker_pipeline": 282,
+    "shutdown_budget_seconds": 5,
+    "concurrent_withdrawals": 4,
+    "behavior": "Close admission, stop acquisition/maintenance, conditionally clear owned routing addresses. Replacements still fence permits and recover selected history. An address that remains advertised uses the ordinary challenge path.",
+    "new_background_workers_or_object_classes": 0,
+    "stored_format_changed": false,
+    "routine_rust_checks_passed": 351,
+    "formatting_and_strict_clippy_passed": true,
+    "regressions": {
+      "transport": "Independent real loopback HTTP servers in one Rust process; paused Tokio scheduler for the replacement deadline",
+      "replacement_deadline_simulated_seconds": 5,
+      "suppressed_hint_failed_seconds": 0.1,
+      "two_regressions_passed_seconds": 0.11,
+      "old_backend_retained_and_fenced": true,
+      "identical_durable_receipt_replayed": true,
+      "failed_write_lost_reply_stale_comparison_and_wrong_incarnation_checked": true
+    },
+    "challenge_model": {
+      "distinct_states": 14750,
+      "generated_states": 104725,
+      "depth": 14,
+      "fault_controls": 6,
+      "reachability_controls": 3,
+      "scope": "One incumbent, two challengers, four metadata writes and one shutdown hint captured at the initial revision. Assumes exact comparison and the existing permit/recovery protocol; not Rust refinement, composed authority proof or arbitrary-round liveness."
+    },
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.580650202,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 79,
+        "container_removed": true
+      }
+    },
+    "removed": [
+      "Separate challenge publication body replaced by one shared conditional hint publisher"
+    ],
+    "local_log_sha256": {
+      "negative": "caf60e060737ec6fe9e8c6686bfda56e93f49229b141de21039cd79fcc1395c6",
+      "positive": "d20d95de8836dfc39e627018262ecbd8fb59ec90831186cf2c92a00c022de936",
+      "tests": "0a96376bcec650120d7a2ce4337e940f9b1ce7d481a78eae49054bd95ca7f226",
+      "clippy": "8dca56e772a2856840b5b527973ec92cab2a9867d8f584491eb8b81300c1ca97",
+      "model": "826e9f220cd72a109e82f6b52c6f7de7d1c9b4899f37cc18a00c3259d43ece49"
+    },
+    "scope": "Initial exact-artifact campaign recovered every acknowledgement; two rollout targets missed. Follow-up retires every local resident before starting conditional hints.",
+    "optimized_directory_capacity_seconds": 199.32,
+    "retirement_followup": {
+      "behavior": "Retire every local resident before publishing any storage hint; a cancelled storage wait cannot leave later residents running.",
+      "blocked_provider_regression_failed_before_fix_seconds": 0.11,
+      "two_shutdown_regressions_passed_after_fix_seconds": 0.11,
+      "routine_rust_checks_passed": 352,
+      "formatting_and_strict_clippy_passed": true,
+      "removed": "Storage awaits interleaved with local resident retirement",
+      "local_log_sha256": {
+        "negative": "1802a8a4c263c84000ca58c8a0f00201a80e989478a88dfa66851b04f1c91db4",
+        "positive": "759a19b5b7c11b38fb12fef245b0398b90c0c6ee153cc9fe1cef27377b69c0f8",
+        "tests": "bd85f6934502145216b106d51e48e59eb97e8151f3cc63aa3e03cb46d8364ea4",
+        "clippy": "696588c2043bedcb6f56925c0511a709d6cd90ddbbccbd242f449833788950c3"
+      }
+    }
   }
 }

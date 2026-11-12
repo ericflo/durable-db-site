@@ -11,9 +11,26 @@ five simulated seconds, then checks fencing and exact receipt replay. Suppressin
 the hint fails in 0.10 seconds. Both regressions pass in 0.11 seconds, including
 failed writes, lost replies, stale comparisons and wrong incarnations. The
 updated challenge model checks 14,750 states with six fault controls and three
-reachability checks. All 351 routine Rust checks, formatting and strict clippy
-pass. These bounded checks do not prove Rust or production latency. Cloud
-qualification is pending.</p>
+reachability checks. The first candidate passes all 351 routine Rust checks,
+formatting and strict clippy. These bounded checks do not prove Rust or production
+latency.</p>
+<p>The first exact-artifact B2 campaign (<code>f7ed193</code>, Woodpecker #282) recovers all 752
+acknowledged writes across four independently checked histories. Scale-to-three
+and scale-to-six pass at 20.11 / 20.52 seconds; two rollouts miss the 60-second
+target at 120.27 / 135.76 seconds. Cold recovery passes at 65.40 seconds. The
+largest acknowledgement gaps in the rollout history slices are 85.35 / 85.12
+seconds. These include intervening diagnostics and are not exact fault windows.
+The namespace, bucket, 1,809 physical versions and scoped key are removed.
+Versioned MinIO passes in 40.58 seconds and removes its bucket, container and 79
+versions.</p>
+<p>A follow-up removes storage I/O from the local retirement loop: all residents
+retire before any conditional hint starts. A blocked provider can otherwise
+leave later residents running after the shutdown deadline. The focused
+regression reproduces this in 0.11 seconds. Both shutdown regressions pass in
+0.11 seconds after the fix; all 352 routine checks, formatting and strict clippy
+pass. Cloud qualification of the follow-up is pending. The earlier campaign
+does not establish the cause of its remaining
+challenge wait or a repeatable latency improvement.</p>
 <h2 id="v0241-response-validation-uncertainty-2026-11-12">v0.24.1 response validation uncertainty (2026-11-12)<a class="anchor" href="#v0241-response-validation-uncertainty-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p>Two real TCP regressions reproduce worker retirement after a transient permit
 GET failure: one for a rejected command, one for a sealed durable commit. Both
