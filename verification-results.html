@@ -17,7 +17,11 @@ The disposable bucket/container and 31 physical versions were removed. The B2 ca
 <p>The maintained fault harness now adds a targeted one-host process pause before
 the all-process fault: surviving hosts must recover every writer without adding
 pods, while stopped process identities and DNS entries remain unchanged. This
-new phase is not yet qualified; it does not simulate a peer-only network partition.</p>
+new phase is not yet qualified; it does not simulate a peer-only network partition.
+The provider-egress phase also replaces its blind forty-second sleep with thirty
+seconds to settle responses and ten seconds requiring unchanged acknowledgement
+and readback counters. A fresh connection probe alone cannot establish that an
+existing provider connection was blocked. The stronger check remains unqualified.</p>
 <h2 id="v0237-idle-owner-rejoin-recovery-2026-11-12">v0.23.7 idle-owner rejoin recovery (2026-11-12)<a class="anchor" href="#v0237-idle-owner-rejoin-recovery-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.7">v0.23.7</a> packages
 <code>5606aff</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/241/1">Woodpecker #241</a>.</p>
