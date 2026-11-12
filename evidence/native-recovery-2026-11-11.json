@@ -14068,6 +14068,586 @@
       "single-prefix temporary vector allocation",
       "obsolete unconditional-restart descriptions"
     ],
-    "cloud_qualification": "pending"
+    "cloud_qualification": "Versioned MinIO and exact static B2/Kubernetes runtime pass history/cold recovery checks; scale-to-six and both rollout targets miss. No overall latency improvement established.",
+    "source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+    "woodpecker_pipeline": 294,
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.516314512,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 80,
+        "container_removed": true
+      }
+    },
+    "verification_cleanup": {
+      "change": "Reduce six fault/coverage configurations to smaller bounds that retain the same expected violation; positive safety bounds and production binary unchanged.",
+      "previous_distinct_states": 1119253,
+      "distinct_states": 113591,
+      "configurations": {
+        "RootCatalogUnsafeCompare": {
+          "epochs": 2,
+          "invocations": 3,
+          "frames": 0,
+          "distinct_states": 41892
+        },
+        "RootCatalogUnsafeInherit": {
+          "epochs": 3,
+          "invocations": 3,
+          "frames": 0,
+          "distinct_states": 51187
+        },
+        "RootCatalogUnsafeEarly": {
+          "epochs": 2,
+          "invocations": 2,
+          "frames": 0,
+          "distinct_states": 776
+        },
+        "RootCatalogUnsafeScan": {
+          "epochs": 2,
+          "invocations": 2,
+          "frames": 1,
+          "distinct_states": 13280
+        },
+        "RootCatalogLate": {
+          "epochs": 2,
+          "invocations": 2,
+          "frames": 0,
+          "distinct_states": 994
+        },
+        "RootCatalogRetry": {
+          "epochs": 2,
+          "invocations": 3,
+          "frames": 0,
+          "distinct_states": 5462
+        }
+      },
+      "all_checks_passed": true,
+      "log_sha256": "d173ad23d0d787d84a4043423d222a70d05cc53199f06a657ea57a8f945afc1f",
+      "source_commit": "3c3011d7b00c60d47c3ea29222cc16f0f61e9710"
+    },
+    "woodpecker_status": "success",
+    "kubernetes_b2": {
+      "binary_source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.5",
+      "binary_sha256": "434305e64418886f3ec8bc9137d265766ee5aadfdfde3ea6bb287f2267124669",
+      "image_digest": "sha256:70a6db9f87bb0cca3f85bd227861d3e7e2dc3f95f4a0edbe9dd65268e1b93c6f",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 839,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1442
+      },
+      "started_at": "2026-11-12T20:25:03.450658+00:00",
+      "finished_at": "2026-11-12T20:36:39.295044+00:00",
+      "source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+      "harness_sha256": "86b343051c6112a09a36d168c42766a47f28f3b40888757966edefc0f0b57f02",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 839,
+      "reads_verified": 839,
+      "verified_keys": 839,
+      "history_sha256": "78df573103e89ccc47c9af303d2d024b3e3ec3d5c039aa002e2957a7ebbfdfd1",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T20:26:46.840515+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            18.427762612933293,
+            18.427762612933293,
+            18.427762612933293,
+            18.427762612933293
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T20:27:55.933509+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            61.52381340099964,
+            18.972938097896986,
+            18.972938097896986,
+            61.52381340099964
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T20:29:12.094637+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            98.28019828209653,
+            112.38449479208793,
+            94.81464896409307,
+            98.28019828209653
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T20:31:09.068263+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            107.91277693398297,
+            161.82512956194114,
+            107.91277693398297,
+            107.91277693398297
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T20:34:21.656942+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            79.9453520559473,
+            54.76024127192795,
+            76.4392116399249,
+            79.9453520559473
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "trace_event_counts": {
+          "acquisition_owners": 87,
+          "activation_events": 264,
+          "selection_events": 460,
+          "catalog_events": 73,
+          "checkpoint_events": 521
+        },
+        "longest_complete_calls": {
+          "activation_events": {
+            "complete_calls_sampled": 88,
+            "longest": {
+              "pod": "durable-db-0/ba209a4e-84d1-4617-ad04-4cade223f9db",
+              "partition": 4,
+              "elapsed_ms": 18683,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T20:32:59.004264Z",
+                  "owner": "d0f0c53a-9a4f-427d-9a4e-8f6b64594bb4",
+                  "stage": "revocation",
+                  "predecessors": 0,
+                  "elapsed_ms": 89
+                },
+                {
+                  "time_utc": "2026-11-12T20:32:59.549481Z",
+                  "owner": "d0f0c53a-9a4f-427d-9a4e-8f6b64594bb4",
+                  "stage": "publication",
+                  "predecessors": 2,
+                  "elapsed_ms": 634
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:17.597947Z",
+                  "owner": "d0f0c53a-9a4f-427d-9a4e-8f6b64594bb4",
+                  "stage": "submitted",
+                  "predecessors": 2,
+                  "elapsed_ms": 18683
+                }
+              ]
+            }
+          },
+          "selection_events": {
+            "complete_calls_sampled": 86,
+            "longest": {
+              "pod": "durable-db-0/ba209a4e-84d1-4617-ad04-4cade223f9db",
+              "partition": 5,
+              "elapsed_ms": 34564,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T20:32:59.629227Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "discovery",
+                  "journals": 0,
+                  "frames": 0,
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:00.145252Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "publication",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 516
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:34.099371Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "validation",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 34470
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:34.099413Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "advance",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 34470
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:34.193706Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "discovery",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 34564
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:34.193742Z",
+                  "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+                  "stage": "complete",
+                  "journals": 1,
+                  "frames": 0,
+                  "elapsed_ms": 34564
+                }
+              ]
+            }
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 70,
+            "longest": {
+              "pod": "durable-db-1/12793682-ad79-4571-b352-4bbec535fb8c",
+              "partition": 12,
+              "elapsed_ms": 45405,
+              "events": [
+                {
+                  "time_utc": "2026-11-12T20:32:59.348305Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "permission",
+                  "elapsed_ms": 0
+                },
+                {
+                  "time_utc": "2026-11-12T20:32:59.435158Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "allowance",
+                  "elapsed_ms": 86
+                },
+                {
+                  "time_utc": "2026-11-12T20:32:59.435255Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "funding",
+                  "elapsed_ms": 86
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:18.246677Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "staging",
+                  "elapsed_ms": 18898
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:19.376232Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "publication",
+                  "elapsed_ms": 20027
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:19.376309Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "publication",
+                  "elapsed_ms": 20028
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:19.552008Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "confirmation",
+                  "elapsed_ms": 20203
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:37.510125Z",
+                  "outcome": "progress",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "publication",
+                  "elapsed_ms": 38161
+                },
+                {
+                  "time_utc": "2026-11-12T20:33:44.754057Z",
+                  "outcome": "completed",
+                  "owner": "397f717c-2d24-4c50-b20e-139577e3d994",
+                  "stage": "publication",
+                  "elapsed_ms": 45405
+                }
+              ]
+            }
+          }
+        },
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "retained_scan_retries": {
+          "sampled_retries": 2,
+          "scope": "Same completed call, no intervening discovery, unchanged frame/journal counters. Frame counts exclude end-of-journal GETs; bounded logs can omit retries.",
+          "largest_frame_batch": {
+            "pod": "durable-db-2/bc9d21d7-c477-407c-9c92-4ee872425f65",
+            "partition": 5,
+            "retained_frame_reads": 0,
+            "first_publication": {
+              "time_utc": "2026-11-12T20:30:32.518924Z",
+              "owner": "38d73d9f-be98-4f1a-9976-adb6eae8d2a7",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 224
+            },
+            "retry_publication": {
+              "time_utc": "2026-11-12T20:30:36.749906Z",
+              "owner": "38d73d9f-be98-4f1a-9976-adb6eae8d2a7",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 4455
+            }
+          }
+        },
+        "longest_empty_selection": {
+          "pod": "durable-db-0/ba209a4e-84d1-4617-ad04-4cade223f9db",
+          "partition": 5,
+          "elapsed_ms": 34564,
+          "events": [
+            {
+              "time_utc": "2026-11-12T20:32:59.629227Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "discovery",
+              "journals": 0,
+              "frames": 0,
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-12T20:33:00.145252Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "publication",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 516
+            },
+            {
+              "time_utc": "2026-11-12T20:33:34.099371Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "validation",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 34470
+            },
+            {
+              "time_utc": "2026-11-12T20:33:34.099413Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "advance",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 34470
+            },
+            {
+              "time_utc": "2026-11-12T20:33:34.193706Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "discovery",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 34564
+            },
+            {
+              "time_utc": "2026-11-12T20:33:34.193742Z",
+              "owner": "b71ba3da-e05f-4f35-92a8-a49789d06687",
+              "stage": "complete",
+              "journals": 1,
+              "frames": 0,
+              "elapsed_ms": 34564
+            }
+          ]
+        },
+        "history_slices": [
+          {
+            "phase": "rolling-replacement-1",
+            "max_acknowledgement_gap_seconds": 65.75985001999999,
+            "max_request_seconds": 47.59184186599998,
+            "record_slice": [
+              317,
+              559
+            ]
+          },
+          {
+            "phase": "rolling-replacement-2",
+            "max_acknowledgement_gap_seconds": 88.02005009000004,
+            "max_request_seconds": 83.12867131899998,
+            "record_slice": [
+              559,
+              762
+            ]
+          }
+        ],
+        "history_scope": "Recorded phase slices include intervening diagnostics; these are acknowledgement gaps, not exact fault windows or readback latencies."
+      },
+      "report_sha256": "9583765fc4af745be6b96eb665646dc77a8dab53b200af0369bc0d5128831a6b"
+    },
+    "optimized_directory_capacity_seconds": 199.87,
+    "github_actions_disabled": true,
+    "repository_private": true
+  },
+  "release_0_24_5": {
+    "source_commit": "79c5f0f923c7ed64a4f068892511a04dea51ecaf",
+    "woodpecker_pipeline": 294,
+    "artifact_image_digest": "sha256:e81d38de307a343b1bcffae4c9e9bf2f5eb4f3900ab6be06e0a6d5d753db25da",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.5",
+      "archive_sha256": "d1385bdeec1889d38a7231bea248d4c8183e33a7a3d9d3ceb8a2201352ebc28c",
+      "binary_sha256": "434305e64418886f3ec8bc9137d265766ee5aadfdfde3ea6bb287f2267124669",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6355142,
+    "version": "v0.24.5",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 294,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/294/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "tag_pipeline": {
+      "number": 295,
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/295/1"
+    },
+    "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.5",
+    "published_at": "2026-11-12T20:40:42Z",
+    "prerelease": true
   }
 }
