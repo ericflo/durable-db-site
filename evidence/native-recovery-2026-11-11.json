@@ -3992,6 +3992,346 @@
         "NetworkPolicy blocked new peer connections but preserved established connections; intended isolation was not established.",
         "No final cold recovery or independent history verification; partial readbacks are not a passing campaign."
       ]
+    },
+    {
+      "binary_source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.8",
+      "artifact_verification_reused": true,
+      "binary_sha256": "2433c58f78754f6ba40c7ca33b086e87722a9a27d67014eceadf7afaa4c89e2d",
+      "image_digest": "sha256:f0add54ba2232cc9afde9f43c2ce8a0f376bcc85decd2d437a5231883b7a2d1a",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 495,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 959
+      },
+      "started_at": "2026-11-12T07:34:39.007245+00:00",
+      "finished_at": "2026-11-12T07:43:30.478961+00:00",
+      "source_commit": "4b127ad7637acb43f746fc1e65cfcf19c9ac5306",
+      "harness_sha256": "2f424c26c94fe0592433fbaab53e48dd305e2608c1c7eb98b56d561931388bb6",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        }
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 495,
+      "reads_verified": 495,
+      "http_attempt_statuses": {
+        "200": 1016,
+        "429": 89,
+        "503": 130,
+        "transport_or_decode_error": 38
+      },
+      "verified_keys": 495,
+      "history_sha256": "ce1fca34a834c85b2ffe1b65b140834130e5af53f4db709c2fd20ba857814e73",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T07:38:00.006079+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            20.84383251995314,
+            13.667711627902463,
+            20.84383251995314,
+            17.25086587795522
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T07:39:35.962291+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            60.021893819910474,
+            45.71639603492804,
+            10.393159440951422,
+            60.021893819910474
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T07:41:08.076572+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            47.43459385097958,
+            65.09362011903431,
+            75.80212275194936,
+            47.43459385097958
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "failures": [],
+      "report_sha256": "a11987d894fbb176d0d721b95ee7df23bffb6eb140307f8051e5a8af2309ea7d",
+      "phases": [
+        {
+          "name": "initial-three",
+          "time_utc": "2026-11-12T07:35:17.423382+00:00"
+        },
+        {
+          "name": "initial-progress",
+          "time_utc": "2026-11-12T07:36:36.250207+00:00",
+          "writes_acknowledged": 22
+        },
+        {
+          "name": "asymmetric-baseline",
+          "time_utc": "2026-11-12T07:36:56.222950+00:00"
+        },
+        {
+          "name": "asymmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T07:37:16.281357+00:00"
+        },
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T07:38:00.004884+00:00",
+          "before": [
+            37,
+            47,
+            31,
+            33
+          ],
+          "after": [
+            61,
+            47,
+            31,
+            57
+          ],
+          "writer_progress": [
+            true,
+            false,
+            false,
+            true
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T07:38:23.294154+00:00",
+          "writes_acknowledged": 222
+        },
+        {
+          "name": "symmetric-baseline",
+          "time_utc": "2026-11-12T07:38:30.631289+00:00"
+        },
+        {
+          "name": "symmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T07:38:53.478395+00:00"
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T07:39:35.960550+00:00",
+          "before": [
+            84,
+            87,
+            58,
+            64
+          ],
+          "after": [
+            84,
+            95,
+            58,
+            64
+          ],
+          "writer_progress": [
+            false,
+            true,
+            false,
+            false
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T07:40:38.759994+00:00",
+          "writes_acknowledged": 364
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T07:40:52.087453+00:00",
+          "writes_acknowledged": 407
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T07:42:26.277838+00:00",
+          "writes_acknowledged": 485
+        }
+      ],
+      "peer_fault_observations": [
+        {
+          "phase": "asymmetric-peer-isolation-held",
+          "mode": "asymmetric",
+          "correct": true,
+          "fresh_statuses": [
+            [
+              200,
+              200,
+              200
+            ],
+            [
+              200,
+              200,
+              200
+            ],
+            [
+              0,
+              0,
+              200
+            ]
+          ],
+          "retained_statuses": [
+            [
+              200,
+              200,
+              200
+            ],
+            [
+              200,
+              200,
+              200
+            ],
+            [
+              0,
+              0,
+              200
+            ]
+          ],
+          "fresh_provider_https_statuses": [
+            301,
+            301,
+            301
+          ],
+          "provider_backed_admin_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "phase": "symmetric-peer-isolation-held",
+          "mode": "symmetric",
+          "correct": true,
+          "fresh_statuses": [
+            [
+              200,
+              200,
+              0
+            ],
+            [
+              200,
+              200,
+              0
+            ],
+            [
+              0,
+              0,
+              200
+            ]
+          ],
+          "retained_statuses": [
+            [
+              200,
+              200,
+              0
+            ],
+            [
+              200,
+              200,
+              0
+            ],
+            [
+              0,
+              0,
+              200
+            ]
+          ],
+          "fresh_provider_https_statuses": [
+            301,
+            301,
+            301
+          ],
+          "provider_backed_admin_statuses": [
+            200,
+            200,
+            200
+          ]
+        }
+      ],
+      "network_matrix_order": [
+        "majority",
+        "majority",
+        "isolated"
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Some writers stalled during both splits; no claim of continuous progress or availability under permanent peer isolation.",
+        "One of three recovery targets missed; controller polling upper bounds are not a repeatable latency SLO.",
+        "Peer-only scenario does not repeat the separate full autoscaling and host-process-pause campaign."
+      ],
+      "network_validation": "Both baseline matrices and each fault matrix checked before and after the hold, including stable API pod identities/restart counts."
     }
   ],
   "release": {
@@ -5384,6 +5724,19 @@
       "unrelated_port_and_heal_checked": true
     },
     "local_resources_removed": true,
-    "real_packet_fault_qualification": "pending"
+    "real_packet_fault_qualification": {
+      "complete": true,
+      "harness_source_commit": "4b127ad7637acb43f746fc1e65cfcf19c9ac5306",
+      "binary_source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "acknowledgements_independently_checked": 495,
+      "provider_backed_admin_succeeded_on_both_sides": true,
+      "writers_progressing_during_asymmetric_hold": 2,
+      "writers_progressing_during_symmetric_hold": 1,
+      "asymmetric_healing_seconds": 20.84383251995314,
+      "symmetric_healing_seconds": 60.021893819910474,
+      "all_recovery_targets_met": false,
+      "continuous_partition_availability_established": false,
+      "all_test_resources_removed": true
+    }
   }
 }

@@ -28,8 +28,13 @@ connections; every process
 must also complete a fresh provider-backed administrative read. Each split is
 held for thirty seconds after its network checks pass. Per-writer progress during
 the split is recorded separately from recovery after healing. Both scenarios
-share cold replacement, full history verification and namespace cleanup. This
-new packet-fault scenario is awaiting B2 qualification; it does not yet establish
+share cold replacement, full history verification and namespace cleanup. The
+exact v0.23.8 executable passes this focused B2 scenario with all 495 acknowledged
+writes recovered and independently checked. Provider-backed administrative reads
+succeed on every process during both splits. Only two of four writers advance
+during the one-way split, and one of four during the two-way split. Every writer
+resumes within 20.84 / 60.02 seconds after healing, respectively; the latter
+misses the 60-second target. This qualifies bounded fault recovery, not
 availability during a permanent partition. The initial NetworkPolicy attempt
 failed injection validation because established connections remained usable;
 <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/#networkpolicy-s-impact-on-existing-connections">that behavior is implementation-defined</a>.</p>
