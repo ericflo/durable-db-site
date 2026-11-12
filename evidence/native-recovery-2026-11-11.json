@@ -3262,7 +3262,299 @@
       "depth": 9,
       "negative_controls": 7
     },
-    "provider_qualification": "pending",
-    "scope": "Bounded protocol and real TCP regression; scheduling liveness and Rust refinement are not proved."
+    "provider_qualification": "Versioned MinIO passed; exact release-runtime B2/Kubernetes campaign pending.",
+    "scope": "Bounded protocol and real TCP regression; scheduling liveness and Rust refinement are not proved.",
+    "provider_checks": [
+      {
+        "provider": "versioned MinIO",
+        "source_commit": "5606aff3d044de54853169a38d0d03fe8d2cc9b8",
+        "passed": false,
+        "seconds": 61.28,
+        "failure": "New fixture queried nonexistent object_range metric; replaced with the existing cache_miss event counter.",
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 34,
+          "container_removed": true
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "source_commit": "c89fd5be416193b67b7957e257803d2c6b437197",
+        "passed": true,
+        "test": {
+          "admission_bytes_per_write": [
+            103670,
+            107362
+          ],
+          "automatic_collection": true,
+          "automatic_table_and_manifest_collection": true,
+          "background_permission_interval_seconds": 3,
+          "base_table_and_manifest_allowance_per_write": [
+            45550,
+            47396
+          ],
+          "catalog_admission_bytes": 18596,
+          "catalog_survived_collection_after_takeover": true,
+          "checkpoint_objects_after_first_sweep": 3,
+          "checkpoint_objects_after_takeover_sweep": 3,
+          "checkpoint_objects_before_first_sweep": 6,
+          "checkpoint_row_bytes_per_write": 174,
+          "cleanup_wait_ms": 60419.130411,
+          "closed_journal_epochs_reclaimed": true,
+          "cold_receipts_and_values_verified": true,
+          "cold_recovery_ms": 184.44481,
+          "complete_reopens": 2,
+          "directory_objects_after": 1,
+          "exhausted_tenant_did_not_stall_neighbor": true,
+          "inline_checkpoint_descriptors": true,
+          "journal_bytes_per_write": 254,
+          "journal_objects_after_first_sweep": 1,
+          "journal_objects_after_takeover_sweep": 0,
+          "journal_objects_before": 5,
+          "journal_only_funding_refused": true,
+          "ledger_objects_after": 2,
+          "ledger_objects_before": 11,
+          "live_predecessor_refused_after_takeover": true,
+          "maintenance_funding": {
+            "after_recovery": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            },
+            "before_recovery": {
+              "allocated": {
+                "attempts": 1,
+                "bytes": 51581
+              },
+              "funded_bytes": 114814
+            },
+            "cold_recovery_claimed_preserved_reserve": true,
+            "no_new_admission_allocation_for_recovery": true,
+            "second_cold_reopen_preserved_counters": true
+          },
+          "namespace": "native-http-6affb45d-3cf9-4099-a134-b99c34a8f9c9",
+          "namespace_budget": {
+            "allocated": {
+              "attempts": 128,
+              "bytes": 25165824
+            },
+            "configuration_revision": 0,
+            "limits": {
+              "attempts": 256,
+              "bytes": 33554432
+            }
+          },
+          "new_rows_only_funding_refused": true,
+          "provider": "s3",
+          "refusal_and_retry_immutable_puts": 0,
+          "retained_export": {
+            "databases": 2,
+            "identical_restore_repeated": true,
+            "immutable_puts": 0,
+            "independent_local_destination": true,
+            "restored_after_source_image_collection": true,
+            "source_revision": 1
+          },
+          "retention": {
+            "cold_reopen_and_collection": true,
+            "exact_cut_values": true,
+            "immutable_puts": 0,
+            "release_reclaimed_old_checkpoint": true
+          },
+          "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; clock-independent permits; live predecessor refused reads and receipt retries after takeover. Not AWS, Kubernetes placement, arbitrary memory rollback or performance-SLO qualification.",
+          "setup_seconds": 0.395761886,
+          "tenant_budget": {
+            "allocated": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "configuration_revision": 4,
+            "limits": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "maintenance": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            }
+          },
+          "total_seconds": 182.916053933,
+          "warm_cache_misses": 0,
+          "warm_http_reads": 100,
+          "warm_read_control_calls": 0,
+          "warm_read_ms": {
+            "p50": 2.401468,
+            "p95": 4.236013000000001,
+            "p99": 4.889883
+          },
+          "warm_read_object_gets": 100,
+          "warm_read_paths": [
+            "checkpoint"
+          ]
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 32,
+          "container_removed": true
+        }
+      }
+    ]
+  },
+  "ancestry_cursor": {
+    "released": false,
+    "fixture_journals": 8,
+    "old_registration_reads": 53,
+    "corrected_registration_reads": 9,
+    "reads_every_selected_frame": true,
+    "uncertain_publication_restarts_cursor": true,
+    "confirmed_publication_preserves_ancestry_cursor": true,
+    "enabled_rust_checks": 337,
+    "strict_clippy": true,
+    "catalog_model": {
+      "distinct_states": [
+        393513,
+        102525
+      ],
+      "negative_and_coverage_controls": 7
+    },
+    "source_sha256": {
+      "src/ownership/root.rs": "31f5bd37409023a3fb8b96103907513dbf492b9c3826c3c11f919ae0c8b81b38",
+      "src/ownership/root/catalog.rs": "ffbc31542b6f53bbb98b6910f8e8a53e2a364089fd919fcac97bbf905e102be7",
+      "src/ownership/root/tests/catalog.rs": "15990d41d730d97fa0e93019b839c8263a71437c0baa1ded21bb17a7f9842faf"
+    },
+    "scope": "An uncached local provider-operation bound; no measured cloud latency improvement yet. Existing exact catalog comparisons, permit checks and uncertain-outcome validation remain.",
+    "provider_checks": [
+      {
+        "provider": "versioned MinIO",
+        "source_commit": "8a8234672ce6ac78af0ac80c5ca1ad4301681a56",
+        "passed": true,
+        "test": {
+          "admission_bytes_per_write": [
+            103670,
+            107362
+          ],
+          "automatic_collection": true,
+          "automatic_table_and_manifest_collection": true,
+          "background_permission_interval_seconds": 3,
+          "base_table_and_manifest_allowance_per_write": [
+            45550,
+            47396
+          ],
+          "catalog_admission_bytes": 18596,
+          "catalog_survived_collection_after_takeover": true,
+          "checkpoint_objects_after_first_sweep": 3,
+          "checkpoint_objects_after_takeover_sweep": 3,
+          "checkpoint_objects_before_first_sweep": 6,
+          "checkpoint_row_bytes_per_write": 174,
+          "cleanup_wait_ms": 60411.826054000005,
+          "closed_journal_epochs_reclaimed": true,
+          "cold_receipts_and_values_verified": true,
+          "cold_recovery_ms": 155.668341,
+          "complete_reopens": 2,
+          "directory_objects_after": 1,
+          "exhausted_tenant_did_not_stall_neighbor": true,
+          "inline_checkpoint_descriptors": true,
+          "journal_bytes_per_write": 254,
+          "journal_objects_after_first_sweep": 1,
+          "journal_objects_after_takeover_sweep": 0,
+          "journal_objects_before": 5,
+          "journal_only_funding_refused": true,
+          "ledger_objects_after": 2,
+          "ledger_objects_before": 11,
+          "live_predecessor_refused_after_takeover": true,
+          "maintenance_funding": {
+            "after_recovery": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            },
+            "before_recovery": {
+              "allocated": {
+                "attempts": 1,
+                "bytes": 51581
+              },
+              "funded_bytes": 114814
+            },
+            "cold_recovery_claimed_preserved_reserve": true,
+            "no_new_admission_allocation_for_recovery": true,
+            "second_cold_reopen_preserved_counters": true
+          },
+          "namespace": "native-http-866a37bd-802d-490b-bc80-ebedff16d8ea",
+          "namespace_budget": {
+            "allocated": {
+              "attempts": 128,
+              "bytes": 25165824
+            },
+            "configuration_revision": 0,
+            "limits": {
+              "attempts": 256,
+              "bytes": 33554432
+            }
+          },
+          "new_rows_only_funding_refused": true,
+          "provider": "s3",
+          "refusal_and_retry_immutable_puts": 0,
+          "retained_export": {
+            "databases": 2,
+            "identical_restore_repeated": true,
+            "immutable_puts": 0,
+            "independent_local_destination": true,
+            "restored_after_source_image_collection": true,
+            "source_revision": 1
+          },
+          "retention": {
+            "cold_reopen_and_collection": true,
+            "exact_cut_values": true,
+            "immutable_puts": 0,
+            "release_reclaimed_old_checkpoint": true
+          },
+          "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; clock-independent permits; live predecessor refused reads and receipt retries after takeover. Not AWS, Kubernetes placement, arbitrary memory rollback or performance-SLO qualification.",
+          "setup_seconds": 0.37655048,
+          "tenant_budget": {
+            "allocated": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "configuration_revision": 4,
+            "limits": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "maintenance": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            }
+          },
+          "total_seconds": 182.7611236,
+          "warm_cache_misses": 0,
+          "warm_http_reads": 100,
+          "warm_read_control_calls": 0,
+          "warm_read_ms": {
+            "p50": 2.304373,
+            "p95": 3.856478,
+            "p99": 4.630265
+          },
+          "warm_read_object_gets": 100,
+          "warm_read_paths": [
+            "checkpoint"
+          ]
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 31,
+          "container_removed": true
+        }
+      }
+    ]
   }
 }
