@@ -1,8 +1,8 @@
 #!/bin/sh
 # Install a checksum-verified release executable. No root privileges required.
 set -eu
-version=${1:-v0.24.3}
-case "$version" in v[0-9]*);; *) echo 'Expected a release tag such as v0.24.3' >&2; exit 1;; esac
+version=${1:-v0.24.4}
+case "$version" in v[0-9]*);; *) echo 'Expected a release tag such as v0.24.4' >&2; exit 1;; esac
 case "$(uname -s)-$(uname -m)" in
   Linux-x86_64) asset=durable-db-linux-amd64.tar.gz;;
   *) echo 'Prebuilt binaries currently target Linux x86_64; build from source for this platform.' >&2; exit 1;;
