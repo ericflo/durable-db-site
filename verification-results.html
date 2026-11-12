@@ -1,131 +1,104 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.5 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
-<h2 id="peer-failure-routing-and-observation-deadlines-2026-11-12-release-pending">Peer failure, routing and observation deadlines (2026-11-12, release pending)<a class="anchor" href="#peer-failure-routing-and-observation-deadlines-2026-11-12-release-pending" aria-label="Link to this section">#</a></h2>
-<p>A newly reproduced local stall explains one way checkpoint recovery can stop:
-a failed refresh clears the cached control confirmation, while the write-once
-permit remains live. Later checkpoint attempts previously reused the missing
-origin and never refreshed it. They now repeat exact metadata validation under
-the existing control lock before staging. This does not grant serving permission,
-change ownership, or retry an uncertain immutable write.</p>
-<p>The old implementation fails both a lost-refresh regression and a real HTTP
-fixture that fails maintenance funding followed by its metadata refresh. The
-HTTP fixture now resumes background checkpointing in 1.12 seconds without a new
-request or owner, accepts the next write and replays the earlier receipt. All 335
-enabled Rust checks, formatting, strict clippy and the site build pass. The
-RootAcquisition bounds (117,741 / 30,349 states, six negative controls) and
-Checkpoint bound (65,664 states, nine negative controls) still pass. These are
-component checks, not a proof of Rust or confirmation of the failed B2 run’s
-cause. The corrected runtime still requires the complete cloud campaign.</p>
-<p>Candidate <code>5e9b5fd</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/234/1">Woodpecker #234</a>,
-independent executable checks and stale-DNS replacement in a fresh B2 campaign,
-but <strong>fails rejoin</strong>. Writer 2 exhausts its 180-second read-retry deadline while
-its partition has not reached a new ready owner. The partial snapshot records
-1,022 acknowledgements and 1,021 readbacks, without final history/cold recovery.
-The difference is unresolved in this failed run, not a finding of data loss.
-All resources and 788 physical versions were removed. Six of seven diagnostic
-metric reads succeeded; cumulative durations include the deliberate process
-pause and cannot be treated as isolated provider latency.</p>
-<p>The new controller-monotonic measurements put scale-to-three at <strong>61.56 seconds</strong>
-and scale-to-six at <strong>62.24 seconds</strong> for the last writer’s two further readbacks.
-Both pass the outer ceiling but miss the 60-second engineering target. Initial
-setup took 231 seconds. The stopped-process phase boundary took 194 seconds,
-including diagnostics. No latency SLO or repeatability claim follows.</p>
-<p>A further local correction bounds a shared-provider wait: the object SDK’s
-default ten retries and three-minute retry budget could occupy an acquisition
-slot through the client’s entire recovery window. B2 and S3 now share at most
-three read attempts and a ten-second whole-observation deadline covering GET,
-range and listing bodies. Expiration returns an error, never confirmed absence;
-conditional writes and immutable uploads remain single-attempt. The stalled-body TCP regression fails on the
-previous reader. All 332 enabled Rust checks, formatting, strict clippy and the
-site build pass. The unchanged 856-state revocable-owner model passes its nine
-negative controls. These bounded checks do not prove Rust or liveness.
-Candidate <code>0e31829</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/236/1">Woodpecker #236</a>
-and independent executable checks, but its B2/Kubernetes run <strong>fails during the
-steady phase, before fault injection</strong>. Writers 0 and 3 share partition 11 and
-exhaust their unchanged 180-second commit retry limits; writers 1 and 2 continue.
-The partial snapshot has 787 acknowledgements and readbacks. Tenant credits
-remain available. There is no final cold recovery or full history check, and no
-failure metrics were captured before the pods disappeared. All disposable
-resources and 625 physical versions were removed.</p>
-<p>Scale-to-three takes at most 121.73 seconds for every writer’s two readbacks;
-scale-to-six takes 61.83 seconds. Both miss the 60-second engineering target.
-The observation policy correction is not established as the stall’s cause or
-resolution. The candidate remains unreleased. A two-tenant production-directory
-test completes 400 commits with concurrent collection locally in 2.06 seconds,
-but does not reproduce the cloud stall. Fixed-stage checkpoint warnings and
-bounded metric capture before cleanup now make the next failure diagnosable
-without recording provider error text, credentials, keys or values.</p>
-<p>Candidate <code>aa3996f</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/233/1">Woodpecker #233</a>
-and the independent executable checks. Its fresh B2/Kubernetes campaign reaches
-all four writers’ progress while <strong>all six original database processes remain
-stopped and listed in DNS</strong>. Their process identities are checked before and
-after; only the new seventh process can serve. The original processes then
-resume, and every writer progresses through the return to six replicas.</p>
-<p>The subsequent forced pod loss <strong>fails</strong>: writer 3 exhausts its unchanged
-180-second commit-retry limit, although its replacement owner became ready
-about 47 seconds after the preceding phase boundary. The partial snapshot has
-1,540 acknowledgements/readbacks, without final cold recovery/history checking.
-This does not establish lost acknowledgements. The pause-to-replacement phase
-boundary takes 148 seconds; rejoin takes 73 seconds. These include diagnostics,
-not isolated recovery latencies. All disposable resources and 703 physical
-versions were removed; the failed run and exact hashes remain in the evidence.</p>
-<p>A local HTTP regression reproduces a routing defect consistent with that stall:
-cancelling a forwarded request before its peer timeout skipped cache invalidation,
-so the next explicit retry used the same dead destination. Invalidation now runs
-synchronously when the attempt ends or is dropped, affecting only that route
-instance. A late cancellation cannot erase a replacement or revive a failed peer.
-The interruptible asynchronous invalidation block was removed. Six HTTP routing
-checks pass in 0.19 seconds, including cancellation and delayed failures; the
-138-state routing model passes all six negative controls. All 330 enabled Rust
-checks, formatting, strict clippy and the documentation build pass. These bounded checks
-are not a Rust proof or confirmation of the cloud stall’s cause. A complete new
-campaign remains required before release.</p>
-<p>Versioned MinIO passes the complete native HTTP budget/retention fixture with
-the observation deadline: two cold reopens, live predecessor refusal, automatic
-journal/table/manifest collection, preserved maintenance funding, retained-image
-export and restoration after source collection. Its 100 warm reads perform 100
-permit GETs and zero authority operations. This is local loopback, not AWS or a
-cloud latency SLO. The 182-second run includes three normal collection intervals.</p>
-<p>Two failed fixture attempts are retained. The fixture now waits for the handoff
-checkpoint, allows its claim of preserved reserve, and writes two new frames
-before demanding their collection. It still checks the exact final charge,
-unchanged admission ceilings and reclamation; it no longer expects a valid live
-suffix to disappear. All three MinIO buckets/containers and 86 physical versions
-were removed. The B2/Kubernetes failure above remains unresolved.</p>
-<p>The earlier candidate and provider checks below remain part of the record.</p>
-<p>Candidate <code>689cfcf</code> passes <a href="https://ci.eflorenzano.com/repos/18/pipeline/231/1">Woodpecker #231</a>
-and the independently downloaded static executable checks, but <strong>fails the fresh
-B2/Kubernetes campaign</strong>. Two writers exhaust the unchanged 180-second retry
-limit during scale-to-six; tenant-budget observation also fails. The stopped-peer
-fault is not reached. The partial snapshot records 219 acknowledged/read-back
-writes, without a complete cold recovery or history check. This is a failed
-availability qualification, not a finding of lost acknowledgements.</p>
-<p>The auxiliary metrics locate substantial delay in bucket-metadata updates:
-one new pod spent 207.82 seconds across 22 calls, while its 23 list-bucket calls
-took 2.36 seconds in total. These measure client-observed request durations;
-they do not identify a provider rate limit. Four of six metric reads succeeded;
-administrator admission refused the other two. The namespace, bucket, key and
-all 554 remaining physical object versions were removed. The failed run remains
-in the <a href="evidence/native-recovery-2026-11-11.json">campaign evidence</a>.</p>
-<p>The follow-up removes redundant conditional writes from raw partition control
-observations. The common manifest reader still validates immutable bytes and
-bounds retries; ordinary storage reads retain their freshness barrier. Claims,
-activation and public budget status still require exact comparisons. Routed data
-responses still require fresh writer-permit validation. No wire or storage format
-changes, special clocks or additional coordinator are introduced.</p>
-<p>The stale-observation regression fails on the previous implementation. It now
-reads an intentionally old partition pointer without an authority write, then
-checks that exact validation fails and the revoked owner cannot serve. All nine
-partition tests and 329 enabled Rust checks pass, with formatting and strict
-clippy. The existing acquisition model already permits historical observations:
-117,741 states in its main bound and 30,349 in the three-candidate bound pass,
-along with six negative controls. These are bounded protocol checks, not a proof
-of Rust or a guarantee of liveness.
-The corrected provider-cost assertion requires one raw read and zero updates or
-barriers. Versioned MinIO passes 1→2→1→0→1 handoff and cold recovery in 2.61 seconds.
-The B2 fixture stops on a single-attempt HTTP 503; its failure remains recorded.
-All four provider-fixture buckets, both B2 keys, both MinIO containers and 173
-remaining physical versions were removed. The later Kubernetes run above
-reached the stopped-peer fault but still failed its full availability check.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.6 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
+<h2 id="idle-owner-rejoin-correction-2026-11-12-release-pending">Idle-owner rejoin correction (2026-11-12, release pending)<a class="anchor" href="#idle-owner-rejoin-correction-2026-11-12-release-pending" aria-label="Link to this section">#</a></h2>
+<p>A revoked owner can remain idle when membership assigns its partition back to
+it. Requests routed through another process then follow stale durable routing
+hints, so no request reaches the old owner to discover revocation. A bounded
+background permit observation now retires that cached owner on confirmed
+absence, allowing the existing controller to reacquire. Errors do not retire
+it or grant authority; ordinary responses still validate their own permits.</p>
+<p>The real HTTP regression fails against the old implementation at its eight-second
+deadline and passes in 6.05 seconds with the correction. All 336 enabled Rust
+checks, formatting and strict clippy pass. The 236-state routing model and seven
+negative controls pass; they do not prove scheduling liveness or Rust refinement.
+This follow-up is not included in v0.23.6 and still needs provider qualification.</p>
+<h2 id="v0236-peer-failure-and-checkpoint-recovery-2026-11-12">v0.23.6 peer failure and checkpoint recovery (2026-11-12)<a class="anchor" href="#v0236-peer-failure-and-checkpoint-recovery-2026-11-12" aria-label="Link to this section">#</a></h2>
+<p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.6">v0.23.6</a> packages
+<code>11ded2c</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/239/1">Woodpecker #239</a>.
+The downloaded static executable passes standalone installation, transactions,
+ordered reads, export/restore and forced-stop recovery. It corrects checkpoint
+origins lost after failed metadata refresh, excludes unresponsive peers retained
+in DNS, invalidates cancelled forwarding attempts, removes redundant control-read
+updates, and bounds object-observation retries and response-body waits.</p>
+<p>The exact executable passes the complete B2 campaign on the existing Kubernetes
+hosts. All six original processes are stopped while their DNS entries remain;
+a seventh takes over, and every writer progresses before those processes resume.
+Rejoin, return to six, pod loss, rolling replacement, a 40-second provider
+interruption, scale-down to one and total compute replacement also pass.
+<strong>All 1,974 acknowledged writes are recovered</strong>, with four independently checked
+histories. The namespace, bucket, scoped key and 1,505 remaining physical object
+versions were removed. The four writers map to distinct partitions in this run;
+shared-partition coverage is a separate local 400-write/collection regression.</p>
+<table>
+<thead>
+<tr>
+<th>Transition</th>
+<th style="text-align:right">Every writer’s recovery upper bound</th>
+<th style="text-align:right">Engineering target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scale to three</td>
+<td style="text-align:right">59.75 s</td>
+<td style="text-align:right">60 s — met</td>
+</tr>
+<tr>
+<td>Scale to six</td>
+<td style="text-align:right">76.42 s</td>
+<td style="text-align:right">60 s — missed</td>
+</tr>
+<tr>
+<td>Forced pod loss</td>
+<td style="text-align:right">16.52 s</td>
+<td style="text-align:right">60 s — met</td>
+</tr>
+<tr>
+<td>Rolling replacement</td>
+<td style="text-align:right">142.79 s</td>
+<td style="text-align:right">60 s — missed</td>
+</tr>
+<tr>
+<td>Scale to one</td>
+<td style="text-align:right">80.76 s</td>
+<td style="text-align:right">60 s — missed</td>
+</tr>
+<tr>
+<td>Cold recovery after API readiness</td>
+<td style="text-align:right">79.24 s</td>
+<td style="text-align:right">120 s — met</td>
+</tr>
+</tbody>
+</table>
+<p>These controller-monotonic bounds include readiness and polling until two more
+readbacks per writer, excluding later diagnostics. Stopped-peer replacement and
+rejoin take 136.72 and 125.31 seconds between phase boundaries, including
+diagnostics; they are not direct recovery/SLO measurements. Sampled peak API RSS
+is 5,156,864 bytes during the short steady phase, not a worst-case memory bound.
+This is one passing campaign, not physical-host power-loss, sustained-load,
+AWS, arbitrary-contention or production-SLO qualification.</p>
+<p>Four earlier candidates failed: <code>689cfcf</code> during scale-to-six (219 partial
+acknowledgements), <code>aa3996f</code> after pod loss (1,540), <code>5e9b5fd</code> during rejoin
+(1,022 acknowledgements / 1,021 readbacks), and <code>0e31829</code> during steady traffic
+with two writers sharing a partition (787). None completed cold recovery or
+final history checking. The partial readback difference does not establish data
+loss. Their exact hashes, observations, failures and confirmed resource cleanup
+remain in the <a href="evidence/native-recovery-2026-11-11.json">campaign evidence</a>.
+A passing later run does not prove the cause of every earlier stall.</p>
+<p>The lost-origin HTTP regression fails before the correction and resumes background
+checkpointing in 1.12 seconds afterward, without a new request or owner. It then
+accepts another write and replays the earlier receipt. All 335 enabled Rust checks,
+99 client/adapter checks, the optimized 10,005-database check, formatting and
+strict clippy pass. RootAcquisition (117,741 / 30,349 states; six negative controls),
+Checkpoint (65,664; nine), RevocableOwner (856; nine) and routing (138; six)
+remain bounded component checks, not a proof of Rust or the integrated cluster.</p>
+<p>Versioned MinIO separately passes native HTTP budgets, two cold reopens, live
+predecessor refusal, automatic journal/table/manifest collection, retained-image
+export and restoration after source collection in 182 seconds. The 100 warm reads
+use 100 permit GETs and no authority operations. Two earlier fixture failures
+incorrectly expected unchanged maintenance allocation and reclamation of a live
+journal suffix after handoff; the corrected assertions retain exact final charges,
+admission limits and collection checks. All three buckets/containers and 86
+physical versions were removed. This local fixture is not an AWS/B2 latency SLO.</p>
 <h2 id="v0235-independent-recovery-scheduling-2026-11-12">v0.23.5 independent recovery scheduling (2026-11-12)<a class="anchor" href="#v0235-independent-recovery-scheduling-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.5">v0.23.5</a> packages
 <code>503faaa</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/228/1">Woodpecker #228</a>.
@@ -933,4 +906,4 @@ were removed, along with an orphaned publication working-design document. Histor
 <h2 id="placement-requests-during-coordinator-replacement--2026-11-09">Placement requests during coordinator replacement — 2026-11-09<a class="anchor" href="#placement-requests-during-coordinator-replacement--2026-11-09" aria-label="Link to this section">#</a></h2>
 <p>The bounded <code>PlacementTakeover</code> composition checks 3,379,987 states with the actual root fence, renewal, drain and activation actions. Four faulty variants fail. Its required recovery trace contains an applied freeze with an uncertain reply, root replacement, exact placement revalidation and generation-two permission after generation-one permission ends.</p>
 <p>It starts at a reachable active root and permits one successor. It does not prove arbitrary takeover, platform timing, journal selection, a runtime controller or production readiness. <a href="verification.html#candidate-placement-requests-across-root-replacement">Scope and evidence</a>.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="verification.html"><span>Previous</span>Verification</a><a class="next" href="proof-publication.html"><span>Next</span>Publication proof</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#peer-failure-routing-and-observation-deadlines-2026-11-12-release-pending">Peer failure, routing and observation deadlines (2026-11-12, release pending)</a></li><li><a href="#v0235-independent-recovery-scheduling-2026-11-12">v0.23.5 independent recovery scheduling (2026-11-12)</a></li><li><a href="#v0234-local-health-and-complete-b2-recovery-2026-11-11">v0.23.4 local health and complete B2 recovery (2026-11-11)</a></li><li><a href="#v0233-routing-readiness-during-recovery-2026-11-11">v0.23.3 routing readiness during recovery (2026-11-11)</a></li><li><a href="#v0232-same-owner-acquisition-recovery-2026-11-11">v0.23.2 same-owner acquisition recovery (2026-11-11)</a></li><li><a href="#v0231-recovery-progress-fixes-2026-11-11">v0.23.1 recovery progress fixes (2026-11-11)</a></li><li><a href="#v0230-native-cloud-cli-2026-11-11">v0.23.0 native cloud CLI (2026-11-11)</a></li><li><a href="#v0220-membership-driven-native-placement-2026-11-11">v0.22.0 membership-driven native placement (2026-11-11)</a></li><li><a href="#v0210-native-owner-forwarding-2026-11-11">v0.21.0 native owner forwarding (2026-11-11)</a></li><li><a href="#v0200-independent-partition-control-2026-11-11">v0.20.0 independent partition control (2026-11-11)</a></li><li><a href="#v0190-native-permits-2026-11-11">v0.19.0 native permits (2026-11-11)</a></li><li><a href="#timing-independent-ownership-candidate-2026-11-11">Timing-independent ownership candidate (2026-11-11)</a></li><li><a href="#clockbound-vm-boundary-rejection-2026-11-11">ClockBound VM boundary rejection (2026-11-11)</a></li><li><a href="#unreleased-catalog-admission-2026-11-10">Unreleased catalog admission (2026-11-10)</a></li><li><a href="#v0181-metadata-retry-reuse-2026-11-10">v0.18.1 metadata retry reuse (2026-11-10)</a></li><li><a href="#v0180-durable-maintenance-funding-2026-11-10">v0.18.0 durable maintenance funding (2026-11-10)</a></li><li><a href="#v0170-retained-checkpoint-export-2026-11-10">v0.17.0 retained checkpoint export (2026-11-10)</a></li><li><a href="#v0161-checkpoint-retry-pacing-2026-11-10">v0.16.1 checkpoint retry pacing (2026-11-10)</a></li><li><a href="#v0160-manifest-encoding-and-split-admission-2026-11-10">v0.16.0 manifest encoding and split admission (2026-11-10)</a></li><li><a href="#v0150-existing-manifest-path-admission-2026-11-10">v0.15.0 existing manifest-path admission (2026-11-10)</a></li><li><a href="#v0140-stable-checkpoint-manifest-groups-2026-11-10">v0.14.0 stable checkpoint manifest groups (2026-11-10)</a></li><li><a href="#v0130-retained-row-reblocking-admission-2026-11-10">v0.13.0 retained-row reblocking admission (2026-11-10)</a></li><li><a href="#v0120-checkpoint-retention-2026-11-10">v0.12.0 checkpoint retention (2026-11-10)</a></li><li><a href="#v0110-checkpoint-encoding-admission-2026-11-10">v0.11.0 checkpoint encoding admission (2026-11-10)</a></li><li><a href="#clock-error-prerequisites-2026-11-10">Clock error prerequisites (2026-11-10)</a></li><li><a href="#v0100-shared-table-index-admission-2026-11-10">v0.10.0 shared-table index admission (2026-11-10)</a></li><li><a href="#v090-native-local-cli-2026-11-10">v0.9.0 native local CLI (2026-11-10)</a></li><li><a href="#v080-shared-table-copy-admission-2026-11-10">v0.8.0 shared-table copy admission (2026-11-10)</a></li><li><a href="#v070-retained-receipt-admission-2026-11-10">v0.7.0 retained-receipt admission (2026-11-10)</a></li><li><a href="#v060-tenant-checkpoint-row-admission-2026-11-10">v0.6.0 tenant checkpoint-row admission (2026-11-10)</a></li><li><a href="#v051-checkpoint-index-reads-2026-11-10">v0.5.1 checkpoint index reads (2026-11-10)</a></li><li><a href="#v050-native-table-and-manifest-collection-2026-11-10">v0.5.0 native table and manifest collection (2026-11-10)</a></li><li><a href="#v040-inline-checkpoint-descriptors-2026-11-10">v0.4.0 inline checkpoint descriptors (2026-11-10)</a></li><li><a href="#v020-experimental-release-2026-11-10">v0.2.0 experimental release (2026-11-10)</a></li><li><a href="#native-http-budgets-and-recovery-2026-11-10">Native HTTP budgets and recovery (2026-11-10)</a></li><li><a href="#initial-release-2026-11-08">Initial release (2026-11-08)</a></li><li><a href="#production-hardening-audit-2026-11-08">Production hardening audit (2026-11-08)</a></li><li><a href="#publication-contention-changes-2026-11-08">Publication contention changes (2026-11-08)</a></li><li><a href="#initial-local-latency-baseline">Initial local latency baseline</a></li><li><a href="#b2-contention-baseline-release-gate-failed">B2 contention baseline: release gate failed</a></li><li><a href="#b2-rebase-diagnostic">B2 rebase diagnostic</a></li><li><a href="#grouped-reads-and-publication-profiling">Grouped reads and publication profiling</a></li><li><a href="#publication-combining-qualification">Publication combining qualification</a></li><li><a href="#bounded-b2-observation-recovery">Bounded B2 observation recovery</a></li><li><a href="#monitoring-capability-and-control-admission">Monitoring capability and control admission</a></li><li><a href="#b2-rolling-compatibility-and-partial-run-recovery">B2 rolling compatibility and partial-run recovery</a></li><li><a href="#durable-database-authorization">Durable database authorization</a></li><li><a href="#idempotent-protected-creation">Idempotent protected creation</a></li><li><a href="#indexed-pi-storage-and-session-fencing">Indexed Pi storage and Session fencing</a></li><li><a href="#indexed-pi-on-b2-and-complete-process-loss">Indexed Pi on B2 and complete process loss</a></li><li><a href="#signing-key-overlap-and-administrator-migration">Signing-key overlap and administrator migration</a></li><li><a href="#cpu-driven-kubernetes-scaling-and-injected-failures">CPU-driven Kubernetes scaling and injected failures</a></li><li><a href="#s3-conditional-write-ambiguity">S3 conditional-write ambiguity</a></li><li><a href="#kernel-oom-recovery-under-autoscaling">Kernel OOM recovery under autoscaling</a></li><li><a href="#kubernetes-fault-campaign-on-real-b2">Kubernetes fault campaign on real B2</a></li><li><a href="#durable-immutable-upload-admission-and-transport-audit">Durable immutable-upload admission and transport audit</a></li><li><a href="#upload-free-page-collection-and-independent-credit-replenishment">Upload-free page collection and independent credit replenishment</a></li><li><a href="#format-5-autoscaling-with-durable-upload-limits">Format-5 autoscaling with durable upload limits</a></li><li><a href="#logical-backup-after-complete-source-removal">Logical backup after complete source removal</a></li><li><a href="#format-5-budgeted-b2-autoscaling">Format-5 budgeted B2 autoscaling</a></li><li><a href="#replicas-on-three-physical-hosts">Replicas on three physical hosts</a></li><li><a href="#unbounded-abstract-publicationcollection-proof">Unbounded abstract publication/collection proof</a></li><li><a href="#directory-capacity-at-100005-entries">Directory capacity at 100,005 entries</a></li><li><a href="#actual-pi-harness-recovery-and-cancellation--2026-11-09">Actual Pi Harness recovery and cancellation — 2026-11-09</a></li><li><a href="#memory-pilot-instrumentation-preflight--2026-11-09">Memory pilot instrumentation preflight — 2026-11-09</a></li><li><a href="#client-readability-and-a-general-web-application-example--2026-11-09">Client readability and a general web application example — 2026-11-09</a></li><li><a href="#json-sdk-and-simplified-task-board--2026-11-09">JSON SDK and simplified task board — 2026-11-09</a></li><li><a href="#one-hour-physical-b2-baseline--2026-11-09">One-hour physical B2 baseline — 2026-11-09</a></li><li><a href="#raw-provider-capacity-and-candidate-log-handoff--2026-11-09">Raw provider capacity and candidate log handoff — 2026-11-09</a></li><li><a href="#combined-servinglog-candidate--2026-11-09">Combined serving/log candidate — 2026-11-09</a></li><li><a href="#delegated-permission-candidate--2026-11-09">Delegated permission candidate — 2026-11-09</a></li><li><a href="#immutable-journal-component--2026-11-09">Immutable journal component — 2026-11-09</a></li><li><a href="#root-renewal-and-repeated-takeover-candidate--2026-11-09">Root renewal and repeated takeover candidate — 2026-11-09</a></li><li><a href="#candidate-timing-margins--2026-11-09">Candidate timing margins — 2026-11-09</a></li><li><a href="#delegated-ownership-and-journal-history--2026-11-09">Delegated ownership and journal history — 2026-11-09</a></li><li><a href="#delayed-control-application--2026-11-09">Delayed control application — 2026-11-09</a></li><li><a href="#bounded-transaction-validation--2026-11-09">Bounded transaction validation — 2026-11-09</a></li><li><a href="#placement-request-uncertainty--2026-11-09">Placement request uncertainty — 2026-11-09</a></li><li><a href="#placement-requests-during-coordinator-replacement--2026-11-09">Placement requests during coordinator replacement — 2026-11-09</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<nav class="pager" aria-label="Pagination"><a class="previous" href="verification.html"><span>Previous</span>Verification</a><a class="next" href="proof-publication.html"><span>Next</span>Publication proof</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#idle-owner-rejoin-correction-2026-11-12-release-pending">Idle-owner rejoin correction (2026-11-12, release pending)</a></li><li><a href="#v0236-peer-failure-and-checkpoint-recovery-2026-11-12">v0.23.6 peer failure and checkpoint recovery (2026-11-12)</a></li><li><a href="#v0235-independent-recovery-scheduling-2026-11-12">v0.23.5 independent recovery scheduling (2026-11-12)</a></li><li><a href="#v0234-local-health-and-complete-b2-recovery-2026-11-11">v0.23.4 local health and complete B2 recovery (2026-11-11)</a></li><li><a href="#v0233-routing-readiness-during-recovery-2026-11-11">v0.23.3 routing readiness during recovery (2026-11-11)</a></li><li><a href="#v0232-same-owner-acquisition-recovery-2026-11-11">v0.23.2 same-owner acquisition recovery (2026-11-11)</a></li><li><a href="#v0231-recovery-progress-fixes-2026-11-11">v0.23.1 recovery progress fixes (2026-11-11)</a></li><li><a href="#v0230-native-cloud-cli-2026-11-11">v0.23.0 native cloud CLI (2026-11-11)</a></li><li><a href="#v0220-membership-driven-native-placement-2026-11-11">v0.22.0 membership-driven native placement (2026-11-11)</a></li><li><a href="#v0210-native-owner-forwarding-2026-11-11">v0.21.0 native owner forwarding (2026-11-11)</a></li><li><a href="#v0200-independent-partition-control-2026-11-11">v0.20.0 independent partition control (2026-11-11)</a></li><li><a href="#v0190-native-permits-2026-11-11">v0.19.0 native permits (2026-11-11)</a></li><li><a href="#timing-independent-ownership-candidate-2026-11-11">Timing-independent ownership candidate (2026-11-11)</a></li><li><a href="#clockbound-vm-boundary-rejection-2026-11-11">ClockBound VM boundary rejection (2026-11-11)</a></li><li><a href="#unreleased-catalog-admission-2026-11-10">Unreleased catalog admission (2026-11-10)</a></li><li><a href="#v0181-metadata-retry-reuse-2026-11-10">v0.18.1 metadata retry reuse (2026-11-10)</a></li><li><a href="#v0180-durable-maintenance-funding-2026-11-10">v0.18.0 durable maintenance funding (2026-11-10)</a></li><li><a href="#v0170-retained-checkpoint-export-2026-11-10">v0.17.0 retained checkpoint export (2026-11-10)</a></li><li><a href="#v0161-checkpoint-retry-pacing-2026-11-10">v0.16.1 checkpoint retry pacing (2026-11-10)</a></li><li><a href="#v0160-manifest-encoding-and-split-admission-2026-11-10">v0.16.0 manifest encoding and split admission (2026-11-10)</a></li><li><a href="#v0150-existing-manifest-path-admission-2026-11-10">v0.15.0 existing manifest-path admission (2026-11-10)</a></li><li><a href="#v0140-stable-checkpoint-manifest-groups-2026-11-10">v0.14.0 stable checkpoint manifest groups (2026-11-10)</a></li><li><a href="#v0130-retained-row-reblocking-admission-2026-11-10">v0.13.0 retained-row reblocking admission (2026-11-10)</a></li><li><a href="#v0120-checkpoint-retention-2026-11-10">v0.12.0 checkpoint retention (2026-11-10)</a></li><li><a href="#v0110-checkpoint-encoding-admission-2026-11-10">v0.11.0 checkpoint encoding admission (2026-11-10)</a></li><li><a href="#clock-error-prerequisites-2026-11-10">Clock error prerequisites (2026-11-10)</a></li><li><a href="#v0100-shared-table-index-admission-2026-11-10">v0.10.0 shared-table index admission (2026-11-10)</a></li><li><a href="#v090-native-local-cli-2026-11-10">v0.9.0 native local CLI (2026-11-10)</a></li><li><a href="#v080-shared-table-copy-admission-2026-11-10">v0.8.0 shared-table copy admission (2026-11-10)</a></li><li><a href="#v070-retained-receipt-admission-2026-11-10">v0.7.0 retained-receipt admission (2026-11-10)</a></li><li><a href="#v060-tenant-checkpoint-row-admission-2026-11-10">v0.6.0 tenant checkpoint-row admission (2026-11-10)</a></li><li><a href="#v051-checkpoint-index-reads-2026-11-10">v0.5.1 checkpoint index reads (2026-11-10)</a></li><li><a href="#v050-native-table-and-manifest-collection-2026-11-10">v0.5.0 native table and manifest collection (2026-11-10)</a></li><li><a href="#v040-inline-checkpoint-descriptors-2026-11-10">v0.4.0 inline checkpoint descriptors (2026-11-10)</a></li><li><a href="#v020-experimental-release-2026-11-10">v0.2.0 experimental release (2026-11-10)</a></li><li><a href="#native-http-budgets-and-recovery-2026-11-10">Native HTTP budgets and recovery (2026-11-10)</a></li><li><a href="#initial-release-2026-11-08">Initial release (2026-11-08)</a></li><li><a href="#production-hardening-audit-2026-11-08">Production hardening audit (2026-11-08)</a></li><li><a href="#publication-contention-changes-2026-11-08">Publication contention changes (2026-11-08)</a></li><li><a href="#initial-local-latency-baseline">Initial local latency baseline</a></li><li><a href="#b2-contention-baseline-release-gate-failed">B2 contention baseline: release gate failed</a></li><li><a href="#b2-rebase-diagnostic">B2 rebase diagnostic</a></li><li><a href="#grouped-reads-and-publication-profiling">Grouped reads and publication profiling</a></li><li><a href="#publication-combining-qualification">Publication combining qualification</a></li><li><a href="#bounded-b2-observation-recovery">Bounded B2 observation recovery</a></li><li><a href="#monitoring-capability-and-control-admission">Monitoring capability and control admission</a></li><li><a href="#b2-rolling-compatibility-and-partial-run-recovery">B2 rolling compatibility and partial-run recovery</a></li><li><a href="#durable-database-authorization">Durable database authorization</a></li><li><a href="#idempotent-protected-creation">Idempotent protected creation</a></li><li><a href="#indexed-pi-storage-and-session-fencing">Indexed Pi storage and Session fencing</a></li><li><a href="#indexed-pi-on-b2-and-complete-process-loss">Indexed Pi on B2 and complete process loss</a></li><li><a href="#signing-key-overlap-and-administrator-migration">Signing-key overlap and administrator migration</a></li><li><a href="#cpu-driven-kubernetes-scaling-and-injected-failures">CPU-driven Kubernetes scaling and injected failures</a></li><li><a href="#s3-conditional-write-ambiguity">S3 conditional-write ambiguity</a></li><li><a href="#kernel-oom-recovery-under-autoscaling">Kernel OOM recovery under autoscaling</a></li><li><a href="#kubernetes-fault-campaign-on-real-b2">Kubernetes fault campaign on real B2</a></li><li><a href="#durable-immutable-upload-admission-and-transport-audit">Durable immutable-upload admission and transport audit</a></li><li><a href="#upload-free-page-collection-and-independent-credit-replenishment">Upload-free page collection and independent credit replenishment</a></li><li><a href="#format-5-autoscaling-with-durable-upload-limits">Format-5 autoscaling with durable upload limits</a></li><li><a href="#logical-backup-after-complete-source-removal">Logical backup after complete source removal</a></li><li><a href="#format-5-budgeted-b2-autoscaling">Format-5 budgeted B2 autoscaling</a></li><li><a href="#replicas-on-three-physical-hosts">Replicas on three physical hosts</a></li><li><a href="#unbounded-abstract-publicationcollection-proof">Unbounded abstract publication/collection proof</a></li><li><a href="#directory-capacity-at-100005-entries">Directory capacity at 100,005 entries</a></li><li><a href="#actual-pi-harness-recovery-and-cancellation--2026-11-09">Actual Pi Harness recovery and cancellation — 2026-11-09</a></li><li><a href="#memory-pilot-instrumentation-preflight--2026-11-09">Memory pilot instrumentation preflight — 2026-11-09</a></li><li><a href="#client-readability-and-a-general-web-application-example--2026-11-09">Client readability and a general web application example — 2026-11-09</a></li><li><a href="#json-sdk-and-simplified-task-board--2026-11-09">JSON SDK and simplified task board — 2026-11-09</a></li><li><a href="#one-hour-physical-b2-baseline--2026-11-09">One-hour physical B2 baseline — 2026-11-09</a></li><li><a href="#raw-provider-capacity-and-candidate-log-handoff--2026-11-09">Raw provider capacity and candidate log handoff — 2026-11-09</a></li><li><a href="#combined-servinglog-candidate--2026-11-09">Combined serving/log candidate — 2026-11-09</a></li><li><a href="#delegated-permission-candidate--2026-11-09">Delegated permission candidate — 2026-11-09</a></li><li><a href="#immutable-journal-component--2026-11-09">Immutable journal component — 2026-11-09</a></li><li><a href="#root-renewal-and-repeated-takeover-candidate--2026-11-09">Root renewal and repeated takeover candidate — 2026-11-09</a></li><li><a href="#candidate-timing-margins--2026-11-09">Candidate timing margins — 2026-11-09</a></li><li><a href="#delegated-ownership-and-journal-history--2026-11-09">Delegated ownership and journal history — 2026-11-09</a></li><li><a href="#delayed-control-application--2026-11-09">Delayed control application — 2026-11-09</a></li><li><a href="#bounded-transaction-validation--2026-11-09">Bounded transaction validation — 2026-11-09</a></li><li><a href="#placement-request-uncertainty--2026-11-09">Placement request uncertainty — 2026-11-09</a></li><li><a href="#placement-requests-during-coordinator-replacement--2026-11-09">Placement requests during coordinator replacement — 2026-11-09</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
