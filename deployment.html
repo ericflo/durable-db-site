@@ -40,6 +40,11 @@ failed injection validation because established connections remained usable;
 <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/#networkpolicy-s-impact-on-existing-connections">that behavior is implementation-defined</a>.</p>
 <p>Use a registry address reachable by the <strong>nodes’ container runtime</strong>, not just by pods. For example, a build may push through a cluster DNS service while the nodes pull the same registry through a configured NodePort alias. The qualification run used this arrangement; it did not modify cluster-wide registry or metrics settings.</p>
 <h2 id="request-budgets">Request budgets<a class="anchor" href="#request-budgets" aria-label="Link to this section">#</a></h2>
+<p><code>--concurrency</code> bounds admitted tenant HTTP requests. Two additional slots are
+reserved for authenticated budget, access-policy, token and metrics operations; these requests
+retain their per-principal rate/concurrency limits. Budget for at most
+<code>concurrency + 2</code> admitted HTTP requests per process. Tenant traffic cannot use
+the control reserve, even with a control-like path or database name.</p>
 <p>v0.19.0 exposes two per-principal, per-pod overload settings:</p>
 <table>
 <thead>

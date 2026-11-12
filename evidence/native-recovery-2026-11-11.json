@@ -4332,6 +4332,52 @@
         "Peer-only scenario does not repeat the separate full autoscaling and host-process-pause campaign."
       ],
       "network_validation": "Both baseline matrices and each fault matrix checked before and after the hold, including stable API pod identities/restart counts."
+    },
+    {
+      "binary_source_commit": "3b7c64380cd66c5c324433d79d29e4e328255ed9",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.9",
+      "binary_sha256": "faf52d82363c41775da712bcd90ec689e0888d6b1befaf22e58d56b3062edd1e",
+      "image_digest": "sha256:7b07e98e31e8ad559e796bc05fa057a47ac9a18bc8242c5a63494ad6614d6fbf",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 453
+      },
+      "started_at": "2026-11-12T08:20:03.667982+00:00",
+      "finished_at": "2026-11-12T08:23:40.789824+00:00",
+      "source_commit": "3b7c64380cd66c5c324433d79d29e4e328255ed9",
+      "harness_sha256": "2f424c26c94fe0592433fbaab53e48dd305e2608c1c7eb98b56d561931388bb6",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": false,
+      "namespace_removed": true,
+      "controller_failure": {
+        "type": "RuntimeError",
+        "reason": "A partition side could not read the provider-backed administrative budget"
+      },
+      "scenario": "peer-isolation",
+      "partial_workload": {
+        "writes_acknowledged": 175,
+        "reads_verified": 175,
+        "http_attempt_statuses": {
+          "200": 367,
+          "429": 29,
+          "503": 17
+        },
+        "failures": []
+      },
+      "failure_metrics_statuses": [
+        200,
+        200,
+        429
+      ],
+      "report_sha256": "2771426e1a151e5d0d4aa352cf4ed62f6a0f5ec665ec82d73d1f76ba7c9486c4",
+      "limitations": [
+        "Stopped at first asymmetric provider-backed administrative probe; original probe status was not retained.",
+        "Monitoring later returned 429 on the isolated process; local saturation reproduces control admission starvation.",
+        "No final cold recovery or independent history verification; not a passing campaign."
+      ]
     }
   ],
   "release": {
@@ -5765,11 +5811,71 @@
       "changed_model_behavior": false,
       "in_flight_resource_bound": "Rust regression only"
     },
-    "cloud_qualification": "pending",
+    "cloud_qualification": "first candidate failed administrative probe; control admission reserve awaits requalification",
     "input_sha256": {
       "src/ownership/root.rs": "f1e82453ca8653350a61601683892f3030a5e9dffd24d1759a098ca44066c6d6",
       "src/ownership/root/tests/permit.rs": "54778751d8093102ce96f7f47b17ec02b8ac0f389983e26395df923d82040cb1",
       "spec/candidates/RootRegistration.tla": "c42cff5062c808adeb91587f2b25c4f7b35138f5000bd7891e0028176bec3a77"
+    },
+    "minio": {
+      "source_commit": "3b7c64380cd66c5c324433d79d29e4e328255ed9",
+      "provider": "versioned MinIO",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "native_http_fixture": "pass",
+      "elapsed_seconds": 183.26,
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 32,
+        "container_removed": true
+      },
+      "checks": {
+        "live_predecessor_refused_after_takeover": true,
+        "cold_receipts_and_values_verified": true,
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "retained_export": {
+          "databases": 2,
+          "identical_restore_repeated": true,
+          "immutable_puts": 0,
+          "independent_local_destination": true,
+          "restored_after_source_image_collection": true,
+          "source_revision": 1
+        },
+        "warm_http_reads": 100,
+        "warm_cache_misses": 0,
+        "warm_read_control_calls": 0,
+        "warm_read_object_gets": 100
+      },
+      "report_sha256": "fe78ffe35e21d333c92959743c7822a46aed48b538af26a38b8c183e748ca8d8",
+      "scope": "Versioned MinIO native HTTP fixture using the debug build; not AWS, clustered placement or a performance claim."
+    }
+  },
+  "control_admission_reserve": {
+    "tenant_slots": "configured concurrency",
+    "additional_control_slots": 2,
+    "authenticated_principals": [
+      "Administrator operational routes",
+      "Metrics"
+    ],
+    "local_regression": {
+      "old_shared_pool": "fails with HTTP 429",
+      "reserved_pool_seconds": 0.01,
+      "held_tenant_requests": 8,
+      "cases": [
+        "several tenant principals saturate data pool",
+        "budget inspection and monitoring remain admitted",
+        "control pool is bounded",
+        "cancellation releases control and tenant capacity",
+        "administrator data cannot exhaust operator principal allowance"
+      ]
+    },
+    "scope": "Local overload policy; no durable authority or credit change. Cloud availability remains to be qualified.",
+    "rust_checks_passed": 338,
+    "format_and_strict_clippy": "pass",
+    "input_sha256": {
+      "src/api.rs": "3040053ed5dbde4bbeeab0fac944b9e49223eab33e515267c0c4d260dc9190bf",
+      "tests/http.rs": "4fe12ae8af1e821969f8e10b04070f6da55d929c904bbe4340d4c4f6b4afb833",
+      "scripts/qualify-multinode.py": "4927ad99ee5729cfc9123ffa108d790c2a9447ef0eb2e19da9951fbdc96d1a9a"
     }
   }
 }
