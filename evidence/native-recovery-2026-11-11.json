@@ -3062,6 +3062,361 @@
         "max_rss_bytes": 4648960,
         "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
       }
+    },
+    {
+      "binary_source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.8",
+      "binary_sha256": "2433c58f78754f6ba40c7ca33b086e87722a9a27d67014eceadf7afaa4c89e2d",
+      "image_digest": "sha256:f0add54ba2232cc9afde9f43c2ce8a0f376bcc85decd2d437a5231883b7a2d1a",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 1969,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1235
+      },
+      "started_at": "2026-11-12T06:11:24.982759+00:00",
+      "finished_at": "2026-11-12T06:36:01.930938+00:00",
+      "source_commit": "84bca2bb6fe9635a96a80536fdfd8a3ab1609e9b",
+      "harness_sha256": "9f38396a6680e83f2ce4eda65634a75142275706e78c8c184e1d62dd461f2866",
+      "workload_sha256": "e3f8ef12cfd8fe8a9586ee0c2f5b0ee6e269ed588f50fe9c953760a562b54d44",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "client_origin": "http://durable-db:7654",
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 120,
+        "memory_observation": true,
+        "maximum_write_intents": 100000
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T06:14:08.396495+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.017802451038733,
+            65.68240305699874,
+            17.017802451038733,
+            62.23314664699137
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T06:15:33.353970+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            68.35785421496257,
+            53.98598399700131,
+            18.890116996946745,
+            61.17289212800097
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "paused-dns-replacement",
+          "started_at": "2026-11-12T06:19:54.097772+00:00",
+          "basis": "after sole replacement API readiness with old peers stopped",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            61.56484323600307,
+            151.05108608398587,
+            143.8689520630287,
+            72.21621319605038
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "paused-processes-resumed",
+          "started_at": "2026-11-12T06:22:44.360357+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            19.794009751058184,
+            66.5899571570335,
+            70.15308928897139,
+            19.794009751058184
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "resume-scale-six",
+          "started_at": "2026-11-12T06:24:00.608555+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            6.649303360027261,
+            6.649303360027261,
+            92.05694232101087,
+            31.916067413054407
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "started_at": "2026-11-12T06:25:37.501668+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.939852734911256,
+            94.36654314992484,
+            83.55414978798945,
+            15.939852734911256
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement",
+          "started_at": "2026-11-12T06:27:16.670677+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            99.18666457396466,
+            120.59810141299386,
+            95.52117015200201,
+            106.332495640032
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "provider-restored",
+          "started_at": "2026-11-12T06:30:26.283612+00:00",
+          "basis": "before restoring provider egress",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            49.657079078955576,
+            17.63971437793225,
+            56.98982659797184,
+            17.63971437793225
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "started_at": "2026-11-12T06:31:27.683191+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            63.03234515793156,
+            94.72644826001488,
+            56.21821649197955,
+            6.056980076013133
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T06:33:53.546284+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            52.310708462959155,
+            59.72829767095391,
+            52.310708462959155,
+            37.33668668405153
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "writes_acknowledged": 1969,
+      "reads_verified": 1969,
+      "http_attempt_statuses": {
+        "200": 3986,
+        "429": 616,
+        "503": 413,
+        "transport_or_decode_error": 105
+      },
+      "expected": [
+        544,
+        372,
+        451,
+        602
+      ],
+      "verified": [
+        544,
+        372,
+        451,
+        602
+      ],
+      "verified_keys": 1969,
+      "history_sha256": "1cc2c2c6ed7a6e85891d1e476bcd6343c0b4a86e19a0456369ae2c189e8fa4fe",
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Application-process pause, pod loss and namespace-scoped egress restriction; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Eight of ten transitions miss their engineering target; lower ancestry GET counts do not establish a cloud latency improvement.",
+        "Predates targeted one-host pause, demonstrated workload blackout and fixed writer names."
+      ],
+      "phases": [
+        {
+          "name": "initial-one",
+          "time_utc": "2026-11-12T06:11:45.228394+00:00"
+        },
+        {
+          "name": "provider-reachable",
+          "time_utc": "2026-11-12T06:11:58.716710+00:00",
+          "probe": "CONNECTED"
+        },
+        {
+          "name": "one-progress",
+          "time_utc": "2026-11-12T06:14:08.395561+00:00",
+          "writes_acknowledged": 20
+        },
+        {
+          "name": "scale-3",
+          "time_utc": "2026-11-12T06:15:17.549770+00:00",
+          "writes_acknowledged": 164
+        },
+        {
+          "name": "scale-6",
+          "time_utc": "2026-11-12T06:16:46.115910+00:00",
+          "writes_acknowledged": 331
+        },
+        {
+          "name": "steady-start",
+          "time_utc": "2026-11-12T06:17:11.062288+00:00",
+          "seconds": 120,
+          "writes_acknowledged": 395
+        },
+        {
+          "name": "steady-complete",
+          "time_utc": "2026-11-12T06:19:20.382164+00:00",
+          "elapsed_seconds": 122.26042659790255,
+          "writes_acknowledged": 763
+        },
+        {
+          "name": "prior-api-processes-paused",
+          "time_utc": "2026-11-12T06:19:53.517859+00:00"
+        },
+        {
+          "name": "paused-dns-replacement",
+          "time_utc": "2026-11-12T06:22:44.359065+00:00",
+          "writes_acknowledged": 933
+        },
+        {
+          "name": "paused-processes-resumed",
+          "time_utc": "2026-11-12T06:24:00.606914+00:00",
+          "writes_acknowledged": 1086
+        },
+        {
+          "name": "resume-scale-six",
+          "time_utc": "2026-11-12T06:25:37.039247+00:00",
+          "writes_acknowledged": 1268
+        },
+        {
+          "name": "forced-api-pod-loss",
+          "time_utc": "2026-11-12T06:27:16.668949+00:00",
+          "victim_node": "epsilon-2",
+          "writes_acknowledged": 1432
+        },
+        {
+          "name": "rolling-replacement",
+          "time_utc": "2026-11-12T06:29:22.308619+00:00",
+          "writes_acknowledged": 1569
+        },
+        {
+          "name": "provider-partition-start",
+          "time_utc": "2026-11-12T06:29:46.280109+00:00",
+          "probe": "BLOCKED"
+        },
+        {
+          "name": "provider-partition-healed",
+          "time_utc": "2026-11-12T06:31:27.681011+00:00",
+          "probe": "CONNECTED",
+          "writes_acknowledged": 1707
+        },
+        {
+          "name": "scale-one",
+          "time_utc": "2026-11-12T06:33:03.869831+00:00",
+          "writes_acknowledged": 1848
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T06:33:37.025917+00:00",
+          "writes_acknowledged": 1909
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T06:34:55.820288+00:00",
+          "writes_acknowledged": 1953
+        }
+      ],
+      "paused_peer_checks": [
+        {
+          "phase": "prior-api-processes-paused",
+          "stopped_processes": 6,
+          "dns_addresses": 7,
+          "states": [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ]
+        },
+        {
+          "phase": "paused-dns-replacement",
+          "stopped_processes": 6,
+          "dns_addresses": 7,
+          "states": [
+            "T",
+            "T",
+            "T",
+            "T",
+            "T",
+            "T"
+          ]
+        }
+      ],
+      "writer_partitions": [
+        2,
+        7,
+        14,
+        6
+      ],
+      "sampled_memory": {
+        "samples": 6,
+        "max_rss_bytes": 4886528,
+        "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
+      }
     }
   ],
   "release": {
@@ -4348,6 +4703,76 @@
     "github_asset_digest_matches": true,
     "tag_pipeline": {
       "number": 243,
+      "status": "success"
+    }
+  },
+  "release_0_23_8": {
+    "source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+    "pipeline_status_at_verification": "success",
+    "woodpecker_pipeline": 242,
+    "artifact_image_digest": "sha256:31356e7a9b3d7fee526fa9cee6af0a41ea1ec90c0a56fd85470b3a34c376658d",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.8",
+      "archive_sha256": "b9414e84a3a0bfe5d4c897c5b9fa11610415c84df3970958ae6dde595aa8838f",
+      "binary_sha256": "2433c58f78754f6ba40c7ca33b086e87722a9a27d67014eceadf7afaa4c89e2d",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6293848,
+    "version": "v0.23.8",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 242,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/242/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "woodpecker_tests_passed": 99,
+      "opt_in_skipped": 1
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.8",
+    "published_at": "2026-11-12T06:38:06Z",
+    "github_asset_digest_matches": true,
+    "pipeline_status_at_release": "success",
+    "tag_pipeline": {
+      "number": 248,
       "status": "success"
     }
   }
