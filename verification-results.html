@@ -34,10 +34,15 @@ the blind sleep and detects policies that leave the workload connected. All-proc
 pause, replacement, pod loss, rolling replacement, scale-down and cold recovery
 also pass. These are process faults on existing hosts and a provider-egress fault;
 physical host shutdown and peer-only/asymmetric network isolation remain open.
-The maintained harness now has a focused <code>peer-isolation</code> scenario with requests
-entering both sides, fresh/retained connection checks and provider-backed admin
-reads. Local socket reuse/block/heal and directed-policy checks pass; real B2
-qualification is pending.</p>
+The focused <code>peer-isolation</code> experiment first failed <strong>fault injection</strong>, not a
+database correctness check: new connections were blocked while established peer
+connections remained usable. Its 111 acknowledgements/readbacks are partial;
+no final cold/history check ran. The namespace, bucket, scoped key and 492 object
+versions were removed. The harness replaces those policy mutations with packet
+drops inside disposable pod network namespaces. A local real-TCP check of the
+actual injector passes both directions, retained sockets, an unrelated port and
+healing; its containers/network were removed. B2 packet-fault qualification is
+pending.</p>
 <p>Every-writer recovery upper bounds, in seconds:</p>
 <table>
 <thead>

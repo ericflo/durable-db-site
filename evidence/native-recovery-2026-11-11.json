@@ -3868,6 +3868,130 @@
         "max_rss_bytes": 4780032,
         "scope": "API containers during short steady phase; not a peak/worst-case guarantee"
       }
+    },
+    {
+      "binary_source_commit": "43d9ea474bb681c4431a4d626f29b6a66b1ff5d4",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.8",
+      "artifact_verification_reused": true,
+      "binary_sha256": "2433c58f78754f6ba40c7ca33b086e87722a9a27d67014eceadf7afaa4c89e2d",
+      "image_digest": "sha256:f0add54ba2232cc9afde9f43c2ce8a0f376bcc85decd2d437a5231883b7a2d1a",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 1,
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 492
+      },
+      "started_at": "2026-11-12T07:25:26.864392+00:00",
+      "finished_at": "2026-11-12T07:29:04.612507+00:00",
+      "source_commit": "4b1fa6df6c7c58cfee2f82b3f949d7d41da056a6",
+      "harness_sha256": "b1d9634105f7ddbea8a69951aa59feeab63dd408f4bf5f5417e779eaf2110a66",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000
+      },
+      "complete": false,
+      "namespace_removed": true,
+      "controller_failure": {
+        "type": "RuntimeError",
+        "reason": "Peer fault did not establish the required fresh/retained connection matrix"
+      },
+      "report_sha256": "8020c254ba9eddb3559918d8e1414ced6d33551e8cf65737fa6694f24297828a",
+      "failure_class": "fault_injection",
+      "partial_workload": {
+        "writes_acknowledged": 111,
+        "reads_verified": 111,
+        "http_attempt_statuses": {
+          "200": 239,
+          "429": 34,
+          "503": 69
+        },
+        "failures": []
+      },
+      "last_network_matrix": {
+        "mode": "asymmetric",
+        "fresh_statuses": [
+          [
+            200,
+            0,
+            0
+          ],
+          [
+            200,
+            200,
+            200
+          ],
+          [
+            200,
+            200,
+            200
+          ]
+        ],
+        "retained_statuses": [
+          [
+            200,
+            200,
+            200
+          ],
+          [
+            200,
+            200,
+            200
+          ],
+          [
+            200,
+            200,
+            200
+          ]
+        ],
+        "provider_statuses": [
+          301,
+          301,
+          301
+        ]
+      },
+      "limitations": [
+        "NetworkPolicy blocked new peer connections but preserved established connections; intended isolation was not established.",
+        "No final cold recovery or independent history verification; partial readbacks are not a passing campaign."
+      ]
     }
   ],
   "release": {
@@ -5249,5 +5373,17 @@
       "workload_keys_revoked": 2,
       "remaining_physical_versions_deleted": 3243
     }
+  },
+  "peer_isolation": {
+    "local_packet_injection": {
+      "complete": true,
+      "scope": "two disposable private Docker network namespaces, real TCP, actual harness restrict function",
+      "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+      "retained_socket_identity_checked": true,
+      "asymmetric_and_symmetric_drop_checked": true,
+      "unrelated_port_and_heal_checked": true
+    },
+    "local_resources_removed": true,
+    "real_packet_fault_qualification": "pending"
   }
 }
