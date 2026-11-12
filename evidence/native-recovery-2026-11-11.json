@@ -8889,6 +8889,426 @@
         "scope": "Sanitized live log follow of one pod, ending at stream EOF or a 180-second deadline. Not a complete cluster trace.",
         "limitation": "This pod follow captured shutdown for the cold-restart phase, not the earlier rollout handoff. It does not explain the remaining challenge wait."
       }
+    },
+    {
+      "binary_source_commit": "42463584157e504a36d9c5456f54a0082477bd77",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.2",
+      "binary_sha256": "7c491e7c150cebb77c040ced2458a7849b205317770f41d97abf55ad93f05bf5",
+      "image_digest": "sha256:1250bd10f466098ebb1e1e508c3a9487447fb739779808d7fa63d47811026661",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 971,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1540
+      },
+      "started_at": "2026-11-12T17:51:34.269003+00:00",
+      "finished_at": "2026-11-12T18:03:57.321002+00:00",
+      "source_commit": "42463584157e504a36d9c5456f54a0082477bd77",
+      "harness_sha256": "6941ddcd7532e9e314e2d1fdbffb619170a5ab1ebad4a6372d2fec6c35dd6437",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 971,
+      "reads_verified": 971,
+      "verified_keys": 971,
+      "history_sha256": "be86cf69e66252631c2e7205b60592e049b29df6c0dfc4cc1b9c060bcdf230c5",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-12T17:53:21.884920+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.327813577023335,
+            17.327813577023335,
+            20.76891165494453,
+            17.327813577023335
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-12T17:54:54.871213+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.35723693598993,
+            17.35723693598993,
+            17.35723693598993,
+            17.35723693598993
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-12T17:55:54.339358+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            94.68647781899199,
+            145.58744157489855,
+            94.68647781899199,
+            94.68647781899199
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-12T17:58:26.204314+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            133.23838779795915,
+            162.56923637201544,
+            133.23838779795915,
+            133.23838779795915
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T18:01:42.572481+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            65.54358065500855,
+            29.435431303922087,
+            61.87081979797222,
+            65.54358065500855
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "rollout_history": [
+        {
+          "name": "rolling-replacement-1",
+          "history_interval": [
+            243,
+            588
+          ],
+          "max_ack_gap_seconds": {
+            "0": 92.95850638000002,
+            "2": 55.995764365999975,
+            "3": 62.117092025000034,
+            "1": 88.460908496
+          },
+          "max_commit_seconds": {
+            "0": 92.62082897500002,
+            "2": 55.662249865999996,
+            "3": 30.50078725999998,
+            "1": 9.285565710999947
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "history_interval": [
+            588,
+            886
+          ],
+          "max_ack_gap_seconds": {
+            "1": 75.57584657199988,
+            "2": 87.956483563,
+            "3": 63.92897226600002,
+            "0": 63.48574419400006
+          },
+          "max_commit_seconds": {
+            "1": 8.311922991000017,
+            "2": 6.936216478999995,
+            "3": 14.856340805000002,
+            "0": 15.138602401999947
+          }
+        }
+      ],
+      "busy_partition_acquisitions": [
+        {
+          "phase": "rolling-replacement-1",
+          "pod_uid": "durable-db-1/89f36971-e6dd-45ae-9e3a-9aa95a41abf5",
+          "partition": 12,
+          "ready_time_utc": "2026-11-12T17:58:03.994073Z",
+          "successful_attempt_seconds": 54.543,
+          "observed_challenge_events": 0,
+          "stage_seconds": {
+            "activate": 15.147,
+            "select_journals": 17.421,
+            "recover": 14.175
+          }
+        },
+        {
+          "phase": "rolling-replacement-1",
+          "pod_uid": "durable-db-4/b4f43540-c82f-493f-9426-562af2003024",
+          "partition": 14,
+          "ready_time_utc": "2026-11-12T17:56:41.419631Z",
+          "successful_attempt_seconds": 17.452,
+          "observed_challenge_events": 0,
+          "stage_seconds": {
+            "activate": 2.982,
+            "select_journals": 7.327,
+            "recover": 2.127
+          }
+        },
+        {
+          "phase": "rolling-replacement-1",
+          "pod_uid": "durable-db-5/e609ca58-7020-4a30-9e59-c7c0a03f64b0",
+          "partition": 2,
+          "ready_time_utc": "2026-11-12T17:56:38.190222Z",
+          "successful_attempt_seconds": 16.312,
+          "observed_challenge_events": 0,
+          "stage_seconds": {
+            "activate": 4.039,
+            "select_journals": 8.304,
+            "recover": 1.014
+          }
+        },
+        {
+          "phase": "rolling-replacement-2",
+          "pod_uid": "durable-db-1/cd70fc67-2dc7-4d23-b74f-4110f1db7af9",
+          "partition": 12,
+          "ready_time_utc": "2026-11-12T18:00:53.854342Z",
+          "successful_attempt_seconds": 38.694,
+          "observed_challenge_events": 0,
+          "stage_seconds": {
+            "activate": 5.786,
+            "select_journals": 13.674,
+            "recover": 11.84
+          }
+        },
+        {
+          "phase": "rolling-replacement-2",
+          "pod_uid": "durable-db-4/4bf83cdf-9577-48e9-9bca-4927496f2a58",
+          "partition": 14,
+          "ready_time_utc": "2026-11-12T17:59:51.959291Z",
+          "successful_attempt_seconds": 41.52,
+          "observed_challenge_events": 0,
+          "stage_seconds": {
+            "activate": 2.317,
+            "select_journals": 15.863,
+            "recover": 10.762
+          }
+        },
+        {
+          "phase": "rolling-replacement-2",
+          "pod_uid": "durable-db-5/527c288c-a780-4225-8693-fa222aef37b6",
+          "partition": 2,
+          "ready_time_utc": "2026-11-12T17:59:19.757971Z",
+          "successful_attempt_seconds": 17.697,
+          "observed_challenge_events": 16,
+          "stage_seconds": {
+            "activate": 4.22,
+            "select_journals": 6.74,
+            "recover": 0.936
+          }
+        }
+      ],
+      "purpose": "Qualify graceful route withdrawal after retiring all local residents before storage I/O; both rollout targets remain unmet.",
+      "report_sha256": "a4a59ae5ca7c96d8fb2b477da484ee523a8077279166213ca3aec4df132e2cc7",
+      "history_scope": "Acknowledgements completed between preceding phase and rollout progress barrier; includes intervening budget/diagnostic time. Gaps use the single workload monotonic clock and preceding acknowledgement per writer. Not exact fault-window outage or readback latency.",
+      "acquisition_scope": "Retained acquisition logs for three busy partitions across two rollouts. Stage durations cover each successful attempt, not earlier failed attempts or exact writer outage. Sampling may omit events across pod deletion.",
+      "shutdown_observations": {
+        "pod_uids_observed": 21,
+        "events": [
+          {
+            "pod_uid": "durable-db-0/88e86bea-de17-4163-bb15-fafa46a58429",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:57:14.696664Z"
+          },
+          {
+            "pod_uid": "durable-db-1/12943412-fcf8-4a97-a36a-84a8813c5b6e",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:56:50.500382Z"
+          },
+          {
+            "pod_uid": "durable-db-2/730d35a0-24fd-46be-afdb-58cddb336467",
+            "event": "routing withdrawal deadline reached",
+            "time_utc": "2026-11-12T17:56:39.195438Z"
+          },
+          {
+            "pod_uid": "durable-db-2/730d35a0-24fd-46be-afdb-58cddb336467",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:56:39.195484Z"
+          },
+          {
+            "pod_uid": "durable-db-3/0629d752-cde8-4667-9970-05dd0864a76f",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:56:23.918745Z"
+          },
+          {
+            "pod_uid": "durable-db-4/0ae40b3b-4f85-4fa7-892d-00cc71255285",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:56:12.517540Z"
+          },
+          {
+            "pod_uid": "durable-db-5/2796efdd-f090-45d0-8a9a-7e5cb4d2f58d",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:55:57.331957Z"
+          },
+          {
+            "pod_uid": "durable-db-5/e609ca58-7020-4a30-9e59-c7c0a03f64b0",
+            "event": "native routing withdrawal deferred",
+            "time_utc": "2026-11-12T17:58:28.654027Z",
+            "partition": 2
+          },
+          {
+            "pod_uid": "durable-db-5/e609ca58-7020-4a30-9e59-c7c0a03f64b0",
+            "event": "native routing withdrawal deferred",
+            "time_utc": "2026-11-12T17:58:28.739677Z",
+            "partition": 15
+          },
+          {
+            "pod_uid": "durable-db-5/e609ca58-7020-4a30-9e59-c7c0a03f64b0",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:58:28.739707Z"
+          },
+          {
+            "pod_uid": "durable-db-4/b4f43540-c82f-493f-9426-562af2003024",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:58:49.307198Z"
+          },
+          {
+            "pod_uid": "durable-db-3/c32ec2ef-ae6a-4f7e-8437-c5f13b966302",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:59:17.358257Z"
+          },
+          {
+            "pod_uid": "durable-db-2/a279b663-c6f5-4435-9575-6b65ecd4126d",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:59:38.653302Z"
+          },
+          {
+            "pod_uid": "durable-db-1/89f36971-e6dd-45ae-9e3a-9aa95a41abf5",
+            "event": "native routing withdrawal deferred",
+            "time_utc": "2026-11-12T17:59:52.655941Z",
+            "partition": 6
+          },
+          {
+            "pod_uid": "durable-db-1/89f36971-e6dd-45ae-9e3a-9aa95a41abf5",
+            "event": "routing withdrawal deadline reached",
+            "time_utc": "2026-11-12T17:59:56.294706Z"
+          },
+          {
+            "pod_uid": "durable-db-1/89f36971-e6dd-45ae-9e3a-9aa95a41abf5",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T17:59:56.294733Z"
+          },
+          {
+            "pod_uid": "durable-db-0/1e0fd142-6135-4cf7-89a1-4e47ba10ce29",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:00:20.475074Z"
+          },
+          {
+            "pod_uid": "durable-db-5/527c288c-a780-4225-8693-fa222aef37b6",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:17.412231Z"
+          },
+          {
+            "pod_uid": "durable-db-4/4bf83cdf-9577-48e9-9bca-4927496f2a58",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:17.916523Z"
+          },
+          {
+            "pod_uid": "durable-db-3/b33a5a49-a09c-4c01-a6d4-16cef36fb69f",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:20.458570Z"
+          },
+          {
+            "pod_uid": "durable-db-2/81ade704-ebd4-4e3a-8286-99c67e56e85e",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:19.618495Z"
+          },
+          {
+            "pod_uid": "durable-db-1/cd70fc67-2dc7-4d23-b74f-4110f1db7af9",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:19.319461Z"
+          },
+          {
+            "pod_uid": "durable-db-0/87e79fa6-aaaf-4b3c-af81-90f20021c8d9",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:01:20.558995Z"
+          },
+          {
+            "pod_uid": "durable-db-0/93b11f66-d101-44fe-a991-f7acf297be0e",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:03:15.448109Z"
+          },
+          {
+            "pod_uid": "durable-db-1/fdddd4e8-5726-4913-9e85-875ecc1fd420",
+            "event": "routing withdrawal deadline reached",
+            "time_utc": "2026-11-12T18:03:15.361601Z"
+          },
+          {
+            "pod_uid": "durable-db-1/fdddd4e8-5726-4913-9e85-875ecc1fd420",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:03:15.361632Z"
+          },
+          {
+            "pod_uid": "durable-db-2/2fb44de9-0c08-4b94-b7f5-4ed3628cfb6e",
+            "event": "draining requests",
+            "time_utc": "2026-11-12T18:03:15.298474Z"
+          }
+        ],
+        "omitted_events": 0,
+        "scope": "Bounded live log followers from first observed pod UID; only shutdown events retained. A stream can miss events before attachment or on transport failure.",
+        "report_sha256": "5d7c3b001dd98f6f81d46c9ea140893a904cc2d2660b42ae027a41f9ecde3988"
+      }
     }
   ],
   "release": {
@@ -11811,7 +12231,7 @@
       "clippy": "8dca56e772a2856840b5b527973ec92cab2a9867d8f584491eb8b81300c1ca97",
       "model": "826e9f220cd72a109e82f6b52c6f7de7d1c9b4899f37cc18a00c3259d43ece49"
     },
-    "scope": "Initial exact-artifact campaign recovered every acknowledgement; two rollout targets missed. Follow-up retires every local resident before starting conditional hints.",
+    "scope": "Both exact-artifact campaigns recover every acknowledgement. The final source passes scale and cold targets but misses both rollout targets; no overall latency improvement or production SLO established.",
     "optimized_directory_capacity_seconds": 199.32,
     "retirement_followup": {
       "behavior": "Retire every local resident before publishing any storage hint; a cancelled storage wait cannot leave later residents running.",
@@ -11825,7 +12245,109 @@
         "positive": "759a19b5b7c11b38fb12fef245b0398b90c0c6ee153cc9fe1cef27377b69c0f8",
         "tests": "bd85f6934502145216b106d51e48e59eb97e8151f3cc63aa3e03cb46d8364ea4",
         "clippy": "696588c2043bedcb6f56925c0511a709d6cd90ddbbccbd242f449833788950c3"
-      }
+      },
+      "source_commit": "42463584157e504a36d9c5456f54a0082477bd77",
+      "woodpecker_pipeline": 283,
+      "optimized_directory_capacity_seconds": 200.56,
+      "minio": {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "automatic_acquisition_and_placement": true,
+          "ceilings_preserved": true,
+          "checkpoint_and_cold_recovery": true,
+          "independent_node_transports_and_caches": true,
+          "layout_mismatch_refused": true,
+          "live_removed_owner_refused": true,
+          "maximum_live_servers": 2,
+          "membership_sequence": [
+            1,
+            2,
+            1,
+            0,
+            1
+          ],
+          "partitions": 2,
+          "provider_metrics_count_once": true,
+          "receipts_preserved": true,
+          "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+          "seconds": 40.553750141,
+          "shared_metadata_collection": true,
+          "unmoved_owner_preserved": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 79,
+          "container_removed": true
+        }
+      },
+      "removed_superseded_unpublished_artifact_bytes": 21214556
     }
+  },
+  "release_0_24_2": {
+    "source_commit": "42463584157e504a36d9c5456f54a0082477bd77",
+    "woodpecker_pipeline": 283,
+    "artifact_image_digest": "sha256:46fd8801842421597e88cec7d772ec9e4a92d4939c90fdd3ad2b58a00386978a",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.24.2",
+      "archive_sha256": "f65223d4accf5117c668a3efd70cfa3520b5367dab0a92b0dcdf3b64fe7c6757",
+      "binary_sha256": "7c491e7c150cebb77c040ced2458a7849b205317770f41d97abf55ad93f05bf5",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "standalone_checked_in_woodpecker_and_after_download": true,
+    "archive_bytes": 6344785,
+    "version": "v0.24.2",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 283,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/283/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "running"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true,
+    "woodpecker_tag_pipeline": 284,
+    "woodpecker_tag_status": "success",
+    "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.2",
+    "published_at": "2026-11-12T18:07:06Z"
   }
 }
