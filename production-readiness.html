@@ -69,6 +69,14 @@ include readiness and polling delay, exclude subsequent budget/diagnostic work,
 and report target attainment separately from campaign success. Earlier
 phase-to-phase durations include diagnostics and are not direct measurements
 of the new targets.</p>
+<p>Schema 2 records each successful readback only after validating its revision
+and value. Rollout windows use the workload’s own monotonic clock and per-writer
+counters. The independent checker reports the largest completed readback gap
+per writer, including the last readback before the window, and the unfinished
+gap at window close. That final gap is right-censored: later silence is unknown.
+The windows end before subsequent diagnostics. These observations do not compare
+clocks across hosts or attribute all delay to the rollout. Older schema 1
+histories remain checkable but cannot supply verified readback timings.</p>
 <p>Gate 1 now follows <a href="design-owned-partitions.html#revocable-writer-permits">revocable writer permits</a>: fresh per-writer object validation, permanent revocation before journal recovery, no bounded-clock assumption and no bucket-wide conditional update for ordinary requests. The ownership, routing, layout and residency models establish separate bounded properties; their composition and implementation correspondence remain open. The integrated CLI has completed per-writer handoff, provider-interruption and cold-replacement checks on B2. Repeatability, host failures and declared latency/concurrency targets remain decisive checks. Restricted-profile and ClockBound findings remain <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">fallback evidence</a>; they do not narrow the required hosts.</p>
 <p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with revocable permits and independent partitions, historical clock experiments, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
 <h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>
