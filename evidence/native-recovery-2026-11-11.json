@@ -9796,5 +9796,32 @@
     },
     "url": "https://github.com/ericflo/durable-db/releases/tag/v0.23.13",
     "published_at": "2026-11-12T13:40:34Z"
+  },
+  "placement_settling": {
+    "quiet_seconds": 15,
+    "empty_excluded_and_reused_addresses_bypass_delay": true,
+    "identical_snapshots_do_not_restart_delay": true,
+    "new_workers_or_durable_fields": 0,
+    "response_permission_protocol_unchanged": true,
+    "rollout_test": "rollout_coalesces_reachable_owner_moves_until_membership_settles",
+    "rollout_negative_seconds": 0.09,
+    "rollout_positive_seconds": 0.27,
+    "delayed_failure_negative_seconds": 0.25,
+    "owner_routing_model": {
+      "distinct_states": 1888,
+      "generated_states": 12609,
+      "depth": 13,
+      "negative_controls": 10
+    },
+    "removed": [
+      "immediate elective takeover during observed membership churn",
+      "real-time sleeps from two existing controller checks",
+      "duplicated rollout qualification sequence"
+    ],
+    "scope": "Local advisory scheduling only; already submitted claims can complete after hints change. Cloud timing qualification pending.",
+    "routine_rust_checks_passed": 345,
+    "controller_checks": 19,
+    "controller_check_seconds": 6.08,
+    "controller_check_seconds_before_simulated_time": 57.13
   }
 }
