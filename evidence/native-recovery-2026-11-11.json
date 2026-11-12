@@ -5560,6 +5560,260 @@
         ]
       },
       "scope": "One peer-isolation campaign; bounded retained logs show no claims in either hold. Cold recovery misses 120-second target. Not an SLO or universal partition availability."
+    },
+    {
+      "binary_source_commit": "f842fdcdd8965f62d10f822793f0985b9cd16c8f",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.11",
+      "binary_sha256": "114aaeb16ba0ffb7a42535dc964cac588311fa11dfa4b0e8315dacbf1318d026",
+      "image_digest": "sha256:6513f395c4c00f30ed4ceb7cc1399cb81aefe9ea951376c6ff38229a79c19785",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 558,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 975
+      },
+      "started_at": "2026-11-12T11:27:15.916828+00:00",
+      "finished_at": "2026-11-12T11:34:47.152416+00:00",
+      "source_commit": "f842fdcdd8965f62d10f822793f0985b9cd16c8f",
+      "harness_sha256": "c65905eaa090276b6a40e0273e00b4d40aa167f3e28f895b8ed0a75533e635b4",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 558,
+      "reads_verified": 558,
+      "http_attempt_statuses": {
+        "200": 1142,
+        "429": 68,
+        "503": 90,
+        "transport_or_decode_error": 33
+      },
+      "verified_keys": 558,
+      "history_sha256": "e6ae0b811531579886e288bed8cd383790c0b0ac1e6bb4fb9bbd37004b7070e6",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T11:30:08.770006+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.675839664996602,
+            10.675839664996602,
+            10.675839664996602,
+            10.675839664996602
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T11:31:32.864576+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            11.41374257998541,
+            14.985902359010652,
+            11.41374257998541,
+            11.41374257998541
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T11:32:19.040780+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            83.71541523805354,
+            54.73917697009165,
+            79.94735046802089,
+            83.71541523805354
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "provider_access_observations": [
+        {
+          "time_utc": "2026-11-12T11:29:05.294457+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:29:23.924931+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:30:06.227532+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:30:26.603329+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:30:48.406377+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:31:30.439192+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        }
+      ],
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        }
+      },
+      "report_sha256": "bf4b9f644d8756acb7fd2eafcb4a64f8f1765f4ef9cb0eb1589fff1c66505a87",
+      "hold_observations": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T11:30:08.769145+00:00",
+          "before": [
+            40,
+            51,
+            31,
+            38
+          ],
+          "after": [
+            64,
+            80,
+            31,
+            61
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            true
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-6896486894-65p9z": [],
+            "durable-db-6896486894-lqsgs": [],
+            "durable-db-6896486894-sqsfp": []
+          }
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T11:31:32.863063+00:00",
+          "before": [
+            105,
+            126,
+            53,
+            88
+          ],
+          "after": [
+            122,
+            143,
+            53,
+            88
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            false
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-6896486894-65p9z": [],
+            "durable-db-6896486894-lqsgs": [],
+            "durable-db-6896486894-sqsfp": []
+          }
+        }
+      ],
+      "reachable_writers_under_initial_placement": {
+        "asymmetric": [
+          true,
+          true,
+          false,
+          true
+        ],
+        "symmetric": [
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      "scope": "Corrected candidate, one peer-isolation campaign: all three recovery targets pass, no retained claim attempts in either hold. No general SLO or universal partition availability."
     }
   ],
   "release": {
@@ -7499,6 +7753,36 @@
       "test": "uncertain_claim_retry_reuses_only_the_completed_owner_challenge",
       "detected_in_seconds": 0.13
     },
-    "qualification": "569 acknowledgements recovered; no claims during holds; healing targets pass; cold target fails; retry correction pending fresh cloud qualification"
+    "qualification": "Initial 569-acknowledgement run misses cold target; corrected 558-acknowledgement run meets all three targets. Both hold pairs have zero retained claim attempts. Genuine host/rolling/scale-down requalification remains open.",
+    "retry_source": "f842fdcdd8965f62d10f822793f0985b9cd16c8f",
+    "routine_rust_checks_corrected_candidate": 342
+  },
+  "release_0_23_11": {
+    "source_commit": "f842fdcdd8965f62d10f822793f0985b9cd16c8f",
+    "woodpecker_pipeline": 262,
+    "artifact_image_digest": "sha256:c77a6a4cff2505fe8012cae725caa7a9fcbb158892e2af171fb18188df8eb83b",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.11",
+      "archive_sha256": "58592fe04e9472bb8fce66b6609825bee49f5637ec43b9cca360041cb5e3db03",
+      "binary_sha256": "114aaeb16ba0ffb7a42535dc964cac588311fa11dfa4b0e8315dacbf1318d026",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "archive_bytes": 6316858,
+    "version": "v0.23.11",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 262,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/262/1",
+      "status": "success"
+    },
+    "github_actions_disabled": true,
+    "capacity_test_passed": true
   }
 }
