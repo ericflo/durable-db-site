@@ -13,7 +13,11 @@ coverage controls pass. This is a provider-operation reduction measured locally,
 not a qualified cloud latency improvement or proof of Rust. Versioned MinIO
 passes the full native HTTP budget/retention/cold-recovery fixture at <code>8a82346</code>
 in 182.76 seconds, including zero warm cache misses and automatic collection.
-The disposable bucket/container and 31 physical versions were removed.</p>
+The disposable bucket/container and 31 physical versions were removed. The B2 campaign is pending.</p>
+<p>The maintained fault harness now adds a targeted one-host process pause before
+the all-process fault: surviving hosts must recover every writer without adding
+pods, while stopped process identities and DNS entries remain unchanged. This
+new phase is not yet qualified; it does not simulate a peer-only network partition.</p>
 <h2 id="v0237-idle-owner-rejoin-recovery-2026-11-12">v0.23.7 idle-owner rejoin recovery (2026-11-12)<a class="anchor" href="#v0237-idle-owner-rejoin-recovery-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p><a href="https://github.com/ericflo/durable-db/releases/tag/v0.23.7">v0.23.7</a> packages
 <code>5606aff</code>, verified by <a href="https://ci.eflorenzano.com/repos/18/pipeline/241/1">Woodpecker #241</a>.</p>

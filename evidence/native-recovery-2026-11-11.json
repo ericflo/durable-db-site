@@ -4270,6 +4270,15 @@
       "preserved_site_overrides": [],
       "javascript_checks": 99,
       "optimized_10005_database_check": true
+    },
+    "artifact_preflight": {
+      "source_commit": "84bca2bb6fe9635a96a80536fdfd8a3ab1609e9b",
+      "pipeline": 244,
+      "standalone_passed": true,
+      "qualification_started": false,
+      "reason": "Documentation-only build reused test layers; local verifier expected fresh test stdout. Used fully logged build 242 at 43d9ea4 instead.",
+      "database_binary_identical": true,
+      "cloud_resources_created": false
     }
   },
   "release_0_23_7": {
