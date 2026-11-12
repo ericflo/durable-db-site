@@ -5738,5 +5738,38 @@
       "continuous_partition_availability_established": false,
       "all_test_resources_removed": true
     }
+  },
+  "parallel_revocation": {
+    "date_utc": "2026-11-12",
+    "maximum_in_flight_per_activation": 4,
+    "activation_waits_for_all_absence_confirmations": true,
+    "local_regression": {
+      "ancestors": 8,
+      "serial_implementation": "fails one-second progress bound",
+      "bounded_implementation_seconds": 0.02,
+      "cases": [
+        "held final completion",
+        "lost deletion reply",
+        "cancellation",
+        "replacement owner recovery"
+      ]
+    },
+    "rust_checks_passed": 338,
+    "format_and_strict_clippy": "pass",
+    "root_registration": {
+      "bounds_distinct_states": [
+        34061,
+        281563
+      ],
+      "negative_and_coverage_controls": 6,
+      "changed_model_behavior": false,
+      "in_flight_resource_bound": "Rust regression only"
+    },
+    "cloud_qualification": "pending",
+    "input_sha256": {
+      "src/ownership/root.rs": "f1e82453ca8653350a61601683892f3030a5e9dffd24d1759a098ca44066c6d6",
+      "src/ownership/root/tests/permit.rs": "54778751d8093102ce96f7f47b17ec02b8ac0f389983e26395df923d82040cb1",
+      "spec/candidates/RootRegistration.tla": "c42cff5062c808adeb91587f2b25c4f7b35138f5000bd7891e0028176bec3a77"
+    }
   }
 }
