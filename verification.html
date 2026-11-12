@@ -494,7 +494,8 @@ publishes or joins an incarnation-bound random challenge in the existing partiti
 metadata. It waits 15 seconds for that same owner and nonce to remain unanswered;
 only then does it attempt the ordinary exact conditional claim. A response, changed
 incarnation/nonce or uncertain challenge publication defers takeover. A completed
-wait can survive a claim conflict only while the same owner and nonce remain.
+wait survives conflicts, provider errors and cancelled acquisitions only while
+the same owner and nonce remain. One bounded tuple per partition records it.
 Known healthy peers can still rebalance; reuse of this process’s address takes the
 normal fenced recovery path directly.</p>
 <p>Each confirmed claimant polls once every three seconds, with one request in flight,
@@ -511,8 +512,9 @@ Revocation, journal recovery and fresh response permits remain mandatory. Stable
 placement requires timely storage responses and scheduling. API pods unable to
 reach a partition’s owner may still refuse requests during a permanent peer split.</p>
 <p><code>OwnerChallenge.tla</code> checks one incumbent, two challengers, one challenge round and
-four metadata writes: <strong>3,142 distinct states, depth 13</strong>. Four negative controls
-break comparison, coalescing, waiting and owner-only acknowledgement; two coverage
+four metadata writes: <strong>3,518 distinct states, depth 14</strong>. Five negative controls
+break comparison, coalescing, waiting, owner-only acknowledgement and retention
+of a completed wait across retries; two coverage
 controls reach a live answer and replacement after a stop. Captured requests can
 apply after owner death or lost replies. This finite policy check assumes the
 existing exact register/permit protocol; it is neither Rust refinement nor a proof
@@ -522,8 +524,12 @@ checks of acquisition and response authority.</p>
 checks unchanged owner incarnations, stops one controller without a DNS change,
 and verifies recovery and fencing of a retained old backend. Root tests cover
 coalesced/uncertain challenges, stale comparisons, activating-owner responses,
-non-owner metadata work, malformed hints and old-writer preservation. Cloud
-qualification of this change remains pending.</p>
+non-owner metadata work, malformed hints and old-writer preservation. An injected
+provider failure after the wait requires replacement within eight seconds after
+service returns; discarding the completed wait makes this check fail in 0.13
+seconds of real time. The first B2 campaign below preserves acknowledgements and
+avoids claims during peer isolation, but misses the cold-recovery target; retry
+qualification remains open.</p>
 <h2 id="membership-driven-native-placement">Membership-driven native placement<a class="anchor" href="#membership-driven-native-placement" aria-label="Link to this section">#</a></h2>
 <p><code>api::Cluster</code> persists a versioned layout in the existing directory-root envelope, before the first partition entry. Different partition counts and populated manual directories are refused. Publication/rebase preserves this layout from the successful comparison. SHA-256 database mapping never uses membership; rendezvous placement changes the preferred process while preserving partition IDs and object scopes. Counts are 1…1,024 partitions and at most 256 canonical peer addresses, independent of database count. The byte cache is shared. Aggregate resident index/validation allowances and journal bytes are now divided across the fixed layout; see the owner lifetime accounting below.</p>
 <p>A watch channel supplies membership snapshots. A single task retires removed local placements before slow I/O and maintains at most four acquisitions. Each completion immediately admits the next eligible partition through a rotating cursor; one stalled operation cannot hold up the remaining slots. Failed acquisitions wait for the existing three-second retry tick or a membership update. Controller health checks perform no provider I/O or blocking owner-lock acquisition. Each native worker separately observes its permit at most once every three seconds, with one observation in flight and no owner lock held over I/O. Confirmed absence retires the owner; errors leave authority unchanged. This adds a background GET per cloud partition, never a conditional update. It is independent of the fresh permit validation required for each response. Local-directory guards need no object request. Membership changes cancel only acquisitions whose own preferred peer changed; unchanged partitions keep their progress. Closing membership cancels recovery and retires local backends. Membership and readiness schedule work, never authorize responses.</p>

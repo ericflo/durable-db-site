@@ -5306,6 +5306,260 @@
         "maximum_ms": 16915,
         "method": "Adjacent same-partition progress events in bounded retained process logs; excludes failed/incomplete stages. Not a causal or SLO measurement."
       }
+    },
+    {
+      "binary_source_commit": "9976821ca25338be0f79b8643bf4353b6c5b0f51",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.11",
+      "binary_sha256": "a53c8f4e9041296dc13cd9dffd8a2c33821c421d0e74e501174734b95cf2b4f5",
+      "image_digest": "sha256:ab431c159384482e78de2fdff90ac7efa864c833c17c2152e797a18fe1f69632",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 569,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 620
+      },
+      "started_at": "2026-11-12T10:57:48.395936+00:00",
+      "finished_at": "2026-11-12T11:06:05.493487+00:00",
+      "source_commit": "9976821ca25338be0f79b8643bf4353b6c5b0f51",
+      "harness_sha256": "c65905eaa090276b6a40e0273e00b4d40aa167f3e28f895b8ed0a75533e635b4",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 569,
+      "reads_verified": 569,
+      "http_attempt_statuses": {
+        "200": 1164,
+        "429": 71,
+        "503": 42,
+        "transport_or_decode_error": 49
+      },
+      "verified_keys": 569,
+      "history_sha256": "060e40cd7b1e759585291d26d708859a6acdd562039ede52d1ee508ab77a8c6b",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T11:00:40.422802+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.299838939099573,
+            10.299838939099573,
+            10.299838939099573,
+            10.299838939099573
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T11:02:08.344883+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.378843126934953,
+            10.378843126934953,
+            13.824422718025744,
+            13.824422718025744
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T11:02:56.087665+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            79.72774216905236,
+            76.13689168705605,
+            126.2795645520091,
+            76.13689168705605
+          ],
+          "observed_within_target": false
+        }
+      ],
+      "provider_access_observations": [
+        {
+          "time_utc": "2026-11-12T10:59:36.079421+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T10:59:55.952215+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:00:38.094532+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:00:59.266879+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:01:23.887978+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T11:02:06.012484+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        }
+      ],
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        }
+      },
+      "report_sha256": "b708b7d28352b73006565d217c382197aaf95f5650ff298e583eaa350fe9961c",
+      "hold_observations": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T11:00:40.422071+00:00",
+          "before": [
+            39,
+            51,
+            27,
+            39
+          ],
+          "after": [
+            64,
+            83,
+            27,
+            61
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            true
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-d9f56cdd7-kd78k": [],
+            "durable-db-d9f56cdd7-mrjgs": [],
+            "durable-db-d9f56cdd7-nvxn7": []
+          }
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T11:02:08.343715+00:00",
+          "before": [
+            109,
+            117,
+            48,
+            82
+          ],
+          "after": [
+            112,
+            117,
+            48,
+            82
+          ],
+          "writer_progress": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-d9f56cdd7-kd78k": [],
+            "durable-db-d9f56cdd7-mrjgs": [],
+            "durable-db-d9f56cdd7-nvxn7": []
+          }
+        }
+      ],
+      "reachable_writers_under_initial_placement": {
+        "asymmetric": [
+          true,
+          true,
+          false,
+          true
+        ],
+        "symmetric": [
+          true,
+          false,
+          false,
+          false
+        ]
+      },
+      "scope": "One peer-isolation campaign; bounded retained logs show no claims in either hold. Cold recovery misses 120-second target. Not an SLO or universal partition availability."
     }
   ],
   "release": {
@@ -7055,5 +7309,196 @@
     },
     "capacity_test_passed": true,
     "github_actions_disabled": true
+  },
+  "owner_challenges": {
+    "candidate_source": "9976821ca25338be0f79b8643bf4353b6c5b0f51",
+    "woodpecker_pipeline": 261,
+    "challenge_wait_seconds": 15,
+    "responder_interval_seconds": 3,
+    "one_owner_bound_nonce_per_partition": true,
+    "new_storage_object_classes": 0,
+    "ordinary_response_permission_path_unchanged": true,
+    "local_test": "two split membership views retain both incarnations for a simulated minute; dropping one without a DNS change permits fenced takeover",
+    "model": {
+      "module": "OwnerChallenge",
+      "initial_distinct_states": 3142,
+      "retry_distinct_states": 3518,
+      "retry_depth": 14,
+      "negative_controls": 5,
+      "coverage_controls": 2,
+      "scope": "One incumbent, two challengers, one challenge round, four metadata mutations; exact register and permit protocol assumed; not arbitrary-round liveness or Rust refinement."
+    },
+    "routine_rust_checks_initial_candidate": 341,
+    "minio": [
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "admission_bytes_per_write": [
+            103670,
+            107362
+          ],
+          "automatic_collection": true,
+          "automatic_table_and_manifest_collection": true,
+          "background_permission_interval_seconds": 3,
+          "base_table_and_manifest_allowance_per_write": [
+            45550,
+            47396
+          ],
+          "catalog_admission_bytes": 18596,
+          "catalog_survived_collection_after_takeover": true,
+          "checkpoint_objects_after_first_sweep": 3,
+          "checkpoint_objects_after_takeover_sweep": 3,
+          "checkpoint_objects_before_first_sweep": 6,
+          "checkpoint_row_bytes_per_write": 174,
+          "cleanup_wait_ms": 60373.590508,
+          "closed_journal_epochs_reclaimed": true,
+          "cold_receipts_and_values_verified": true,
+          "cold_recovery_ms": 106.228477,
+          "complete_reopens": 2,
+          "directory_objects_after": 1,
+          "exhausted_tenant_did_not_stall_neighbor": true,
+          "inline_checkpoint_descriptors": true,
+          "journal_bytes_per_write": 254,
+          "journal_objects_after_first_sweep": 1,
+          "journal_objects_after_takeover_sweep": 0,
+          "journal_objects_before": 5,
+          "journal_only_funding_refused": true,
+          "ledger_objects_after": 2,
+          "ledger_objects_before": 11,
+          "live_predecessor_refused_after_takeover": true,
+          "maintenance_funding": {
+            "after_recovery": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            },
+            "before_recovery": {
+              "allocated": {
+                "attempts": 1,
+                "bytes": 51581
+              },
+              "funded_bytes": 114814
+            },
+            "cold_recovery_claimed_preserved_reserve": true,
+            "no_new_admission_allocation_for_recovery": true,
+            "second_cold_reopen_preserved_counters": true
+          },
+          "namespace": "native-http-213bb344-4994-40bf-bdf8-2953b0789286",
+          "namespace_budget": {
+            "allocated": {
+              "attempts": 128,
+              "bytes": 25165824
+            },
+            "configuration_revision": 0,
+            "limits": {
+              "attempts": 256,
+              "bytes": 33554432
+            }
+          },
+          "new_rows_only_funding_refused": true,
+          "provider": "s3",
+          "refusal_and_retry_immutable_puts": 0,
+          "retained_export": {
+            "databases": 2,
+            "identical_restore_repeated": true,
+            "immutable_puts": 0,
+            "independent_local_destination": true,
+            "restored_after_source_image_collection": true,
+            "source_revision": 1
+          },
+          "retention": {
+            "cold_reopen_and_collection": true,
+            "exact_cut_values": true,
+            "immutable_puts": 0,
+            "release_reclaimed_old_checkpoint": true
+          },
+          "scope": "Debug native HTTP composition on local loopback; 4 MiB cache; clock-independent permits; live predecessor refused reads and receipt retries after takeover. Not AWS, Kubernetes placement, arbitrary memory rollback or performance-SLO qualification.",
+          "setup_seconds": 0.287010545,
+          "tenant_budget": {
+            "allocated": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "configuration_revision": 4,
+            "limits": {
+              "attempts": 3,
+              "bytes": 229628
+            },
+            "maintenance": {
+              "allocated": {
+                "attempts": 2,
+                "bytes": 105008
+              },
+              "funded_bytes": 114814
+            }
+          },
+          "total_seconds": 182.228129266,
+          "warm_cache_misses": 0,
+          "warm_http_reads": 100,
+          "warm_read_control_calls": 0,
+          "warm_read_ms": {
+            "p50": 1.9810320000000001,
+            "p95": 2.650542,
+            "p99": 3.1046289999999996
+          },
+          "warm_read_object_gets": 100,
+          "warm_read_paths": [
+            "checkpoint"
+          ]
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 32,
+          "container_removed": true
+        }
+      },
+      {
+        "provider": "versioned MinIO",
+        "image": "epsilon-maintenance-minio:20261105",
+        "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+        "test": {
+          "automatic_acquisition_and_placement": true,
+          "ceilings_preserved": true,
+          "checkpoint_and_cold_recovery": true,
+          "independent_node_transports_and_caches": true,
+          "layout_mismatch_refused": true,
+          "live_removed_owner_refused": true,
+          "maximum_live_servers": 2,
+          "membership_sequence": [
+            1,
+            2,
+            1,
+            0,
+            1
+          ],
+          "partitions": 2,
+          "provider_metrics_count_once": true,
+          "receipts_preserved": true,
+          "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+          "seconds": 32.222352975,
+          "shared_metadata_collection": true,
+          "unmoved_owner_preserved": true
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "physical_versions_deleted": 79,
+          "container_removed": true
+        }
+      }
+    ],
+    "previous_symmetric_hold_claim_samples": [
+      42,
+      33
+    ],
+    "retry_regression": {
+      "negative_control": "first candidate forgets completed wait on uncertain acquisition",
+      "test": "uncertain_claim_retry_reuses_only_the_completed_owner_challenge",
+      "detected_in_seconds": 0.13
+    },
+    "qualification": "569 acknowledgements recovered; no claims during holds; healing targets pass; cold target fails; retry correction pending fresh cloud qualification"
   }
 }

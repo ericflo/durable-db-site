@@ -1,16 +1,32 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.23.10 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
 <h2 id="storage-path-placement-challenges-v02311-candidate">Storage-path placement challenges (v0.23.11 candidate)<a class="anchor" href="#storage-path-placement-challenges-v02311-candidate" aria-label="Link to this section">#</a></h2>
-<p>The current candidate asks an unreachable incumbent to answer through the existing
-conditional metadata record before attempting takeover. The local split-view
-regression preserves both owners for a simulated minute, then recovers after one
-controller stops without a DNS change. Three focused challenge checks pass in
-0.49 seconds. The policy model checks 3,142 states with four negative and two
-coverage controls; the existing acquisition and routing checks also pass.
-<a href="verification.html#storage-path-owner-challenges">Mechanism and assumptions</a>.</p>
-<p>All 341 routine Rust checks pass. B2/S3 qualification is pending. The harness now records bounded claim-attempt
-samples during each hold separately from writer progress. Neither those samples
-nor an answered challenge establish universal availability during a peer split.
-The v0.23.10 results below describe the released binary, before this change.</p>
+<p>Before replacing an unreachable incumbent, the controller asks it to answer an
+incarnation-bound challenge through the existing conditional metadata record.
+It waits 15 seconds before attempting the unchanged fenced takeover protocol.
+The local regression preserves both owners through a simulated minute of disjoint
+membership views, then recovers after a stop without a DNS change.
+<a href="verification.html#storage-path-owner-challenges">Mechanism, model and assumptions</a>.</p>
+<p>At <code>9976821</code>, Woodpecker #261 passes all checks, including 341 routine Rust tests,
+the 10,005-database release check and native JavaScript/Pi integration. Versioned
+MinIO passes the native HTTP fixture in 182.23 seconds and 1→2→1→0→1 membership
+in 32.22 seconds. Both buckets, containers and 111 remaining versions were removed.
+The latter includes two 15-second waits; it is not a latency improvement.</p>
+<p>The exact static binary completes a B2/Kubernetes peer-isolation campaign with
+<strong>569 acknowledgements recovered and independently checked</strong>, zero retained claim
+attempts during either hold, and all 18 administrative probes returning 200.
+One-way healing takes <strong>10.30 seconds</strong>, two-way healing <strong>13.83 seconds</strong>. During
+the holds, three / one writers progress, matching the routes reachable under the
+initial rendezvous placement. Two databases share a partition but enter opposite
+sides; universal four-writer progress during a permanent split is not promised.
+The namespace, bucket, scoped key and 620 remaining versions were removed.</p>
+<p>Cold recovery takes <strong>126.28 seconds</strong>, missing its 120-second target. Partition 14
+loses a claim after completing the challenge wait, then its next acquisition waits
+again on the same unchanged owner/nonce. The current retry correction retains
+that completed wait across acquisitions while still requiring an exact match.
+Its regression fails on the first candidate; all 342 routine Rust checks, strict
+clippy and formatting pass with the correction. Fresh cloud qualification is pending.
+The policy model checks 3,518 states with five negative and two coverage controls.
+<a href="evidence/native-recovery-2026-11-11.json">Exact candidate, configuration and failed target</a>.</p>
 <h2 id="v02310-batched-journal-recovery-2026-11-12">v0.23.10 batched journal recovery (2026-11-12)<a class="anchor" href="#v02310-batched-journal-recovery-2026-11-12" aria-label="Link to this section">#</a></h2>
 <p>Recovery now publishes up to eight completed journal prefixes from one catalog
 snapshot together, using the existing immutable B+tree and exact conditional
