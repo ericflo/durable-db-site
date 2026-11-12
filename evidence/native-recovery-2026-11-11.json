@@ -4709,6 +4709,603 @@
           }
         }
       }
+    },
+    {
+      "binary_source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.10",
+      "binary_sha256": "5deb8be92559e67ec667a2827f6a7d78e0ff05b79c7df598e27f069c2e4837c8",
+      "image_digest": "sha256:6bef24815f9a70725e087e839e4d5a5dfdd62882589550f73cf1bddf683875ab",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 553,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1113
+      },
+      "started_at": "2026-11-12T09:38:45.106651+00:00",
+      "finished_at": "2026-11-12T09:47:09.564330+00:00",
+      "source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+      "harness_sha256": "4927ad99ee5729cfc9123ffa108d790c2a9447ef0eb2e19da9951fbdc96d1a9a",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "rollout_surge": 1,
+        "rollout_unavailable": 0,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        }
+      },
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 553,
+      "reads_verified": 553,
+      "http_attempt_statuses": {
+        "200": 1132,
+        "429": 70,
+        "503": 135,
+        "transport_or_decode_error": 79
+      },
+      "verified_keys": 553,
+      "history_sha256": "fb8548e2740fa5dad14d18470f437de1dfde5946eafad47e5fc5416d774f36bb",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T09:41:44.487121+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.752063513966277,
+            10.752063513966277,
+            38.99235439603217,
+            10.752063513966277
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T09:43:37.544037+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            27.737885998096317,
+            31.308322997996584,
+            34.867672987049446,
+            27.737885998096317
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T09:45:10.630176+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            54.700448831077665,
+            54.700448831077665,
+            29.88761928898748,
+            44.0757032710826
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "provider_access_observations": [
+        {
+          "time_utc": "2026-11-12T09:40:42.434274+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:41:00.197708+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:41:42.115750+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:42:30.902321+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:42:52.981303+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:43:35.206966+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        }
+      ],
+      "failures": [],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Three of four writers progress during the one-way hold; one of four during the two-way hold. No continuous partition availability claim.",
+        "All recovery targets pass in this campaign and the repeat; two short campaigns do not establish a production SLO."
+      ],
+      "report_sha256": "9050420cbdd4192304a6f91fa4f682f5ada65c29047c9ad859545b8a1e50cb67",
+      "phases": [
+        {
+          "name": "initial-three",
+          "time_utc": "2026-11-12T09:39:12.924735+00:00"
+        },
+        {
+          "name": "initial-progress",
+          "time_utc": "2026-11-12T09:40:25.712004+00:00",
+          "writes_acknowledged": 21
+        },
+        {
+          "name": "asymmetric-baseline",
+          "time_utc": "2026-11-12T09:40:44.788842+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T09:41:02.549664+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T09:41:44.485909+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ],
+          "before": [
+            42,
+            52,
+            34,
+            38
+          ],
+          "after": [
+            64,
+            77,
+            34,
+            59
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            true
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T09:42:25.818858+00:00",
+          "writes_acknowledged": 341
+        },
+        {
+          "name": "symmetric-baseline",
+          "time_utc": "2026-11-12T09:42:33.520983+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T09:42:55.332909+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T09:43:37.542407+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ],
+          "before": [
+            113,
+            136,
+            58,
+            95
+          ],
+          "after": [
+            113,
+            151,
+            58,
+            95
+          ],
+          "writer_progress": [
+            false,
+            true,
+            false,
+            false
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T09:44:15.021061+00:00",
+          "writes_acknowledged": 447
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T09:44:51.966100+00:00",
+          "writes_acknowledged": 493
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T09:46:07.699104+00:00",
+          "writes_acknowledged": 540
+        }
+      ],
+      "network_validation": {
+        "all_six_matrices_match_expected": true,
+        "scope": "Fresh and retained peer sockets; one-way and two-way drops with provider HTTPS and signed provider-backed administrative reads reachable."
+      },
+      "completed_selection_samples": {
+        "samples": 63,
+        "median_ms": 5211,
+        "maximum_ms": 13458,
+        "method": "Adjacent same-partition progress events in bounded retained process logs; excludes failed/incomplete stages. Not a causal or SLO measurement."
+      }
+    },
+    {
+      "binary_source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+      "binary_profile": "verified Woodpecker static release candidate v0.23.10",
+      "artifact_verification_reused": true,
+      "binary_sha256": "5deb8be92559e67ec667a2827f6a7d78e0ff05b79c7df598e27f069c2e4837c8",
+      "image_digest": "sha256:6bef24815f9a70725e087e839e4d5a5dfdd62882589550f73cf1bddf683875ab",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 709,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals"
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1094
+      },
+      "configuration_matches_report_sha256": "9050420cbdd4192304a6f91fa4f682f5ada65c29047c9ad859545b8a1e50cb67",
+      "started_at": "2026-11-12T09:48:08.950935+00:00",
+      "finished_at": "2026-11-12T09:56:43.644451+00:00",
+      "source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+      "harness_sha256": "4927ad99ee5729cfc9123ffa108d790c2a9447ef0eb2e19da9951fbdc96d1a9a",
+      "workload_sha256": "63b6c99551865390bbead23d65e3b32f84f0dd4e80bab92fb7e166a1268694c5",
+      "complete": true,
+      "namespace_removed": true,
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "kubernetes_version": "v1.36.2",
+      "writes_acknowledged": 709,
+      "reads_verified": 709,
+      "http_attempt_statuses": {
+        "200": 1444,
+        "429": 105,
+        "503": 122,
+        "transport_or_decode_error": 48
+      },
+      "verified_keys": 709,
+      "history_sha256": "b2d196cbd5a10ab0372104d96ae2b9cde8e67df93caf6c9354bac6918e879390",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T09:51:06.917898+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            13.564303993014619,
+            41.90942202799488,
+            9.96059187001083,
+            17.17582034796942
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-12T09:53:02.928886+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            46.330404827953316,
+            10.817844675970264,
+            28.551164845004678,
+            46.330404827953316
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-12T09:54:21.448033+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            40.6731987609528,
+            73.21124440897256,
+            59.03356423100922,
+            40.6731987609528
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "provider_access_observations": [
+        {
+          "time_utc": "2026-11-12T09:50:02.718740+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:50:22.438912+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:51:04.568154+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:51:56.053174+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:52:17.661739+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "time_utc": "2026-11-12T09:53:00.606522+00:00",
+          "statuses": [
+            200,
+            200,
+            200
+          ]
+        }
+      ],
+      "failures": [],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Four of four writers progress during the one-way hold; one of four during the two-way hold. No continuous partition availability claim.",
+        "All recovery targets pass in this repeat. Two short campaigns do not establish a production SLO or full rolling/host-loss qualification."
+      ],
+      "report_sha256": "97fed7a2d4574b89179029f25c8b4928eede379934163d47afda3672c6f13565",
+      "phases": [
+        {
+          "name": "initial-three",
+          "time_utc": "2026-11-12T09:48:35.590622+00:00"
+        },
+        {
+          "name": "initial-progress",
+          "time_utc": "2026-11-12T09:49:45.334920+00:00",
+          "writes_acknowledged": 19
+        },
+        {
+          "name": "asymmetric-baseline",
+          "time_utc": "2026-11-12T09:50:05.219797+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T09:50:24.843233+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T09:51:06.915360+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ],
+          "before": [
+            39,
+            47,
+            45,
+            39
+          ],
+          "after": [
+            63,
+            74,
+            75,
+            62
+          ],
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T09:51:51.208294+00:00",
+          "writes_acknowledged": 389
+        },
+        {
+          "name": "symmetric-baseline",
+          "time_utc": "2026-11-12T09:51:58.425891+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-start",
+          "time_utc": "2026-11-12T09:52:20.631986+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-12T09:53:02.926986+00:00",
+          "provider_statuses": [
+            200,
+            200,
+            200
+          ],
+          "before": [
+            111,
+            107,
+            145,
+            98
+          ],
+          "after": [
+            111,
+            129,
+            145,
+            98
+          ],
+          "writer_progress": [
+            false,
+            true,
+            false,
+            false
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "time_utc": "2026-11-12T09:53:51.681623+00:00",
+          "writes_acknowledged": 567
+        },
+        {
+          "name": "zero-api-pods",
+          "time_utc": "2026-11-12T09:54:02.747423+00:00",
+          "writes_acknowledged": 615
+        },
+        {
+          "name": "cold-three",
+          "time_utc": "2026-11-12T09:55:37.536146+00:00",
+          "writes_acknowledged": 698
+        }
+      ],
+      "network_validation": {
+        "all_six_matrices_match_expected": true,
+        "scope": "Fresh and retained peer sockets; one-way and two-way drops with provider HTTPS and signed provider-backed administrative reads reachable."
+      },
+      "completed_selection_samples": {
+        "samples": 66,
+        "median_ms": 5017.0,
+        "maximum_ms": 16915,
+        "method": "Adjacent same-partition progress events in bounded retained process logs; excludes failed/incomplete stages. Not a causal or SLO measurement."
+      }
     }
   ],
   "release": {
@@ -6333,7 +6930,7 @@
       "coverage_controls": 3,
       "scope": "One nonempty ancestral journal or two empty ancestral journals; not Rust refinement or all nonempty batch interleavings."
     },
-    "qualification": "Eleven catalog regressions and strict clippy pass; full suite and cloud qualification pending",
+    "qualification": "339 routine Rust checks, formatting and strict clippy pass; RootCatalog safe bounds and all eight controls pass. Versioned MinIO and two exact-release B2 peer-isolation campaigns pass, including all six recovery targets. Continuous peer-partition availability remains unresolved.",
     "input_sha256": {
       "src/ownership/root.rs": "e801aebf5286add82a02b96c91bb7e8d0e5698638c3915423670964b103f1cba",
       "src/ownership/root/catalog.rs": "ccfb21f9f41e414527a91ff82fe1b5f5295bb755cca540be2f6e55f4e33e3689",
@@ -6361,6 +6958,102 @@
       },
       "limitation": "Stage timings and competing claim attempts do not establish a causal provider-cost breakdown."
     },
-    "iteration": "Capacity sweep is opt-in in cargo test and mandatory via --ignored --exact in release-mode Woodpecker checks; no capacity check removed."
+    "iteration": "Capacity sweep is opt-in in cargo test and mandatory via --ignored --exact in release-mode Woodpecker checks; no capacity check removed.",
+    "routine_rust_checks_passed": 339,
+    "minio": {
+      "source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+      "provider": "versioned MinIO",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "elapsed_seconds": 183.50349323,
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 32,
+        "container_removed": true
+      },
+      "checks": {
+        "live_predecessor_refused_after_takeover": true,
+        "cold_receipts_and_values_verified": true,
+        "automatic_collection": true,
+        "automatic_table_and_manifest_collection": true,
+        "retained_export": {
+          "databases": 2,
+          "identical_restore_repeated": true,
+          "immutable_puts": 0,
+          "independent_local_destination": true,
+          "restored_after_source_image_collection": true,
+          "source_revision": 1
+        },
+        "warm_http_reads": 100,
+        "warm_cache_misses": 0,
+        "warm_read_control_calls": 0,
+        "warm_read_object_gets": 100
+      },
+      "report_sha256": "6e8c7912ff1a434b47577511c6373222417176ada4feea3f8e2c394cb84f4af2",
+      "scope": "Debug native HTTP on versioned MinIO; not AWS, clustered placement or latency qualification."
+    },
+    "b2_report_sha256": [
+      "9050420cbdd4192304a6f91fa4f682f5ada65c29047c9ad859545b8a1e50cb67",
+      "97fed7a2d4574b89179029f25c8b4928eede379934163d47afda3672c6f13565"
+    ]
+  },
+  "release_0_23_10": {
+    "source_commit": "5aafa89f3c38ea60a1f5641d1dcf218f00fe1b5a",
+    "woodpecker_pipeline": 258,
+    "artifact_image_digest": "sha256:3a8170e3cb28ff97e9bf015decdf1707ef94b0f9be8f69a042c715c37812bde8",
+    "static_pie": true,
+    "standalone": {
+      "version": "0.23.10",
+      "archive_sha256": "1677045f78317948db8233da7a0e333ba38a19f70dfa7c562b67d9fc9d5b3de5",
+      "binary_sha256": "5deb8be92559e67ec667a2827f6a7d78e0ff05b79c7df598e27f069c2e4837c8",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "archive_bytes": 6305386,
+    "version": "v0.23.10",
+    "experimental": true,
+    "woodpecker": {
+      "pipeline": 258,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/258/1",
+      "status": "success",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "build": {
+      "rust": "1.90.0",
+      "rust_wrapper": "kache",
+      "target": "x86_64-unknown-linux-musl",
+      "static_pie": true
+    },
+    "native_client_contract": {
+      "artifact_success_marker": true,
+      "fresh_contract_stdout": true
+    },
+    "capacity_test_passed": true,
+    "github_actions_disabled": true
   }
 }
