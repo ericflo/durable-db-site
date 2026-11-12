@@ -521,14 +521,31 @@ Revocation, journal recovery and fresh response permits remain mandatory. Stable
 placement requires timely storage responses and scheduling. API pods unable to
 reach a partition’s owner may still refuse requests during a permanent peer split.</p>
 <p><code>OwnerChallenge.tla</code> checks one incumbent, two challengers, one challenge round and
-four metadata writes: <strong>3,518 distinct states, depth 14</strong>. Five negative controls
-break comparison, coalescing, waiting, owner-only acknowledgement and retention
-of a completed wait across retries; two coverage
-controls reach a live answer and replacement after a stop. Captured requests can
+four metadata writes, with one shutdown withdrawal captured at the initial
+revision: <strong>14,750 distinct states, 104,725 generated, depth 14</strong>. Six fault
+controls break comparison, coalescing, waiting, owner-only acknowledgement,
+retention of a completed wait across retries and the withdrawal comparison.
+Three reachability controls exercise a live answer, replacement after a stop,
+and replacement without a challenge wait after withdrawal. A stale withdrawal
+cannot clear a successor’s route. Captured requests can
 apply after owner death or lost replies. This finite policy check assumes the
 existing exact register/permit protocol; it is neither Rust refinement nor a proof
 of arbitrary-round liveness. RootAcquisition and OwnerRouting remain separate
 checks of acquisition and response authority.</p>
+<p>The CLI now closes admission, aborts and joins the cluster scheduler and
+maintenance task, and conditionally withdraws the final resident routes. Four
+hints can run concurrently within the CLI’s five-second deadline. Each hint
+checks the old incarnation and captures the exact metadata comparison; it neither
+activates that incarnation nor revokes its permit. If no withdrawal becomes
+durable, replacements retain the ordinary challenge path. Lost replies and
+cancelled hints cannot authorize service. No format,
+object class or extra background worker is added. The real HTTP regression keeps
+the old backend alive and requires replacement within five simulated seconds,
+then checks actual permit fencing and identical receipt replay. Suppressing the
+hint fails in 0.10 seconds; both withdrawal regressions pass in 0.11 seconds.
+The root regression covers refused writes, lost replies, stale comparisons and
+wrong incarnations. These are bounded policy and contract checks, not a
+production rollout SLO or a proof of the Rust implementation.</p>
 <p>The paused-time Rust regression holds two disjoint membership views for a minute,
 checks unchanged owner incarnations, stops one controller without a DNS change,
 and verifies recovery and fencing of a retained old backend. Root tests cover
@@ -541,7 +558,7 @@ all 16 partitions and requires all owners within 25 simulated seconds. The old
 four-slot sleeping path fails in 0.24 seconds of real time; deferring idle waits
 passes alongside the four challenge regressions in 0.37 seconds. This scheduling
 change implements the existing model’s separate Join/Wait/Prepare actions; the
-same 3,518 states and controls pass. It is not a cloud latency guarantee.
+then-current 3,518 states and controls passed. It is not a cloud latency guarantee.
 The first B2 campaign below preserves acknowledgements and
 avoids claims during peer isolation, but misses the cold-recovery target. The
 corrected v0.23.11 campaign recovers all 558 acknowledgements with zero claims
