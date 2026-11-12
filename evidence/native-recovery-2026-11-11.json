@@ -12349,5 +12349,217 @@
     "woodpecker_tag_status": "success",
     "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.2",
     "published_at": "2026-11-12T18:07:06Z"
+  },
+  "acquisition_costs": {
+    "source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+    "woodpecker_pipeline": 286,
+    "routine_rust_checks_passed": 352,
+    "formatting_and_strict_clippy_passed": true,
+    "structured_parser_checks": {
+      "record_types": 5,
+      "fixed_fields_accepted": true,
+      "appended_provider_text_discarded": true,
+      "unknown_checkpoint_stage_refused": true
+    },
+    "behavior": "Additional fixed-field phase timings and work counts only; no new provider calls, storage formats, authority decisions or memory allowances. Existing protocol models unchanged.",
+    "removed": [
+      "Whole-checkpoint-only timing limitation in qualification reports",
+      "Misleading comment that omitted the serving lock held during handoff checkpoint I/O"
+    ],
+    "isolated_b2": {
+      "source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+      "binary_sha256": "8370b4b4242cf8392c9a0ed550f56ecb7e37aef2e8ba101300c1964f32c01339",
+      "profile": "debug single-partition B2 on development host; not Kubernetes or release latency qualification",
+      "started_at": "2026-11-12T18:20:04.149614+00:00",
+      "recoveries": [
+        {
+          "writes_recovered": 32,
+          "exact_receipt_replayed": true,
+          "verified_read_and_receipt_seconds": 25.154814961948432
+        },
+        {
+          "writes_recovered": 64,
+          "exact_receipt_replayed": true,
+          "verified_read_and_receipt_seconds": 21.21963806799613
+        }
+      ],
+      "complete": true,
+      "cleanup": {
+        "bucket_removed": true,
+        "key_revoked": true,
+        "physical_versions_deleted": 153
+      },
+      "finished_at": "2026-11-12T18:22:03.300050+00:00",
+      "configuration": {
+        "partitions": 1,
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "maintenance_seconds": 3600,
+        "namespace_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "sequential_commits_between_restarts": 32,
+        "fault": "SIGKILL after all commits acknowledged; same listen address, new process and empty cache",
+        "value_bytes": "8 for values 10..63; 7 for 0..9"
+      },
+      "scope": "Two isolated debug process restarts on the development host with no concurrent clients during recovery. Verification elapsed time includes readback and receipt replay, startup and client retry delays. No Kubernetes, collection, production latency or improvement claim.",
+      "stage_breakdown": [
+        {
+          "selection": {
+            "stage_milliseconds": {
+              "discovery": 2782,
+              "publication": 2290,
+              "validation": 1,
+              "advance": 46
+            },
+            "total_milliseconds": 5119
+          },
+          "checkpoint": {
+            "stage_milliseconds": {
+              "permission": 25,
+              "allowance": 1,
+              "funding": 2379,
+              "staging": 4883,
+              "publication": 2746,
+              "confirmation": 674
+            },
+            "total_milliseconds": 10708
+          },
+          "activation": {
+            "stage_milliseconds": {
+              "revocation": 180,
+              "publication": 1251
+            },
+            "total_milliseconds": 1471
+          },
+          "discovered_frames": 33,
+          "predecessors": 1,
+          "catalog_upload_milliseconds": 1458
+        },
+        {
+          "selection": {
+            "stage_milliseconds": {
+              "discovery": 1825,
+              "publication": 1642,
+              "validation": 0,
+              "advance": 36
+            },
+            "total_milliseconds": 3503
+          },
+          "checkpoint": {
+            "stage_milliseconds": {
+              "permission": 24,
+              "allowance": 1,
+              "funding": 2267,
+              "staging": 1098,
+              "publication": 2007,
+              "confirmation": 1071
+            },
+            "total_milliseconds": 6468
+          },
+          "activation": {
+            "stage_milliseconds": {
+              "revocation": 132,
+              "publication": 1298
+            },
+            "total_milliseconds": 1472
+          },
+          "discovered_frames": 32,
+          "predecessors": 1,
+          "catalog_upload_milliseconds": 790
+        }
+      ],
+      "trace_sha256": "3c1ce3332738e4e3db8c5e7e9c4b8355723504c1e07beb3c5426e9c64f9445ae"
+    },
+    "minio": {
+      "provider": "versioned MinIO",
+      "image": "epsilon-maintenance-minio:20261105",
+      "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+      "test": {
+        "automatic_acquisition_and_placement": true,
+        "ceilings_preserved": true,
+        "checkpoint_and_cold_recovery": true,
+        "independent_node_transports_and_caches": true,
+        "layout_mismatch_refused": true,
+        "live_removed_owner_refused": true,
+        "maximum_live_servers": 2,
+        "membership_sequence": [
+          1,
+          2,
+          1,
+          0,
+          1
+        ],
+        "partitions": 2,
+        "provider_metrics_count_once": true,
+        "receipts_preserved": true,
+        "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+        "seconds": 40.439126956,
+        "shared_metadata_collection": true,
+        "unmoved_owner_preserved": true
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 79,
+        "container_removed": true
+      }
+    },
+    "local_log_sha256": {
+      "focused": "b2165f99494fcd44a29fdfe08ca7387164447da72c44c90c559d8becc66f549b",
+      "tests": "83b6a1199485cbfb71b92340170b3041cb6873ae3c0549aad04ba4f8cea06367",
+      "clippy": "1995455460b973804b900bd732eae6e880435d17c7ef4bcf225cd7cce6f8f2db"
+    },
+    "optimized_directory_capacity_seconds": 226.75,
+    "limitations": [
+      "The first diagnostic candidate emitted owner binding before activation, when identity is unavailable. The followup moves it after activation; baseline cluster details cannot directly bind owner IDs to partitions.",
+      "Baseline instrumentation does not change control or storage semantics. Paired table uploads are a separate subsequent change."
+    ]
+  },
+  "paired_table_uploads": {
+    "baseline_source_commit": "f76dc68b699db3147ddc42387fae35a9ec598909",
+    "routine_rust_checks_passed": 353,
+    "model": {
+      "module": "ExternalFiles",
+      "distinct_states": 2197,
+      "bounds": {
+        "physical_names": 3,
+        "values": 2,
+        "logical_names": 2
+      },
+      "fault_controls": 2,
+      "reachability_controls": 2,
+      "scope": "Atomic grouped references require all immutable PUT replies; no Rust, collector or provider proof."
+    },
+    "regression": {
+      "serial_implementation_fails_seconds": 0.0,
+      "table_checks_passed": 10,
+      "table_test_seconds": 0.27,
+      "cases": [
+        "success with overlapping uploads",
+        "lost data reply",
+        "lost index reply",
+        "cancellation after both objects arrive"
+      ]
+    },
+    "removed": [
+      "serial dependency between data and index uploads",
+      "pre-activation owner diagnostic that could never emit a binding",
+      "single-object-only reference publication model"
+    ],
+    "cloud_qualification": "pending",
+    "formatting_and_strict_clippy_passed": true,
+    "local_log_sha256": {
+      "costs-paired-negative.log": "4419a0470430d2eee672136bdd89991556039d8c29f2158ac5f0fd9c614f2301",
+      "costs-paired-focused.log": "e5697e9a2a6998c8d71408678b30f73da7c88842fe12aab4ac29abca81aa7666",
+      "costs-paired-final.log": "37ab89366fbc2817f41f053df5d35f5f02fc1d185672231ec3d0d1745448a3e9",
+      "costs-paired-tests.log": "9746e5ff2c638f4f01cdd103c86a5ac1a204ef2741fda2e6caeefe3796367879",
+      "costs-paired-clippy.log": "7cfd92815a918bc58961c05e7ddd3da412e0140736d9e8b7e6c29def4cde1cdf",
+      "costs-paired-model.log": "a6c6d72b4346ab7a211a3d201deb086a52647dbdac65e04476eb5d4fba6e33e8"
+    }
   }
 }
