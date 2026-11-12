@@ -99,11 +99,29 @@
 <p>Automatic maintenance also shares its initial manifest between compaction and no-op collection. The initial snapshot may justify only a stuttering step: no deletion, cursor update, or publication. A race test pauses after listing, commits a new value, resumes the no-op pass, then verifies the next pass collects only the obsolete object. A publication test checks that empty and one-page idle databases perform exactly one barrier and no directory rewrite. Actual deletion retains the modeled list/read/fence/delete sequence unchanged.</p>
 <h2 id="cross-replica-publication-combining">Cross-replica publication combining<a class="anchor" href="#cross-replica-publication-combining" aria-label="Link to this section">#</a></h2>
 <p><code>PublicationCombining.tla</code> was checked before implementing durable proposals. It models two fresh jobs, two database targets, two helpers, and two authority revision advances in the default check. Jobs can use genuine stale observations, upload, submit, disappear with an unknown outcome, receive success, or be definitely aborted before submission. Helpers select independent targets and race a conditional group publication. Original unbatched publishers, read barriers, collection candidate snapshots, fence publication, manifest/proposal deletion, and abandonment are included. A committed proposal may be cleaned up without advancing the fence; already loaded proposals remain subject to the original target comparison.</p>
-<p>The default two-revision instance checks 1,722,773 distinct states (10,689,765 generated, depth 25) in 43 seconds on the development host. All four unsafe controls still fail as required. This replaces the larger three-revision default to shorten iteration; it does not extend the proof scope.</p>
+<p>The default two-revision instance now permits helpers to select retained
+metadata from any previously submitted proposal, even after proposal deletion.
+This overapproximates the runtime’s one bounded discovery batch per invocation;
+every selection still rechecks the target and original collection fence. It
+checks <strong>1,736,213 distinct states</strong> (11,377,184 generated, depth 25) in 47 seconds
+on the development host. Five fault controls and the superseded-receipt coverage
+control still produce their expected counterexamples. This does not prove Rust,
+latency, fairness or whole-deployment behavior.</p>
+<p>Publication retries retain at most 64 loaded proposal records. A definite bucket
+comparison conflict no longer repeats listing and proposal downloads, or the
+duplicate authority read and target lookup after reusing that batch. Current
+heads, collection fences and manifest availability are rechecked before each
+fresh directory rewrite and exact comparison; neither target eligibility nor
+uncertain PUTs are replayed. Proposals arriving after discovery can be helped by
+a later invocation. The regression forces two conflicts and checks one LIST and
+one proposal GET, with both acknowledged and applied-but-lost final responses.
+The existing suite covers competing writes, collected selections, abandoned
+origins, bounded batches and subsequent progress. Fixed diagnostic fields split
+initial work, local helper queueing, preparation and comparison duration without
+logging database names, keys, values or provider errors.</p>
 <p>Publication receipts now return the directory’s exact published pointer, including
 when another helper confirmed it. They do not require a subsequent metadata
-read. The default model still checks <strong>1,722,773 states</strong> in 43 seconds; five
-fault controls pass, including a new premature-receipt fault. A two-job,
+read. The premature-receipt control rejects unconfirmed success. A two-job,
 one-database, one-helper coverage check reaches a successful receipt whose target
 has since changed. This does not grant serving authority: <code>RootAcquisition</code>
 binds the delayed result to its invocation, and response permission remains
