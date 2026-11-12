@@ -105,7 +105,10 @@ This overapproximates the runtime’s one bounded discovery batch per invocation
 every selection still rechecks the target and original collection fence. It
 checks <strong>1,736,213 distinct states</strong> (11,377,184 generated, depth 25) in 47 seconds
 on the development host. Five fault controls and the superseded-receipt coverage
-control still produce their expected counterexamples. This does not prove Rust,
+control still produce their expected counterexamples. A one-revision coverage
+check also reaches a receipt while another helper remains busy (13,780 states,
+depth 9). <code>Ack</code> already permits this independently of helper admission; no new
+protocol state or safety relaxation is needed. This does not prove Rust,
 latency, fairness or whole-deployment behavior.</p>
 <p>Publication retries retain at most 64 loaded proposal records. A definite bucket
 comparison conflict no longer repeats listing and proposal downloads, or the
@@ -119,6 +122,23 @@ The existing suite covers competing writes, collected selections, abandoned
 origins, bounded batches and subsequent progress. Fixed diagnostic fields split
 initial work, local helper queueing, preparation and comparison duration without
 logging database names, keys, values or provider errors.</p>
+<p>Queued publications can now observe that exact receipt without taking the helper
+slot. After each one-second delay, at most eight attempts check the original
+proposal identity; only one such probe may be in flight per shared connection.
+Busy probe admission skips that attempt. These read-only checks never list
+proposals, upload objects, compare the authority or grant serving permission.
+A missing/changed head, failed read or collected directory cannot supply a
+receipt. The caller keeps its FIFO helper position; admission cancels an in-flight
+probe, and cancellation leaves no detached polling task. Once the probe budget
+is exhausted, ordinary helper admission and its uncertainty rules still apply.
+There is no fairness or cloud-latency guarantee for these optional checks.</p>
+<p>Two virtual-time regressions cover another replica publishing the queued proposal
+while the local helper is stalled, including a lost publication reply. They also
+check the eight-probe bound, absent/different pointers, a failed read, one-probe
+concurrency and helper admission cancelling a stalled observation. The original
+semaphore-only path fails the receipt regression. <code>queued_receipt</code> diagnostics
+record no comparison attempt; their queue duration includes observation work.
+The uncontended helper path starts no probe.</p>
 <p>Publication receipts now return the directory’s exact published pointer, including
 when another helper confirmed it. They do not require a subsequent metadata
 read. The premature-receipt control rejects unconfirmed success. A two-job,
