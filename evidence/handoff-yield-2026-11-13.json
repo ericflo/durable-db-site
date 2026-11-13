@@ -1,0 +1,947 @@
+{
+  "date_utc": "2026-11-13",
+  "release": "v1.0.3",
+  "url": "https://github.com/ericflo/durable-db/releases/tag/v1.0.3",
+  "published_at": "2026-11-13T21:53:13Z",
+  "source_commit": "fae7dee2a27b5bd0ebe66b42d28f6348b833e034",
+  "build": {
+    "rust": "1.90.0",
+    "rust_wrapper": "kache",
+    "target": "x86_64-unknown-linux-musl",
+    "static_pie": true
+  },
+  "woodpecker": {
+    "pipeline": 394,
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/394/1",
+    "status": "success",
+    "steps": [
+      {
+        "name": "clone",
+        "state": "success"
+      },
+      {
+        "name": "dependency-audit",
+        "state": "success"
+      },
+      {
+        "name": "javascript-audit",
+        "state": "success"
+      },
+      {
+        "name": "verify-and-build",
+        "state": "success"
+      },
+      {
+        "name": "publish-docs",
+        "state": "success"
+      }
+    ]
+  },
+  "artifact_image_digest": "sha256:4e4ed9bea69c5f991bddffa2d465e3a938f432528b04353cfcf40e4d284bb47d",
+  "archive_bytes": 6425449,
+  "standalone": {
+    "version": "1.0.3",
+    "archive_sha256": "26506489a09a6fdd0d6dc17965dee22dbdf7f38f846a4e8697102c0984a48313",
+    "binary_sha256": "56c442d3848631a04bc4bef913e78569745f1741e0bc04696689a47ae3f9326e",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true
+  },
+  "github_asset_digests_verified": true,
+  "github_actions_disabled": true,
+  "local_checks": {
+    "old_worker_regression": "Fails optional staging write deadline in 1.04s.",
+    "unlimited_yield_regression": "Fails repeated-queued-work maintenance assertion in 1.02s.",
+    "http_tests": 15,
+    "http_seconds": 1.35,
+    "separate_ci_javascript_contract": true,
+    "formatting": "passed",
+    "strict_clippy": "passed"
+  },
+  "model": {
+    "name": "LiveTransactions",
+    "transition_system_changed": false,
+    "distinct_states": 19220,
+    "generated_states": 104871,
+    "depth": 21,
+    "safety_fault_controls": 9,
+    "staging_read_reachability_control": true,
+    "source_sha256": "8fd7ba5a4f035abce2bfa0874921244777ec447bd1a1b9cee71a0e6a3849d4a3"
+  },
+  "scheduling": {
+    "maximum_yields_per_owner": 1,
+    "cancellable_phase": "handoff-only staging before publication",
+    "required_checkpoint_or_publication_cancellable": false,
+    "command_keeps_original_admission_permit": true,
+    "spent_credit_and_retry_gate_preserved": true,
+    "additional_worker_or_projection": false
+  },
+  "shared_fixture": {
+    "harness_sha256": "5ddadc4b70b3ef56a8f7607ae264c6d6b49b63a11edd912e2eaeff48715a3998",
+    "workload_sha256": "7770f49ea2cdc3a0bfeb0709254aff8982a902c6493a05b009dd099282104f20",
+    "client_transport_sha256": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "scale-down",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "64Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 0,
+      "memory_observation": false,
+      "maximum_write_intents": 100000
+    },
+    "kubernetes_version": "v1.36.2"
+  },
+  "reference": {
+    "evidence": "recovery-slots-2026-11-13.json",
+    "run": "candidate",
+    "release": "v1.0.2",
+    "motivation": "The owner for partition 2 became ready at 20:52:12.301415Z and immediately checkpointed until 20:52:17.871992Z (5569 ms). The worst-gap commit included a successful 13.421844641-second attempt.",
+    "acknowledged": 393,
+    "largest_scale_down_gap_seconds": 54.673396604,
+    "cold_progress_bound_seconds": 44.128730796976015
+  },
+  "runs": {
+    "first": {
+      "binary_source_commit": "fae7dee2a27b5bd0ebe66b42d28f6348b833e034",
+      "binary_sha256": "56c442d3848631a04bc4bef913e78569745f1741e0bc04696689a47ae3f9326e",
+      "image_digest": "sha256:4cb2bb1d71ca6eba0f352a46937bfb19f0d4252878b7eafc3613a94295518193",
+      "runtime_matches_verified_artifact": true,
+      "harness_source_commit": "fae7dee2a27b5bd0ebe66b42d28f6348b833e034",
+      "history_sha256": "5083b20b158cfee8bb5f2cade6eb657ced7936c9812e559897e48fbf858e2c49",
+      "started_at": "2026-11-13T21:35:32.839154+00:00",
+      "finished_at": "2026-11-13T21:42:35.022263+00:00",
+      "kubernetes_version": "v1.36.2",
+      "report_sha256": "0f21af4d49ed254792bb289e0bd22a317230990c2e4572360f99be452638408d",
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 410,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "scale-one",
+            "duration_seconds": 76.767996372,
+            "readbacks": [
+              8,
+              34,
+              6,
+              9
+            ],
+            "max_completed_readback_gap_seconds": [
+              39.858648216000006,
+              35.40100073900001,
+              41.86589048000002,
+              68.44408879100001
+            ],
+            "open_readback_gap_seconds": [
+              2.8375123530000224,
+              0.962139279000013,
+              0.1020606700000144,
+              3.3214193840000235
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "recovered_keys": 410,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-13T21:37:12.830654+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.062081090989523,
+            16.062081090989523,
+            16.062081090989523,
+            16.062081090989523
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-13T21:37:53.351483+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.916145270923153,
+            16.916145270923153,
+            41.84863984398544,
+            16.916145270923153
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "started_at": "2026-11-13T21:38:47.319242+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            72.89559720898978,
+            44.73804280895274,
+            76.40232258592732,
+            72.89559720898978
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T21:40:44.692336+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            47.162270988104865,
+            40.21923341404181,
+            40.21923341404181,
+            43.6704219620442
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "worst_readback_gap_by_writer": [
+        {
+          "writer": 0,
+          "revision": 58,
+          "gap_seconds": 39.858648216000006,
+          "commit_rpc": {
+            "request_seconds": 2.2414452670000027,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 2.2414452670000027,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 23.86287379399998,
+            "backoff_seconds": 13.50405749200008,
+            "longest_request": {
+              "seconds": 2.176992524000001,
+              "status": "503"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 18
+            }
+          }
+        },
+        {
+          "writer": 1,
+          "revision": 88,
+          "gap_seconds": 35.40100073900001,
+          "commit_rpc": {
+            "request_seconds": 0.511030861999985,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 0.511030861999985,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 3.130932936000055,
+            "backoff_seconds": 31.507899038999987,
+            "longest_request": {
+              "seconds": 0.2608991800000076,
+              "status": "503"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 33,
+              "transport_or_decode_error": 3
+            }
+          }
+        },
+        {
+          "writer": 2,
+          "revision": 63,
+          "gap_seconds": 41.86589048000002,
+          "commit_rpc": {
+            "request_seconds": 3.9207930920000074,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 3.9207930920000074,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 20.189348324999997,
+            "backoff_seconds": 17.505019017999906,
+            "longest_request": {
+              "seconds": 2.0931896259999774,
+              "status": "503"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 22
+            }
+          }
+        },
+        {
+          "writer": 3,
+          "revision": 58,
+          "gap_seconds": 68.44408879100001,
+          "commit_rpc": {
+            "request_seconds": 48.60106771900002,
+            "backoff_seconds": 19.506098186000013,
+            "longest_request": {
+              "seconds": 25.00118443599998,
+              "status": "transport_or_decode_error"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 21,
+              "transport_or_decode_error": 3
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.08592245799998637,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 0.08592245799998637,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          }
+        }
+      ],
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1218,
+        "namespace_removed": true
+      },
+      "sampled_yields": [
+        {
+          "pod": "durable-db-0",
+          "uid": "981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:23.267373Z",
+          "owner": "531b70cd-8714-47b0-8ad4-61ec196324f2"
+        },
+        {
+          "pod": "durable-db-0",
+          "uid": "981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:28.100617Z",
+          "owner": "1fd0c5ca-84c1-4b04-a033-069f99c87198"
+        },
+        {
+          "pod": "durable-db-0",
+          "uid": "981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:29.261372Z",
+          "owner": "6561e435-d989-4633-aa77-9a24b343bf3a"
+        }
+      ],
+      "yield_sampling_scope": "Read-only log samples from API pods; not a complete cluster trace or a proof of the per-owner limit.",
+      "slow_operations_during_scale_down": [
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:01.607516Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2082
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:04.691749Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2081
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:07.784058Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2088
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:10.875825Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2089
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:13.968937Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2090
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:17.061740Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2088
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:20.153857Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 2089
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:27.915007Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 4647
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:28.717875Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 5450
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:39.144271Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 10077
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:39.206789Z",
+          "operation": "object_put",
+          "outcome": "ok",
+          "elapsed_ms": 1064
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:39.921435Z",
+          "operation": "object_put",
+          "outcome": "error",
+          "elapsed_ms": 10637
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:39.921537Z",
+          "operation": "native_prepare",
+          "outcome": "error",
+          "elapsed_ms": 11820
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:40.009757Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 11909
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:40.924575Z",
+          "operation": "object_put",
+          "outcome": "error",
+          "elapsed_ms": 10730
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:40.924639Z",
+          "operation": "native_prepare",
+          "outcome": "error",
+          "elapsed_ms": 11663
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:41.000581Z",
+          "operation": "http_commit",
+          "outcome": "unavailable",
+          "elapsed_ms": 11739
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:49.632377Z",
+          "operation": "object_put",
+          "outcome": "ok",
+          "elapsed_ms": 1061
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:51.230464Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 3439
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:53.756605Z",
+          "operation": "http_commit",
+          "outcome": "cancelled",
+          "elapsed_ms": 24998
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:56.406495Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 5175
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:56.494722Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 1736
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:56.930029Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 16815
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:39:59.900995Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 7880
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:40:00.658609Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 19554
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:40:01.042728Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 2164
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:40:03.992995Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 2541
+        },
+        {
+          "pod": "durable-db-0/981c47ea-69e2-48a3-ae9b-dd19e430e3b9",
+          "time_utc": "2026-11-13T21:40:03.993213Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 3024
+        }
+      ]
+    },
+    "repeat": {
+      "binary_source_commit": "fae7dee2a27b5bd0ebe66b42d28f6348b833e034",
+      "binary_sha256": "56c442d3848631a04bc4bef913e78569745f1741e0bc04696689a47ae3f9326e",
+      "image_digest": "sha256:4cb2bb1d71ca6eba0f352a46937bfb19f0d4252878b7eafc3613a94295518193",
+      "runtime_matches_verified_artifact": true,
+      "harness_source_commit": "fae7dee2a27b5bd0ebe66b42d28f6348b833e034",
+      "history_sha256": "58a6d833843fe67a741f0fd4fd53bb6913c88c46c7c933a8e9c508cd01efad62",
+      "started_at": "2026-11-13T21:44:32.222740+00:00",
+      "finished_at": "2026-11-13T21:51:12.604314+00:00",
+      "kubernetes_version": "v1.36.2",
+      "report_sha256": "0f1f5223cf65b86c7f9c7bd070689eaf1915694cd7e929e638fabd911d7b11c4",
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 415,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "scale-one",
+            "duration_seconds": 56.618074244999974,
+            "readbacks": [
+              3,
+              7,
+              12,
+              2
+            ],
+            "max_completed_readback_gap_seconds": [
+              38.752363645,
+              41.964197530999996,
+              35.02140228099998,
+              38.302768103999995
+            ],
+            "open_readback_gap_seconds": [
+              9.07571394499999,
+              0.6217694269999754,
+              0.3174575779999884,
+              9.284367065999987
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "recovered_keys": 415,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-13T21:46:02.450173+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.445045183994807,
+            36.992146602948196,
+            15.445045183994807,
+            15.445045183994807
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-13T21:46:50.656199+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            39.32020030694548,
+            21.665967329987325,
+            21.665967329987325,
+            42.89914122794289
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "started_at": "2026-11-13T21:47:46.297994+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            49.04881473898422,
+            56.22057096508797,
+            38.425656329025514,
+            49.04881473898422
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T21:49:28.274605+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            43.46620789100416,
+            39.87654865800869,
+            39.87654865800869,
+            43.46620789100416
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "worst_readback_gap_by_writer": [
+        {
+          "writer": 0,
+          "revision": 56,
+          "gap_seconds": 38.752363645,
+          "commit_rpc": {
+            "request_seconds": 4.614740420999995,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 4.614740420999995,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 3.380809558999986,
+            "backoff_seconds": 30.505556632,
+            "longest_request": {
+              "seconds": 0.25414466900000116,
+              "status": "503"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 34,
+              "transport_or_decode_error": 1
+            }
+          }
+        },
+        {
+          "writer": 1,
+          "revision": 83,
+          "gap_seconds": 41.964197530999996,
+          "commit_rpc": {
+            "request_seconds": 9.11201291900003,
+            "backoff_seconds": 32.50916143699995,
+            "longest_request": {
+              "seconds": 5.998942876999994,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 35,
+              "transport_or_decode_error": 2
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.091024304999999,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 0.091024304999999,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          }
+        },
+        {
+          "writer": 2,
+          "revision": 86,
+          "gap_seconds": 35.02140228099998,
+          "commit_rpc": {
+            "request_seconds": 7.166854162999983,
+            "backoff_seconds": 27.507000513000005,
+            "longest_request": {
+              "seconds": 4.14526300799998,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 32
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.09622690699997474,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 0.09622690699997474,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          }
+        },
+        {
+          "writer": 3,
+          "revision": 56,
+          "gap_seconds": 38.302768103999995,
+          "commit_rpc": {
+            "request_seconds": 4.1671203650000095,
+            "backoff_seconds": 0,
+            "longest_request": {
+              "seconds": 4.1671203650000095,
+              "status": "200"
+            },
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 3.37625948300003,
+            "backoff_seconds": 30.508042671999913,
+            "longest_request": {
+              "seconds": 0.21765483900002436,
+              "status": "503"
+            },
+            "statuses": {
+              "200": 1,
+              "503": 33,
+              "transport_or_decode_error": 2
+            }
+          }
+        }
+      ],
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1264,
+        "namespace_removed": true
+      },
+      "sampled_yields": [
+        {
+          "pod": "durable-db-1",
+          "uid": "046c3b0a-5d03-452e-b30b-a1c6a7bbb012",
+          "time_utc": "2026-11-13T21:46:26.835803Z",
+          "owner": "5f62bdce-9376-4572-94ce-6ec0c3d7f7cb"
+        },
+        {
+          "pod": "durable-db-1",
+          "uid": "046c3b0a-5d03-452e-b30b-a1c6a7bbb012",
+          "time_utc": "2026-11-13T21:46:43.454283Z",
+          "owner": "65423716-a6a6-432f-8ac9-2ead9457a69a"
+        },
+        {
+          "pod": "durable-db-2",
+          "uid": "2862a48e-7bdd-4ff7-8a36-97da63584483",
+          "time_utc": "2026-11-13T21:46:27.411675Z",
+          "owner": "4d4b1ac8-eac6-47f4-8fc5-0f11a8dea0b5"
+        },
+        {
+          "pod": "durable-db-1",
+          "uid": "65f48876-abff-4ca7-b173-32814e49ae17",
+          "time_utc": "2026-11-13T21:50:01.242964Z",
+          "owner": "3061f4aa-edb8-471f-9559-09ea36aa3862"
+        },
+        {
+          "pod": "durable-db-1",
+          "uid": "65f48876-abff-4ca7-b173-32814e49ae17",
+          "time_utc": "2026-11-13T21:50:02.591205Z",
+          "owner": "2fb9f103-5249-4ed6-bbd8-f9a8e9dcbb27"
+        },
+        {
+          "pod": "durable-db-2",
+          "uid": "60d6aef0-eabf-43f1-8fe9-c99fe73de080",
+          "time_utc": "2026-11-13T21:49:54.273193Z",
+          "owner": "62debb4d-eaf9-4824-a823-5b6d43631063"
+        }
+      ],
+      "yield_sampling_scope": "Read-only log samples from API pods; not a complete cluster trace or a proof of the per-owner limit.",
+      "slow_operations_during_scale_down": [
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:22.479488Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 3596
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:23.024202Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 4141
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:24.148112Z",
+          "operation": "object_put",
+          "outcome": "ok",
+          "elapsed_ms": 1043
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:28.628530Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 6981
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:28.783558Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 5772
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:29.006033Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 5995
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:30.504519Z",
+          "operation": "object_put",
+          "outcome": "ok",
+          "elapsed_ms": 1079
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:32.939586Z",
+          "operation": "native_prepare",
+          "outcome": "ok",
+          "elapsed_ms": 4310
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:33.032120Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 11385
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:33.498176Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 11657
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:35.256143Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 11884
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:39.805283Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 10456
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:43.966505Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 10134
+        },
+        {
+          "pod": "durable-db-0/2a067fd0-e3e2-45c1-b4bc-e20ba11677f5",
+          "time_utc": "2026-11-13T21:48:44.042920Z",
+          "operation": "http_commit",
+          "outcome": "ok",
+          "elapsed_ms": 10001
+        }
+      ]
+    }
+  },
+  "interpretation": "Both unchanged-candidate campaigns are retained, including the first missed scale-down target. Their fixture, workload and retry policy also match the preceding v1.0.2 run on the same shared hosts. Separate short samples do not establish a causal speedup, sustained performance or an SLO. Failed object PUTs coincide with the first larger gap, without proving the source of variation. Direct gaps include the last readback before the fault window; request/backoff totals describe the whole operation. Cold controller bounds are distinct from direct workload gaps.",
+  "cleanup": "Both disposable namespaces, buckets and scoped keys removed. Eleven generated model-state directories and the superseded pre-provisioning qualification-wait directory removed. Replaced the unconditional handoff staging wait and stale documentation claims; reused the model, fault fixture and campaign harness."
+}
