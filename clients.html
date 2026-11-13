@@ -23,7 +23,8 @@ database, with at most 64 cached pools, 16 outstanding requests per pool, 128
 overall and one idle socket per pool. Active pools are not evicted; local
 capacity refusal returns <code>DbError</code> status 429 before sending. HTTPS trust and
 hostname checks remain enabled, and the 35-second request deadline includes
-body reads. Bodies are bounded to 1 MiB. This replaces global fetch pooling;
+body reads. Bodies are bounded to 1 MiB. HTTP 429/503 discards only the refused
+request’s connection, preserving other in-flight requests. This replaces global fetch pooling;
 it preserves the one-attempt wire contract and identical retry rules. The bounds
 apply to one loaded SDK module, not across Node workers. Pooling cannot guarantee
 availability behind every external proxy or permanent split.</p>
