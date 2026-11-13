@@ -27467,5 +27467,662 @@
       ".tools/ingress-probe-negative.log": "b33f7324ef4560fe20d930dd18e56ad1a56d274ff452d5710fbed0f438ca4de2",
       ".tools/ingress-probe-negative-parallel.log": "f66afe1260132b7744c9906163dea9ebe038f06efa3875de3693014a93788707"
     }
+  },
+  "database_client_pool": {
+    "status": "experimental client routing milestone; production readiness remains open",
+    "date": "2026-11-13",
+    "source_commit": "9184d86f5cb157391980d1329bc4678ee26dd7e3",
+    "version": "0.24.22",
+    "implementation": {
+      "net_client_lines": 97,
+      "rust_behavior_changes": 0,
+      "new_dependencies": 0,
+      "new_background_workers": 0,
+      "change": "Replace global fetch pooling with Node HTTP/1 pools per origin/database; LRU evicts only idle pools; discard only the refused socket on HTTP 429/503; no automatic transport replay.",
+      "bounds": {
+        "pools": 64,
+        "inflight_per_pool": 16,
+        "inflight_total": 128,
+        "idle_sockets_per_pool": 1,
+        "body_bytes": 1048576,
+        "request_deadline_seconds": 35
+      },
+      "scope": "Bounds apply to a loaded SDK module, not combined workers or process RSS. HTTPS trust and hostname verification remain enabled. Explicit identity encoding bounds raw response bytes. No cached owner address or new authority."
+    },
+    "local": {
+      "focused_tests": 11,
+      "focused_seconds": 1.12,
+      "sdk_pi_tests": 105,
+      "skipped": 1,
+      "sdk_pi_seconds": 7.95,
+      "web_application_tests": 4,
+      "harness_tests": 3,
+      "harness_seconds": 7.47,
+      "checks": [
+        "format",
+        "TypeScript",
+        "real TCP L4 separation, owner moves and lost acknowledgement with exact body retry",
+        "TLS trust, hostname and credentials",
+        "idle eviction, scope/per-scope/aggregate work limits and cancellation",
+        "oversized and stalled response bodies",
+        "redirect rejection"
+      ],
+      "negative_controls": [
+        "share pools only by origin",
+        "automatically replay a reset",
+        "reset the whole pool on HTTP 429/503"
+      ],
+      "model": {
+        "name": "OwnerRouting",
+        "changed": false,
+        "states": 728,
+        "generated": 3197,
+        "depth": 11,
+        "negative_controls": 9,
+        "scope": "Existing single-attempt, owner identity and permit invariants; not a model of Node pools, TLS or transport liveness."
+      }
+    },
+    "isolation": {
+      "harness_source_commit": "9a1a070e7a204ac9ec2c0fc4185054e58700d7d3",
+      "binary_source_commit": "b60112ec56c40590d5bcb0f011e828fde341fa19",
+      "binary_sha256": "13f940ef926c54b253b7f9a027924814c6dc655f532f5e37e9c6662e79640230",
+      "image_digest": "sha256:8de2b7af59e64cb8609fffd331917636a11b269379832ebb136a93845d11cb48",
+      "transport_sha256": "22fa6605660abac548f98a4c549874a6948f7276f97c4c8e1974c6fdb2b0fe24",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_ingress": "shared",
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        },
+        "ingress_observation": {
+          "fresh_connections": true,
+          "timeout_seconds": 5,
+          "read_concurrency": 1,
+          "writers": [
+            0,
+            1
+          ],
+          "outside_measured_hold": true
+        }
+      },
+      "acknowledged": 851,
+      "readbacks": 851,
+      "recovered_keys": 851,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 851,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "identified_data_sockets": 86,
+      "identified_cross_database_sockets": 0,
+      "identified_sockets_with_repeated_refusals": 1,
+      "connection_summary": {
+        "acknowledged": 851,
+        "readbacks": 851,
+        "recovered_keys": 851,
+        "rpc_statuses": {
+          "commit_rpc": {
+            "200": 851,
+            "503": 78,
+            "429": 2,
+            "transport_or_decode_error": 21
+          },
+          "read_rpc": {
+            "200": 851,
+            "503": 36,
+            "transport_or_decode_error": 19
+          }
+        },
+        "distinct_observed_connections": 86,
+        "maximum_unavailable_responses_on_one_connection_per_rpc": 1,
+        "maximum_unavailable_responses_per_identified_connection": 1,
+        "identified_connections_with_repeated_unavailable": 0,
+        "rpcs_with_repeated_unavailable_on_one_connection": 0,
+        "observed_buckets": {
+          "overflow": 82
+        },
+        "unidentified_statuses": {
+          "overflow": {
+            "200": 8,
+            "503": 64,
+            "transport_or_decode_error": 10
+          },
+          "unobserved": {}
+        },
+        "repeated_examples": [],
+        "hold_progress": [
+          {
+            "name": "asymmetric-peer-isolation-held",
+            "before": [
+              55,
+              66,
+              63,
+              57
+            ],
+            "after": [
+              64,
+              95,
+              93,
+              67
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "name": "symmetric-peer-isolation-held",
+            "before": [
+              125,
+              149,
+              166,
+              127
+            ],
+            "after": [
+              140,
+              159,
+              193,
+              140
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "recovery": [
+          {
+            "name": "asymmetric-peer-isolation-healed",
+            "max_upper_bound_seconds": 15.534018728067167,
+            "target_seconds": 60,
+            "within_target": true
+          },
+          {
+            "name": "symmetric-peer-isolation-healed",
+            "max_upper_bound_seconds": 44.13533710199408,
+            "target_seconds": 60,
+            "within_target": true
+          },
+          {
+            "name": "cold-three",
+            "max_upper_bound_seconds": 34.240241720108315,
+            "target_seconds": 120,
+            "within_target": true
+          }
+        ],
+        "scope": "Socket IDs identify observed fetch sockets, not backend pods. Per-RPC totals include retries outside the hold; unavailable outcomes can include recovery/provider delays. Overflow and pre-socket failures cannot identify reuse. Short samples are not a causal latency comparison or production SLO."
+      },
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1015
+      },
+      "evidence_sha256": {
+        ".tools/database-pool-b2/kubernetes.json": "c8f35a2beb5dd23ee6904847c42ab547f6eb1dc274328acc929c566b7f6fc8b8",
+        ".tools/database-pool-b2/kubernetes.history.jsonl": "207146773096a86d518e11273637dd29e69207bf3a5362838c09bf70cb0799e1",
+        ".tools/database-pool-b2/result.json": "c84017901d159e39f5af77daf9550929a8035f17f4b28256bef8200f99277614",
+        ".tools/database-pool-b2/history-check.json": "964ead5a34dbd31a484480b39503f58bf9a5bffa01e556523761444145451c15",
+        ".tools/database-pool-b2/connection-summary.json": "e63f7f299ca45061b08e5c9e6b012b2bdb70cdf2ee68f6d25dc1600aedfe8228",
+        ".tools/database-pool-b2.log": "e8dda42f2ca9a073dd9a2c8fe450f542afa489e26f817e1cf7d68808ba0de722"
+      },
+      "remaining_owner_availability": {
+        "time_utc": "2026-11-13T13:26:23.794661+00:00",
+        "targets": [
+          "durable-db-0",
+          "durable-db-1",
+          "durable-db-2",
+          "Service"
+        ],
+        "readiness": [
+          200,
+          200,
+          200,
+          200
+        ],
+        "reads_status_ms": [
+          [
+            [
+              503,
+              175
+            ],
+            [
+              200,
+              168
+            ]
+          ],
+          [
+            [
+              503,
+              89
+            ],
+            [
+              200,
+              97
+            ]
+          ],
+          [
+            [
+              503,
+              4
+            ],
+            [
+              503,
+              2177
+            ]
+          ],
+          [
+            [
+              503,
+              2006
+            ],
+            [
+              200,
+              85
+            ]
+          ]
+        ],
+        "writer_0_partition": 2,
+        "claim_events": [
+          {
+            "pod": "durable-db-0/2c517f60-8152-47a2-8c98-699a3cc2672f",
+            "time_utc": "2026-11-13T13:26:11.198234Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "claim",
+            "elapsed_ms": 2762
+          }
+        ],
+        "scope": "Sparse post-hold probes, not continuous monitoring. All writer-0 paths returned 503 while Ready; a new claim for its partition was sampled during the hold. Logs do not establish why the incumbent stopped serving."
+      }
+    },
+    "rollout": {
+      "harness_source_commit": "9184d86f5cb157391980d1329bc4678ee26dd7e3",
+      "binary_source_commit": "9184d86f5cb157391980d1329bc4678ee26dd7e3",
+      "binary_sha256": "d41ab13ceff1b72e018b35c90cee536c0d3d7b569725032d01b544c303738d81",
+      "image_digest": "sha256:2931982eb14e18bf9ddcbf049bd5511f89e5f2ddb797c15a5c1b4119b642c180",
+      "transport_sha256": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "acknowledged": 773,
+      "readbacks": 773,
+      "recovered_keys": 773,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 773,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "rolling-replacement-1",
+            "duration_seconds": 104.17262883700002,
+            "readbacks": [
+              47,
+              63,
+              68,
+              47
+            ],
+            "max_completed_readback_gap_seconds": [
+              47.02095379899998,
+              34.02063197199996,
+              38.92522732399999,
+              47.54252611499999
+            ],
+            "open_readback_gap_seconds": [
+              0.2253679500000203,
+              0.052666835000025,
+              1.5424401579999767,
+              0.9498863750000055
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          },
+          {
+            "name": "rolling-replacement-2",
+            "duration_seconds": 95.83128331099999,
+            "readbacks": [
+              40,
+              57,
+              50,
+              43
+            ],
+            "max_completed_readback_gap_seconds": [
+              31.779842679000012,
+              44.30343939299996,
+              45.74077684700001,
+              31.619287313999962
+            ],
+            "open_readback_gap_seconds": [
+              1.359629573999996,
+              0.7687922410000283,
+              0.3002693459999932,
+              1.4547854390000339
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "identified_data_sockets": 174,
+      "identified_cross_database_sockets": 0,
+      "identified_sockets_with_repeated_refusals": 0,
+      "connection_summary": {
+        "acknowledged": 773,
+        "readbacks": 773,
+        "recovered_keys": 773,
+        "rpc_statuses": {
+          "commit_rpc": {
+            "200": 773,
+            "503": 251,
+            "transport_or_decode_error": 9
+          },
+          "read_rpc": {
+            "200": 773,
+            "503": 154,
+            "transport_or_decode_error": 28
+          }
+        },
+        "distinct_observed_connections": 174,
+        "maximum_unavailable_responses_on_one_connection_per_rpc": 1,
+        "maximum_unavailable_responses_per_identified_connection": 1,
+        "identified_connections_with_repeated_unavailable": 0,
+        "rpcs_with_repeated_unavailable_on_one_connection": 0,
+        "observed_buckets": {
+          "overflow": 307
+        },
+        "unidentified_statuses": {
+          "overflow": {
+            "200": 18,
+            "503": 285,
+            "transport_or_decode_error": 4
+          },
+          "unobserved": {}
+        },
+        "repeated_examples": [],
+        "hold_progress": [],
+        "recovery": [
+          {
+            "name": "scale-3",
+            "max_upper_bound_seconds": 19.8269425049657,
+            "target_seconds": 60,
+            "within_target": true
+          },
+          {
+            "name": "scale-6",
+            "max_upper_bound_seconds": 38.95755638903938,
+            "target_seconds": 60,
+            "within_target": true
+          },
+          {
+            "name": "rolling-replacement-1",
+            "max_upper_bound_seconds": 103.51866436901037,
+            "target_seconds": 60,
+            "within_target": false
+          },
+          {
+            "name": "rolling-replacement-2",
+            "max_upper_bound_seconds": 95.18751929595601,
+            "target_seconds": 60,
+            "within_target": false
+          },
+          {
+            "name": "cold-three",
+            "max_upper_bound_seconds": 51.68897440901492,
+            "target_seconds": 120,
+            "within_target": true
+          }
+        ],
+        "scope": "Socket IDs identify Node HTTP socket assignments, not backend pods; assignment can occur before connection establishment. Per-RPC totals include retries outside the hold; unavailable outcomes can include recovery/provider delays. Overflow and pre-socket failures cannot identify reuse. Short samples are not a causal latency comparison or production SLO."
+      },
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1657
+      },
+      "evidence_sha256": {
+        ".tools/database-pool-refusal-rollout-b2/kubernetes.json": "019543376ad1e619246488f3cd78cf7391c52bc78265343434f39631f106746e",
+        ".tools/database-pool-refusal-rollout-b2/kubernetes.history.jsonl": "12a16fedc3be9d569fff0fdd49f9cb5ab2f1b31cc89acf2b33ae8b222b318b2d",
+        ".tools/database-pool-refusal-rollout-b2/result.json": "c57b7c5fd5a2a90e68ce2370002d7adccb29cbb01be879632317139d17bc2b29",
+        ".tools/database-pool-refusal-rollout-b2/history-check.json": "e5a44538ef3be307cbbfd87f0493e6fa11d62b174ecd51be64f8b554c11cd955",
+        ".tools/database-pool-refusal-rollout-b2/connection-summary.json": "bf283a46817631488db7a5083daf13dcc74d224e504253900704d5843b2a9f65",
+        ".tools/database-pool-refusal-rollout-b2.log": "949dfb9846afba6b4112386a17fb012f18b84ba29dee242430b778272e40fd98"
+      },
+      "identified_refused_data_sockets": 120,
+      "identified_data_reuse_after_refusal": 0
+    },
+    "failed_rollout": {
+      "source_commit": "49533d73bc8c1a285c3a14c95faf4e97f8346af2",
+      "complete": false,
+      "controller_failure": {
+        "type": "HTTPError",
+        "reason": "HTTP Error 500: Internal Server Error"
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-13T13:49:13.562497+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            56.18913581606466,
+            49.23287656006869,
+            17.120589405996725,
+            52.70527502405457
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "diagnostic_metrics_statuses": [
+        429,
+        429,
+        429
+      ],
+      "partial_acknowledged": 145,
+      "partial_readbacks": 145,
+      "partial_http_attempt_statuses": {
+        "200": 308,
+        "429": 313,
+        "503": 152,
+        "transport_or_decode_error": 9
+      },
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted_on_retry": 446,
+        "retry_required": "initial cleanup failed with provider connection reset; earlier deletion count is unknown"
+      },
+      "report_sha256": "be4e80b351abc3f70656aecb1982222d612ac3e61fddfbea2fb5116bf66c0e93",
+      "result_sha256": "fb3ab9d1e215fc6dced434ed5e0fb00f72d83f86b2faf3b937462fda6fe51068",
+      "scope": "Budget inspection failed with HTTP 500 after scale-three. No complete history check or cold recovery result. Local tests independently show refusal sockets must be discarded; this does not attribute the entire cloud failure to pooling. Provider connection reset interrupted cleanup; retry completed."
+    },
+    "qualification_scope": "The isolation comparison keeps the exact v0.24.21 server and uses transport at 9a1a070. The v0.24.22 corrected rollout uses the final transport, adding explicit identity encoding and individual HTTP 429/503 socket retirement. The intervening failed rollout is retained separately. Local and cloud work use the same transport implementation. HTTP observer changed from Undici sendHeaders to Node socket assignment; IDs can include sockets before connect. Nonidentical short runs do not establish causal latency gains or an SLO. No new AWS result.",
+    "removed": [
+      "SDK global fetch transport",
+      "old workload Undici observer",
+      "obsolete client/example version pins",
+      "10 model scratch directories; result logs retained",
+      "21,107,540 bytes of superseded candidate binary/archive; verification records retained"
+    ],
+    "artifact": {
+      "source_commit": "9184d86f5cb157391980d1329bc4678ee26dd7e3",
+      "pipeline_status_at_verification": "success",
+      "woodpecker_pipeline": 363,
+      "artifact_image_digest": "sha256:9b205dd5f98a2240f3bd405a89fbb2a2e9796b1b632997b7883cf36292cf1bc5",
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.22",
+        "archive_sha256": "cb10b2010aa4c4a9a4cb70eb27b95ff95000ce9b3035bf2fc64d4c8e081fbee3",
+        "binary_sha256": "d41ab13ceff1b72e018b35c90cee536c0d3d7b569725032d01b544c303738d81",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "standalone_checked_in_woodpecker_and_after_download": true,
+      "archive_bytes": 6417549,
+      "version": "v0.24.22",
+      "experimental": true,
+      "woodpecker": {
+        "pipeline": 363,
+        "url": "https://ci.eflorenzano.com/repos/18/pipeline/363/1",
+        "status": "success",
+        "steps": [
+          {
+            "name": "clone",
+            "state": "success"
+          },
+          {
+            "name": "dependency-audit",
+            "state": "success"
+          },
+          {
+            "name": "javascript-audit",
+            "state": "success"
+          },
+          {
+            "name": "verify-and-build",
+            "state": "success"
+          },
+          {
+            "name": "publish-docs",
+            "state": "success"
+          }
+        ]
+      },
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "native_client_contract": {
+        "artifact_success_marker": true,
+        "fresh_contract_stdout": true
+      },
+      "capacity_test_passed": true,
+      "github_actions_disabled": true,
+      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:9b205dd5f98a2240f3bd405a89fbb2a2e9796b1b632997b7883cf36292cf1bc5",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.22",
+      "published_at": "2026-11-13T14:18:06Z",
+      "github_asset_digest_matches": true
+    },
+    "source_sha256": {
+      "clients/javascript/transport.mjs": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+      "clients/javascript/transport.test.mjs": "587b34d4f7499516fc8540a2ead236642131f3b150a39025ae48ab16dca389f3",
+      "clients/javascript/client.mjs": "347b8edb56e59957d445ef9faabfae45a80f8a55cf608bd1d759c98e5f8a5991",
+      "scripts/cluster-workload.mjs": "fe87f8a9d0b35c1bfd5f29549d88a8f182b7b823c202fdb0c75b7cf6b7d0241f",
+      "scripts/qualify-multinode.py": "9161a1c94b66d6d4badb342738035ce98de93b34dd332274683e406e9ab4f8cd"
+    },
+    "local_log_sha256": {
+      ".tools/database-pool-refusal-tests.log": "a8663fc14af75f85a36fcc3d95254587caa92b43ae7317fe67dd14e1da1a6d61",
+      ".tools/database-pool-release-tests.log": "da0af15d7d42dcab15b6f4ae5742a24ae954e969aa14fd1909e0c779c2f7557b",
+      ".tools/database-pool-refusal-client.log": "84a49637e495519ba2718524b3a23d6378e3eca7a523ee13d9def82682e3efeb",
+      ".tools/database-pool-harness.log": "f2128114da85e9bb007508554673a2d6f04b55bffe82a61600ed5494c23d9d6b",
+      ".tools/database-pool-model.log": "96662bcc227bd0dc8814a0d98684cb4cb498c07c29ad073b0acdff53b8bfd7df",
+      ".tools/database-pool-negative-origin.log": "7baa760ec6874956b47000e2f67e3f586095e5a111cdb288c44d05b1ba27fa72",
+      ".tools/database-pool-negative-replay.log": "442b039d07c5cf599376ec72e0763c147a8383961310df0a8f4703634a63cc13",
+      ".tools/database-pool-refusal-before.log": "812f342fe66bee74a24e839f1e9a5cabdcbb78849a35830e8f0fe66f2fc5803d",
+      ".tools/database-pool-refusal-negative-pool.log": "27f0acf5eda83a2210299fa58c4a4421e4bd9a7939df5899933dc177621ed19d",
+      ".tools/database-pool-format.log": "8faa6ec2d8e29bbb2e087b99aa6597276dbb8793a494c5eeafdcc1094ae72b81",
+      ".tools/database-pool-types.log": "63d2524acdcf38cde0ba8570c9e49ccc2f9f33a696f2316d16708234dd892699"
+    }
   }
 }
