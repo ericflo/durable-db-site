@@ -20648,7 +20648,7 @@
     }
   },
   "checkpoint_shared_staging": {
-    "status": "Verified experimental v0.24.13 candidate; reads continue during staging, rollout latency target remains missed",
+    "status": "Released experimental v0.24.13; two B2 rollout campaigns preserve 1,405 acknowledgements; latency targets remain missed",
     "routine_rust_checks_passed": 370,
     "ignored_opt_in_checks": 20,
     "formatting_and_strict_clippy_passed": true,
@@ -20902,7 +20902,23 @@
       },
       "capacity_test_passed": true,
       "github_actions_disabled": true,
-      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:0b3fa9156d4c20e64e831924106df2c847b253cf58add3f67b82c3a79f2ceedc"
+      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:0b3fa9156d4c20e64e831924106df2c847b253cf58add3f67b82c3a79f2ceedc",
+      "tag_pipeline": {
+        "pipeline": 322,
+        "status": "success"
+      },
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.13",
+      "published_at": "2026-11-13T05:34:55Z",
+      "github_asset_digest_matches": true,
+      "installer": {
+        "public_installer_matches_docs_source": true,
+        "docs_source_commit": "fec50a395eade0eee0cadb573964988ef3589940",
+        "default_version": "v0.24.13",
+        "downloaded_github_asset": true,
+        "checksum_verified": true,
+        "installed_binary_matches_smoke_test": true,
+        "temporary_installation_removed": true
+      }
     },
     "b2_rollout": {
       "binary_source_commit": "39cdf5113477422c06d4d2b2e7fcf55f4ebfa9df",
@@ -21271,7 +21287,597 @@
       "status": "success",
       "url": "https://ci.eflorenzano.com/repos/18/pipeline/322/1"
     },
-    "release_asset_digests_verified": true
+    "release_asset_digests_verified": true,
+    "b2_diagnostic_rollout": {
+      "binary_source_commit": "39cdf5113477422c06d4d2b2e7fcf55f4ebfa9df",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.13",
+      "binary_sha256": "3ad2b8189f411962ab5541388c8edfce1f998a85bdacc391b5a3ff558f0d0747",
+      "image_digest": "sha256:2cf9d4654918caa8c4e2445137aea32915c6c32163a8014c13d794f4ca7f76b5",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 729,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "rolling-replacement-1",
+            "duration_seconds": 116.09621599600001,
+            "readbacks": [
+              51,
+              51,
+              48,
+              53
+            ],
+            "max_completed_readback_gap_seconds": [
+              30.027630244000022,
+              62.780480411999974,
+              58.660794089000035,
+              32.94592423100005
+            ],
+            "open_readback_gap_seconds": [
+              1.1419362409999962,
+              0.27512685499999634,
+              2.5607953080000243,
+              1.0674453599999651
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          },
+          {
+            "name": "rolling-replacement-2",
+            "duration_seconds": 141.802767936,
+            "readbacks": [
+              25,
+              48,
+              41,
+              26
+            ],
+            "max_completed_readback_gap_seconds": [
+              74.295743803,
+              57.595074669999974,
+              90.52865556899997,
+              87.42400115600003
+            ],
+            "open_readback_gap_seconds": [
+              3.5957200880000073,
+              0.5769179229999963,
+              0.5965265040000531,
+              3.5920512269999563
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1387
+      },
+      "schema": 2,
+      "started_at": "2026-11-13T05:30:32.896837+00:00",
+      "finished_at": "2026-11-13T05:42:45.004220+00:00",
+      "source_commit": "367d47af9ca54473fcf5006e0021e59c52b4f244",
+      "harness_sha256": "530c07763ea55a55b75efc8df3b35e5b5fa2856639ddd56bcd379726afd5b095",
+      "workload_sha256": "685048b5e49469b274d43a0187e571f168e52b54a1d539dc497dcd655138dc8c",
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "writes_acknowledged": 729,
+      "reads_verified": 729,
+      "verified_keys": 729,
+      "history_sha256": "663e561b7c8e8a5a6cc88a57165a0193db1c82b4814b9c8b6cb37dc3192c76e3",
+      "namespace_removed": true,
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-13T05:32:55.396348+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.644438449991867,
+            16.644438449991867,
+            16.644438449991867,
+            12.709515974042006
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-13T05:33:55.510402+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            66.09078552189749,
+            16.347194876987487,
+            16.347194876987487,
+            66.09078552189749
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-13T05:35:15.684630+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            90.41850590298418,
+            115.49069153307937,
+            90.41850590298418,
+            90.41850590298418
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-13T05:37:16.940225+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            137.39201140298974,
+            141.17847899300978,
+            119.5764210060006,
+            137.39201140298974
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T05:40:11.987360+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            69.36532633099705,
+            33.52044312900398,
+            55.03533692401834,
+            69.36532633099705
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "stages": {
+          "activation_events": {
+            "complete_calls_sampled": 84,
+            "longest_elapsed_ms": 9923
+          },
+          "selection_events": {
+            "complete_calls_sampled": 84,
+            "longest_elapsed_ms": 31957
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 65,
+            "longest_elapsed_ms": 10285
+          }
+        },
+        "checkpoint_control_work": {
+          "complete_calls_sampled": 65,
+          "calls_with_confirmation": 1,
+          "confirmation_events": 1,
+          "longest_funding_ms": 6747,
+          "scope": "Complete sampled checkpoint calls; confirmation may resolve a real race or unknown response. Counts are not population rates."
+        },
+        "retained_scan_retries": 3,
+        "queued_receipt_completions": 65,
+        "publication": {
+          "complete_calls_sampled": 460,
+          "partial_calls_sampled": 24,
+          "conflicted_calls": 115,
+          "outcomes": {
+            "confirmed": 286,
+            "helped": 174,
+            "uncertain": 0
+          },
+          "comparison_attempts": 411,
+          "conflicts": 125,
+          "scope": "Complete bounded log samples, not rates or a population distribution. Initial includes observation/uploads before helper admission. Preparation includes discovery, target checks and directory uploads; comparison is the conditional provider call. Separate maxima are not one critical path.",
+          "maxima_ms": {
+            "elapsed": 10242,
+            "initial": 7738,
+            "queue": 7203,
+            "preparation": 6507,
+            "comparison": 3234
+          }
+        }
+      },
+      "raw_evidence_sha256": {
+        "kubernetes.json": "ae3cf72c585ea2a74cdfc77cef9b3b11c1023b0890ce3a7f655fa4401428fef2",
+        "history-check.json": "aaf9a772b14fa5d5dccba6aba67c50b1c5c009eaa33ae8628f03bade778c5325",
+        "cost-summary.json": "417dfabd19908c99c348bbbcd4d3b3cbd57994569af1dfc106af26d0749ef3e0"
+      },
+      "acquisition_calls": {
+        "completed_calls_sampled": 208,
+        "ready_calls_sampled": 84,
+        "deferred_calls_sampled": 118,
+        "confirmed_claims_with_terminal_event": 84,
+        "failed_after_confirmed_claim": [],
+        "unfinished_claimed_calls_sampled": 0,
+        "longest_ready_ms": 45746,
+        "scope": "Bounded per-pod acquisition traces only. Failed means an explicit failure after the activate stage, not inferred cancellation. Incomplete traces cannot establish cancellation or exhaustive counts; elapsed times stay within one acquisition."
+      },
+      "readback_gap_breakdown": [
+        {
+          "name": "rolling-replacement-1",
+          "writers": [
+            {
+              "writer": 0,
+              "partition": 2,
+              "gap_seconds": 30.027630244000022,
+              "before_commit_seconds": 0.2497831200000178,
+              "commit_seconds": 0.33810865899999953,
+              "after_ack_seconds": 29.439738465000005,
+              "revision": 42,
+              "start_seconds": 258.438210153,
+              "end_seconds": 288.465840397,
+              "commit_rpc": {
+                "request_seconds": 0.33806570599999397,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 3.936199450999905,
+                "backoff_seconds": 25.502997863000083,
+                "statuses": {
+                  "200": 1,
+                  "429": 5,
+                  "503": 25
+                }
+              }
+            },
+            {
+              "writer": 1,
+              "partition": 12,
+              "gap_seconds": 62.780480411999974,
+              "before_commit_seconds": 0.25076757000005045,
+              "commit_seconds": 62.281666521999966,
+              "after_ack_seconds": 0.24804631999995763,
+              "revision": 157,
+              "start_seconds": 307.44470937,
+              "end_seconds": 370.225189782,
+              "commit_rpc": {
+                "request_seconds": 54.77706144000002,
+                "backoff_seconds": 7.504395440999943,
+                "statuses": {
+                  "200": 1,
+                  "429": 10,
+                  "transport_or_decode_error": 2
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 0.24796372800000244,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            {
+              "writer": 2,
+              "partition": 14,
+              "gap_seconds": 58.660794089000035,
+              "before_commit_seconds": 0.2508751670000038,
+              "commit_seconds": 58.32919158499999,
+              "after_ack_seconds": 0.08072733700004164,
+              "revision": 110,
+              "start_seconds": 271.448651999,
+              "end_seconds": 330.109446088,
+              "commit_rpc": {
+                "request_seconds": 21.822408409999973,
+                "backoff_seconds": 36.50610419699993,
+                "statuses": {
+                  "200": 1,
+                  "429": 12,
+                  "503": 29
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 0.08064380099996925,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            {
+              "writer": 3,
+              "partition": 2,
+              "gap_seconds": 32.94592423100005,
+              "before_commit_seconds": 0.25068111600000975,
+              "commit_seconds": 0.7715745749999883,
+              "after_ack_seconds": 31.92366854000005,
+              "revision": 38,
+              "start_seconds": 258.004826849,
+              "end_seconds": 290.95075108000003,
+              "commit_rpc": {
+                "request_seconds": 0.771513769000012,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 5.42002505400026,
+                "backoff_seconds": 26.503107683999808,
+                "statuses": {
+                  "200": 1,
+                  "429": 6,
+                  "503": 25
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "rolling-replacement-2",
+          "writers": [
+            {
+              "writer": 0,
+              "partition": 2,
+              "gap_seconds": 74.295743803,
+              "before_commit_seconds": 0.28858879199998455,
+              "commit_seconds": 1.963299438999968,
+              "after_ack_seconds": 72.04385557200004,
+              "revision": 95,
+              "start_seconds": 378.190088328,
+              "end_seconds": 452.485832131,
+              "commit_rpc": {
+                "request_seconds": 1.9632467490000418,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 52.540094687000035,
+                "backoff_seconds": 19.503377649000146,
+                "statuses": {
+                  "200": 1,
+                  "429": 2,
+                  "503": 20,
+                  "transport_or_decode_error": 2
+                }
+              }
+            },
+            {
+              "writer": 1,
+              "partition": 12,
+              "gap_seconds": 57.595074669999974,
+              "before_commit_seconds": 0.2505646660000025,
+              "commit_seconds": 57.00309170799994,
+              "after_ack_seconds": 0.34141829600002893,
+              "revision": 206,
+              "start_seconds": 458.29165725,
+              "end_seconds": 515.88673192,
+              "commit_rpc": {
+                "request_seconds": 36.501485168000166,
+                "backoff_seconds": 20.501342021000106,
+                "statuses": {
+                  "200": 1,
+                  "429": 15,
+                  "503": 9,
+                  "transport_or_decode_error": 1
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 0.34127980000001845,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            },
+            {
+              "writer": 2,
+              "partition": 14,
+              "gap_seconds": 90.52865556899997,
+              "before_commit_seconds": 0.2503709409999715,
+              "commit_seconds": 36.48287549099996,
+              "after_ack_seconds": 53.795409137000036,
+              "revision": 148,
+              "start_seconds": 377.64041850700005,
+              "end_seconds": 468.169074076,
+              "commit_rpc": {
+                "request_seconds": 17.975077998000256,
+                "backoff_seconds": 18.507565699000082,
+                "statuses": {
+                  "200": 1,
+                  "503": 23
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 52.79386564399995,
+                "backoff_seconds": 1.0013971990000572,
+                "statuses": {
+                  "200": 1,
+                  "503": 2,
+                  "transport_or_decode_error": 2
+                }
+              }
+            },
+            {
+              "writer": 3,
+              "partition": 2,
+              "gap_seconds": 87.42400115600003,
+              "before_commit_seconds": 0.25020203800005447,
+              "commit_seconds": 87.06236849999999,
+              "after_ack_seconds": 0.11143061799998577,
+              "revision": 94,
+              "start_seconds": 378.81429617699996,
+              "end_seconds": 466.238297333,
+              "commit_rpc": {
+                "request_seconds": 66.56020699700002,
+                "backoff_seconds": 20.50190543199994,
+                "statuses": {
+                  "200": 1,
+                  "429": 5,
+                  "503": 18,
+                  "transport_or_decode_error": 2
+                }
+              },
+              "read_rpc": {
+                "request_seconds": 0.11135336899996037,
+                "backoff_seconds": 0,
+                "statuses": {
+                  "200": 1
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "rpc_timing": {
+        "scope": "Workload monotonic time; bounded per-operation request and backoff totals plus HTTP status counts. Transport/decode errors are not identified as connection versus request timeouts. Earlier reports lack these optional fields. No cross-host timing attribution.",
+        "longest_completed_reads": [
+          {
+            "writer": 2,
+            "revision": 197,
+            "commit_seconds": 3.874528906000137,
+            "read_seconds": 73.55529274599996,
+            "commit_rpc": {
+              "request_seconds": 3.874475355000002,
+              "backoff_seconds": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "read_rpc": {
+              "request_seconds": 63.05098442600004,
+              "backoff_seconds": 10.504126681999887,
+              "statuses": {
+                "200": 1,
+                "429": 6,
+                "transport_or_decode_error": 9
+              }
+            }
+          },
+          {
+            "writer": 0,
+            "revision": 95,
+            "commit_seconds": 1.963299438999968,
+            "read_seconds": 72.04385557200004,
+            "commit_rpc": {
+              "request_seconds": 1.9632467490000418,
+              "backoff_seconds": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "read_rpc": {
+              "request_seconds": 52.540094687000035,
+              "backoff_seconds": 19.503377649000146,
+              "statuses": {
+                "200": 1,
+                "429": 2,
+                "503": 20,
+                "transport_or_decode_error": 2
+              }
+            }
+          },
+          {
+            "writer": 2,
+            "revision": 148,
+            "commit_seconds": 36.48287549099996,
+            "read_seconds": 53.795409137000036,
+            "commit_rpc": {
+              "request_seconds": 17.975077998000256,
+              "backoff_seconds": 18.507565699000082,
+              "statuses": {
+                "200": 1,
+                "503": 23
+              }
+            },
+            "read_rpc": {
+              "request_seconds": 52.79386564399995,
+              "backoff_seconds": 1.0013971990000572,
+              "statuses": {
+                "200": 1,
+                "503": 2,
+                "transport_or_decode_error": 2
+              }
+            }
+          },
+          {
+            "writer": 1,
+            "revision": 215,
+            "commit_seconds": 0.40873686000009,
+            "read_seconds": 43.84478388299988,
+            "commit_rpc": {
+              "request_seconds": 0.40867972500005273,
+              "backoff_seconds": 0,
+              "statuses": {
+                "200": 1
+              }
+            },
+            "read_rpc": {
+              "request_seconds": 22.339574008999392,
+              "backoff_seconds": 21.504895932000245,
+              "statuses": {
+                "200": 1,
+                "429": 10,
+                "503": 14,
+                "transport_or_decode_error": 2
+              }
+            }
+          }
+        ]
+      }
+    },
+    "released_binary_b2_acknowledgements_recovered": 1405
   },
   "eight_acquisition_slots": {
     "status": "Rejected and removed; first rollout readback gap worsened; four-slot bound restored",

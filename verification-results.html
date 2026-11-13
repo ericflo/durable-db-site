@@ -79,6 +79,24 @@ respectively; they are separate calls, not one critical path. Allowing reads
 during staging fixes the controlled blocking case but leaves publication,
 routing and acquisition delays to isolate. Open gaps are right-censored; the
 workload monotonic clock does not attribute all delay to the rollout.</p>
+<p>A second rollout campaign uses the same released binary with the updated
+workload’s per-operation timing summaries. All <strong>729 additional acknowledgements</strong>
+recover, for <strong>1,405 across the two release-binary campaigns</strong>. Its direct rollout
+gaps are <strong>62.78 / 90.53s</strong>; whole-rollout bounds are <strong>115.49 / 141.18s</strong>. Scale-up
+takes <strong>16.64 / 66.09s</strong>, so scale-to-six misses 60s this time. Cold recovery takes
+<strong>69.37s</strong>. Its namespace, bucket, scoped key and <strong>1,387 physical versions</strong>
+are removed. These repeated misses keep the gate open.</p>
+<p>The diagnostic run distinguishes two causes of elapsed client time. One <strong>31.92s</strong>
+post-acknowledgement read spends <strong>5.42s</strong> in requests and <strong>26.50s</strong> backing off
+after 25 unavailable and six overload responses. Another <strong>72.04s</strong> read spends
+<strong>52.54s</strong> in requests, including two transport/decode failures, and <strong>19.50s</strong>
+backing off. The largest first-rollout gap is mostly a <strong>62.28s commit</strong>; the
+largest second gap includes a <strong>36.48s commit plus 53.80s readback</strong>. These summaries
+do not identify whether a long attempt waits on connection, forwarding, owner
+locking or provider I/O. The next target is separating those waits from the
+interval with no recovered owner; changing concurrency or deadlines without
+that distinction has not earned a performance claim. The diagnostic fields
+leave history acceptance and retry behavior unchanged.</p>
 <p>The earlier one-minute acquisition queue was occupied by other recoveries,
 not an idle timer. An eight-slot experiment at <code>cb2b54e</code> keeps the same aggregate
 resident budget and recovers all <strong>786 acknowledgements</strong>, but direct rollout
@@ -86,7 +104,7 @@ gaps worsen to <strong>115.38 / 81.58s</strong> (whole bounds <strong>162.96 / 1
 improves to <strong>15.59 / 19.74s</strong> and cold recovery takes <strong>66.27s</strong>. The tradeoff does
 not justify doubling concurrency: the experiment and its expanded fixture are
 <strong>removed</strong>, restoring four slots. Its namespace, bucket, key and <strong>1,346 versions</strong>
-are removed. Those writes belong to a different binary and are not added to the
+are removed, along with the rejected local binary artifacts. Those writes belong to a different binary and are not added to the
 release’s recovery count. <a href="evidence/native-recovery-2026-11-11.json">Artifacts, measurements and scope</a>.</p>
 <p>Cleanup also removes the implicit foreground maintenance helper and all six
 call sites, obsolete API migration instructions and stale clock/lock wording.
