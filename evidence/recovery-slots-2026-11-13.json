@@ -1,0 +1,583 @@
+{
+  "date_utc": "2026-11-13",
+  "release": "v1.0.2",
+  "url": "https://github.com/ericflo/durable-db/releases/tag/v1.0.2",
+  "published_at": "2026-11-13T20:57:06Z",
+  "source_commit": "4e8b32fb96b1eb1193d0b8df4d91f7ca8c3f784f",
+  "build": {
+    "rust": "1.90.0",
+    "rust_wrapper": "kache",
+    "target": "x86_64-unknown-linux-musl",
+    "static_pie": true
+  },
+  "woodpecker": {
+    "pipeline": 390,
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/390/1",
+    "status": "success",
+    "steps": [
+      {
+        "name": "clone",
+        "state": "success"
+      },
+      {
+        "name": "dependency-audit",
+        "state": "success"
+      },
+      {
+        "name": "javascript-audit",
+        "state": "success"
+      },
+      {
+        "name": "verify-and-build",
+        "state": "success"
+      },
+      {
+        "name": "publish-docs",
+        "state": "success"
+      }
+    ]
+  },
+  "artifact_image_digest": "sha256:66b5d5dc27d8825d6362eb8d24d2a8cc489015feb570907549228d03b4e56097",
+  "archive_bytes": 6426058,
+  "standalone": {
+    "version": "1.0.2",
+    "archive_sha256": "f0d5cc31081cf1d3892433245e46fb47ca404add9020c12f7c4d41c43fa1f633",
+    "binary_sha256": "88d70f1407f58bbcd9afc81a93208007de99b3c964816cd3c3a184c1bb30a648",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true
+  },
+  "github_asset_digests_verified": true,
+  "github_actions_disabled": true,
+  "local_checks": {
+    "regression_before_fix": "Fails: four acquisition slots occupied instead of two when only one partition is requested.",
+    "controller_tests": 27,
+    "controller_seconds": 6.11,
+    "harness_tests": 4,
+    "harness_seconds": 8.661,
+    "formatting": "passed",
+    "strict_clippy": "passed"
+  },
+  "model": {
+    "name": "OwnerResidency",
+    "transition_system_changed": false,
+    "distinct_states": 19,
+    "generated_states": 46,
+    "depth": 5,
+    "negative_controls": [
+      "UnsafeResidentAcquire: Bounded",
+      "UnsafeResidentRetire: Funded"
+    ],
+    "source_sha256": "6f65bad85f3bc2cc2e08aee685b45b7270b498cc6d9d17890a35e47bb97512bc"
+  },
+  "scheduling": {
+    "concurrent_acquisitions": 4,
+    "background_limit_while_local_demand_exists": 1,
+    "existing_acquisitions_preempted": false,
+    "new_state_tasks_provider_operations_or_authority": false,
+    "description": "Requested partitions keep priority; background recovery no longer fills every slot while requested retries wait. Unrequested work still progresses."
+  },
+  "baseline": {
+    "binary_source_commit": "b441e2c695211ca679f8dea8cce33c46fdc02707",
+    "binary_sha256": "b81616dcef4c61804a7c786602d4b7e9151adfc58e152b54f59675b8442d9280",
+    "image_digest": "sha256:5e0f220883cf70968bbd289f431151b1e1a20fa1d36026d09007b555415ea041",
+    "runtime_matches_verified_artifact": true,
+    "history_sha256": "a91e3c28b854448a01bb3292545f61e8950334744ee9f0fd2a912dbd8953aa13",
+    "started_at": "2026-11-13T20:33:06.975735+00:00",
+    "finished_at": "2026-11-13T20:39:46.999894+00:00",
+    "report_sha256": "829baf4d04ca4967c0cb8782d788a0d835821499d0fe6ad546032e2286506b80",
+    "independent_history_check": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 466,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "scale-one",
+          "duration_seconds": 52.297569912,
+          "readbacks": [
+            6,
+            4,
+            12,
+            5
+          ],
+          "max_completed_readback_gap_seconds": [
+            57.030274883999994,
+            39.83080031,
+            35.709839036999995,
+            57.19704188900002
+          ],
+          "open_readback_gap_seconds": [
+            0.20869116500000473,
+            0.3709233440000048,
+            0.5233880899999974,
+            0.5328202569999974
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovered_keys": 466,
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T20:34:37.040910+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.438241009018384,
+          32.93532823701389,
+          15.438241009018384,
+          15.438241009018384
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T20:35:28.308148+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          18.251774120959453,
+          18.251774120959453,
+          21.717136841034517,
+          18.251774120959453
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T20:36:11.959221+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          51.80930910794996,
+          51.80930910794996,
+          44.70223252498545,
+          51.80930910794996
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T20:37:45.499459+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          43.69281568808947,
+          50.737744279089384,
+          61.36070213105995,
+          43.69281568808947
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "worst_readback_gap_by_writer": [
+      {
+        "writer": 0,
+        "revision": 62,
+        "gap_seconds": 57.030274883999994,
+        "commit_rpc": {
+          "request_seconds": 27.463617913999972,
+          "backoff_seconds": 8.501315975000004,
+          "longest_request": {
+            "seconds": 19.086265282000006,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 13
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 2.3080099140000243,
+          "backoff_seconds": 18.505278400000012,
+          "longest_request": {
+            "seconds": 0.2639552200000035,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 23
+          }
+        }
+      },
+      {
+        "writer": 1,
+        "revision": 100,
+        "gap_seconds": 39.83080031,
+        "commit_rpc": {
+          "request_seconds": 0.4241719490000105,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.4241719490000105,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 3.650710653999995,
+          "backoff_seconds": 35.505107873999926,
+          "longest_request": {
+            "seconds": 0.25425105699998674,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 38,
+            "transport_or_decode_error": 2
+          }
+        }
+      },
+      {
+        "writer": 2,
+        "revision": 65,
+        "gap_seconds": 35.709839036999995,
+        "commit_rpc": {
+          "request_seconds": 0.6051974489999993,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.6051974489999993,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 3.3457837149998526,
+          "backoff_seconds": 31.507121341000083,
+          "longest_request": {
+            "seconds": 0.24592093200000817,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 35,
+            "transport_or_decode_error": 1
+          }
+        }
+      },
+      {
+        "writer": 3,
+        "revision": 58,
+        "gap_seconds": 57.19704188900002,
+        "commit_rpc": {
+          "request_seconds": 29.141158448000034,
+          "backoff_seconds": 10.502511642999975,
+          "longest_request": {
+            "seconds": 22.371565376000014,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 15
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 1.799269722999976,
+          "backoff_seconds": 15.503254187999934,
+          "longest_request": {
+            "seconds": 0.09703984599999967,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 20
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 1112,
+      "namespace_removed": true
+    }
+  },
+  "candidate": {
+    "binary_source_commit": "4e8b32fb96b1eb1193d0b8df4d91f7ca8c3f784f",
+    "binary_sha256": "88d70f1407f58bbcd9afc81a93208007de99b3c964816cd3c3a184c1bb30a648",
+    "image_digest": "sha256:63e80eee5540d1dd8a011b53f5b2b0d492dd966e3697303c26f0cb6a23666770",
+    "runtime_matches_verified_artifact": true,
+    "history_sha256": "049a892dc06286fb41235426703ba6dfad9bd49d2cb92c606b4582037daeb9cc",
+    "started_at": "2026-11-13T20:48:36.496109+00:00",
+    "finished_at": "2026-11-13T20:55:01.113301+00:00",
+    "report_sha256": "7c83aa375508cfb35cccf41b768547c7ff0ea3ce1d49806b8b7f89cab757758e",
+    "independent_history_check": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 393,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "scale-one",
+          "duration_seconds": 59.49865000700004,
+          "readbacks": [
+            8,
+            19,
+            18,
+            7
+          ],
+          "max_completed_readback_gap_seconds": [
+            54.673396604000004,
+            34.402713686,
+            45.521082444,
+            41.71741337
+          ],
+          "open_readback_gap_seconds": [
+            0.4679231500000185,
+            0.6875134250000201,
+            0.12985073300001204,
+            0.47913860500003125
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovered_keys": 393,
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T20:50:04.702015+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.434824493946508,
+          15.434824493946508,
+          15.434824493946508,
+          15.434824493946508
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T20:50:43.968510+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          30.13179365103133,
+          19.421269449056126,
+          15.827436246094294,
+          33.6257442550268
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T20:51:30.774421+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          59.01079667394515,
+          48.2589622909436,
+          48.2589622909436,
+          59.01079667394515
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T20:53:11.103339+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          44.128730796976015,
+          44.128730796976015,
+          44.128730796976015,
+          44.128730796976015
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "worst_readback_gap_by_writer": [
+      {
+        "writer": 0,
+        "revision": 49,
+        "gap_seconds": 54.673396604000004,
+        "commit_rpc": {
+          "request_seconds": 17.827098253000003,
+          "backoff_seconds": 36.50953952799996,
+          "longest_request": {
+            "seconds": 13.421844641000003,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 39,
+            "transport_or_decode_error": 2
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 0.08487647299998206,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.08487647299998206,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        }
+      },
+      {
+        "writer": 1,
+        "revision": 75,
+        "gap_seconds": 34.402713686,
+        "commit_rpc": {
+          "request_seconds": 0.41384609599999383,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.41384609599999383,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 3.227066846999951,
+          "backoff_seconds": 30.510733896999945,
+          "longest_request": {
+            "seconds": 0.26505983099999136,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 35
+          }
+        }
+      },
+      {
+        "writer": 2,
+        "revision": 78,
+        "gap_seconds": 45.521082444,
+        "commit_rpc": {
+          "request_seconds": 12.670678921999933,
+          "backoff_seconds": 32.50994453499999,
+          "longest_request": {
+            "seconds": 9.49370621599999,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 36,
+            "transport_or_decode_error": 1
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 0.08838962800000445,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.08838962800000445,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        }
+      },
+      {
+        "writer": 3,
+        "revision": 44,
+        "gap_seconds": 41.71741337,
+        "commit_rpc": {
+          "request_seconds": 0.44466591300000435,
+          "backoff_seconds": 0,
+          "longest_request": {
+            "seconds": 0.44466591300000435,
+            "status": "200"
+          },
+          "statuses": {
+            "200": 1
+          }
+        },
+        "read_rpc": {
+          "request_seconds": 4.514799789000011,
+          "backoff_seconds": 36.506189958000036,
+          "longest_request": {
+            "seconds": 0.9926694019999995,
+            "status": "503"
+          },
+          "statuses": {
+            "200": 1,
+            "503": 38,
+            "transport_or_decode_error": 3
+          }
+        }
+      }
+    ],
+    "cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 1125,
+      "namespace_removed": true
+    }
+  },
+  "interpretation": "Same maintained harness, retry policy and configuration; sequential short B2 runs on shared existing hosts. The baseline ran during candidate CI. No controlled causal estimate, SLO, sustained-load, AWS or additional fault-scenario qualification. Direct completed gaps include the last readback before the window; request and backoff time describe the whole operation, not solely the replica change.",
+  "cleanup": "Both namespaces, buckets and scoped keys removed. Three generated TLC state directories removed. Replaced unrestricted background slot filling and extended existing telemetry/tests; no additional implementation or model.",
+  "shared_fixture": {
+    "harness_source_commit": "4e8b32fb96b1eb1193d0b8df4d91f7ca8c3f784f",
+    "harness_sha256": "5ddadc4b70b3ef56a8f7607ae264c6d6b49b63a11edd912e2eaeff48715a3998",
+    "workload_sha256": "7770f49ea2cdc3a0bfeb0709254aff8982a902c6493a05b009dd099282104f20",
+    "client_transport_sha256": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "scale-down",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "64Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 0,
+      "memory_observation": false,
+      "maximum_write_intents": 100000
+    },
+    "kubernetes_version": "v1.36.2"
+  },
+  "tag_pipeline": {
+    "pipeline": 391,
+    "status": "success",
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/391/1"
+  }
+}
