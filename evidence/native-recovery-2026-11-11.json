@@ -19181,5 +19181,565 @@
     "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.11",
     "published_at": "2026-11-13T02:01:05Z",
     "prerelease": true
+  },
+  "handoff_recovery_challenges": {
+    "source_commit": "39bbf807e2019a3cc094a3afe92c74ffd9da4a8e",
+    "routine_rust_checks_passed": 368,
+    "ignored_opt_in_checks": 20,
+    "focused_http_checks": 2,
+    "focused_http_seconds": 0.42,
+    "formatting_and_strict_clippy_passed": true,
+    "negative_controls": {
+      "reachable_incumbent_bypass": "returning member interrupts recovery",
+      "unlimited_recovery_answers": "stalled owner prevents placement convergence"
+    },
+    "models": {
+      "OwnerChallenge": {
+        "distinct_states": 14750,
+        "generated_states": 104725,
+        "depth": 14,
+        "fault_controls": 6,
+        "reachability_controls": 3
+      },
+      "RootAcquisition": {
+        "distinct_states": [
+          117741,
+          30349
+        ],
+        "fault_controls": 3,
+        "reachability_controls": 3
+      },
+      "OwnerRouting": {
+        "distinct_states": 728,
+        "generated_states": 3197,
+        "fault_controls": 9
+      },
+      "scope": "Unchanged component state spaces; one challenge round and abstract scheduling. Multi-round stage credit and bounded stalled recovery checked in Rust, not a proof of Rust or deployment liveness."
+    },
+    "source_sha256": {
+      "src/api/cluster.rs": "4cb2148b6dd0a9c28536f026bd609db8967268d87c1aea4c7b686f08643a0b34",
+      "src/ownership/root/challenge.rs": "aeb0bdc822eeab8d96b9ee9fc64fa0d2600c97cad609c058cf85181500418a75",
+      "src/ownership/root/tests/cluster.rs": "ec73db461eb6872f5f7eb9ddcc65a1607231eebdca7e3ef4a22ac9fff2f1931b",
+      "spec/OwnerChallenge.tla": "0148ddcef15156976d3f3dcbbdb0d9141ff3ec18012d8a9bdfada66b138a9491"
+    },
+    "raw_log_sha256": {
+      "handoff-challenge-focused.log": "f133d951b79029bc688361dd830777f1eb3eee4d32db1e5399e26038e5e3f8f6",
+      "handoff-challenge-negative-bypass.log": "21ffc23e769d8dba94efe74dc46325d9c626ddd597dbb1d3859a1fb7c2566e6b",
+      "handoff-challenge-negative-renew.log": "25e6fdb7662d75f7a94bde0ba7bdca8ed673b732569759226a37ba32d7f6c7ce",
+      "handoff-challenge-rust.log": "7c476870afda6ecb0fe11af758bcea7c93568c5ad59cc5bfed61ea86d966c940",
+      "handoff-challenge-clippy.log": "2f6f1ef20196dddf159f8aef10f07b164bf8efd4340473cfcb4e7f8cce1ccb98",
+      "handoff-challenge-model.log": "23868a883a028f448b6a2643308baa04f48a5fb23356ef5f288193e78e87d890",
+      "handoff-acquisition-model.log": "29a8f8623af67524fd0dcc8a77daebf7158da44a2f548b181b52636b87f3848b",
+      "handoff-routing-model.log": "6c18d3a35733467544f81c8ef3f0d3b07528317ee29f2ea5cbb5e4ea1be6586a"
+    },
+    "removed": "Reachable-incumbent takeover bypass, empty-poll callback consumption, old simulated-peer recovery test replaced by two real-HTTP cases; 22 TLC scratch directories removed.",
+    "minio": {
+      "date_utc": "2026-11-13",
+      "source_commit": "39bbf807e2019a3cc094a3afe92c74ffd9da4a8e",
+      "clean_worktree": true,
+      "native_format": "owned-candidate-23",
+      "command": "cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::membership_places_partitions_and_recovers_over_http --nocapture",
+      "scope": "Native HTTP on versioned MinIO with supplied membership snapshots; not AWS, Kubernetes discovery, sustained load or a latency SLO.",
+      "results": [
+        {
+          "provider": "versioned MinIO",
+          "image": "epsilon-maintenance-minio:20261105",
+          "image_id": "sha256:9d75ed8ad714bbe8111050a031fe9cb31eb446e1ee4651bb94b805c96eaadef1",
+          "test": {
+            "automatic_acquisition_and_placement": true,
+            "ceilings_preserved": true,
+            "checkpoint_and_cold_recovery": true,
+            "independent_node_transports_and_caches": true,
+            "layout_mismatch_refused": true,
+            "live_removed_owner_refused": true,
+            "maximum_live_servers": 2,
+            "membership_sequence": [
+              1,
+              2,
+              1,
+              0,
+              1
+            ],
+            "partitions": 2,
+            "provider_metrics_count_once": true,
+            "receipts_preserved": true,
+            "scope": "Loopback controller with supplied membership snapshots and B2/versioned-MinIO storage. Not Kubernetes discovery, AWS, CLI cutover or a performance SLO.",
+            "seconds": 58.304276251,
+            "shared_metadata_collection": true,
+            "unmoved_owner_preserved": true
+          },
+          "cleanup": {
+            "bucket_removed": true,
+            "physical_versions_deleted": 80,
+            "container_removed": true
+          }
+        }
+      ]
+    },
+    "baseline_acquisitions": {
+      "completed_calls_sampled": 125,
+      "ready_calls_sampled": 81,
+      "deferred_calls_sampled": 22,
+      "confirmed_claims_with_terminal_event": 83,
+      "failed_after_confirmed_claim": [
+        {
+          "pod": "durable-db-2/430ced04-e8cb-42fe-aca2-6efcf312e20d",
+          "partition": 11,
+          "outcome": "failed",
+          "last_stage": "select_journals",
+          "elapsed_ms": 17365
+        },
+        {
+          "pod": "durable-db-5/15876a18-46f3-49dc-8fb7-d3c7c5e76f51",
+          "partition": 12,
+          "outcome": "failed",
+          "last_stage": "select_journals",
+          "elapsed_ms": 28954
+        }
+      ],
+      "unfinished_claimed_calls_sampled": 7,
+      "longest_ready_ms": 33971,
+      "scope": "Bounded per-pod acquisition traces only. Failed means an explicit failure after the activate stage, not inferred cancellation. Incomplete traces cannot establish cancellation or exhaustive counts; elapsed times stay within one acquisition."
+    },
+    "baseline_reference": "selection_retry_observation.kubernetes_b2",
+    "woodpecker_pipeline": 316,
+    "woodpecker_status": "success",
+    "woodpecker_elapsed_seconds": 885,
+    "repository_private": true,
+    "github_actions_disabled": true,
+    "binary_sha256": "af163a327c90d888d2c9f5a64e52ead9a86f7c09c7606e1ac94abee6a8e1492b",
+    "archive_sha256": "6c9d18ddfd6ee57f71fed45469d5db40171e86994179f592f8a6cead2429be95",
+    "artifact_image_digest": "sha256:497db8d78456c15ecb4b9ba50324bd4b1dc2896c833a77e372cb22f8a1595579",
+    "status": "rejected",
+    "decision": "Removed broad challenges for reachable incumbents and recovery-stage reply credits. Sampled rollout readback gaps regressed from 71.10/72.29s to 86.53/94.42s despite no explicit post-claim failures. Never released; next experiment binds graceful withdrawal to the returning stable member.",
+    "artifact_directory": ".tools/handoff-challenge-artifacts",
+    "rollout": {
+      "result": {
+        "binary_source_commit": "39bbf807e2019a3cc094a3afe92c74ffd9da4a8e",
+        "binary_profile": "verified Woodpecker static release candidate v0.24.12",
+        "binary_sha256": "af163a327c90d888d2c9f5a64e52ead9a86f7c09c7606e1ac94abee6a8e1492b",
+        "image_digest": "sha256:4eaba0499cc2b55056419fe24faad780c30fdaf0a8302def6e414b0853c7157d",
+        "runtime_matches_verified_artifact": true,
+        "campaign_exit_code": 0,
+        "independent_history_check": {
+          "complete": true,
+          "histories": 4,
+          "acknowledged": 939,
+          "check": "sequential append identity, invocation order, value hashes and recovered totals",
+          "readback_windows": [
+            {
+              "name": "rolling-replacement-1",
+              "duration_seconds": 144.89345901700003,
+              "readbacks": [
+                69,
+                52,
+                65,
+                64
+              ],
+              "max_completed_readback_gap_seconds": [
+                29.934580487000005,
+                86.52621176,
+                70.91465649900002,
+                29.945789407000035
+              ],
+              "open_readback_gap_seconds": [
+                2.0631245060000083,
+                0.6461118830000032,
+                0.34794818800003213,
+                1.2074054140000499
+              ],
+              "target_seconds": 60,
+              "observed_within_target": false
+            },
+            {
+              "name": "rolling-replacement-2",
+              "duration_seconds": 163.89652458000006,
+              "readbacks": [
+                65,
+                57,
+                68,
+                35
+              ],
+              "max_completed_readback_gap_seconds": [
+                62.575338817000045,
+                86.56112812600003,
+                94.42165048599998,
+                63.32113330000004
+              ],
+              "open_readback_gap_seconds": [
+                6.822215567000001,
+                0.4325550190000058,
+                0.38128358699998444,
+                6.738825740000038
+              ],
+              "target_seconds": 60,
+              "observed_within_target": false
+            }
+          ],
+          "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 1618
+        }
+      },
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "complete": true,
+      "failures": [],
+      "writes_acknowledged": 939,
+      "reads_verified": 939,
+      "verified_keys": 939,
+      "namespace_removed": true,
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            15.460178644047119,
+            15.460178644047119,
+            19.03432206902653,
+            15.460178644047119
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            16.203352724085562,
+            16.203352724085562,
+            16.203352724085562,
+            16.203352724085562
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            83.23107688489836,
+            144.25177581596654,
+            90.38438253593631,
+            83.23107688489836
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            127.68502561899368,
+            163.38212722504977,
+            127.68502561899368,
+            127.68502561899368
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            51.54772763000801,
+            33.465345776989125,
+            55.01699210901279,
+            51.54772763000801
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "raw_sha256": {
+        "result.json": "db029317b97b9c93834b10cbe3f6b7e389bf0d82b415ae24cbd21e757cbc775c",
+        "kubernetes.json": "2d73a0957bea65a848ef58178d2a1688935fd83bf40d29d21e441222e9765e86",
+        "handoff-costs.json": "146835f4803514765629ad5d7843d8ef5f93706a607b60a4f7cd888afe54346d"
+      },
+      "acquisitions": {
+        "completed_calls_sampled": 342,
+        "ready_calls_sampled": 79,
+        "deferred_calls_sampled": 237,
+        "confirmed_claims_with_terminal_event": 79,
+        "failed_after_confirmed_claim": [],
+        "unfinished_claimed_calls_sampled": 0,
+        "longest_ready_ms": 31095,
+        "scope": "Bounded per-pod acquisition traces only. Failed means an explicit failure after the activate stage, not inferred cancellation. Incomplete traces cannot establish cancellation or exhaustive counts; elapsed times stay within one acquisition."
+      },
+      "maximum_readback_gaps": [
+        {
+          "name": "rolling-replacement-1",
+          "writer": 1,
+          "partition": 12,
+          "gap_seconds": 86.52621176,
+          "before_commit_seconds": 0.2508847560000049,
+          "commit_seconds": 3.3297647880000056,
+          "after_ack_seconds": 82.94556221599998,
+          "revision": 153,
+          "start_seconds": 241.685955367,
+          "end_seconds": 328.212167127
+        },
+        {
+          "name": "rolling-replacement-2",
+          "writer": 2,
+          "partition": 14,
+          "gap_seconds": 94.42165048599998,
+          "before_commit_seconds": 0.25063378300001204,
+          "commit_seconds": 93.07259706100001,
+          "after_ack_seconds": 1.0984196419999535,
+          "revision": 172,
+          "start_seconds": 354.026136824,
+          "end_seconds": 448.44778730999997
+        }
+      ],
+      "longest_empty_selection_ms": 9599
+    },
+    "peer_isolation": {
+      "result": {
+        "binary_source_commit": "39bbf807e2019a3cc094a3afe92c74ffd9da4a8e",
+        "binary_profile": "verified Woodpecker static release candidate v0.24.12",
+        "artifact_verification_reused": true,
+        "binary_sha256": "af163a327c90d888d2c9f5a64e52ead9a86f7c09c7606e1ac94abee6a8e1492b",
+        "image_digest": "sha256:4eaba0499cc2b55056419fe24faad780c30fdaf0a8302def6e414b0853c7157d",
+        "runtime_matches_verified_artifact": true,
+        "campaign_exit_code": 0,
+        "independent_history_check": {
+          "complete": true,
+          "histories": 4,
+          "acknowledged": 601,
+          "check": "sequential append identity, invocation order, value hashes and recovered totals",
+          "readback_windows": [],
+          "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+        },
+        "cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 892
+        }
+      },
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db-isolated:7654",
+          "http://durable-db-majority:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 30
+        }
+      },
+      "complete": true,
+      "failures": [],
+      "writes_acknowledged": 601,
+      "reads_verified": 601,
+      "verified_keys": 601,
+      "namespace_removed": true,
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.804924666997977,
+            10.804924666997977,
+            10.804924666997977,
+            10.804924666997977
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            17.91017040400766,
+            17.91017040400766,
+            10.868147292057984,
+            17.91017040400766
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            40.40416258003097,
+            54.52785574703012,
+            58.16809498809744,
+            40.40416258003097
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "raw_sha256": {
+        "result.json": "6ee1d4d0b66a1c5e5ea635b59dc2e0393d084d9e02e0bdec1905c0f7a64094a3",
+        "kubernetes.json": "5211e5d4bc3d8c482da41cb61a67138c3b69496cc0ddcb64181bfd8b3c282330"
+      },
+      "peer_network_observations": [
+        {
+          "mode": "connected",
+          "correct": true
+        },
+        {
+          "mode": "asymmetric",
+          "correct": true
+        },
+        {
+          "mode": "asymmetric",
+          "correct": true
+        },
+        {
+          "mode": "connected",
+          "correct": true
+        },
+        {
+          "mode": "connected",
+          "correct": true
+        },
+        {
+          "mode": "symmetric",
+          "correct": true
+        },
+        {
+          "mode": "symmetric",
+          "correct": true
+        },
+        {
+          "mode": "connected",
+          "correct": true
+        }
+      ]
+    },
+    "cleanup_physical_versions_deleted": 2590
+  },
+  "member_targeted_withdrawal": {
+    "status": "local checks passed; real-cloud qualification pending",
+    "routine_rust_checks_passed": 369,
+    "ignored_opt_in_checks": 20,
+    "focused_http_checks": 3,
+    "focused_http_seconds": 0.12,
+    "formatting_and_strict_clippy_passed": true,
+    "negative_controls": {
+      "missing_target": "temporary fallback claims before returning member",
+      "ignored_target": "same-member replacement misses five-second simulated deadline"
+    },
+    "models": {
+      "OwnerChallenge": {
+        "distinct_states": 3968,
+        "generated_states": 24897,
+        "depth": 14,
+        "fault_controls": 7,
+        "reachability_controls": 3
+      },
+      "RootAcquisition": {
+        "distinct_states": [
+          117741,
+          30349
+        ],
+        "fault_controls": 3,
+        "reachability_controls": 3
+      },
+      "OwnerRouting": {
+        "distinct_states": 728,
+        "generated_states": 3197,
+        "fault_controls": 9
+      },
+      "scope": "One shutdown hint and challenge round; stopped responder, returning and fallback members. Component checks, not proof of Rust or deployment liveness."
+    },
+    "source_sha256": {
+      "src/api/cluster.rs": "cc90650d32e7f5baed19f9d8bcd41f2e222e6d56ee2c10b7b6dc8be5a86f5729",
+      "src/ownership/root/challenge.rs": "3a570e30f3b94e85c613ca19d138fa8ce19e204af2dc4839855cdffc2d570ce7",
+      "src/ownership/root/tests/cluster.rs": "6fa3b983785e10808e067e9355302e41e8c8bd961839e7808b9e4f95b52eecf7",
+      "src/ownership/root/tests/challenge.rs": "fff56eb5f53fd9905a1c4cd25731da3290522d588ec5cbb9b7b416c85c9841a1",
+      "spec/OwnerChallenge.tla": "6614cfcb2bd477111656c1ef5d4fd7e62b2301f97cfdd29be3364ab93213a9d2",
+      "spec/OwnerChallengeWithdrawTarget.cfg": "dd1d23ef27cf47e61b23e9533456b321a31be5d4e1cc8ae6c57b17571abe985c"
+    },
+    "raw_log_sha256": {
+      "member-handoff-negative-target.log": "55c811dd6578bcfe149592840938521ce12a96d209c4637e0ee2667dcf881ebd",
+      "member-handoff-clippy.log": "52922c31b8a406aa5e34a665c07e8321772e31e4b13e6f6f3ab7730748544eb8",
+      "member-handoff-model.log": "bca435c16389c0f6949933ac4012ca7114c9b7572c4d9ad2d77c8ddcb6624e21",
+      "member-handoff-root.log": "b55d4f677f8ae5d94083cbdc4d7e8619b98d7a1db2b103bf68c617d5421d0276",
+      "member-handoff-negative-missing.log": "2915295144f4474c32d5a94056a4bc158ca5180ce6ab704f32d98b6b68863749",
+      "member-handoff-focused.log": "35830c1cb22a7b9556d5dd4eb3a47c8abde9dd0dfccba9bf5d6401374dd5a43b",
+      "member-handoff-rust.log": "1af43a637e44a4dd051df164b968afc5fc13415e087ceda3590c686a769dbb28",
+      "member-handoff-routing-model.log": "7a05c93a31afe1e0799f921ad783f8b5f3910efe16469e0f10ad2aa837b3fbfb",
+      "member-handoff-acquisition-model.log": "97e60d9eb27bdd0ef0d36651c20396928c5de1af901d78c3766e5afbc898a598"
+    },
+    "removed": "Rejected reachable-owner wait and recovery credits; rejected HTTP scaffolding; unconditional withdrawal regression replaced by three shared-fixture cases; 12 TLC scratch directories."
   }
 }
