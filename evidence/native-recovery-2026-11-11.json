@@ -23583,5 +23583,73 @@
       "tag_woodpecker_pipeline": 333,
       "tag_woodpecker_status": "success"
     }
+  },
+  "journal_discovery_prefetch": {
+    "status": "Local verification passes; exact-runtime cloud qualification pending",
+    "change": "Discovery overlaps four GETs, consumes only ordered checksum/hash-chain validated frames, reconfirms speculative absence at the front, and discards pending reads on error, corruption, cancellation or EOF. Selected replay remains one-frame bounded. No detached worker, new dependency, control mutation or storage-format change.",
+    "window_frames": 4,
+    "discovery_payload_bytes_per_reader": 16777216,
+    "cluster_acquisitions": 4,
+    "maximum_cluster_discovery_payload_bytes": 67108864,
+    "memory_scope": "Recovery scratch is separate from resident/cache allowances; allocator, request and provider transport overhead are outside this payload bound. Not a whole-process RSS qualification.",
+    "synthetic_107_frame_regression": {
+      "per_get_delay_ms": 100,
+      "old_virtual_seconds": 10.8,
+      "new_virtual_seconds": 2.9,
+      "focused_checks": 3,
+      "wall_seconds": 0.01,
+      "scope": "Controlled virtual-time storage, not cloud latency or throughput."
+    },
+    "rust_negative_controls": [
+      "Remove cancellation cleanup",
+      "Trust speculative missing result without a fresh front read"
+    ],
+    "routine_rust_checks_passed": 375,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "model": {
+      "name": "Journal",
+      "transition_system_unchanged": true,
+      "distinct_states": 4134,
+      "generated_states": 18455,
+      "depth": 26,
+      "negative_controls": 6,
+      "scope": "Immutable durable objects and externally fenced acknowledgement/atomic selection; prefetch stutters until in-order consumption. Physical collection, bytes, liveness and Rust refinement remain separate."
+    },
+    "proof": {
+      "name": "JournalProof",
+      "strict_obligations": 88,
+      "negative_controls": 1,
+      "scope": "Unbounded abstract one-handoff prefix safety; not a Rust, memory or deployment proof."
+    },
+    "source_sha256": {
+      "spec/Journal.tla": "9fc45bb648728d559580ab02ccf3fa591ad1c63ccb718c846c869f14c20f882c",
+      "src/journal/reader.rs": "05f0d81788a63537e9e9b032ce299cfef3c44add5d3318c1ab6126711ea1176c",
+      "src/journal/tests.rs": "efbb67bb518771d7932f942e1af29b3a24fc8ed969ec1f2c84e989ff171236d5",
+      "src/ownership/root/tests/catalog.rs": "a10031c442dc1f92ddc45050167fd64d08ed9d028298e1ba3a7a88adc96650ec"
+    },
+    "raw_log_sha256": {
+      "journal-prefetch-before.log": "0a6b77d8f715aeefc61516fcbf7de073f69db2d1f984e10bc56a38d543635e3e",
+      "journal-prefetch-focused.log": "ca1d2570e9e6d1d88b84a72c2ccc58bc6f6ff756b29b74904f3dc131efc6776c",
+      "journal-prefetch-negative-cancel.log": "45986cb0df2c367e01a4100ee1a979b7606057f0f4f04cb0068f4cfdd18fa0ec",
+      "journal-prefetch-negative-absence.log": "a9c55fa611893f88e20d5911676fd4350debd04b8b9b86a7682190702502cbcb",
+      "journal-prefetch-model.log": "ddaa79d76265f90c5a1108b4c324b2f82dbbfdacea43a08317ea98b5fee5826c",
+      "journal-prefetch-proof.log": "7317b104ab51d00c42c6ead9ba2552ccaaf8e2f53e31c86d14b9278638f5eb64",
+      "journal-prefetch-clippy.log": "c4c1406e060ce4407dc58252defebe4353deeca4e195e60cbb97391e2d260afe",
+      "journal-prefetch-tests.log": "fb971dce6fa449c82c4f158c1c0e5830721b1d4db6d719ca6cce103c949a9bd4"
+    },
+    "removed": [
+      "Duplicated replay-reader initialization",
+      "Obsolete serial-discovery description and stale unchanged-serving sentence"
+    ],
+    "tlc_scratch_directories_removed": [
+      "tlc-journal",
+      "tlc-journal-knowledge",
+      "tlc-journal-gap",
+      "tlc-journal-early",
+      "tlc-journal-missing",
+      "tlc-journal-permission",
+      "tlc-journal-reopen"
+    ]
   }
 }
