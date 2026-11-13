@@ -95,6 +95,7 @@ writer progress. Outside the measured 30-second interval it snapshots the shared
 Service’s EndpointSlices before and after fresh readiness and known-key read
 probes through each pod and the Service. Reads use administrator authorization;
 200 replies must contain the expected synthetic value, which is never logged.
+Diagnostic reads run one at a time to avoid exhausting per-principal admission.
 Each probe has a five-second deadline and 64 KiB response bound, with no retries
 or redirect following. Statuses and elapsed times distinguish ingress selection
 from availability through each pod; a direct pod request can itself forward and
