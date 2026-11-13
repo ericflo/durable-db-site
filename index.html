@@ -49,7 +49,18 @@
 
 <section class="band" aria-labelledby="status-title">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>v0.24.12 gives a returning stable member priority during graceful handoff, with delayed fallback when it stays absent. Across two B2 campaigns, all 2,586 acknowledged writes recover through scaling, rollouts, process pauses, provider interruption and cold restart. The largest readback gap per rollout ranges from 64.80 to 86.83 seconds, still missing 60 seconds; six of twelve broader recovery targets are missed. These samples establish no overall availability improvement. Next address recovery queueing and checkpoint I/O that blocks reads. <a href="verification-results.html">Read the measurements and limits</a> and the <a href="production-readiness.html#remaining-production-gates-in-order">ordered production gates</a>.</p></div>
+<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>v0.24.16 overlaps journal discovery through a bounded four-read window while
+preserving ordered validation and safe retries. The exact binary recovers all
+<strong>651 acknowledged writes</strong> on B2 through scaling, two rollouts, total compute
+loss and cold restart. Both direct rollout readback gaps meet the 60-second
+target: <strong>57.56s / 49.21s</strong>. Scale-up and cold recovery also meet their targets;
+whole-rollout progress bounds remain <strong>98.74s / 108.93s</strong>. These short,
+different-history runs do not establish an availability guarantee or SLO.
+Continuous split availability, worst-case memory, sustained performance and
+public multitenancy remain open. See the
+<a href="verification-results.html">measured results and limits</a> and the
+<a href="production-readiness.html#remaining-production-gates-in-order">ordered production gates</a>.</p>
+</div>
 <div class="status-grid">
 <article class="status-card"><h3><span class="dot dot-ready"></span>Ready to try</h3><ul><li>Local mode on the native engine: one process, one directory, automatic checkpoints, cleanup and crash recovery</li><li>The HTTP API with scoped, revocable tokens and per-database quotas</li><li>The TypeScript SDK with automatic conflict retries, linked from source while the repository is private</li><li>Consistent export and resumable restore</li></ul></article>
 <article class="status-card"><h3><span class="dot dot-experimental"></span>Experimental</h3><ul><li>Native clustered serving on S3 and B2; production performance and failure qualification remain open</li><li><a href="design-owned-partitions.html">Owned partitions</a>, DNS discovery, forwarding and bounded resident state</li><li>Namespace upload ceilings, tenant admission and maintenance funding in cloud serving</li></ul></article>
