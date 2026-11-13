@@ -592,7 +592,7 @@ recorded in <a href="verification-results.html">verification results</a>.</p>
 <p>Four TCP/root regressions complete in 0.10 seconds after compilation. They cover live takeover, exact receipt replay after a lost response, wrong-partition address reuse, token revocation, cached discovery, delayed failures racing cache replacement, redirect refusal, overload and oversized responses. Two deliberate Rust faults omit the destination check or clear a refreshed route on a late old failure; both are detected. An authentication regression checks unchanged tenant claims across signing-key rotation and rejects expired claims. The common journal-selection loop replaces duplicate local-startup and cloud-fixture implementations.</p>
 <p>At <code>80841e5</code>, the expanded four-server/two-partition fixture passes on B2 in <strong>51.42 seconds</strong> and versioned MinIO in <strong>1.48 seconds</strong>. Create/write/read requests traverse the gateway; a cached stale route returns 503 after live takeover, and the caller’s explicit identical retry discovers the successor and returns its retained receipt. The unmoved partition keeps serving. Shared ceilings, checkpoint recovery, collection and physical metric checks still pass. Both disposable buckets, all 88 remaining physical versions, the temporary B2 key and the MinIO container were removed. These are debug functional runs, not latency/throughput benchmarks, AWS qualification or automatic placement. <a href="evidence/owner-routing-2026-11-11.json">Evidence</a>.</p>
 <h2 id="storage-path-owner-challenges">Storage-path owner challenges<a class="anchor" href="#storage-path-owner-challenges" aria-label="Link to this section">#</a></h2>
-<p>Before replacing an advertised owner excluded by local peer health, the controller
+<p>Before replacing another advertised owner, including a reachable one, the controller
 publishes or joins an incarnation-bound random challenge in the existing partition
 metadata. It waits 15 seconds for that same owner and nonce to remain unanswered;
 only then does it attempt the ordinary exact conditional claim. A response, changed
@@ -602,16 +602,24 @@ the same owner and nonce remain. One bounded owner/nonce/deadline descriptor per
 partition records it. Pending waits release their acquisition and resident slots;
 the ordinary three-second scheduler revisits them. Four active acquisitions remain
 the limit. No sleeping future or one-second polling loop holds up later partitions.
-Known healthy peers can still rebalance; reuse of this process’s address takes the
+Healthy peers rebalance after the same challenge wait; reuse of this process’s address takes the
 normal fenced recovery path directly. Confirmed acquisition continues while this
 process remains in membership, even after preference changes; an unconfirmed
 candidate still yields immediately. Actual takeover can fence either stage.
-No extra settling interval delays reachable-owner moves.</p>
+The existing 15-second challenge now also delays reachable-owner moves. This
+lets a returning preferred pod observe useful recovery before fencing it;
+graceful route withdrawal still skips the wait.</p>
 <p>Each confirmed claimant polls once every three seconds, with one request in flight,
 through activation, recovery and serving. It conditionally clears only its own
 challenge. Removing the local placement stops this responder even when an in-flight request
-retains the old backend. A retained incumbent that prefers another process stops
+retains the old backend. A serving incumbent that prefers another process stops
 answering, allowing that successor to take over even with asymmetric peer reachability.
+A recovering incumbent can also answer once after confirmed claim, once after
+activation and once after journal selection. These credits coalesce into one
+boolean and are consumed only for an actual challenge. Finishing recovery clears
+the credit. A stalled stage cannot renew it indefinitely; observation errors or
+an uncertain answer may consume it without delaying takeover. These are advisory
+opportunities to finish work, never authority or a guarantee against interruption.
 Ordinary owner publication, collection, budget operations and read barriers
 preserve the hint; the responder is the sole answer path. An already submitted
 answer may still complete after preference changes. No extra storage object or
@@ -635,6 +643,17 @@ apply after owner death or lost replies. This finite policy check assumes the
 existing exact register/permit protocol; it is neither Rust refinement nor a proof
 of arbitrary-round liveness. RootAcquisition and OwnerRouting remain separate
 checks of acquisition and response authority.</p>
+<p>The returning-member HTTP regressions pause a confirmed owner’s activation,
+then start a real preferred peer with both processes still reachable. The first
+requires the original claimant to finish, accept a write, and hand off its value
+and identical receipt; the retained predecessor must refuse after takeover.
+The second keeps activation stalled and requires takeover without a membership
+change. Restoring the reachable-owner bypass fails the first; allowing repeated
+answers without new progress fails the second. Both pass in 0.42 seconds with
+paused scheduling time. They replace the older simulated-peer recovery test;
+membership retirement, unrelated-partition progress and cold restart retain
+their existing independent coverage. The one-round model remains unchanged in
+state space; these checks do not establish cloud handoff latency.</p>
 <p>The CLI now closes admission, aborts and joins the cluster scheduler and
 maintenance task, retires every local resident before storage I/O, and
 conditionally withdraws the final resident routes. Four

@@ -34,7 +34,7 @@ alone does not delete an existing Deployment.</p>
 <p>Build/pull the runtime image, then set its immutable digest in an overlay. The base’s <code>durable-db:local</code> is a deliberate image placeholder, not a published registry claim. Woodpecker publishes each successful commit’s image in the configured private registry.</p>
 <p>Create namespace <code>durable-db</code>, a <code>durable-db-signing</code> Secret containing <code>admin.key</code>, and a <code>durable-db-storage</code> Secret containing either <code>DURABLE_DB_B2_BUCKET</code>, <code>B2_APPLICATION_KEY_ID</code>, <code>B2_APPLICATION_KEY</code>, or <code>DURABLE_DB_BUCKET</code> and the S3 provider settings. Include <code>DURABLE_DB_UPLOAD_BUDGET_BYTES</code> and <code>DURABLE_DB_UPLOAD_BUDGET_ATTEMPTS</code> for initial shared ceilings. Existing counters/ceilings are preserved on reopen; refill them through the administrator API. Keep secrets out of Git. When changing provider type in an existing Secret, replace its complete <code>data</code> map and remove the old provider fields; applying new <code>stringData</code> alone may leave old environment variables behind. Startup refuses simultaneous B2 and S3 selection. Never mount a shared local store directory across pods. Apply the configured overlay with <code>kubectl apply -k</code>.</p>
 <p>The headless service publishes not-ready addresses so discovery does not depend on acquisition completing first. Discovery admits candidates only after an HTTP 200 from <code>/health/live</code>, and excludes an established peer after two missed observations even if DNS still lists it. Probes run independently of DNS refresh, with sixteen requests at most and a one-second request deadline. Three-second rounds do not overlap; large peer lists can take longer. Permit fencing, not this failure suspicion, authorizes takeover. Allow peer HTTP traffic on the advertised port. All pods must use the same peer port, IP family and fixed layout. Defaults are 16 partitions and a 128 MiB aggregate resident payload allowance (<code>--partitions</code>, <code>--resident-memory-mib</code>). The partition count does not cap database count and does not change when pods scale. Too-small per-partition shares fail startup. Frame/window/checkpoint thresholds remain per partition; the cloud receipt window is 128 commits. Journal bytes retain a 256 MiB aggregate component ceiling. Cache, transient checkpoint/HTTP/provider buffers and allocator overhead are separate from resident payload accounting; qualify peak RSS against pod limits.</p>
-<p>Before taking over from an excluded incumbent, the candidate publishes or joins a
+<p>Before taking over from another advertised incumbent, the candidate publishes or joins a
 storage-path challenge and waits 15 seconds for an answer. The incumbent answers
 through the bucket even when peer HTTP is blocked. Pending waits release acquisition
 slots; the three-second scheduler revisits them while other partitions recover.
@@ -44,12 +44,17 @@ not make every partition reachable through every isolated pod. Upgrade all
 servers before relying on this behavior; older binaries do not answer challenges.</p>
 <p>A preference change keeps the current healthy backend serving until actual
 revocation; leaving membership still removes it. While yielding to another
-preferred process, the incumbent stops answering challenges so asymmetric peer
+preferred process, a serving incumbent stops answering challenges so asymmetric peer
 reachability cannot prevent that successor from taking over. The existing
 resident budget covers this overlap. Once a claim is confirmed, recovery also
 continues while the process remains a member, even if preference changes before
 activation finishes. A later takeover still fences it. Candidates without a
-confirmed claim continue to yield immediately. No extra settling timer is used.</p>
+confirmed claim continue to yield immediately. During recovery, the incumbent can
+answer once after each of claim, activation and journal selection. A stalled
+stage cannot continually renew that allowance. The same challenge wait now
+protects recovery from a returning reachable pod; healthy rebalancing also waits
+for an unanswered challenge. Graceful route withdrawal still skips that wait.
+No separate settling timer or serving authority is introduced.</p>
 <p><code>scripts/qualify-multinode.py</code> is the maintained native deployment/fault campaign.
 Use <code>--scenario rollout</code> for two consecutive replacements after 1→3→6 scaling,
 followed by zero-compute cold recovery; <code>recovery</code> retains the broader fault campaign.
