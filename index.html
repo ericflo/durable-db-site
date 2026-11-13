@@ -1,7 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>durable-db · Transactional key-value storage that lives in your bucket</title><meta name="description" content="An experimental transactional, ordered key-value database in one Rust binary. S3 or B2 holds the data; API servers are replaceable."><meta property="og:title" content="durable-db · Transactional key-value storage that lives in your bucket"><meta property="og:description" content="An experimental transactional, ordered key-value database in one Rust binary. S3 or B2 holds the data; API servers are replaceable."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.24.23 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>durable-db · Transactional key-value storage that lives in your bucket</title><meta name="description" content="An experimental transactional, ordered key-value database in one Rust binary. S3 or B2 holds the data; API servers are replaceable."><meta property="og:title" content="durable-db · Transactional key-value storage that lives in your bucket"><meta property="og:description" content="An experimental transactional, ordered key-value database in one Rust binary. S3 or B2 holds the data; API servers are replaceable."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.24.24 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main">
 <section class="hero wrap">
 <div class="hero-copy">
-<a class="pill" href="production-readiness.html"><span class="dot dot-experimental"></span>v0.24.23 is experimental. Not ready for production data yet. <span aria-hidden="true">→</span></a>
+<a class="pill" href="production-readiness.html"><span class="dot dot-experimental"></span>v0.24.24 is experimental. Not ready for production data yet. <span aria-hidden="true">→</span></a>
 <h1>Transactional <span class="nowrap">key-value</span> storage that lives in your bucket.</h1>
 <p class="lead">durable-db is one Rust binary that serves atomic transactions and ordered scans over HTTP. S3 or Backblaze B2 holds the authoritative data. API servers keep only disposable state, so you can add, replace or stop all of them without moving the database. On a laptop, a local directory replaces the bucket.</p>
 <div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="api.html">HTTP API reference</a></div>
@@ -49,19 +49,14 @@
 
 <section class="band" aria-labelledby="status-title">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>v0.24.23 removes the extra sleep after slow owner-challenge I/O and records
-bounded diagnostics for owner retirement. A B2 run with <strong>90-second peer splits</strong>
-recovers all <strong>1,015 acknowledged writes</strong> after replacing every API pod. It also
-reproduces an unresolved journal upload that retires the local worker: one
-database returns <strong>503 through all three pods and the Service while every pod
-reports Ready</strong>. This availability failure is identified, not resolved. All four
-writers progressing over a hold does not establish uninterrupted service.</p>
-<p>The SDK retains bounded per-database connections and explicit, identical retries.
-The previous v0.24.22 rollout recovered 773 writes with <strong>47.54s / 45.74s</strong> readback
-gaps, below its 60-second fixture target; that rollout has not been repeated for
-v0.24.23. Continuous split availability, worst-case memory, sustained performance
-and public multitenancy remain open. These samples establish no production SLO.
-See the
+<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>Clustered availability remains the immediate gate. B2 testing has reproduced a
+database returning <strong>503 through every path while all pods report Ready</strong>, after
+an ambiguous journal upload retires its owner. Proven-unsent connection failures
+now retain their original upload for bounded retry; uncertain writes still need
+safe recovery. Checkpoint retries can also stall writes during peer isolation.
+Continuous split availability, worst-case memory, sustained
+performance and public multitenancy remain open. Short passing runs establish no
+production SLO. See the
 <a href="verification-results.html">measured results and limits</a> and the
 <a href="production-readiness.html#remaining-production-gates-in-order">ordered production gates</a>.</p>
 </div>
@@ -70,7 +65,7 @@ See the
 <article class="status-card"><h3><span class="dot dot-experimental"></span>Experimental</h3><ul><li>Native clustered serving on S3 and B2; production performance and failure qualification remain open</li><li><a href="design-owned-partitions.html">Owned partitions</a>, DNS discovery, forwarding and bounded resident state</li><li>Namespace upload ceilings, tenant admission and maintenance funding in cloud serving</li></ul></article>
 <article class="status-card"><h3><span class="dot dot-pending"></span>Not yet</h3><ul><li>Production or irreplaceable data</li><li>Public multitenant hosting</li><li>Scheduled backups and point-in-time recovery</li><li>Prebuilt binaries beyond Linux x86_64</li></ul></article>
 </div>
-<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#owner-challenge-polling-and-journal-retirement-v02423-2026-11-13"><span>Owner challenge polling and journal retirement (v0.24.23, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#per-database-client-connections-v02422-2026-11-13"><span>Per-database client connections (v0.24.22, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#service-readiness-versus-database-reachability-2026-11-13"><span>Service readiness versus database reachability</span><time>2026-11-13</time></a></li><li><a href="verification-results.html#bound-unacknowledged-peer-traffic-v02421-2026-11-13"><span>Bound unacknowledged peer traffic (v0.24.21, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#release-unavailable-client-connections-v02420-2026-11-13"><span>Release unavailable client connections (v0.24.20, 2026-11-13)</span><time></time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
+<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#proven-unsent-journal-uploads-v02424-2026-11-13"><span>Proven-unsent journal uploads (v0.24.24, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#owner-challenge-polling-and-journal-retirement-v02423-2026-11-13"><span>Owner challenge polling and journal retirement (v0.24.23, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#per-database-client-connections-v02422-2026-11-13"><span>Per-database client connections (v0.24.22, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#service-readiness-versus-database-reachability-2026-11-13"><span>Service readiness versus database reachability</span><time>2026-11-13</time></a></li><li><a href="verification-results.html#bound-unacknowledged-peer-traffic-v02421-2026-11-13"><span>Bound unacknowledged peer traffic (v0.24.21, 2026-11-13)</span><time></time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
 </div>
 </section>
 
@@ -97,7 +92,7 @@ See the
 
 <section class="band" aria-labelledby="quickstart-title" id="quickstart">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on your laptop in a minute</h2><p>No bucket, container or extra service needed. v0.24.23 ships a static binary for Linux x86_64; other platforms can <a href="development.html">build from source</a>.</p></div>
+<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on your laptop in a minute</h2><p>No bucket, container or extra service needed. v0.24.24 ships a static binary for Linux x86_64; other platforms can <a href="development.html">build from source</a>.</p></div>
 <ol class="steps">
 <li><div><h3>Install</h3><p>The installer verifies the release checksum and installs one file in <code>~/.local/bin</code>. While the repository is private, authenticate the <code>gh</code> CLI with an account that has access.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"</code></pre></li>
@@ -146,7 +141,7 @@ curl http://127.0.0.1:7654/v1/databases/demo/read \
 <div class="stats">
 <a href="verification-results.html#initial-release-2026-11-08"><strong>36.3M</strong><span>distinct states checked in the shared-page cluster model</span></a>
 <a href="proof-publication.html"><strong>35</strong><span>obligations in an unbounded TLAPS proof of abstract page reachability</span></a>
-<a href="verification-results.html#owner-challenge-polling-and-journal-retirement-v02423-2026-11-13"><strong>1,015 writes</strong><span>recovered on B2 after 90-second peer splits and total API replacement. The trace also reproduces all-paths 503 after an unresolved journal upload. Continuous availability remains open.</span></a>
+<a href="verification-results.html#proven-unsent-journal-uploads-v02424-2026-11-13"><strong>1,023 writes</strong><span>recovered on B2 after 90-second peer splits and total API replacement. The two-way split still has an 88.99-second readback gap, exceeding the fixture target.</span></a>
 <a href="verification-results.html#directory-capacity-at-100005-entries"><strong>100,005</strong><span>databases in the directory capacity check, every head reopened without a cache</span></a>
 </div>
 <p class="caveat">Bounded model checking is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification record</a> lists every assumption, checked bound and remaining obligation.</p>

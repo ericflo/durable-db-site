@@ -29453,5 +29453,614 @@
       "superseded generic worker-retirement warning",
       "redundant endpoint/baseline copies in the new candidate evidence; raw hashes preserved"
     ]
+  },
+  "unsent_uploads": {
+    "version": "0.24.24",
+    "date": "2026-11-13",
+    "experimental": true,
+    "status": "Proven-unsent connection failure retry verified; genuine uncertainty still recovers; two-way isolation readback target fails.",
+    "local": {
+      "focused_tests": 10,
+      "seconds": 6.08,
+      "harness_tests": 3,
+      "harness_seconds": 7.78,
+      "clippy_all_targets": true,
+      "format": true,
+      "real_tcp_negative_control_failed_before_fix": true,
+      "journal_model": {
+        "distinct_states": 4134,
+        "generated_states": 18455,
+        "depth": 26,
+        "negative_controls": 6
+      },
+      "upload_credits_model": {
+        "distinct_states": 11006,
+        "generated_states": 41209,
+        "depth": 17,
+        "negative_controls": 5
+      },
+      "protocol_transitions_changed": false,
+      "new_workers": 0,
+      "new_dependencies": 0,
+      "new_storage_objects": 0
+    },
+    "classification": {
+      "proven_unsent": "Typed Connect on the trusted single-attempt upload client; SDK retries, transport replay and redirects disabled. Existing admission witness remains supported.",
+      "ambiguous": [
+        "timeout",
+        "interrupted",
+        "request",
+        "decode",
+        "other",
+        "HTTP failure",
+        "cancellation"
+      ],
+      "arbitrary_clients_never_grant_connect_witness": true,
+      "fresh_charge_each_attempt": true,
+      "no_refunds": true,
+      "retry_interval_seconds": 1,
+      "diagnostic_fields": [
+        "owner UUID",
+        "position",
+        "fixed kind",
+        "unsent"
+      ],
+      "diagnostic_limit_per_pod": 256,
+      "cloud_connect_witness_observed": false,
+      "cloud_admission_witness_count": 14,
+      "cloud_ambiguous_count": 1
+    },
+    "artifact": {
+      "source_commit": "a28861253e584fed7daf31d056cfadc9d1be3e39",
+      "pipeline_status_at_verification": "running",
+      "woodpecker_pipeline": 372,
+      "artifact_image_digest": "sha256:1641951904ad64d9b1c99c0106b91dead4e4c02aa33f9b4f3620c13c05fe6a03",
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.24",
+        "archive_sha256": "c50dee4e314c8d22e4241ac76210acefcd4f503276a2675ed98a450e59a98aff",
+        "binary_sha256": "280693886007806595ff8c154b335c8e2aa08e8b9d9a901d6d5d04f20d3b9c41",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "standalone_checked_in_woodpecker_and_after_download": true,
+      "archive_bytes": 6419580,
+      "version": "v0.24.24",
+      "experimental": true,
+      "woodpecker": {
+        "pipeline": 372,
+        "url": "https://ci.eflorenzano.com/repos/18/pipeline/372/1",
+        "status": "failure",
+        "source_commit": "a28861253e584fed7daf31d056cfadc9d1be3e39",
+        "steps": [
+          {
+            "name": "clone",
+            "state": "success"
+          },
+          {
+            "name": "dependency-audit",
+            "state": "success"
+          },
+          {
+            "name": "javascript-audit",
+            "state": "success"
+          },
+          {
+            "name": "verify-and-build",
+            "state": "success"
+          },
+          {
+            "name": "publish-docs",
+            "state": "failure"
+          }
+        ]
+      },
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "native_client_contract": {
+        "artifact_success_marker": true,
+        "fresh_contract_stdout": true
+      },
+      "capacity_test_passed": true,
+      "github_actions_disabled": true,
+      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:1641951904ad64d9b1c99c0106b91dead4e4c02aa33f9b4f3620c13c05fe6a03",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.24",
+      "published_at": "2026-11-13T16:37:14Z",
+      "github_asset_digest_matches": true
+    },
+    "harness_ci": {
+      "pipeline": 373,
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/373/1",
+      "status": "success",
+      "source_commit": "ccd0b02dd2fc9b04d5581429194907c2301069b2",
+      "steps": [
+        {
+          "name": "clone",
+          "state": "success"
+        },
+        {
+          "name": "dependency-audit",
+          "state": "success"
+        },
+        {
+          "name": "javascript-audit",
+          "state": "success"
+        },
+        {
+          "name": "verify-and-build",
+          "state": "success"
+        },
+        {
+          "name": "publish-docs",
+          "state": "success"
+        }
+      ]
+    },
+    "campaign": {
+      "binary_source_commit": "a28861253e584fed7daf31d056cfadc9d1be3e39",
+      "harness_source_commit": "ccd0b02dd2fc9b04d5581429194907c2301069b2",
+      "binary_sha256": "280693886007806595ff8c154b335c8e2aa08e8b9d9a901d6d5d04f20d3b9c41",
+      "image_digest": "sha256:1b0bddf1a8831bd01ea4faeff73830391a787fb3c79e58e071bf8be11459acfb",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_ingress": "shared",
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 90
+        },
+        "ingress_observation": {
+          "fresh_connections": true,
+          "timeout_seconds": 5,
+          "read_concurrency": 1,
+          "writers": [
+            0,
+            1
+          ],
+          "outside_measured_hold": true
+        }
+      },
+      "started_at": "2026-11-13T16:23:04.663232+00:00",
+      "finished_at": "2026-11-13T16:33:12.008348+00:00",
+      "writes_acknowledged": 1023,
+      "recovered_keys": 1023,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 1023,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "asymmetric-peer-isolation",
+            "duration_seconds": 157.434804036,
+            "readbacks": [
+              79,
+              131,
+              97,
+              83
+            ],
+            "max_completed_readback_gap_seconds": [
+              39.05627330799999,
+              10.522283429999987,
+              51.21089281100001,
+              36.01892705
+            ],
+            "open_readback_gap_seconds": [
+              0.0803390869999987,
+              0.9957757479999714,
+              0.6771068139999841,
+              0.07789046599998528
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          },
+          {
+            "name": "symmetric-peer-isolation",
+            "duration_seconds": 173.53205075300002,
+            "readbacks": [
+              71,
+              75,
+              110,
+              75
+            ],
+            "max_completed_readback_gap_seconds": [
+              40.790039086000036,
+              88.991963784,
+              27.190802416999986,
+              27.73124678000005
+            ],
+            "open_readback_gap_seconds": [
+              0.7528634290000014,
+              0.23260120899999492,
+              0.5034469940000008,
+              0.756733803999964
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "holds": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "time_utc": "2026-11-13T16:27:14.683523+00:00",
+          "before": [
+            49,
+            49,
+            61,
+            54
+          ],
+          "after": [
+            78,
+            131,
+            127,
+            86
+          ],
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "time_utc": "2026-11-13T16:30:18.218496+00:00",
+          "before": [
+            131,
+            205,
+            172,
+            135
+          ],
+          "after": [
+            178,
+            255,
+            231,
+            183
+          ],
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T16:27:14.686392+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            14.367868482950144,
+            10.760366139002144,
+            21.576378227910027,
+            14.367868482950144
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T16:30:18.222535+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            14.503390829078853,
+            28.878151678014547,
+            25.336298312991858,
+            14.503390829078853
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T16:31:23.470157+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            30.202779612038285,
+            37.403710028971545,
+            47.827131506986916,
+            30.202779612038285
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "largest_gaps": [
+        {
+          "window": "asymmetric-peer-isolation",
+          "writer": 2,
+          "partition": 14,
+          "gap_seconds": 51.21089281100001,
+          "revision": 128,
+          "commit_rpc": {
+            "request_seconds": 46.345936541000036,
+            "backoff_seconds": 4.5311862409999595,
+            "statuses": {
+              "200": 1,
+              "503": 9
+            }
+          },
+          "read_seconds": 0.08315253500000108
+        },
+        {
+          "window": "symmetric-peer-isolation",
+          "writer": 1,
+          "partition": 12,
+          "gap_seconds": 88.991963784,
+          "revision": 256,
+          "commit_rpc": {
+            "request_seconds": 72.15505439999984,
+            "backoff_seconds": 16.50663116800011,
+            "statuses": {
+              "200": 1,
+              "429": 18,
+              "503": 3
+            }
+          },
+          "read_seconds": 0.07926983999996447
+        }
+      ],
+      "ambiguous_recovery": {
+        "failure": {
+          "pod": "durable-db-2/232016fe-53c8-402b-9e8a-d6151dd45c96",
+          "time_utc": "2026-11-13T16:26:01.631260Z",
+          "owner": "5d11927e-c6ba-4c9c-97c6-aa36e39d6034",
+          "position": 141,
+          "kind": "other",
+          "unsent": false
+        },
+        "retirement": {
+          "time_utc": "2026-11-13T16:26:01.789465Z",
+          "owner": "5d11927e-c6ba-4c9c-97c6-aa36e39d6034",
+          "reason": "unresolved_upload"
+        },
+        "successor_ready": "2026-11-13T16:26:23.271122Z",
+        "retirement_to_ready_seconds": 21.481657,
+        "retirement_to_acquisition_seconds": 5.521762,
+        "acquisition_events": [
+          {
+            "time_utc": "2026-11-13T16:26:07.311227Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "resident",
+            "elapsed_ms": 0
+          },
+          {
+            "time_utc": "2026-11-13T16:26:07.311238Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "budget",
+            "elapsed_ms": 0
+          },
+          {
+            "time_utc": "2026-11-13T16:26:07.385228Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "observe",
+            "elapsed_ms": 73
+          },
+          {
+            "time_utc": "2026-11-13T16:26:07.459393Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "budget",
+            "elapsed_ms": 148
+          },
+          {
+            "time_utc": "2026-11-13T16:26:07.459433Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "claim",
+            "elapsed_ms": 148
+          },
+          {
+            "time_utc": "2026-11-13T16:26:12.152704Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "activate",
+            "elapsed_ms": 4841
+          },
+          {
+            "time_utc": "2026-11-13T16:26:16.436494Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "select_journals",
+            "elapsed_ms": 9125
+          },
+          {
+            "time_utc": "2026-11-13T16:26:22.944049Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "recover",
+            "elapsed_ms": 15632
+          },
+          {
+            "time_utc": "2026-11-13T16:26:23.271048Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "serve",
+            "elapsed_ms": 15959
+          },
+          {
+            "time_utc": "2026-11-13T16:26:23.271122Z",
+            "outcome": "progress",
+            "partition": 2,
+            "stage": "ready",
+            "elapsed_ms": 15959
+          }
+        ]
+      },
+      "checkpoint_delay": {
+        "owner": "e21c20f0-5a2e-47b2-8006-b76e66ea67a9",
+        "partition": 12,
+        "start": "2026-11-13T16:29:16.771079Z",
+        "end": "2026-11-13T16:30:38.928101Z",
+        "span_seconds": 82.157022,
+        "deferred_stages": {
+          "funding": 2,
+          "confirmation": 5
+        },
+        "successful_attempt_milliseconds": 9486,
+        "scope": "Same-owner host log span. It does not attribute the entire client gap across clocks."
+      },
+      "ingress": [
+        {
+          "mode": "asymmetric",
+          "paths": [
+            {
+              "ready": 200,
+              "reads": [
+                200,
+                200
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                200,
+                200
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                200,
+                503
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                200,
+                503
+              ]
+            }
+          ]
+        },
+        {
+          "mode": "symmetric",
+          "paths": [
+            {
+              "ready": 200,
+              "reads": [
+                503,
+                200
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                503,
+                200
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                200,
+                503
+              ]
+            },
+            {
+              "ready": 200,
+              "reads": [
+                429,
+                429
+              ]
+            }
+          ]
+        }
+      ],
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1628
+      }
+    },
+    "scope": "No cloud connection refusal was sampled; the new path is verified by real TCP tests. Unclassified ambiguous upload remains conservative. All acknowledgements recovered; the two-way readback target fails. Serial probes and cross-host clock samples do not establish simultaneous availability or causal delay attribution. No new AWS/rollout qualification or production SLO.",
+    "next": "Reproduce checkpoint funding/confirmation retries behind the 82.16-second span and reduce shared-publication pressure; continue ambiguous-upload recovery qualification.",
+    "removed": [
+      "budget-only NotSent type definition",
+      "duplicate default upload-client reference",
+      "13 task-owned TLC scratch directories; logs retained",
+      "duplicated release history from README; dated record retained"
+    ],
+    "evidence_sha256": {
+      ".tools/unsent-b2/ambiguous-recovery.json": "c595c890bfe0508b24070f2d23e2da8d862c435fd9b13107cb6d054c639cedc5",
+      ".tools/unsent-b2/checkpoint-delay.json": "04dff6c7674d4c05d2cba4cc9c6db931bc957d71abbf2fd1093c598c1a7cd9cd",
+      ".tools/unsent-b2/history-check.json": "7854733f772d4a546a76b95d9162744e4946a410bf77490c531afa8fec693920",
+      ".tools/unsent-b2/kubernetes.history.jsonl": "7083a9e4a400368afd2511c2a76e3dfd5bf0aba6da57cbd3ae466699133f8f14",
+      ".tools/unsent-b2/kubernetes.json": "355f7be16744b8c96432487ab13eb1d7292705885b5040c88c531b066b4e4500",
+      ".tools/unsent-b2/largest-readback-gaps.json": "01e67dc310a2cfccdc6c382eef2fa7d1941ea2c1868521c7a1ffd06f4df5fa8c",
+      ".tools/unsent-b2/result.json": "03f610426fa3d8ed13adf7a918f9f72c225def4c3bbc91d83b17def2e9b82f07",
+      ".tools/unsent-b2.log": "db07f3f052d91175a798630b542dca65f4c4e3088b9d985d3792eb4ecb53ba6a",
+      ".tools/upload-classification-clippy.log": "a9122fc6feeec4f243a3be43abcb81624318ffa51c4cb382def870152392cc67",
+      ".tools/upload-classification-credits-model.log": "6bafe88e5cfdcea807bef2690a027a2e3c336afd86e1d0da76a1cbe9eadd8e72",
+      ".tools/upload-classification-journal-model.log": "077a0270736d79221c367cbb2e513eeb25fc7dff58fe921e94452cb8a7bef13b",
+      ".tools/upload-classification-tests.log": "c602ad805dc29e3360036a6c1f1d2e3d4a88341a99bbade76d6ba99147e77174",
+      ".tools/upload-connect-before.log": "fc48ae0a29a5d02f003f1a2b6ebe162984cf157be49eb83832b98b765cb01695",
+      ".tools/upload-peer-readbacks-tests.log": "80b1299db0ebbd622eb007c5a4ba9746ea3ee45693a8e0155d554c72c64a2048"
+    },
+    "release_tag_ci": {
+      "pipeline": 374,
+      "source_commit": "a28861253e584fed7daf31d056cfadc9d1be3e39",
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/374/1"
+    }
   }
 }
