@@ -49,12 +49,12 @@
 
 <section class="band" aria-labelledby="status-title">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>Clustered availability remains the immediate gate. The latest B2 peer-isolation
-campaign recovered all acknowledged writes, with <strong>25.17s / 50.16s</strong> readback gaps
-under the 60-second fixture target. Answered ownership challenges are now paced
-to reduce checkpoint conflicts; funding and confirmation retries can still stall
-writes. One passing campaign establishes no production SLO. Worst-case memory,
-sustained performance and public multitenancy remain open. See the
+<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>Clustered availability remains the immediate gate. Two B2 peer-isolation
+campaigns recovered all acknowledged writes and met the 60-second readback-gap
+fixture target. Answered ownership challenges are paced to reduce checkpoint
+conflicts; funding and confirmation retries can still stall writes. These short
+runs establish no production SLO. Host loss, worst-case memory, sustained
+performance and public multitenancy remain open. See the
 <a href="verification-results.html">measured results and limits</a> and the
 <a href="production-readiness.html#remaining-production-gates-in-order">ordered production gates</a>.</p>
 </div>
@@ -63,7 +63,7 @@ sustained performance and public multitenancy remain open. See the
 <article class="status-card"><h3><span class="dot dot-experimental"></span>Experimental</h3><ul><li>Native clustered serving on S3 and B2; production performance and failure qualification remain open</li><li><a href="design-owned-partitions.html">Owned partitions</a>, DNS discovery, forwarding and bounded resident state</li><li>Namespace upload ceilings, tenant admission and maintenance funding in cloud serving</li></ul></article>
 <article class="status-card"><h3><span class="dot dot-pending"></span>Not yet</h3><ul><li>Production or irreplaceable data</li><li>Public multitenant hosting</li><li>Scheduled backups and point-in-time recovery</li><li>Prebuilt binaries beyond Linux x86_64</li></ul></article>
 </div>
-<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#answered-challenge-pacing-v02425-2026-11-13"><span>Answered-challenge pacing (v0.24.25, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#proven-unsent-journal-uploads-v02424-2026-11-13"><span>Proven-unsent journal uploads (v0.24.24, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#owner-challenge-polling-and-journal-retirement-v02423-2026-11-13"><span>Owner challenge polling and journal retirement (v0.24.23, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#per-database-client-connections-v02422-2026-11-13"><span>Per-database client connections (v0.24.22, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#service-readiness-versus-database-reachability-2026-11-13"><span>Service readiness versus database reachability</span><time>2026-11-13</time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
+<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#isolation-repeat-on-v02425-2026-11-13"><span>Isolation repeat on v0.24.25</span><time>2026-11-13</time></a></li><li><a href="verification-results.html#answered-challenge-pacing-v02425-2026-11-13"><span>Answered-challenge pacing (v0.24.25, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#proven-unsent-journal-uploads-v02424-2026-11-13"><span>Proven-unsent journal uploads (v0.24.24, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#owner-challenge-polling-and-journal-retirement-v02423-2026-11-13"><span>Owner challenge polling and journal retirement (v0.24.23, 2026-11-13)</span><time></time></a></li><li><a href="verification-results.html#per-database-client-connections-v02422-2026-11-13"><span>Per-database client connections (v0.24.22, 2026-11-13)</span><time></time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
 </div>
 </section>
 
@@ -139,7 +139,7 @@ curl http://127.0.0.1:7654/v1/databases/demo/read \
 <div class="stats">
 <a href="verification-results.html#initial-release-2026-11-08"><strong>36.3M</strong><span>distinct states checked in the shared-page cluster model</span></a>
 <a href="proof-publication.html"><strong>35</strong><span>obligations in an unbounded TLAPS proof of abstract page reachability</span></a>
-<a href="verification-results.html#answered-challenge-pacing-v02425-2026-11-13"><strong>1,106 writes</strong><span>recovered on B2 after 90-second peer splits and total API replacement. Both measured readback gaps meet the fixture target; repeated failure qualification remains open.</span></a>
+<a href="verification-results.html#isolation-repeat-on-v02425-2026-11-13"><strong>2 B2 runs</strong><span>recovered all 2,175 acknowledged writes across separate buckets. Both meet the isolation-gap fixture target; host-loss qualification remains open.</span></a>
 <a href="verification-results.html#directory-capacity-at-100005-entries"><strong>100,005</strong><span>databases in the directory capacity check, every head reopened without a cache</span></a>
 </div>
 <p class="caveat">Bounded model checking is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification record</a> lists every assumption, checked bound and remaining obligation.</p>

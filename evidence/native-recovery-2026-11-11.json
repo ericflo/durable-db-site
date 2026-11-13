@@ -30808,5 +30808,358 @@
       "status": "success",
       "url": "https://ci.eflorenzano.com/repos/18/pipeline/377/1"
     }
+  },
+  "answered_challenge_repeat": {
+    "version": "0.24.25",
+    "date": "2026-11-13",
+    "runtime_source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+    "runtime_binary_sha256": "d7715a602982bb36307eaa9f81ce849289c5ba6c4b83f17261c66a5d8265a5a4",
+    "runtime_image_digest": "sha256:1c76a85cb060e22b183feadb24c97c3722b09e7e6d9f088aeda71113ed50a6b7",
+    "runtime_matches_verified_artifact": true,
+    "artifact_verification_reused": true,
+    "artifact_reference": "answered_challenge_pacing.artifact",
+    "harness_source_commit": "58a5a6a5050e2293d2e025296aab496035d6292b",
+    "harness_sha256": "66102cc7c4a4bb9ec945cf40424824e410527307b10865bc69a39a2192619c20",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "peer-isolation",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "128Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 0,
+      "memory_observation": false,
+      "maximum_write_intents": 100000,
+      "peer_ingress": "shared",
+      "peer_fault": {
+        "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+        "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+        "capability": "NET_ADMIN",
+        "uid": 0,
+        "host_network": false,
+        "hold_seconds": 90
+      },
+      "ingress_observation": {
+        "fresh_connections": true,
+        "timeout_seconds": 5,
+        "read_concurrency": 1,
+        "writers": [
+          0,
+          1
+        ],
+        "outside_measured_hold": true
+      }
+    },
+    "complete": true,
+    "writes_acknowledged": 1069,
+    "verified_keys": 1069,
+    "independent_history": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 1069,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "asymmetric-peer-isolation",
+          "duration_seconds": 143.911565892,
+          "readbacks": [
+            83,
+            141,
+            132,
+            86
+          ],
+          "max_completed_readback_gap_seconds": [
+            30.692163168000008,
+            9.453752944999962,
+            9.027496673999991,
+            28.80112953400001
+          ],
+          "open_readback_gap_seconds": [
+            0.5748766999999475,
+            3.342317758999968,
+            0.30125077799999644,
+            0.9139850839999895
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation",
+          "duration_seconds": 150.470224396,
+          "readbacks": [
+            57,
+            123,
+            112,
+            73
+          ],
+          "max_completed_readback_gap_seconds": [
+            30.886858159999974,
+            21.864152630000035,
+            35.82154055899997,
+            15.07731116900004
+          ],
+          "open_readback_gap_seconds": [
+            1.6510280279999847,
+            3.068167588000051,
+            0.17956271400004198,
+            1.6520465850000505
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovery_observations": [
+      {
+        "name": "asymmetric-peer-isolation-healed",
+        "started_at": "2026-11-13T17:36:19.416313+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          10.403862481936812,
+          13.974454076960683,
+          10.403862481936812,
+          10.403862481936812
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "symmetric-peer-isolation-healed",
+        "started_at": "2026-11-13T17:39:07.901205+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          10.176167464000173,
+          10.176167464000173,
+          10.176167464000173,
+          10.176167464000173
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T17:39:52.935020+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          54.52416833303869,
+          26.153945871046744,
+          57.978606199030764,
+          54.52416833303869
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "hold_progress": [
+      {
+        "name": "asymmetric-peer-isolation-held",
+        "writer_progress": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "symmetric-peer-isolation-held",
+        "writer_progress": [
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    ],
+    "checkpoint_sequences": {
+      "capture_limit_per_pod": 1024,
+      "captured_events": 182,
+      "completed": 23,
+      "left_censored": 0,
+      "open": [],
+      "longest": {
+        "pod": "durable-db-1/ca9edd0c-71af-4f58-b8d1-d83d359bfdd3",
+        "owner": "6b5de631-2f75-44ea-9c57-e344df3a546b",
+        "start_utc": "2026-11-13T17:37:54.948703+00:00",
+        "end_utc": "2026-11-13T17:38:25.854940Z",
+        "seconds": 30.906237,
+        "deferred": {
+          "funding": 1,
+          "confirmation": 1
+        },
+        "left_censored": false
+      }
+    },
+    "journal_failures": {
+      "durable-db-1/ca9edd0c-71af-4f58-b8d1-d83d359bfdd3": [
+        {
+          "time_utc": "2026-11-13T17:34:00.645273Z",
+          "owner": "a798d9b8-5df1-4420-8e26-871e09814bab",
+          "position": 27,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:34:29.793825Z",
+          "owner": "a798d9b8-5df1-4420-8e26-871e09814bab",
+          "position": 57,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:36:25.164410Z",
+          "owner": "a798d9b8-5df1-4420-8e26-871e09814bab",
+          "position": 172,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:38:37.743270Z",
+          "owner": "a798d9b8-5df1-4420-8e26-871e09814bab",
+          "position": 278,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:38:40.192448Z",
+          "owner": "a798d9b8-5df1-4420-8e26-871e09814bab",
+          "position": 278,
+          "kind": "other",
+          "unsent": true
+        }
+      ],
+      "durable-db-2/2bdfa480-3825-4fcf-a1a5-b4a800634180": [
+        {
+          "time_utc": "2026-11-13T17:33:59.481785Z",
+          "owner": "2f09f677-466d-4ac2-9a5e-bfe7ab26ce65",
+          "position": 53,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:34:39.541683Z",
+          "owner": "2f09f677-466d-4ac2-9a5e-bfe7ab26ce65",
+          "position": 110,
+          "kind": "other",
+          "unsent": false
+        },
+        {
+          "time_utc": "2026-11-13T17:35:32.713437Z",
+          "owner": "3b686daf-bcb7-4c15-9297-d79aa1c9d786",
+          "position": 52,
+          "kind": "request",
+          "unsent": false
+        },
+        {
+          "time_utc": "2026-11-13T17:38:00.441181Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "position": 153,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:38:01.336800Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "position": 154,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:38:07.869616Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "position": 153,
+          "kind": "other",
+          "unsent": true
+        },
+        {
+          "time_utc": "2026-11-13T17:39:17.165997Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "position": 217,
+          "kind": "request",
+          "unsent": false
+        }
+      ]
+    },
+    "retirements": {
+      "durable-db-2/2bdfa480-3825-4fcf-a1a5-b4a800634180": [
+        {
+          "time_utc": "2026-11-13T17:34:39.622795Z",
+          "owner": "2f09f677-466d-4ac2-9a5e-bfe7ab26ce65",
+          "reason": "unresolved_upload"
+        },
+        {
+          "time_utc": "2026-11-13T17:34:40.852558Z",
+          "owner": "2f09f677-466d-4ac2-9a5e-bfe7ab26ce65",
+          "reason": "unready"
+        },
+        {
+          "time_utc": "2026-11-13T17:35:32.847789Z",
+          "owner": "3b686daf-bcb7-4c15-9297-d79aa1c9d786",
+          "reason": "unresolved_upload"
+        },
+        {
+          "time_utc": "2026-11-13T17:35:33.091912Z",
+          "owner": "3b686daf-bcb7-4c15-9297-d79aa1c9d786",
+          "reason": "unready"
+        },
+        {
+          "time_utc": "2026-11-13T17:39:17.254533Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "reason": "unresolved_upload"
+        },
+        {
+          "time_utc": "2026-11-13T17:39:19.852421Z",
+          "owner": "0ac28ed8-2919-4acc-8ff1-318ff77ffc8e",
+          "reason": "unready"
+        }
+      ]
+    },
+    "namespace_removed": true,
+    "provider_cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 722
+    },
+    "scope": "Second passing isolation campaign on unchanged v0.24.25. Separate dedicated bucket, four sequential writers, existing hosts. No production SLO, sustained workload, AWS, physical-host failure or node-controller replacement claim.",
+    "evidence_sha256": {
+      ".tools/pacing-repeat-b2/result.json": "2bc36aa3dc9c0aed32bd29a36dab6f64c15b43ffbd53368ebba018613b0dc3cf",
+      ".tools/pacing-repeat-b2/kubernetes.json": "dfbff343f01dc27398950c6bdff713b436c383511ac4f166781c9bb40b8ec911",
+      ".tools/pacing-repeat-b2/kubernetes.history.jsonl": "baafab5d63033e4a8e081a200184c543dd33fba713ccffb5c0a4ca290940d6ab",
+      ".tools/pacing-repeat-b2/history-check.json": "5ed18df8358a2299110a51007a2c773e7ea6714d6a77e6d26971a0033fb98332",
+      ".tools/pacing-repeat-b2/checkpoint-samples.json": "1b6bcc718103d84b35061643525b4a5e51bcd8060175e088d9961700eda131df",
+      ".tools/pacing-repeat-b2/checkpoint-spans.json": "e83b86647ee3ab14c380d85da65b42ce6df07512b7372c6636a42311d6ab4133",
+      ".tools/pacing-repeat-b2.log": "02c44d32bda2d4528e2ed23dc9ee121edbd27c84528479c89bb777450a4d0f6d"
+    }
   }
 }
