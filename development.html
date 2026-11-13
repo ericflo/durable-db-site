@@ -16,7 +16,7 @@ scripts/check-proof.sh
 <p>The two Rust test commands run the complete required suite: the capacity regression is opt-in so ordinary <code>cargo test</code> does not run its large directory sweep in debug mode. CI runs it explicitly in release mode. The local command uses your host target. Woodpecker runs that same regression on musl, sharing the target used by the shipped static binary instead of building a separate optimized GNU target.</p>
 <p>The model command checks every current-engine model and its required controls. The proof command above checks abstract publication safety; journal and research proofs have separate commands below. These checks do not establish that the Rust implementation refines the models. See <a href="verification.html">verification</a> for each theorem’s assumptions and scope.</p>
 <h2 id="work-on-one-component">Work on one component<a class="anchor" href="#work-on-one-component" aria-label="Link to this section">#</a></h2>
-<p>Run the checks affected by a change while iterating. Woodpecker retains the complete required suite.</p>
+<p>Run the checks affected by a change while iterating. Woodpecker retains the complete required suite. Its client contract finishes before optimized compilation starts, avoiding CPU contention with the contract deadline. Only the successful marker is passed into the optimized build; application source and Node dependencies stay in the client stage.</p>
 <table>
 <thead>
 <tr>

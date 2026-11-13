@@ -55,7 +55,7 @@ durable-db token --key-file /run/secrets/admin.key --metrics \
 </tr>
 </tbody>
 </table>
-<p>HTTP operations include body decoding, admission, and handler execution. Health probes are excluded. Publication timing includes retries and path rebuilding. Provider-boundary operations cover authority reads/replacements, immutable object GET/PUT/list, and physical version reclamation. B2 native operations additionally expose each native API attempt; a refreshed authorization retry appears as another attempt. Startup bucket discovery is included in native listing counters after the bounded-read-retry change. Earlier profiling reports predate that instrumentation. Read-only native retries have three attempts and a ten-second deadline; each actual native request appears in the counters. Conditional publication errors are never retried as if their outcome were known.</p>
+<p>HTTP operations include body decoding, admission, and handler execution. Health probes are excluded. <code>forward_discovery</code> covers cached-route lookup, its lock and any authoritative discovery; <code>forward_request</code> covers one peer request including its response body. <code>native_read_lock</code> isolates the wait for the serving view, while <code>native_read</code> covers authorization, value retrieval and fresh permit validation after that lock is acquired. Publication timing includes retries and path rebuilding. Provider-boundary operations cover authority reads/replacements, immutable object GET/PUT/list, and physical version reclamation. B2 native operations additionally expose each native API attempt; a refreshed authorization retry appears as another attempt. Startup bucket discovery is included in native listing counters after the bounded-read-retry change. Earlier profiling reports predate that instrumentation. Read-only native retries have three attempts and a ten-second deadline; each actual native request appears in the counters. Conditional publication errors are never retried as if their outcome were known.</p>
 <p>These are operational measurements, <strong>not a provider billing meter</strong>. Object-store SDK retries can occur inside a measured call. A successful physical-deletion call can remove several versions, and a failed response can hide a successful deletion. Candidate counts are scan activity, not an estimate of the whole garbage backlog. A cancelled publication may have committed; metrics cannot resolve its transaction outcome.</p>
 <p>Acquisition logs expose the work inside the larger recovery stages. <code>native acquisition owner</code> connects a partition ID to its activated owner’s opaque
 incarnation after activation succeeds. The same owner ID links the following fixed-field records:</p>
@@ -82,9 +82,20 @@ call; subtract adjacent values from that call for stage duration. Catalogue
 completion has its own interval. A failed or cancelled call may have no terminal
 record. The qualification harness retains only these fixed fields from bounded
 pod-log samples; disappearance and rotation can omit events. These timings add
-no provider calls and grant no authority. Checkpoint construction currently holds
-the serving owner’s write lock through I/O, including an opportunistic handoff
-checkpoint; its duration can therefore delay foreground requests after readiness.</p>
+no provider calls and grant no authority. Checkpoint funding and immutable uploads
+allow concurrent reads; publication and projection replacement remain exclusive.</p>
+<p>Measured operations lasting at least one second also emit <code>slow operation</code> with
+fixed operation/outcome labels and elapsed milliseconds. Cancellation emits a
+terminal sample when the future is dropped; abrupt process death may prevent it.
+These records separate discovery, forwarding, lock contention and provider work,
+but nested durations overlap and must not be summed. <code>forward transport failed</code>
+adds only the opaque owner incarnation, connect/timeout classification and
+elapsed time for failed peer sends; it never logs the URL, request or raw error.
+Peer forwarding permits two seconds to establish a connection within its existing
+25-second overall request deadline. Failure invalidates that cached route; a
+caller retries explicitly. These deadlines schedule availability, never serving
+authority. A cancelled send has no transport-error classification. Pod logs are bounded
+samples, not complete request traces or cross-host clock measurements.</p>
 <p>For example, inspect the publication-register conflict fraction:</p>
 <pre><code class="language-promql">sum(rate(durable_db_operations_total{job=&quot;durable-db&quot;,operation=&quot;authority_replace&quot;,outcome=&quot;conflict&quot;}[5m]))
 /
