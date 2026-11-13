@@ -117,7 +117,7 @@
 </code></pre>
 <p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
 <p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
-<p>Only <code>409 conflict</code> authorizes a fresh transaction attempt before any uncertain write outcome. The native engine also distinguishes <code>409 receipt_expired</code>: the receipt no longer establishes the original outcome, so reconcile using the original request instead of generating a new ID. The JSON SDK raises <code>UncertainCommitError</code> for this case; Pi adapters stop instead of rebuilding the write. This distinction is implemented in the native library while HTTP router integration remains pending.</p>
+<p>Only <code>409 conflict</code> authorizes a fresh transaction attempt before any uncertain write outcome. The native server also distinguishes <code>409 receipt_expired</code>: the receipt no longer establishes the original outcome, so reconcile using the original request instead of generating a new ID. The JSON SDK raises <code>UncertainCommitError</code> for this case; Pi adapters stop instead of rebuilding the write.</p>
 <h2 id="durable-token-revocation">Durable token revocation<a class="anchor" href="#durable-token-revocation" aria-label="Link to this section">#</a></h2>
 <p>PUT creation starts protected. Use an administrator credential and the current policy revision to change access through <code>POST /v1/databases/{db}/access</code>. For example, invalidate all currently issued database tokens:</p>
 <pre><code class="language-json">{
@@ -139,6 +139,12 @@
 <p>At least one ceiling must increase and neither may decrease. The result contains current <code>status</code> and <code>replayed</code>. Eight administrative receipts retain exact request identity; an evicted request’s stale expected revision conflicts. Retry an uncertain change with its identical ID and body. Startup flags never reset an initialized ledger. Administrative refill stays available before owner readiness. Existing owners can read while immutable upload credit is exhausted; acquiring an owner, publishing checkpoints and writing data require funded uploads. Fenced physical collection itself needs no immutable PUT credit, but virtual partition-control publication still uses the shared directory allowance. Exhaustion returns <code>503 storage_unavailable</code> because a previously submitted proposal may still commit. Resolve the original write identity after a refill; do not reinterpret exhaustion as a definite abort.</p>
 <h2 id="errors-and-bounds">Errors and bounds<a class="anchor" href="#errors-and-bounds" aria-label="Link to this section">#</a></h2>
 <p>Errors use <code>{error,message}</code>: 400 invalid request, 401 invalid/mismatched credentials, 404 missing database, 409 conflict, 413 resource limit, 429 admission limit, 503 provider failure or deadline. Axum’s malformed-JSON/body-extraction errors may use plain text. Provider error details, object names, secrets, and values are not returned to callers.</p>
+<p>An API 503 response over HTTP/1 includes <code>Connection: close</code>: the complete error
+reply precedes closure, allowing the next explicit retry to select a new Service
+connection. Keep the identical request ID, revision and body for an uncertain
+write. This does not replay requests or guarantee a different or healthy pod.
+Other API responses retain normal connection reuse; HTTP/2 responses never carry
+this hop-by-hop header. A provider-wide outage can still cause connection churn.</p>
 <table>
 <thead>
 <tr>
