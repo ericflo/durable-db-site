@@ -8,9 +8,11 @@ despite blocked peer HTTP. A completed unanswered wait schedules an ordinary
 conditional claim; it grants no serving authority. Replies use the existing
 partition metadata and introduce no new object class. See the
 <a href="verification.html#storage-path-owner-challenges">challenge protocol and limits</a>.
-On orderly shutdown, the process conditionally removes its routing addresses so
-replacements can skip that wait. This bounded best-effort hint changes no permit
-or history; an interrupted shutdown retains the ordinary challenge path.</p>
+On orderly shutdown, the process conditionally removes its routing addresses
+and leaves the departing stable member’s fingerprint. That member’s replacement
+skips the wait; another member waits before fallback. This bounded best-effort
+hint changes no permit or history; an interrupted shutdown retains the ordinary
+challenge path.</p>
 <p>A permit is a write-once positive object. A successor permanently revokes predecessor permits before choosing their durable journal prefixes. Remote responses are sealed before a fresh, uncached permit GET. There is no lease, bounded-clock assumption or bucket-wide conditional write on the ordinary read path. A fresh object GET still has provider latency; this is not an in-memory latency claim. <a href="design-owned-partitions.html#revocable-writer-permits">Protocol details and assumptions</a>.</p>
 <p>If the fresh permit read is unavailable, the response returns HTTP 503 while a locally healthy worker stays resident. An identical retry can resolve its durable receipt without another journal upload. Confirmed revocation and a failed local view still stop serving.</p>
 <p>Requests arriving elsewhere are forwarded once to an advertised owner incarnation. The receiving API pins that backend through authorization and dispatch; address reuse cannot redirect a request to an unrelated incarnation. Tenant claims and policy checks remain intact. Unknown outcomes return to the caller for an identical retry, without hidden forwarding replay.</p>
