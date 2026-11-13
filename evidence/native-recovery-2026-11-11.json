@@ -30062,5 +30062,751 @@
       "status": "success",
       "url": "https://ci.eflorenzano.com/repos/18/pipeline/374/1"
     }
+  },
+  "answered_challenge_pacing": {
+    "version": "0.24.25",
+    "date": "2026-11-13",
+    "experimental": true,
+    "status": "Answered challenges are paced; both isolation readback targets pass in one B2 campaign; checkpoint retries and broader qualification remain open.",
+    "local": {
+      "focused_tests": 32,
+      "seconds": 6.11,
+      "clippy_all_targets": true,
+      "format": true,
+      "old_scheduler_fails_checkpoint_regression": true,
+      "answered_then_stopped_owner_fenced_after_fresh_wait": true,
+      "replacement_fixture": "Initial combined batch stopped after a non-finishing existing replacement fixture; isolated rerun passes in 0.07s. Unbounded random-port search removed; revised batch and full CI pass.",
+      "model": {
+        "distinct_states": 3968,
+        "generated_states": 24897,
+        "depth": 14,
+        "controls": 10,
+        "transitions_changed": false,
+        "scope": "One round; retry pacing stutters. Not a timing guarantee or proof of Rust."
+      }
+    },
+    "policy": {
+      "wait_seconds": 15,
+      "answer_keeps_deadline": true,
+      "fresh_nonce_needs_fresh_wait": true,
+      "answered_then_stopped_owner": "May wait remainder of existing interval plus a fresh challenge wait, scheduling and provider I/O.",
+      "same_member_withdrawal_bypasses_challenges": true,
+      "new_state_fields": 0,
+      "new_objects": 0,
+      "new_workers": 0,
+      "new_dependencies": 0
+    },
+    "artifact": {
+      "source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+      "pipeline_status_at_verification": "success",
+      "woodpecker_pipeline": 376,
+      "artifact_image_digest": "sha256:b3996035439858bb282cc92d841eb0178bb0657f84c20f21d9fd6f245dd6512f",
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.25",
+        "archive_sha256": "5426fa9839624d67d3c27212f2b59bfdd818380bec4b57114d831f1eb74d3ca9",
+        "binary_sha256": "d7715a602982bb36307eaa9f81ce849289c5ba6c4b83f17261c66a5d8265a5a4",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "standalone_checked_in_woodpecker_and_after_download": true,
+      "archive_bytes": 6420429,
+      "version": "v0.24.25",
+      "experimental": true,
+      "woodpecker": {
+        "pipeline": 376,
+        "url": "https://ci.eflorenzano.com/repos/18/pipeline/376/1",
+        "status": "success",
+        "steps": [
+          {
+            "name": "clone",
+            "state": "success"
+          },
+          {
+            "name": "dependency-audit",
+            "state": "success"
+          },
+          {
+            "name": "javascript-audit",
+            "state": "success"
+          },
+          {
+            "name": "verify-and-build",
+            "state": "success"
+          },
+          {
+            "name": "publish-docs",
+            "state": "success"
+          }
+        ]
+      },
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "native_client_contract": {
+        "artifact_success_marker": true,
+        "fresh_contract_stdout": true
+      },
+      "capacity_test_passed": true,
+      "github_actions_disabled": true,
+      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:b3996035439858bb282cc92d841eb0178bb0657f84c20f21d9fd6f245dd6512f",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.25",
+      "published_at": "2026-11-13T17:22:31Z",
+      "github_asset_digest_matches": true
+    },
+    "cloud": {
+      "runtime_source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+      "runtime_image_digest": "sha256:1c76a85cb060e22b183feadb24c97c3722b09e7e6d9f088aeda71113ed50a6b7",
+      "runtime_matches_verified_artifact": true,
+      "harness_source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+      "harness_sha256": "66102cc7c4a4bb9ec945cf40424824e410527307b10865bc69a39a2192619c20",
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "peer-isolation",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "128Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "peer_ingress": "shared",
+        "peer_fault": {
+          "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+          "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+          "capability": "NET_ADMIN",
+          "uid": 0,
+          "host_network": false,
+          "hold_seconds": 90
+        },
+        "ingress_observation": {
+          "fresh_connections": true,
+          "timeout_seconds": 5,
+          "read_concurrency": 1,
+          "writers": [
+            0,
+            1
+          ],
+          "outside_measured_hold": true
+        }
+      },
+      "complete": true,
+      "writes_acknowledged": 1106,
+      "verified_keys": 1106,
+      "independent_history": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 1106,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "asymmetric-peer-isolation",
+            "duration_seconds": 143.343883101,
+            "readbacks": [
+              99,
+              127,
+              115,
+              92
+            ],
+            "max_completed_readback_gap_seconds": [
+              16.413783138,
+              13.404037732999967,
+              25.16525218800001,
+              16.645238226999993
+            ],
+            "open_readback_gap_seconds": [
+              1.055378638999997,
+              0.7883168930000011,
+              0.4694727039999975,
+              1.0627761199999952
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          },
+          {
+            "name": "symmetric-peer-isolation",
+            "duration_seconds": 156.98315338800006,
+            "readbacks": [
+              64,
+              136,
+              114,
+              43
+            ],
+            "max_completed_readback_gap_seconds": [
+              36.92418491199993,
+              18.282607375000055,
+              28.291230745999997,
+              50.16018462100004
+            ],
+            "open_readback_gap_seconds": [
+              0.3479071930000259,
+              0.2019304160000388,
+              0.7042428580000433,
+              0.34599526700009164
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T17:15:30.726742+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            11.927369937999174,
+            11.927369937999174,
+            11.927369937999174,
+            11.927369937999174
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T17:18:25.390388+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.16386000905186,
+            10.16386000905186,
+            13.791052752989344,
+            10.16386000905186
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T17:19:13.626747+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            29.535423123976216,
+            25.941435865941457,
+            36.71425522491336,
+            29.535423123976216
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "hold_progress": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "checkpoint_sequences": {
+        "capture_limit_per_pod": 1024,
+        "captured_events": 190,
+        "completed": 23,
+        "left_censored": 0,
+        "open": [],
+        "longest": {
+          "pod": "durable-db-2/2a973a8d-01d7-43f2-b465-06b5d2f75870",
+          "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+          "start_utc": "2026-11-13T17:17:37.935167+00:00",
+          "end_utc": "2026-11-13T17:18:14.236633Z",
+          "seconds": 36.301466,
+          "deferred": {
+            "funding": 1,
+            "confirmation": 2
+          },
+          "left_censored": false,
+          "events": [
+            {
+              "time_utc": "2026-11-13T17:17:37.935167Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "permission",
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-13T17:17:38.016889Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "allowance",
+              "elapsed_ms": 81
+            },
+            {
+              "time_utc": "2026-11-13T17:17:38.017167Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "funding",
+              "elapsed_ms": 82
+            },
+            {
+              "time_utc": "2026-11-13T17:17:41.222951Z",
+              "outcome": "deferred",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "funding",
+              "elapsed_ms": 3287
+            },
+            {
+              "time_utc": "2026-11-13T17:17:41.303449Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "permission",
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-13T17:17:41.382907Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 79
+            },
+            {
+              "time_utc": "2026-11-13T17:17:42.546803Z",
+              "outcome": "deferred",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 1243
+            },
+            {
+              "time_utc": "2026-11-13T17:17:43.377638Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "permission",
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-13T17:17:43.452641Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 75
+            },
+            {
+              "time_utc": "2026-11-13T17:17:46.086262Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "allowance",
+              "elapsed_ms": 2708
+            },
+            {
+              "time_utc": "2026-11-13T17:17:46.086634Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "funding",
+              "elapsed_ms": 2709
+            },
+            {
+              "time_utc": "2026-11-13T17:17:56.057089Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "staging",
+              "elapsed_ms": 12679
+            },
+            {
+              "time_utc": "2026-11-13T17:17:56.916147Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "publication",
+              "elapsed_ms": 13538
+            },
+            {
+              "time_utc": "2026-11-13T17:17:56.916180Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "publication",
+              "elapsed_ms": 13538
+            },
+            {
+              "time_utc": "2026-11-13T17:18:04.237721Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 20860
+            },
+            {
+              "time_utc": "2026-11-13T17:18:08.846512Z",
+              "outcome": "deferred",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 25468
+            },
+            {
+              "time_utc": "2026-11-13T17:18:08.846535Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "publication",
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-13T17:18:08.846549Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "confirmation",
+              "elapsed_ms": 0
+            },
+            {
+              "time_utc": "2026-11-13T17:18:11.143501Z",
+              "outcome": "progress",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "publication",
+              "elapsed_ms": 2296
+            },
+            {
+              "time_utc": "2026-11-13T17:18:14.236633Z",
+              "outcome": "completed",
+              "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+              "stage": "publication",
+              "elapsed_ms": 5390
+            }
+          ]
+        },
+        "previous_run_longest_sample_seconds": 82.157022,
+        "comparison_limit": "Different campaigns and partitions; not a paired benchmark or causal attribution."
+      },
+      "largest_readback_gap": {
+        "window": "symmetric-peer-isolation",
+        "writer": 3,
+        "partition": 2,
+        "gap_seconds": 50.16018462100004,
+        "previous_readback": 343.448116192,
+        "record": {
+          "database_index": 3,
+          "request_id": "8fbba4c7-b1c3-4716-a98a-b77dbaf20482",
+          "revision": 179,
+          "start": 343.69856097599995,
+          "end": 393.52383334999996,
+          "readback_end": 393.608300813,
+          "value_sha256": "7f8f2ed39393b27553823bc0a87143dd29e89612d41d83b572e739377fc19831",
+          "commit_rpc": {
+            "request_seconds": 43.32242624900001,
+            "backoff_seconds": 6.502356134999893,
+            "statuses": {
+              "200": 1,
+              "429": 2,
+              "503": 8,
+              "transport_or_decode_error": 1
+            },
+            "connections": {
+              "57": {
+                "429": 1
+              },
+              "58": {
+                "429": 1
+              },
+              "59": {
+                "503": 1
+              },
+              "60": {
+                "503": 1
+              },
+              "62": {
+                "503": 1
+              },
+              "64": {
+                "503": 1
+              },
+              "65": {
+                "transport_or_decode_error": 1
+              },
+              "69": {
+                "503": 1
+              },
+              "overflow": {
+                "200": 1,
+                "503": 3
+              }
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.08434379499999341,
+            "backoff_seconds": 0,
+            "statuses": {
+              "200": 1
+            },
+            "connections": {
+              "76": {
+                "200": 1
+              }
+            }
+          }
+        }
+      },
+      "journal_failures": {
+        "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4": [
+          {
+            "time_utc": "2026-11-13T17:14:06.924155Z",
+            "owner": "ecf70878-547c-4132-a416-79fa0d565c26",
+            "position": 87,
+            "kind": "other",
+            "unsent": true
+          },
+          {
+            "time_utc": "2026-11-13T17:14:28.934088Z",
+            "owner": "061dfde4-2c7c-4de0-8a30-9619ddde9bc0",
+            "position": 115,
+            "kind": "other",
+            "unsent": true
+          },
+          {
+            "time_utc": "2026-11-13T17:14:38.552454Z",
+            "owner": "ecf70878-547c-4132-a416-79fa0d565c26",
+            "position": 117,
+            "kind": "other",
+            "unsent": true
+          },
+          {
+            "time_utc": "2026-11-13T17:15:13.572285Z",
+            "owner": "ecf70878-547c-4132-a416-79fa0d565c26",
+            "position": 142,
+            "kind": "other",
+            "unsent": true
+          },
+          {
+            "time_utc": "2026-11-13T17:16:23.815232Z",
+            "owner": "061dfde4-2c7c-4de0-8a30-9619ddde9bc0",
+            "position": 202,
+            "kind": "request",
+            "unsent": false
+          },
+          {
+            "time_utc": "2026-11-13T17:17:57.478543Z",
+            "owner": "cd6d76a7-0617-4152-bc1a-9d687c7e097b",
+            "position": 64,
+            "kind": "other",
+            "unsent": true
+          },
+          {
+            "time_utc": "2026-11-13T17:18:00.923629Z",
+            "owner": "cd6d76a7-0617-4152-bc1a-9d687c7e097b",
+            "position": 64,
+            "kind": "other",
+            "unsent": true
+          }
+        ],
+        "durable-db-2/2a973a8d-01d7-43f2-b465-06b5d2f75870": [
+          {
+            "time_utc": "2026-11-13T17:16:43.834038Z",
+            "owner": "85a9e55c-dc56-47f8-b542-1a3462307d54",
+            "position": 334,
+            "kind": "other",
+            "unsent": true
+          }
+        ]
+      },
+      "retirements": {
+        "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4": [
+          {
+            "time_utc": "2026-11-13T17:16:23.979291Z",
+            "owner": "061dfde4-2c7c-4de0-8a30-9619ddde9bc0",
+            "reason": "unresolved_upload"
+          },
+          {
+            "time_utc": "2026-11-13T17:16:25.124044Z",
+            "owner": "061dfde4-2c7c-4de0-8a30-9619ddde9bc0",
+            "reason": "unready"
+          }
+        ]
+      },
+      "ambiguous_recovery": {
+        "partition": 14,
+        "retired_at": "2026-11-13T17:16:23.979291Z",
+        "ready_at": "2026-11-13T17:16:37.412846Z",
+        "retired_to_ready_seconds": 13.433555,
+        "acquisition_events": [
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:25.124457Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "resident",
+            "elapsed_ms": 0
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:25.124469Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "budget",
+            "elapsed_ms": 0
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:25.241615Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "observe",
+            "elapsed_ms": 117
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:25.318901Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "budget",
+            "elapsed_ms": 194
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:25.318926Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "claim",
+            "elapsed_ms": 194
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:26.621310Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "observe",
+            "elapsed_ms": 1496
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:26.705968Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "budget",
+            "elapsed_ms": 1581
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:26.705993Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "claim",
+            "elapsed_ms": 1581
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:29.939254Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "activate",
+            "elapsed_ms": 4814
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:32.094100Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "select_journals",
+            "elapsed_ms": 6969
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:37.064892Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "recover",
+            "elapsed_ms": 11940
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:37.412792Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "serve",
+            "elapsed_ms": 12288
+          },
+          {
+            "pod": "durable-db-1/b12f18aa-e4ed-40ca-8e56-652f32d050d4",
+            "time_utc": "2026-11-13T17:16:37.412846Z",
+            "outcome": "progress",
+            "partition": 14,
+            "stage": "ready",
+            "elapsed_ms": 12288
+          }
+        ]
+      },
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1053
+      }
+    },
+    "scope": "Single four-writer B2 shared-Service campaign. Completed readback gaps meet the fixture target; cold and post-heal bounds are separate observations. No new AWS, rollout, physical-host failure qualification or production SLO.",
+    "next": "Repeat isolation and host-loss qualification, then reduce remaining checkpoint funding/confirmation and client retry costs against a declared workload.",
+    "removed": [
+      "unbounded random-port search in replacement fixture",
+      "11 task-owned TLC scratch directories; logs retained",
+      "superseded README and homepage status; dated evidence retained"
+    ],
+    "evidence_sha256": {
+      ".tools/checkpoint-challenge-after.log": "46f7842367e9d9cf0153db3974afeee28a0e6a0be86d13b7d98fca72622459af",
+      ".tools/checkpoint-challenge-b2/ambiguous-recovery.json": "8e8ea04206af282f2ad5f6846ffdb53b2fa2fc398efce9054ecad91a03544373",
+      ".tools/checkpoint-challenge-b2/checkpoint-samples.json": "a5d134611cf5daa369d7f0023c90e7f7370374a82ed6fdda0f3f948ba6eef7c7",
+      ".tools/checkpoint-challenge-b2/checkpoint-spans.json": "7165c5f5a8540b9d225683c24aae33aed149683c81afe92cf82f8d800c7d7d08",
+      ".tools/checkpoint-challenge-b2/history-check.json": "ca3f3db7080eb71fc9d536f0f160daf0c1efe8e36ad8c5b2f61247b77682febe",
+      ".tools/checkpoint-challenge-b2/kubernetes.history.jsonl": "70bea8259a05d96d51598df413971dfa49f62f1d03d68e3cb789e280cca980c9",
+      ".tools/checkpoint-challenge-b2/kubernetes.json": "822de26689de9f19966c0bc46178cc3388ffbd6fedc17ad4c943b74026e2b9dc",
+      ".tools/checkpoint-challenge-b2/largest-readback-gaps.json": "96cf254c2ce98c216cace2f818568a949d063ab4898b1fda9d1369decd334231",
+      ".tools/checkpoint-challenge-b2/result.json": "be46bb9fdacd1adb746d7399ce4797e917cebeb6d530ceef7cc38b683013544c",
+      ".tools/checkpoint-challenge-b2.log": "d7bce6d9aa09a671982db80b3338f0cd39b94a4e41a890f829560869d72ad6a3",
+      ".tools/checkpoint-challenge-before.log": "f4d06afcc7b63310df366deb2ed0257c25997330eccb4901b81ec310c48b9d91",
+      ".tools/checkpoint-challenge-clippy.log": "b53ccc247b39e8ca18a5494da4528f167473399b52c8605a4aacb037fbba3269",
+      ".tools/checkpoint-challenge-focused.log": "472865ce72935e43a3886bafdcdf250426db1cc65ee943e33cb8ac3f287f9dbe",
+      ".tools/checkpoint-challenge-model.log": "351b9614f5e1fce91b0080576d9ab075b09bd6fa2d466147ae6b8892fcff47a5",
+      ".tools/checkpoint-challenge-replacement.log": "173aed0f8057702ee3bdf74f0945a01a35019060637b30674bc57af38f752ed3",
+      ".tools/checkpoint-challenge-site.log": "a2c7762f5e928f07165132d08faee387656cc405ff63cb881b2f67a8c3a3515f",
+      ".tools/checkpoint-challenge-tests.log": "2b97541f0fffa7f77d1cfc4e7c7d94df9928aef9a200d1f832db075c3f3aad10"
+    },
+    "release_tag_ci": {
+      "pipeline": 377,
+      "source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+      "status": "success",
+      "url": "https://ci.eflorenzano.com/repos/18/pipeline/377/1"
+    }
   }
 }
