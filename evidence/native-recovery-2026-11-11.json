@@ -23078,5 +23078,86 @@
       "number": 329,
       "status": "success"
     }
+  },
+  "claim_upload_prefunding": {
+    "status": "Local checks pass; exact-runtime cloud qualification pending",
+    "change": "Allocate volatile rights before observing the claim target, using the existing allocator. Each registration and permit still charges before PUT; no target or fence rebase. Concurrent writers may still invalidate an observation. Funding follows the advisory challenge gate. A confirmed new grant discards the advisory observation before capturing the claim target.",
+    "regression": {
+      "old_registration_objects": 2,
+      "new_registration_objects": 1,
+      "new_permit_objects": 1,
+      "real_http_absent_database_refusal": 404,
+      "seconds": 0.03
+    },
+    "routine_rust_checks_passed": 372,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "model": {
+      "name": "UploadCredits",
+      "transition_system_unchanged": true,
+      "distinct_states": 11006,
+      "generated_states": 41209,
+      "depth": 17,
+      "negative_controls": 5,
+      "scope": "Allocation, spending, cancellation/restart and late arrivals; not composed acquisition, physical timing or Rust refinement."
+    },
+    "removed": [
+      "Redundant Connection budgeted boolean; presence of the shared allocator now supplies that fact",
+      "Duplicated charge/debit branches in allocator",
+      "Obsolete host-timing CLI gate sentence in verification record",
+      "Contradictory development-guide paragraph describing parallel client and release builds",
+      "Isolated capacity experiment worktree",
+      "Superseded CI waiter output directory; no cloud resources were provisioned"
+    ],
+    "tlc_scratch_directories_removed": [
+      "tlc-upload-credits",
+      "tlc-upload-refund",
+      "tlc-upload-restore",
+      "tlc-upload-before-charge",
+      "tlc-upload-refill-reset",
+      "tlc-upload-initialize-reset"
+    ],
+    "source_sha256": {
+      "src/upload_budget.rs": "86a077e02957ac565a2c99cd95ac4d1d25726839f021e59efd1ad5a698bad6e8",
+      "src/providers/mod.rs": "fc56c95229ff37fb6bf4db6a590d2a3400253d0a1e4264889e9e1becd446ce23",
+      "src/api/cluster.rs": "a3566f5634c6dfb95f36bbcca504be9086ed3002501c7a899c5a13cd17d5246e",
+      "src/ownership/root.rs": "ce92671500da1bbf43373074e2afca1c0d654cbfcc65e7893153ae31ae3bda03",
+      "src/ownership/root/registration.rs": "8a76e6d3404281953b995d1b1062290122ae2ae9df5584edee25e7752cf02942",
+      "src/ownership/root/permit.rs": "3ac29d4cd034663a13cd1b21d2e8d3345f5f9875933359753787efaacae8aa6d",
+      "src/ownership/root/tests/budget.rs": "43594b8b4021dcb4bcbe402f70479800dc1c60e4ed906d22cc4c446492020b7e",
+      "src/ownership/root/tests/cluster.rs": "771241e69b769c4eecc1ad33421cd6c5e17822b20280412119e9ddc09c1e6ac4",
+      "spec/UploadCredits.tla": "136161c31fe016e2f4b62a0698e363735aeaf28c334f8714d53807006db6df4b",
+      "tests/publication.rs": "9281f97b5033b035990651b1c5948a28182c8bdd79b8efa54a58c112bf6d298c"
+    },
+    "raw_log_sha256": {
+      "claim-funding-before.log": "cfb3a654c047fddf43c45133504c463590e0f59b72e490f17668e598c429328c",
+      "claim-funding-after.log": "ed5fe506c3fb4062742c623b75ba7e190797d5895cb484d29ea817177063b11b",
+      "claim-funding-model.log": "b9ede89fc7d99f2f8b2af34e6317ce72373fb1e222f9095d252d70539254fbd5",
+      "claim-funding-clippy.log": "f0510336555de94c932892f4e90bb781e84d1e1ccab3e71ebe32931b3579245e",
+      "claim-funding-tests.log": "29eb46a6d701314f50a9e82de2cd8b6ba9ba5f36ec09a6d94d826a6c3f5fabbe",
+      "claim-funding-deferred-before.log": "f8e380d25e64584ebfcb3d461ae97a625e88ea8ca5a88772641fc3d66d5ca1d8",
+      "claim-funding-gated-cluster.log": "83e26ac45166ea68f631cfbe906d52c6dc2e26ae33518017a7af0187164f89da",
+      "capacity-realtime-local.log": "d8264016af1f0d312ffcb292a1a93a57ef9d23e454b1d758032f3b14923525d2",
+      "capacity-virtual-local.log": "ea09dc6ffc5fa5515a7f9b39a73dc9819b8fffd814fbffb88e1fd7f507aa7b90",
+      "claim-funding-gated-clippy.log": "24e6411dbefc979265836f985e91539909ea5f431d7caa735cff66a654d1211b",
+      "claim-funding-gated-tests.log": "1e2a74a12ccf2232fd10e67693dce6c34163203adfdb3c0881270aaaa4fedc6b"
+    },
+    "deferred_fallback_regression": {
+      "old_unused_additional_bytes": 8388608,
+      "old_unused_additional_attempts": 32,
+      "new_additional_allocation": 0,
+      "cluster_checks_passed": 24,
+      "cluster_seconds": 6.1
+    },
+    "capacity_check_iteration": {
+      "databases_per_budget_format": 10005,
+      "budget_formats": 2,
+      "entries_and_assertions_unchanged": true,
+      "local_target": "x86_64-unknown-linux-gnu",
+      "release_mode_realtime_seconds": 87.57,
+      "release_mode_virtual_time_seconds": 31.01,
+      "compilation_excluded": true,
+      "scope": "Synthetic in-memory capacity and correctness, not provider latency or whole-build speed. CI musl result remains pending."
+    }
   }
 }
