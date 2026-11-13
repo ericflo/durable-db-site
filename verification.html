@@ -787,6 +787,18 @@ fixed stage/outcome, and elapsed time; the cloud harness retains at most 256
 eligibility transitions and 1,024 reply samples per pod incarnation across rounds.
 The unchanged model below abstracts polling and I/O failures as stuttering;
 the test is not a timing guarantee on deployment hosts.</p>
+<p>After an answer, a challenger keeps the existing 15-second deadline before
+publishing another challenge against that incumbent. This gives checkpoint and
+funding comparisons a quiet interval across scheduler ticks. A new nonce still
+requires its own full wait; elapsed time never grants authority. If the owner
+answers and then stops, this pacing can add the remainder of the old interval
+before the next challenge. Same-member replacement after withdrawal bypasses
+challenges as before. A paused-clock HTTP cluster regression captures a real
+checkpoint publication after an answer, delays it across two scheduler ticks,
+then checks fresh-challenge waiting and eventual fencing after the responder
+stops. The old scheduler fails the checkpoint comparison. This is retry pacing,
+abstracted as stuttering in the existing single-round model, not a stronger
+failure detector or a cloud availability guarantee.</p>
 <p>Serving diagnostics distinguish unresolved journal uploads, interrupted upload
 tasks, incomplete local publication and unavailable local permission. Placement
 removal separately records unready workers or membership removal. Only fixed
