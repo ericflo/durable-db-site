@@ -78,18 +78,25 @@ network partition. <a href="verification-results.html">Current measurements and 
 remain separate from the declared recovery targets.</p>
 <p>For the focused network experiment, add <code>--scenario peer-isolation</code> to the same
 qualification command. It starts three processes on three hosts, sends writers
-through stable services on both sides of a one-versus-two split, and exercises
-one-way then two-way peer isolation. HTTPS/DNS and workload ingress remain open.
+through stable services on both sides of a one-versus-two split by default, and
+exercises one-way then two-way peer isolation. Add <code>--peer-ingress shared</code> to
+send all writers through the ordinary <code>durable-db</code> Service instead, without
+creating side-specific Services. HTTPS/DNS and workload ingress remain open.
 A pinned test helper uses <code>NET_ADMIN</code> as root inside each disposable pod’s private
 network namespace, dropping only traffic to peer addresses on TCP port 7654.
 Host networking is refused. Long-lived observers check fresh and retained peer
 connections; every process
 must also complete a fresh provider-backed administrative read. Each split is
 held for thirty seconds after its network checks pass. Per-writer progress during
-the split is recorded separately from recovery after healing. Both scenarios
+the split is recorded separately from recovery after healing. Both ingress modes
 share cold replacement, full history verification and namespace cleanup. The
 harness records bounded claim-attempt samples during each hold independently of
-writer progress. <a href="verification-results.html">Current results and missed targets</a>
+writer progress. The workload observes fetch’s actual pooled sockets through
+<a href="https://undici.nodejs.org/api/DiagnosticsChannel">Undici diagnostics</a>, recording
+response counts for at most eight numeric connection identities per RPC, plus
+an overflow bucket. <code>unobserved</code> means no socket assignment was seen. It does not
+record headers, addresses or credentials, and does not change connection reuse
+or retry behavior. <a href="verification-results.html">Current results and missed targets</a>
 retain exact binaries, configurations and timings. These short runs qualify their
 bounded fault/recovery histories, not permanent-partition availability or a
 production SLO. Rolling and scale-down still need broader qualification.
