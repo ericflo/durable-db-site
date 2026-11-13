@@ -22403,7 +22403,7 @@
     "decision": "Shipping profile unchanged: faster local incremental build trades 26.6 percent binary growth for 23.5 percent shorter build; runtime performance unmeasured. Temporary checkout and target deleted."
   },
   "serving_delay_boundaries": {
-    "status": "Locally verified; cloud qualification combined with the bounded-connect candidate",
+    "status": "Qualified in the v0.24.14 exact-runtime B2 rollout; see forward_connection_deadline.b2_rollout.serving_delays. Bounded sampled boundaries, not full cross-host request attribution.",
     "routine_rust_checks_passed": 370,
     "ignored_opt_in_checks": 20,
     "focused_routing_checks": 7,
@@ -22445,7 +22445,7 @@
     }
   },
   "forward_connection_deadline": {
-    "status": "Local TCP regression and routing model verified; exact-runtime B2 qualification pending",
+    "status": "Released v0.24.14: exact static B2 rollout, cold recovery and independent history check pass. One of two direct rollout gaps still misses 60 seconds; no production availability claim.",
     "connection_deadline_seconds": 2,
     "overall_request_deadline_seconds": 25,
     "old_path_misses_test_deadline_seconds": 3,
@@ -22485,7 +22485,10 @@
       "failure": "Aggregate 120-second client-suite deadline during concurrent optimized compilation; no individual test failure was reported before cancellation.",
       "ci_change": "Make the unchanged client success marker a prerequisite of optimized compilation; remove the duplicate final-assembly marker copy. Assertions and deadlines unchanged.",
       "log_sha256": "90d0579f99f44e43afe3e2b6938147f0e8bb44a9385e295aa0ce10d200198331",
-      "ci_log_sha256": "3c06536f32ae17c446cd26b9356c844f98102dafa61ea7ad22d09fa16ebf442b"
+      "ci_log_sha256": "3c06536f32ae17c446cd26b9356c844f98102dafa61ea7ad22d09fa16ebf442b",
+      "passed_ci_pipeline": 328,
+      "ci_seconds": 101.89,
+      "passing_ci_log_sha256": "0e2a6adeb911521c20d300f05596fe7b5c6f1dbc5b8a08b3fbbab1263d83189a"
     },
     "minio_membership": {
       "date_utc": "2026-11-13",
@@ -22529,6 +22532,551 @@
           }
         }
       ]
+    },
+    "source_commit": "5b54de25bb6f104dbf1dc1f09362aad6224c4794",
+    "woodpecker_pipeline": 328,
+    "woodpecker_status": "success",
+    "capacity_check": {
+      "database_count": 10005,
+      "both_budget_formats": true,
+      "seconds": 249.05,
+      "pipeline": 328,
+      "status": "passed"
+    },
+    "static_artifact": {
+      "source_commit": "5b54de25bb6f104dbf1dc1f09362aad6224c4794",
+      "woodpecker_pipeline": 328,
+      "artifact_image_digest": "sha256:f05ce523858c0c8eda26b21370c917ae96daf5f20a73371ae36ffa64a70e5506",
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.14",
+        "archive_sha256": "34742061b45e8f91f3646b8a25f3a37cba8133dd0361a52fe16aa1af2f506be2",
+        "binary_sha256": "0bf57e7847f40913839bb18206c82e01e2084186b46a33852667fd78f10d7650",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "archive_bytes": 6380367,
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "github_actions_disabled": true
+    },
+    "removed": [
+      "Duplicate JavaScript success-marker copy in final artifact stage",
+      "Ten local TLC scratch directories; bounded check logs retained"
+    ],
+    "b2_rollout": {
+      "binary_source_commit": "5b54de25bb6f104dbf1dc1f09362aad6224c4794",
+      "binary_profile": "verified Woodpecker static release candidate v0.24.14",
+      "binary_sha256": "0bf57e7847f40913839bb18206c82e01e2084186b46a33852667fd78f10d7650",
+      "image_digest": "sha256:c85f1c8f5a8cb915e27e61bc3f1d6d0ad1bfb793229449075a738f7c671e86f9",
+      "runtime_matches_verified_artifact": true,
+      "campaign_exit_code": 0,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 791,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "rolling-replacement-1",
+            "duration_seconds": 106.623227211,
+            "readbacks": [
+              41,
+              57,
+              52,
+              42
+            ],
+            "max_completed_readback_gap_seconds": [
+              74.801802345,
+              40.20765463800001,
+              35.49748203500005,
+              73.92342493000001
+            ],
+            "open_readback_gap_seconds": [
+              2.539980909999997,
+              0.06244606499996053,
+              0.5956917539999722,
+              1.4999932239999794
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          },
+          {
+            "name": "rolling-replacement-2",
+            "duration_seconds": 108.29766245100001,
+            "readbacks": [
+              38,
+              50,
+              56,
+              34
+            ],
+            "max_completed_readback_gap_seconds": [
+              38.71404036399997,
+              49.11224658499998,
+              40.096877862999975,
+              44.35265791500001
+            ],
+            "open_readback_gap_seconds": [
+              8.118474958000036,
+              0.3079130960000498,
+              0.4479952660000208,
+              12.665950371000008
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1512
+      },
+      "schema": 2,
+      "started_at": "2026-11-13T06:30:21.033331+00:00",
+      "finished_at": "2026-11-13T06:40:58.007526+00:00",
+      "source_commit": "5b54de25bb6f104dbf1dc1f09362aad6224c4794",
+      "harness_sha256": "fbe85e73e85b982ccdd7580f1cccdfe7e96783cf65341e26e4191deb37f5e398",
+      "workload_sha256": "685048b5e49469b274d43a0187e571f168e52b54a1d539dc497dcd655138dc8c",
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "writes_acknowledged": 791,
+      "reads_verified": 791,
+      "verified_keys": 791,
+      "history_sha256": "e3eafa683ed5cc22fb6352f62271966a54713f808dbf77aabe94559155cbb2ef",
+      "namespace_removed": true,
+      "configuration": {
+        "cpu_request": "25m",
+        "cpu_limit": "250m",
+        "memory_request": "96Mi",
+        "memory_limit": "384Mi",
+        "scenario": "rollout",
+        "client_origin": "http://durable-db:7654",
+        "database_prefix": "app",
+        "writer_origins": [
+          "http://durable-db:7654"
+        ],
+        "memory_cache_mib": 8,
+        "resident_memory_mib": 128,
+        "partitions": 16,
+        "discovery": "headless DNS",
+        "disk_cache": false,
+        "maintenance_seconds": 60,
+        "controller": "StatefulSet",
+        "placement_identity": "pod name",
+        "rollout_unavailable": 1,
+        "rollout_deadline_seconds": 240,
+        "per_writer_readbacks_before_phase": 2,
+        "process_pause": {
+          "shared_pid_namespace": true,
+          "liveness_probe": false,
+          "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+          "sidecar_cpu_limit": "100m",
+          "sidecar_memory_limit": "64Mi"
+        },
+        "upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "tenant_upload_budget": {
+          "bytes": 1073741824,
+          "attempts": 100000
+        },
+        "steady_seconds": 0,
+        "memory_observation": false,
+        "maximum_write_intents": 100000,
+        "rollout_repetitions": 2
+      },
+      "recovery_observations": [
+        {
+          "name": "scale-3",
+          "started_at": "2026-11-13T06:32:20.801460+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            18.337585216970183,
+            48.183012211928144,
+            21.934961878927425,
+            18.337585216970183
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-6",
+          "started_at": "2026-11-13T06:33:25.195919+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            18.3582894859137,
+            18.3582894859137,
+            18.3582894859137,
+            18.3582894859137
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "started_at": "2026-11-13T06:34:24.906855+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            102.29266107699368,
+            105.92826557601802,
+            95.044123310945,
+            98.46730551600922
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "started_at": "2026-11-13T06:36:19.604548+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            93.02160400501452,
+            107.68157005601097,
+            89.41605009394698,
+            93.02160400501452
+          ],
+          "observed_within_target": false
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T06:38:42.971785+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            60.72990076208953,
+            31.47981814504601,
+            49.60039479506668,
+            60.72990076208953
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "readback_windows": [
+        {
+          "name": "rolling-replacement-1",
+          "target_seconds": 60,
+          "start": {
+            "seconds": 212.836919214,
+            "verified": [
+              47,
+              103,
+              86,
+              46
+            ]
+          },
+          "end": {
+            "seconds": 319.460146425,
+            "verified": [
+              88,
+              160,
+              138,
+              88
+            ]
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "target_seconds": 60,
+          "start": {
+            "seconds": 327.505241247,
+            "verified": [
+              96,
+              170,
+              150,
+              96
+            ]
+          },
+          "end": {
+            "seconds": 435.802903698,
+            "verified": [
+              134,
+              220,
+              206,
+              130
+            ]
+          }
+        }
+      ],
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "cost_samples": {
+        "scope": "Complete sampled calls only; bounded log rotation/deletion can omit events. Each maximum is a separate call, not a combined critical path.",
+        "stages": {
+          "activation_events": {
+            "complete_calls_sampled": 84,
+            "longest_elapsed_ms": 7756
+          },
+          "selection_events": {
+            "complete_calls_sampled": 82,
+            "longest_elapsed_ms": 15896
+          },
+          "checkpoint_events": {
+            "complete_calls_sampled": 59,
+            "longest_elapsed_ms": 11273
+          }
+        },
+        "checkpoint_control_work": {
+          "complete_calls_sampled": 59,
+          "calls_with_confirmation": 3,
+          "confirmation_events": 3,
+          "longest_funding_ms": 7940,
+          "scope": "Complete sampled checkpoint calls; confirmation may resolve a real race or unknown response. Counts are not population rates."
+        },
+        "retained_scan_retries": 1,
+        "queued_receipt_completions": 38,
+        "publication": {
+          "complete_calls_sampled": 458,
+          "partial_calls_sampled": 20,
+          "conflicted_calls": 113,
+          "outcomes": {
+            "confirmed": 264,
+            "helped": 194,
+            "uncertain": 0
+          },
+          "comparison_attempts": 385,
+          "conflicts": 121,
+          "scope": "Complete bounded log samples, not rates or a population distribution. Initial includes observation/uploads before helper admission. Preparation includes discovery, target checks and directory uploads; comparison is the conditional provider call. Separate maxima are not one critical path.",
+          "maxima_ms": {
+            "elapsed": 7745,
+            "initial": 4986,
+            "queue": 3064,
+            "preparation": 5443,
+            "comparison": 1227
+          }
+        }
+      },
+      "raw_evidence_sha256": {
+        "kubernetes.json": "814e5f15c428dd14ac6691d1d20f45b8e2a2529ed648afe33d9a8aefe7f0df80",
+        "history-check.json": "8cd27b3edc90cefecbb36713975c0ac31ba3975e6c9415f2205148a5559a348b",
+        "cost-summary.json": "3d786ea2aa34d71af71a44c90d26fcf48233f1d6a678e9a3e55694a918a89edb",
+        "serving-delays.json": "83d5473f700f123a9edcae932fea2177936ff51888090da85a3470ffcca716c3",
+        "gap-breakdown.json": "a0ef0bc806a3664443214a78096de26a17fa663b71bd536347b5d76f56fbe731",
+        "kubernetes.history.jsonl": "e3eafa683ed5cc22fb6352f62271966a54713f808dbf77aabe94559155cbb2ef",
+        "result.json": "7968370d9f5335e1784cf4451bc2f6ff4610865aff070d91d6edafd4be91ea94"
+      },
+      "handoff_calls": {
+        "completed_calls_sampled": 148,
+        "ready_calls_sampled": 80,
+        "deferred_calls_sampled": 64,
+        "confirmed_claims_with_terminal_event": 80,
+        "failed_after_confirmed_claim": [],
+        "unfinished_claimed_calls_sampled": 5,
+        "longest_ready_ms": 27546,
+        "scope": "Bounded per-pod acquisition traces only. Failed means an explicit failure after the activate stage, not inferred cancellation. Incomplete traces cannot establish cancellation or exhaustive counts; elapsed times stay within one acquisition."
+      },
+      "largest_gap_breakdowns": [
+        {
+          "window": "rolling-replacement-1",
+          "writer": 0,
+          "partition": 2,
+          "gap_seconds": 74.801802345,
+          "before_commit_seconds": 0.25092613799998276,
+          "commit_seconds": 49.54147640299999,
+          "after_ack_seconds": 25.009399804000026,
+          "revision": 48,
+          "start_seconds": 174.980412652,
+          "end_seconds": 249.782214997,
+          "commit_rpc": {
+            "request_seconds": 29.962296083999973,
+            "backoff_seconds": 19.57879056600001,
+            "statuses": {
+              "200": 1,
+              "503": 24
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 3.500044750000088,
+            "backoff_seconds": 21.508889828999937,
+            "statuses": {
+              "200": 1,
+              "503": 26
+            }
+          }
+        },
+        {
+          "window": "rolling-replacement-2",
+          "writer": 1,
+          "partition": 12,
+          "gap_seconds": 49.11224658499998,
+          "before_commit_seconds": 0.2502154289999794,
+          "commit_seconds": 48.52775604900006,
+          "after_ack_seconds": 0.33427510699993945,
+          "revision": 215,
+          "start_seconds": 382.722465527,
+          "end_seconds": 431.834712112,
+          "commit_rpc": {
+            "request_seconds": 14.021436166999862,
+            "backoff_seconds": 34.50595898199989,
+            "statuses": {
+              "200": 1,
+              "429": 13,
+              "503": 26
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.3342134300000034,
+            "backoff_seconds": 0,
+            "statuses": {
+              "200": 1
+            }
+          }
+        }
+      ],
+      "serving_delays": {
+        "scope": "Bounded pod-log samples of operations taking at least one second, including cancelled calls. These nested boundaries overlap; maxima are separate calls, not a critical path or population distribution. No cross-host request correlation.",
+        "operations": {
+          "forward_discovery": {
+            "samples": 4,
+            "outcomes": {
+              "ok": 4
+            },
+            "longest": {
+              "pod": "durable-db-0/302c57b6-0d9c-4cea-ab8a-0c60accd8ee0",
+              "time_utc": "2026-11-13T06:32:53.874395Z",
+              "operation": "forward_discovery",
+              "outcome": "ok",
+              "elapsed_ms": 1300
+            }
+          },
+          "forward_request": {
+            "samples": 64,
+            "outcomes": {
+              "ok": 43,
+              "error": 21
+            },
+            "longest": {
+              "pod": "durable-db-1/f14f980e-ff3a-4548-881d-fcd23a6ecfc1",
+              "time_utc": "2026-11-13T06:39:41.827350Z",
+              "operation": "forward_request",
+              "outcome": "ok",
+              "elapsed_ms": 14561
+            }
+          },
+          "native_read_lock": {
+            "samples": 3,
+            "outcomes": {
+              "ok": 3
+            },
+            "longest": {
+              "pod": "durable-db-2/ab0beb67-5bf9-4006-b7d2-75515ffeecfe",
+              "time_utc": "2026-11-13T06:33:13.395492Z",
+              "operation": "native_read_lock",
+              "outcome": "ok",
+              "elapsed_ms": 4815
+            }
+          },
+          "native_read": {
+            "samples": 0,
+            "longest": null
+          },
+          "object_get": {
+            "samples": 24,
+            "outcomes": {
+              "ok": 24
+            },
+            "longest": {
+              "pod": "durable-db-1/27803432-e2bc-41cc-979a-0946e0cc1024",
+              "time_utc": "2026-11-13T06:32:54.996901Z",
+              "operation": "object_get",
+              "outcome": "ok",
+              "elapsed_ms": 5123
+            }
+          },
+          "object_put": {
+            "samples": 102,
+            "outcomes": {
+              "ok": 102
+            },
+            "longest": {
+              "pod": "durable-db-0/302c57b6-0d9c-4cea-ab8a-0c60accd8ee0",
+              "time_utc": "2026-11-13T06:31:24.518406Z",
+              "operation": "object_put",
+              "outcome": "ok",
+              "elapsed_ms": 4683
+            }
+          },
+          "authority_read": {
+            "samples": 24,
+            "outcomes": {
+              "ok": 24
+            },
+            "longest": {
+              "pod": "durable-db-1/f14f980e-ff3a-4548-881d-fcd23a6ecfc1",
+              "time_utc": "2026-11-13T06:38:55.514377Z",
+              "operation": "authority_read",
+              "outcome": "ok",
+              "elapsed_ms": 1596
+            }
+          },
+          "authority_replace": {
+            "samples": 186,
+            "outcomes": {
+              "conflict": 156,
+              "ok": 30
+            },
+            "longest": {
+              "pod": "durable-db-4/0a2cf7e8-1095-4e82-8347-eeb30fb5f7fe",
+              "time_utc": "2026-11-13T06:34:55.193079Z",
+              "operation": "authority_replace",
+              "outcome": "conflict",
+              "elapsed_ms": 1234
+            }
+          },
+          "publication": {
+            "samples": 502,
+            "outcomes": {
+              "ok": 489,
+              "cancelled": 2,
+              "error": 11
+            },
+            "longest": {
+              "pod": "durable-db-2/8a4231fa-8eea-4a1a-be13-d411a976da23",
+              "time_utc": "2026-11-13T06:39:13.360553Z",
+              "operation": "publication",
+              "outcome": "ok",
+              "elapsed_ms": 7745
+            }
+          }
+        },
+        "transport_errors": {
+          "sample_count": 21,
+          "connect_timeouts": 21,
+          "min_elapsed_ms": 2000,
+          "max_elapsed_ms": 2002,
+          "first_sample": {
+            "pod": "durable-db-3/b1e150fc-fea7-4526-952c-7e4bf48ae28c",
+            "time_utc": "2026-11-13T06:37:40.518633Z",
+            "owner": "8cfe953f-0527-42cd-8e8b-5da1d6d47a7a",
+            "connect": true,
+            "timeout": true,
+            "elapsed_ms": 2002
+          }
+        }
+      }
+    },
+    "release_url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.14",
+    "tag_pipeline": {
+      "number": 329,
+      "status": "success"
     }
   }
 }
