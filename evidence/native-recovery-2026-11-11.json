@@ -24445,7 +24445,7 @@
       "helping-receipt-clippy.log": "eb2ca1874d2ed9e7d2cb013e494e0b30717ab1a2e6b45a80e0e90b92fa87c817",
       "helping-receipt-tests.log": "796ce18c6543a0de1e73e492d4a2df25edfd9031ba341a956915df622b150f8a"
     },
-    "status": "Local verification passes; exact-runtime cloud qualification pending",
+    "status": "Exact static binary passed B2/Kubernetes rollout and cold recovery plus MinIO; experimental, not production qualified",
     "change": "One bounded receipt observer spans helper admission and work. An exact published pointer can cancel redundant local helping; normal helper completion cancels a stalled observation. Original target/fence checks and uncertain provider outcomes remain.",
     "probe_attempts_per_invocation": 8,
     "probe_interval_seconds": 1,
@@ -24457,6 +24457,341 @@
       "Obsolete queued-only regression assertions and guidance",
       "Temporary isolated checkout, patch and its TLC working directories"
     ],
-    "qualification_checkout": "Six source-file hashes matched on transfer to main; no parallel implementation retained."
+    "qualification_checkout": "Six source-file hashes matched on transfer to main; no parallel implementation retained.",
+    "source_commit": "d4170d09e23bd504964953365b7d8df38d4931c5",
+    "minio": {
+      "scope": "Versioned MinIO debug native HTTP with two partitions, independent connections and 4 MiB caches; not AWS or an SLO.",
+      "seconds": 40.248107044,
+      "membership_sequence": [
+        1,
+        2,
+        1,
+        0,
+        1
+      ],
+      "checks": [
+        "automatic_acquisition_and_placement",
+        "ceilings_preserved",
+        "checkpoint_and_cold_recovery",
+        "independent_node_transports_and_caches",
+        "layout_mismatch_refused",
+        "live_removed_owner_refused",
+        "provider_metrics_count_once",
+        "receipts_preserved",
+        "shared_metadata_collection",
+        "unmoved_owner_preserved"
+      ],
+      "cleanup": {
+        "bucket_removed": true,
+        "physical_versions_deleted": 68,
+        "container_removed": true
+      },
+      "raw_evidence_sha256": "cd11a1f166f348cbdb41b0d63987c4d45a6e809a56bdc49e22ca5d71fd8baff1"
+    },
+    "qualification_cleanup": {
+      "scope": "Owner-local disposable test-bucket helper, separate from production collection.",
+      "behavior": "After an interrupted version-deletion batch, re-list remaining objects. Abort after three consecutive failed batches. Count distinct observed version IDs only after empty listing and bucket removal.",
+      "injected_cases": [
+        "Failure before deletion",
+        "Lost reply after deletion",
+        "Permanent failure stops before key or bucket deletion"
+      ],
+      "helper_sha256": "dee363194851a20786056560ecb2ccba8474d91be7541b82b808fdbb464ed559",
+      "regression_log_sha256": "bee0388c57b88fc96ac4a7df0d58fa89984f73cb8ec9cb062c098098df347739"
+    },
+    "next_diagnosis": {
+      "refusal_scope": "In the preceding v0.24.17 acknowledged write/readback histories, 117 of 153 HTTP 429 responses occurred in RPCs without a transport error; 36 occurred in RPCs with one. This does not identify the refusal source or exclude an earlier outstanding request. Fast refusals are absent from the one-second slow-operation traces.",
+      "shutdown_observation": "The CLI closes admission before awaiting up to five seconds of route withdrawal inside the graceful-shutdown signal future. During that interval the listener can still accept requests and return 429. Qualify whether concurrent listener shutdown and route withdrawal improves client rerouting; this is source inspection, not measured attribution."
+    },
+    "woodpecker": {
+      "source_pipeline": 342,
+      "source_status": "success",
+      "native_javascript_contract_seconds": 71.69,
+      "musl_capacity_seconds": 141.13,
+      "capacity_entries_each_budget_format": 10005
+    },
+    "artifact": {
+      "version": "0.24.18",
+      "archive_sha256": "d56c113f5ee9f36aeaf7d6cd0b6d47d7f201534622631aaf1f5f9d476ffd23e5",
+      "binary_sha256": "7cace4df4ca1a26f1b7ef4c0e9d7879a002eeb70e211b7720de2f26566fba38d",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "b2_rollout": {
+      "source_commit": "d4170d09e23bd504964953365b7d8df38d4931c5",
+      "runtime_image_digest": "sha256:47dd6512407c345ef2ad2541e8f9d0c047ff47f5f33d7ed66df48478df36a9a3",
+      "runtime_matches_verified_artifact": true,
+      "started_at": "2026-11-13T09:36:19.521313+00:00",
+      "finished_at": "2026-11-13T09:45:30.089948+00:00",
+      "configuration_reference": "journal_discovery_prefetch.b2_rollout.configuration (unchanged and asserted equal)",
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "acknowledged": 705,
+      "readbacks": 705,
+      "recovered_keys": 705,
+      "campaign_exit_code": 0,
+      "qualification_wrapper_exit_code": 0,
+      "history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 705,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "rolling-replacement-1",
+            "duration_seconds": 120.99148296499996,
+            "readbacks": [
+              53,
+              68,
+              73,
+              56
+            ],
+            "max_completed_readback_gap_seconds": [
+              46.46942032299998,
+              50.72347226699995,
+              33.43779140700002,
+              67.48535812200001
+            ],
+            "open_readback_gap_seconds": [
+              0.6930001669999797,
+              0.3497206979999419,
+              0.6949649079999176,
+              0.4287451059999512
+            ],
+            "target_seconds": 60,
+            "observed_within_target": false
+          },
+          {
+            "name": "rolling-replacement-2",
+            "duration_seconds": 96.71950162900004,
+            "readbacks": [
+              41,
+              53,
+              50,
+              39
+            ],
+            "max_completed_readback_gap_seconds": [
+              28.30973520599997,
+              31.991050734999988,
+              32.622121590000006,
+              28.953272536999975
+            ],
+            "open_readback_gap_seconds": [
+              0.726001832999998,
+              0.7223162459999912,
+              0.3820663559999957,
+              0.6456234349999477
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "recovery_targets": [
+        {
+          "name": "scale-3",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            15.609365687938407,
+            15.609365687938407,
+            15.609365687938407,
+            15.609365687938407
+          ],
+          "met": true
+        },
+        {
+          "name": "scale-6",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            16.108240210916847,
+            16.108240210916847,
+            16.108240210916847,
+            16.108240210916847
+          ],
+          "met": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            95.2916260069469,
+            120.32689827505965,
+            91.81583531096112,
+            95.2916260069469
+          ],
+          "met": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            89.138110548025,
+            96.09947507700417,
+            85.67980647902004,
+            89.138110548025
+          ],
+          "met": false
+        },
+        {
+          "name": "cold-three",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "upper_bounds_seconds": [
+            48.140218117972836,
+            33.60235888999887,
+            41.10624986200128,
+            48.140218117972836
+          ],
+          "met": true
+        }
+      ],
+      "rpc_statuses": {
+        "commit_rpc": {
+          "200": 705,
+          "503": 126,
+          "429": 36,
+          "transport_or_decode_error": 6
+        },
+        "read_rpc": {
+          "200": 705,
+          "503": 253,
+          "429": 100,
+          "transport_or_decode_error": 21
+        }
+      },
+      "rpc_scope": "Recorded acknowledged commit/readback RPCs only; excludes controls. Different histories are not a causal rate comparison.",
+      "sampled_stage_maxima_ms": {
+        "activation_events": 6401,
+        "selection_events": 11033,
+        "checkpoint_events": 14480
+      },
+      "publication_observation": {
+        "queued_receipts": {
+          "sampled_completions": 14,
+          "longest_elapsed_ms": 3652,
+          "longest_queue_ms": 2244,
+          "scope": "Complete standalone receipt observations while waiting for a helper. Queue duration includes probe I/O. Bounded log sample, not population rates or the time the exact proposal first became visible."
+        },
+        "helping_receipts": {
+          "sampled_completions": 71,
+          "longest_elapsed_ms": 5678,
+          "longest_queue_ms": 3201,
+          "scope": "Exact receipt observed after admission; interrupted helper work may have staged pages or issued comparisons. Observer zeroes do not measure interrupted helper cost. Bounded sampled completions, not population rates."
+        }
+      },
+      "longest_complete_publication": {
+        "pod": "durable-db-2/8506ffd1-552e-45d8-b098-94ae8df21779",
+        "publication": "c329dd6b-e009-4e6a-91d9-101c09adc5d8",
+        "outcome": "helped",
+        "elapsed_ms": 6056,
+        "initial_ms": 1938,
+        "queue_ms": 542,
+        "prepare_total_ms": 2485,
+        "compare_total_ms": 1083,
+        "longest_single_comparison_ms": 1083,
+        "comparison_attempts": 1,
+        "conflicts": 1
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1673,
+        "namespace_removed": true
+      },
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "harness_sha256": "53e6e9c0fbd07c35ae53cb883ea817a1f60205fc1a22368ccf70aa8c5457c81e",
+      "workload_sha256": "685048b5e49469b274d43a0187e571f168e52b54a1d539dc497dcd655138dc8c",
+      "raw_sha256": {
+        "kubernetes.json": "c40f5ff911cea394c47c6625326e4197012e9baa2204e9cb11a3eb4ccbf96423",
+        "kubernetes.history.jsonl": "873f2b6cf7390bcdcc4d49eb0dc6fc721adfc25ab2ff951276a2cdabce747e36",
+        "history-check.json": "2e7d20d2086218129105f6d7fae4f6435634dfa0b36ff4627c4ce4b9aaaea5ba",
+        "cost-summary.json": "8d521e0f07d3a0f10434fd1c20ef3d95f303fdda3afbfeef4de72b631932ba73",
+        "result.json": "7fa0827361ad7529d7e544cdd08270601ce9bff716edbe53a93c793d62fd68d4",
+        "gap-breakdown.json": "520a6e26d98cb36f3742d2729e98853fe5f3f7e89a9da05a404714864e2a3eaa"
+      },
+      "worst_readback_gaps": [
+        {
+          "name": "rolling-replacement-1",
+          "writer": 3,
+          "partition": 2,
+          "gap_seconds": 67.48535812200001,
+          "before_commit_seconds": 0.25036114399998155,
+          "commit_seconds": 28.96992843999999,
+          "after_ack_seconds": 38.26506853800004,
+          "revision": 35,
+          "start_seconds": 143.55255556400002,
+          "end_seconds": 211.03791368600002,
+          "commit_rpc": {
+            "request_seconds": 19.465549327999966,
+            "backoff_seconds": 9.504184318000014,
+            "statuses": {
+              "200": 1,
+              "503": 14
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 23.75865552099998,
+            "backoff_seconds": 14.506087832999997,
+            "statuses": {
+              "200": 1,
+              "503": 19
+            }
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "writer": 2,
+          "partition": 14,
+          "gap_seconds": 32.622121590000006,
+          "before_commit_seconds": 0.2498124100000041,
+          "commit_seconds": 0.21617140199992946,
+          "after_ack_seconds": 32.15613777800007,
+          "revision": 118,
+          "start_seconds": 300.460972092,
+          "end_seconds": 333.083093682,
+          "commit_rpc": {
+            "request_seconds": 0.2161170699999784,
+            "backoff_seconds": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 3.6235338520000226,
+            "backoff_seconds": 28.532219587999858,
+            "statuses": {
+              "200": 1,
+              "429": 8,
+              "503": 25
+            }
+          }
+        }
+      ]
+    },
+    "release": {
+      "version": "0.24.18",
+      "tag_source_commit": "d4170d09e23bd504964953365b7d8df38d4931c5",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.18",
+      "experimental": true,
+      "tag_woodpecker_pipeline": 343,
+      "tag_woodpecker_status": "success"
+    }
   }
 }
