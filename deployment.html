@@ -91,7 +91,14 @@ held for thirty seconds after its network checks pass. Per-writer progress durin
 the split is recorded separately from recovery after healing. Both ingress modes
 share cold replacement, full history verification and namespace cleanup. The
 harness records bounded claim-attempt samples during each hold independently of
-writer progress. The workload observes fetch’s actual pooled sockets through
+writer progress. Outside the measured 30-second interval it snapshots the shared
+Service’s EndpointSlices before and after fresh readiness and known-key read
+probes through each pod and the Service. Reads use administrator authorization;
+200 replies must contain the expected synthetic value, which is never logged.
+Each probe has a five-second deadline and 64 KiB response bound, with no retries
+or redirect following. Statuses and elapsed times distinguish ingress selection
+from availability through each pod; a direct pod request can itself forward and
+does not identify the owner. Endpoint and request observations are not atomic. The workload observes fetch’s actual pooled sockets through
 <a href="https://undici.nodejs.org/api/DiagnosticsChannel">Undici diagnostics</a>, recording
 response counts for at most eight numeric connection identities per RPC, plus
 an overflow bucket. <code>unobserved</code> means no socket assignment was seen. It does not
