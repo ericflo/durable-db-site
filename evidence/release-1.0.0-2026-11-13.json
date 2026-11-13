@@ -1,0 +1,713 @@
+{
+  "date_utc": "2026-11-13",
+  "release": "v1.0.0",
+  "url": "https://github.com/ericflo/durable-db/releases/tag/v1.0.0",
+  "published_at": "2026-11-13T19:25:14Z",
+  "experimental": false,
+  "source_commit": "8cae5ef3ae79c98e4cc38a9f61adef63c0a887bd",
+  "build": {
+    "rust": "1.90.0",
+    "rust_wrapper": "kache",
+    "target": "x86_64-unknown-linux-musl",
+    "static_pie": true
+  },
+  "woodpecker": {
+    "pipeline": 384,
+    "url": "https://ci.eflorenzano.com/repos/18/pipeline/384/1",
+    "status": "success",
+    "steps": [
+      {
+        "name": "clone",
+        "state": "success"
+      },
+      {
+        "name": "dependency-audit",
+        "state": "success"
+      },
+      {
+        "name": "javascript-audit",
+        "state": "success"
+      },
+      {
+        "name": "verify-and-build",
+        "state": "success"
+      },
+      {
+        "name": "publish-docs",
+        "state": "success"
+      }
+    ]
+  },
+  "archive_bytes": 6420276,
+  "artifact_image_digest": "sha256:2ba094bdef1e37cbb55d02a8d7b0730f771262263dad07efdcd406675df7f8dc",
+  "standalone": {
+    "version": "1.0.0",
+    "archive_sha256": "0ccf0cb32ce258e49d640fd1ae184fb516ac9a5286a9df3d3e1b5f2348dc69f6",
+    "binary_sha256": "3dfcc62792cfd3cfd623b25aab87d8f0fb28663f93982d48e4c2d690a357df26",
+    "empty_toolchain_path": true,
+    "protected_creation_and_replay": true,
+    "commit_and_exact_retry": true,
+    "point_and_ordered_reads": true,
+    "export_inspect_restore": true,
+    "kill_and_reopen": true,
+    "temporary_server_data_and_tokens_removed": true
+  },
+  "standalone_checked_in_woodpecker_and_after_download": true,
+  "github_asset_digests_verified": true,
+  "github_actions_disabled": true,
+  "native_client_contract": {
+    "artifact_success_marker": true,
+    "fresh_contract_stdout": true
+  },
+  "capacity_test_passed": true,
+  "scope": "One trust domain per deployment; dedicated B2 bucket or local directory, Linux x86_64, HTTP/TypeScript KV API, manual export and verified restore. Automatic checkpoints and collection; operator-funded cumulative upload ceilings.",
+  "deferred": [
+    "Mutually untrusted tenant hosting and complete shared-cost/fairness isolation",
+    "Scheduled backups, continuous PITR and broad large-image campaigns",
+    "AWS production qualification, 72-hour soak, throughput/p99 and availability SLOs",
+    "Physical power/rack loss, exhaustive topologies and broad upgrades/platforms",
+    "Full protocol composition, Rust refinement, independent security review and broader cloud Pi Harness qualification"
+  ],
+  "worker_loss": {
+    "binary_source_commit": "8cae5ef3ae79c98e4cc38a9f61adef63c0a887bd",
+    "binary_sha256": "3dfcc62792cfd3cfd623b25aab87d8f0fb28663f93982d48e4c2d690a357df26",
+    "image_digest": "sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e",
+    "runtime_matches_verified_artifact": true,
+    "harness_source_commit": "8cae5ef3ae79c98e4cc38a9f61adef63c0a887bd",
+    "harness_sha256": "5a932746c470bd81a152c61f5d9ac4a9152a65144e1d52f5a93bdfbb194116b5",
+    "workload_sha256": "fe87f8a9d0b35c1bfd5f29549d88a8f182b7b823c202fdb0c75b7cf6b7d0241f",
+    "client_transport_sha256": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+    "history_sha256": "97888c62ed3af343dcdc1c79050b57d1a77e12ff76a4f4b04e699a66e72d4347",
+    "report_sha256": "b0ca9908f58c6d53a7650e8c5da6e2a8dac4206e198c2608f5de33feaebaea6a",
+    "started_at": "2026-11-13T19:17:14.982701+00:00",
+    "finished_at": "2026-11-13T19:23:43.930314+00:00",
+    "kubernetes_version": "v1.36.4",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "worker-loss",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "64Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 0,
+      "memory_observation": false,
+      "maximum_write_intents": 100000,
+      "worker_fault": "SIGKILL of a validated local kind worker container, then restart"
+    },
+    "independent_history_check": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 504,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "worker-loss",
+          "duration_seconds": 52.369137846,
+          "readbacks": [
+            4,
+            18,
+            28,
+            5
+          ],
+          "max_completed_readback_gap_seconds": [
+            52.93450707200002,
+            34.38281551899999,
+            35.169960110999995,
+            52.870731258000006
+          ],
+          "open_readback_gap_seconds": [
+            0.7397699049999744,
+            0.6301525529999878,
+            1.2496514979999915,
+            0.6161560699999882
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "worker-return",
+          "duration_seconds": 4.918025601000011,
+          "readbacks": [
+            6,
+            6,
+            8,
+            6
+          ],
+          "max_completed_readback_gap_seconds": [
+            1.3461840479999978,
+            1.4030643039999973,
+            3.808235658000001,
+            1.2326741160000267
+          ],
+          "open_readback_gap_seconds": [
+            0.03853735699999561,
+            0.281886916000019,
+            0.2081210380000016,
+            0.03837085200001411
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "duration_seconds": 66.33830228400001,
+          "readbacks": [
+            2,
+            87,
+            18,
+            2
+          ],
+          "max_completed_readback_gap_seconds": [
+            65.23111650799999,
+            4.386823176999968,
+            55.88697086399998,
+            56.48302592599998
+          ],
+          "open_readback_gap_seconds": [
+            0.6680315929999949,
+            0.43378782699997487,
+            0.5663323720000051,
+            0.6138065529999892
+          ],
+          "target_seconds": 60,
+          "observed_within_target": false
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovered_keys": 504,
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T19:18:21.235914+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.504357917001471,
+          15.504357917001471,
+          15.504357917001471,
+          15.504357917001471
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T19:18:58.110771+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          12.3450083109783,
+          9.340047348989174,
+          9.340047348989174,
+          9.340047348989174
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "worker-loss",
+        "started_at": "2026-11-13T19:19:24.921251+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          52.280889766989276,
+          43.261214673984796,
+          37.248314713011496,
+          52.280889766989276
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "worker-return",
+        "started_at": "2026-11-13T19:20:18.315006+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          4.9014592609601095,
+          4.9014592609601095,
+          4.9014592609601095,
+          4.9014592609601095
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T19:20:32.109452+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          66.32477521791589,
+          3.171980023966171,
+          57.30316645291168,
+          66.32477521791589
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T19:22:06.705025+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          51.13941205793526,
+          42.11611437401734,
+          48.132072789012454,
+          51.13941205793526
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "worker_fault_phases": [
+      {
+        "name": "worker-killed",
+        "time_utc": "2026-11-13T19:19:26.084065+00:00",
+        "worker": {
+          "name": "durable-db-test-aa418c80e3-worker3",
+          "container_id": "b310ad3e6d205b82a084aa5d293e617e18809f23bbd663ddd4028c7146a5dda3",
+          "cluster": "durable-db-test-aa418c80e3",
+          "address": "172.18.0.5"
+        },
+        "preferred_partition": 2,
+        "readback_window": "worker-loss"
+      },
+      {
+        "name": "worker-loss-recovered",
+        "time_utc": "2026-11-13T19:20:18.303530+00:00",
+        "writes_acknowledged": 250,
+        "node_condition": {
+          "lastHeartbeatTime": "2026-11-13T19:18:39Z",
+          "lastTransitionTime": "2026-11-13T19:20:14Z",
+          "message": "Kubelet stopped posting node status.",
+          "reason": "NodeStatusUnknown",
+          "status": "Unknown",
+          "type": "Ready"
+        },
+        "container_stopped": true
+      },
+      {
+        "name": "worker-return",
+        "time_utc": "2026-11-13T19:20:24.355494+00:00",
+        "placement": [
+          {
+            "pod": "durable-db-0",
+            "node": "durable-db-test-aa418c80e3-worker",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          },
+          {
+            "pod": "durable-db-1",
+            "node": "durable-db-test-aa418c80e3-worker3",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          },
+          {
+            "pod": "durable-db-2",
+            "node": "durable-db-test-aa418c80e3-worker2",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          },
+          {
+            "pod": "durable-db-3",
+            "node": "durable-db-test-aa418c80e3-worker",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          },
+          {
+            "pod": "durable-db-4",
+            "node": "durable-db-test-aa418c80e3-worker2",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          },
+          {
+            "pod": "durable-db-5",
+            "node": "durable-db-test-aa418c80e3-worker3",
+            "image_id": "172.18.0.1:19092/durable-db@sha256:8f27ea37ff130a6a831efffcab018e81e4d80898042ed2137cdf6370da71f82e"
+          }
+        ],
+        "writes_acknowledged": 281,
+        "readback_window": "worker-return"
+      }
+    ],
+    "limitations": [
+      "Manual replica changes; no CPU-driven HPA claim.",
+      "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+      "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+      "Worker kubelet, containers and transport stop; all kind nodes share one host kernel. No physical power or rack-loss claim."
+    ],
+    "cleanup": {
+      "namespace_removed": true,
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 950
+    },
+    "disposable_cluster": {
+      "name": "durable-db-test-aa418c80e3",
+      "context": "kind-durable-db-test-aa418c80e3",
+      "node_image": "kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed",
+      "kubeconfig": "isolated temporary file; removed",
+      "node_cpus": 2,
+      "node_memory_bytes": 4294967296,
+      "removed": true
+    }
+  },
+  "existing_host_direct_scale_down": {
+    "binary_source_commit": "59a961f5c5570fca5fa1a9b0c860c764492f1e85",
+    "binary_sha256": "f75f3fe4e584a088b93992afb580d0d29586df94a1f3103fa808fb54af6b3882",
+    "image_digest": "sha256:9fba655c7cc8af6c5cc52e47bf199570616a5588473c69f21f79084e122389f3",
+    "runtime_matches_verified_artifact": true,
+    "harness_source_commit": "782d68d3ad3f3152adb8c446af6af4da6431cc81",
+    "harness_sha256": "8c6332502e8a77786859d710ac2ed6af3f48bee8c6c72edbe0fb689c939dfaa7",
+    "workload_sha256": "fe87f8a9d0b35c1bfd5f29549d88a8f182b7b823c202fdb0c75b7cf6b7d0241f",
+    "client_transport_sha256": "e1ecb72f6c695bd8186ce9d6b9276332c6e594bbbb49a9ae78e65b2ff7c7bfe9",
+    "history_sha256": "8c39d5425cac7c64cb182d51dc9c36a653c826f5dfef0e2ea110bdb6a24e43e3",
+    "report_sha256": "aaf43f2abb3049c493a5427d7abc642c800cc0a0432039e498117e898c4008a1",
+    "started_at": "2026-11-13T18:47:22.735836+00:00",
+    "finished_at": "2026-11-13T19:06:22.100544+00:00",
+    "kubernetes_version": "v1.36.2",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "recovery",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "64Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 120,
+      "memory_observation": true,
+      "maximum_write_intents": 100000
+    },
+    "independent_history_check": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 1848,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "one-host-process-pause",
+          "duration_seconds": 62.66663943999998,
+          "readbacks": [
+            6,
+            8,
+            69,
+            6
+          ],
+          "max_completed_readback_gap_seconds": [
+            57.49444867700004,
+            51.134475348000024,
+            3.958707817000004,
+            60.31033943900002
+          ],
+          "open_readback_gap_seconds": [
+            0.5680371390000118,
+            0.6336112660000026,
+            0.804549857999973,
+            0.31500000699998054
+          ],
+          "target_seconds": 60,
+          "observed_within_target": false
+        },
+        {
+          "name": "one-host-processes-resumed",
+          "duration_seconds": 33.374491723000006,
+          "readbacks": [
+            11,
+            13,
+            31,
+            13
+          ],
+          "max_completed_readback_gap_seconds": [
+            2.240653965999968,
+            21.943220296999982,
+            4.464662506000025,
+            12.295505802999969
+          ],
+          "open_readback_gap_seconds": [
+            22.113142538000034,
+            1.080494903999977,
+            0.27330656899999894,
+            9.818980839999995
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement",
+          "duration_seconds": 96.72376338000004,
+          "readbacks": [
+            37,
+            56,
+            59,
+            38
+          ],
+          "max_completed_readback_gap_seconds": [
+            43.44969921699999,
+            31.438115692999986,
+            30.88263745600011,
+            30.057256888999973
+          ],
+          "open_readback_gap_seconds": [
+            0.2536045589999958,
+            0.25735987699999896,
+            0.24617694500000198,
+            0.259811465000098
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "scale-one",
+          "duration_seconds": 84.62026480000009,
+          "readbacks": [
+            26,
+            17,
+            4,
+            27
+          ],
+          "max_completed_readback_gap_seconds": [
+            36.68074637200016,
+            66.09105915299995,
+            74.67575556499992,
+            52.05128863300001
+          ],
+          "open_readback_gap_seconds": [
+            0.49872371700007534,
+            0.6784769570000435,
+            0.07589482900004896,
+            0.3226539040001626
+          ],
+          "target_seconds": 60,
+          "observed_within_target": false
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovered_keys": 1848,
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T18:49:03.732631+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          16.372338430956006,
+          23.55455182795413,
+          16.372338430956006,
+          16.372338430956006
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T18:49:49.187559+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          16.30348005797714,
+          16.30348005797714,
+          16.30348005797714,
+          12.851226774975657
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "one-host-process-pause",
+        "started_at": "2026-11-13T18:52:50.861317+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          62.05148514395114,
+          58.45640737900976,
+          19.41464647592511,
+          62.05148514395114
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "one-host-processes-resumed",
+        "started_at": "2026-11-13T18:54:04.707651+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          11.279638270963915,
+          32.76193945191335,
+          11.279638270963915,
+          11.279638270963915
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-dns-replacement",
+        "started_at": "2026-11-13T18:55:16.058627+00:00",
+        "basis": "after sole replacement API readiness with old peers stopped",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          36.73634916602168,
+          79.68942823202815,
+          76.11599080602173,
+          36.73634916602168
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-processes-resumed",
+        "started_at": "2026-11-13T18:56:54.495786+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.52710784599185,
+          15.52710784599185,
+          15.52710784599185,
+          15.52710784599185
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "resume-scale-six",
+        "started_at": "2026-11-13T18:57:16.639121+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          34.44064131798223,
+          52.30572810699232,
+          48.6880312229041,
+          34.44064131798223
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "forced-api-pod-loss",
+        "started_at": "2026-11-13T18:58:15.431176+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.914237412973307,
+          15.914237412973307,
+          19.39307790005114,
+          15.914237412973307
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "rolling-replacement",
+        "started_at": "2026-11-13T18:58:40.883674+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          82.10268346802332,
+          96.10099901398644,
+          82.10268346802332,
+          82.10268346802332
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "provider-restored",
+        "started_at": "2026-11-13T19:01:32.067992+00:00",
+        "basis": "before restoring provider egress",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          35.74997110897675,
+          17.869260769919492,
+          17.869260769919492,
+          35.74997110897675
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T19:02:13.626541+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          55.704854459967464,
+          77.06127304502297,
+          84.00555352901574,
+          55.704854459967464
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T19:04:16.729574+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          51.035799243021756,
+          44.050208447966725,
+          58.23617878893856,
+          51.035799243021756
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "worker_fault_phases": [],
+    "limitations": [
+      "Manual replica changes; no CPU-driven HPA claim.",
+      "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+      "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+    ],
+    "cleanup": {
+      "namespace_removed": true,
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 2470
+    }
+  },
+  "interpretation": "Four sequential writers per campaign; identity, order, hash and recovered-count checks, not general linearizability or an SLO. Worker nodes share one host kernel. Direct scale-down and process-pause target misses are retained. Runtime behavior is unchanged from v0.24.26; the candidate changes version and qualification harness only.",
+  "maintenance": "Reused the maintained harness and small negative controls; removed the superseded six-gate 1.0 plan and stale status text. No new serving implementation, dependency or model."
+}
