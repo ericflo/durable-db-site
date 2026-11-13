@@ -546,6 +546,23 @@ recorded in <a href="verification-results.html">verification results</a>.</p>
 <p>The model assumes ordered winning epochs, durable immutable bytes and exact register comparisons. Drain completion abstracts the ending of every earlier acknowledgement interval. The separate acquisition, registration, timing and journal results are not a complete composition or Rust-refinement theorem. Later sections describe transaction/receipt recovery, checkpoints and native HTTP integration. Collection, physical upload admission, election and placement are outside this component model. History traversal still grows with ownership changes.</p>
 <p>The same change raises only the disposable JavaScript test server’s request budget. An isolated receipt-eviction test fell from <strong>37.35 s to 2.44 s</strong> locally; the full JavaScript suite passed 98 tests with one opt-in process-control case skipped, plus four web-app storage tests. No assertions or failure scenarios were removed. These single-run development timings measure avoided admission waits, not database throughput.</p>
 <h2 id="ordered-catalog-replay">Ordered catalog replay<a class="anchor" href="#ordered-catalog-replay" aria-label="Link to this section">#</a></h2>
+<p>Selection and ordered replay now share authenticated directory pages and selected
+prefix records through the owner’s existing bounded cache. The catalog header
+still comes from storage and validates its identity and checksum. Cached pages
+retain the directory’s digest/schema/count checks; prefixes retain their exact
+size, pointer digest and journal-identity checks. Successful immutable uploads
+populate the same cache. A failed upload still prevents conditional publication,
+and cached bytes never confirm an uncertain selection or grant serving permission.</p>
+<p>The eight-journal regression previously downloaded 33 index pages/prefix records
+across selection, recovery traversal and ordered replay; the cached path downloads
+none for either eight or seventeen journals within the same 64 KiB allowance.
+This excludes catalog headers, registration records, frames and authority work.
+A separate fixture checks cold/warm lookups, zero/128-byte cache limits, corrupt
+cache fallback and a checksum-valid prefix naming the wrong journal. The existing
+lost-selection-reply test now uses the cache and still excludes late frames.
+The existing model treats catalog-byte reuse as stuttering under its immutable
+catalog assumption; byte validation, resource bounds and Rust refinement remain
+separate obligations. No ownership wait, provider authority check or format changes.</p>
 <p><code>CatalogReplay.tla</code> checks the stream produced from a complete immutable catalog. Reads must remain inside each selected prefix, journals must be consumed in increasing epoch order, and completion requires the exact expected sequence. Late uploads beyond a selected cut remain possible. Three journals with zero to two selected frames, including all 27 initial cut combinations, with a one-frame disposable cache check <strong>11,459</strong> distinct states (88,318 generated, depth 12). Positive validated reads may populate the cache, eviction may clear it, and replay retains the selected-cut checks. The cache never represents absence or a failed read. Unsafe skip, extension and reverse-order controls fail the required invariant; a coverage control reaches nonempty completed history. Run <code>scripts/check-candidate.sh CatalogReplay</code>.</p>
 <p>The Rust cursor checks the catalog count against the current root epoch before returning frames, then validates canonical consecutive epoch keys, selected identities and journal hash chains while streaming. It pages at most 64 keys and reuses one frame budget across journals. The cursor owns its frame and exposes a borrowed view, and the underlying reader also refuses a reset while a frame reservation remains live. Thus a journal boundary cannot bypass the reader’s memory limit. This does not bound allocations a caller makes by copying records or constructing multiple cursors.</p>
 <p>Four root tests cover incomplete catalogs, ordered frames across ownership changes, late-frame exclusion, completion after permission expires, 130 mixed empty/nonempty journals across index pages, missing/corrupt frame recovery and checksum-valid bad key sets with the correct count. A journal test retains a frame across end-of-log and verifies that resetting cannot allocate another slot until the frame is released. The B2 and S3 HTTP fixtures also exercise the ordered replay API. <a href="evidence/catalog-replay-2026-11-09.json">Evidence</a>.</p>
