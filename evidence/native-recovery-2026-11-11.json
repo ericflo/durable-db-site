@@ -28301,244 +28301,13 @@
     ],
     "ingress_observations": [
       {
-        "mode": "connected",
-        "time_utc": "2026-11-13T14:49:02.673805+00:00",
-        "targets": [
-          "durable-db-0",
-          "durable-db-1",
-          "durable-db-2",
-          "Service"
-        ],
-        "endpoints_before": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "endpoints_after": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "rows": [
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 11
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 85
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 1474
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 3
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 305
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 88
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 2
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 82
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 78
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 17
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 85
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 120
-              }
-            ]
-          }
-        ]
-      },
-      {
         "mode": "asymmetric",
         "time_utc": "2026-11-13T14:50:12.122544+00:00",
-        "targets": [
-          "durable-db-0",
-          "durable-db-1",
-          "durable-db-2",
-          "Service"
-        ],
-        "endpoints_before": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "endpoints_after": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
+        "endpoints_ready": true,
         "rows": [
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 92
-            },
+            "target": "durable-db-0",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 200,
@@ -28553,10 +28322,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 3
-            },
+            "target": "durable-db-1",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 200,
@@ -28571,10 +28338,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 2
-            },
+            "target": "durable-db-2",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 200,
@@ -28588,10 +28353,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 92
-            },
+            "target": "Service",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 200,
@@ -28608,244 +28371,13 @@
         ]
       },
       {
-        "mode": "connected",
-        "time_utc": "2026-11-13T14:50:43.438655+00:00",
-        "targets": [
-          "durable-db-0",
-          "durable-db-1",
-          "durable-db-2",
-          "Service"
-        ],
-        "endpoints_before": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "endpoints_after": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "rows": [
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 92
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 88
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 85
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 5
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 80
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 140
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 3
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 86
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 263
-              }
-            ]
-          },
-          {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 26
-            },
-            "reads": [
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 96
-              },
-              {
-                "status": 200,
-                "valid": true,
-                "elapsed_ms": 103
-              }
-            ]
-          }
-        ]
-      },
-      {
         "mode": "symmetric",
         "time_utc": "2026-11-13T14:52:01.555174+00:00",
-        "targets": [
-          "durable-db-0",
-          "durable-db-1",
-          "durable-db-2",
-          "Service"
-        ],
-        "endpoints_before": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
-        "endpoints_after": [
-          {
-            "pod": "durable-db-1",
-            "addresses": [
-              "10.1.77.79"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-2",
-            "addresses": [
-              "10.1.77.16"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          },
-          {
-            "pod": "durable-db-0",
-            "addresses": [
-              "10.1.113.153"
-            ],
-            "conditions": {
-              "ready": true,
-              "serving": true,
-              "terminating": false
-            }
-          }
-        ],
+        "endpoints_ready": true,
         "rows": [
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 76
-            },
+            "target": "durable-db-0",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 503,
@@ -28858,10 +28390,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 2
-            },
+            "target": "durable-db-1",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 429,
@@ -28874,10 +28404,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 2
-            },
+            "target": "durable-db-2",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 503,
@@ -28890,10 +28418,8 @@
             ]
           },
           {
-            "ready": {
-              "status": 200,
-              "elapsed_ms": 97
-            },
+            "target": "Service",
+            "ready_status": 200,
             "reads": [
               {
                 "status": 503,
@@ -29002,7 +28528,7 @@
       "workload_key_revoked": true,
       "physical_versions_deleted": 1450
     },
-    "scope": "Fresh B2 shared-Service campaign. Earlier baseline used a v0.24.21 server and initial per-database client transport; this run uses v0.24.23 and the corrected v0.24.22 transport. Serial cross-host probes and capped log samples cannot establish simultaneous outage or continuous availability. No new AWS result.",
+    "scope": "Fresh B2 shared-Service campaign. Earlier baseline used a v0.24.21 server and initial per-database client transport; this run uses v0.24.23 and the corrected v0.24.22 transport. Serial cross-host probes and capped log samples cannot establish simultaneous outage or continuous availability. No new AWS result. Endpoint addresses and repeated baseline snapshots omitted from this summary; raw report hashes retain provenance.",
     "removed": [
       "post-I/O responder sleep",
       "11 model scratch directories and task Python bytecode; result logs retained"
@@ -29097,5 +28623,835 @@
       ".tools/challenge-cadence-model.log": "bc2bc3a0f48e88a8bfc2e4a2ef7fb0344d06076d3992b9995aefc5eacbe9f157",
       ".tools/challenge-cadence-harness.log": "38d522395143df3f69e8458e7cb749bbd18334c4e112839010641a474b07f15e"
     }
+  },
+  "journal_retirement": {
+    "version": "0.24.23",
+    "date": "2026-11-13",
+    "experimental": true,
+    "status": "All-paths 503 reproduced during same-pod recovery after an unresolved journal upload; availability gate remains open.",
+    "woodpecker": [
+      {
+        "number": 368,
+        "commit": "9121e49b327008466eb226ed8b20e15d840a9a82",
+        "status": "success"
+      },
+      {
+        "number": 369,
+        "commit": "402f57570c0e7db92384d3f33c88287040dfb314",
+        "status": "success"
+      }
+    ],
+    "local": {
+      "native_http_tests": 12,
+      "ignored": 1,
+      "seconds": 6.27,
+      "harness_tests": 3,
+      "harness_seconds": 7.48,
+      "clippy_all_targets": true,
+      "format": true,
+      "protocol_change": false,
+      "new_storage_objects": 0,
+      "new_workers": 0,
+      "new_dependencies": 0
+    },
+    "diagnostic_bounds_per_pod": {
+      "retirements": 256,
+      "owner_identities": 256,
+      "challenge_eligibility": 256,
+      "challenge_replies": 1024
+    },
+    "extended_hold": {
+      "min_seconds": 30,
+      "max_seconds": 300,
+      "sampled_every_seconds": 15
+    },
+    "all_path_sample": {
+      "partition": 2,
+      "writer": 0,
+      "pod": "durable-db-2",
+      "owner": "8f318d2f-8dda-447d-8235-4cf322a7e4cc",
+      "upload_failure": [
+        {
+          "time_utc": "2026-11-13T15:38:04.125709Z",
+          "operation": "object_put",
+          "outcome": "error",
+          "elapsed_ms": 10906
+        }
+      ],
+      "retired_at": "2026-11-13T15:38:04.279506Z",
+      "removed_at": "2026-11-13T15:38:04.675190Z",
+      "owner_confirmations": [
+        {
+          "time_utc": "2026-11-13T15:34:45.733846Z",
+          "partition": 2,
+          "owner": "8f318d2f-8dda-447d-8235-4cf322a7e4cc"
+        },
+        {
+          "time_utc": "2026-11-13T15:38:11.958208Z",
+          "partition": 2,
+          "owner": "4bb8bf32-b7b8-4336-bfdd-2f9db4213c86"
+        }
+      ],
+      "probe_started_at": "2026-11-13T15:38:13.622431+00:00",
+      "ready_statuses": [
+        200,
+        200,
+        200,
+        200
+      ],
+      "writer_read_statuses": [
+        503,
+        503,
+        503,
+        503
+      ]
+    },
+    "runs": [
+      {
+        "binary_source_commit": "9121e49b327008466eb226ed8b20e15d840a9a82",
+        "harness_source_commit": "9121e49b327008466eb226ed8b20e15d840a9a82",
+        "binary_sha256": "70a3399650deeb31a0b39fd62ae95c7df80543cdfbf8ae872f04ab3a784290b5",
+        "image_digest": "sha256:1427a3305771227d8e758a15b2100b45a3bdbc949404b913fda198e2d63ab376",
+        "configuration": {
+          "cpu_request": "25m",
+          "cpu_limit": "250m",
+          "memory_request": "96Mi",
+          "memory_limit": "384Mi",
+          "scenario": "peer-isolation",
+          "client_origin": "http://durable-db:7654",
+          "database_prefix": "app",
+          "writer_origins": [
+            "http://durable-db:7654"
+          ],
+          "memory_cache_mib": 8,
+          "resident_memory_mib": 128,
+          "partitions": 16,
+          "discovery": "headless DNS",
+          "disk_cache": false,
+          "maintenance_seconds": 60,
+          "controller": "StatefulSet",
+          "placement_identity": "pod name",
+          "rollout_unavailable": 1,
+          "rollout_deadline_seconds": 240,
+          "per_writer_readbacks_before_phase": 2,
+          "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+          "process_pause": {
+            "shared_pid_namespace": true,
+            "liveness_probe": false,
+            "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+            "sidecar_cpu_limit": "100m",
+            "sidecar_memory_limit": "128Mi"
+          },
+          "upload_budget": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "tenant_upload_budget": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "steady_seconds": 0,
+          "memory_observation": false,
+          "maximum_write_intents": 100000,
+          "peer_ingress": "shared",
+          "peer_fault": {
+            "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+            "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+            "capability": "NET_ADMIN",
+            "uid": 0,
+            "host_network": false,
+            "hold_seconds": 30
+          },
+          "ingress_observation": {
+            "fresh_connections": true,
+            "timeout_seconds": 5,
+            "read_concurrency": 1,
+            "writers": [
+              0,
+              1
+            ],
+            "outside_measured_hold": true
+          }
+        },
+        "writes_acknowledged": 734,
+        "recovered_keys": 734,
+        "independent_history_check": {
+          "complete": true,
+          "histories": 4,
+          "acknowledged": 734,
+          "check": "sequential append identity, invocation order, value hashes and recovered totals",
+          "readback_windows": [],
+          "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+        },
+        "holds": [
+          {
+            "name": "asymmetric-peer-isolation-held",
+            "time_utc": "2026-11-13T15:28:27.247813+00:00",
+            "before": [
+              47,
+              55,
+              52,
+              46
+            ],
+            "after": [
+              63,
+              63,
+              66,
+              63
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "name": "symmetric-peer-isolation-held",
+            "time_utc": "2026-11-13T15:30:21.652004+00:00",
+            "before": [
+              114,
+              127,
+              127,
+              116
+            ],
+            "after": [
+              125,
+              159,
+              154,
+              129
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "retirements": {},
+        "retired_owner_partitions": {},
+        "ingress_observations": [
+          {
+            "mode": "asymmetric",
+            "time_utc": "2026-11-13T15:28:23.524353+00:00",
+            "endpoints_ready": true,
+            "rows": [
+              {
+                "target": "durable-db-0",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 230
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 80
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-1",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 89
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 79
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-2",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 84
+                  },
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2085
+                  }
+                ]
+              },
+              {
+                "target": "Service",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 94
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 84
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "mode": "symmetric",
+            "time_utc": "2026-11-13T15:30:16.891579+00:00",
+            "endpoints_ready": true,
+            "rows": [
+              {
+                "target": "durable-db-0",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2006
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 165
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-1",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2095
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 83
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-2",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 703
+                  },
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2008
+                  }
+                ]
+              },
+              {
+                "target": "Service",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2004
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 1899
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "recovery_observations": [
+          {
+            "name": "asymmetric-peer-isolation-healed",
+            "started_at": "2026-11-13T15:28:27.250162+00:00",
+            "basis": "before fault or replica change",
+            "target_seconds": 60,
+            "writer_progress_upper_bound_seconds": [
+              7.341164429089986,
+              10.83050423907116,
+              10.83050423907116,
+              10.83050423907116
+            ],
+            "observed_within_target": true
+          },
+          {
+            "name": "symmetric-peer-isolation-healed",
+            "started_at": "2026-11-13T15:30:21.655863+00:00",
+            "basis": "before fault or replica change",
+            "target_seconds": 60,
+            "writer_progress_upper_bound_seconds": [
+              11.4452417739667,
+              11.4452417739667,
+              11.4452417739667,
+              11.4452417739667
+            ],
+            "observed_within_target": true
+          },
+          {
+            "name": "cold-three",
+            "started_at": "2026-11-13T15:31:08.165940+00:00",
+            "basis": "after cold API readiness",
+            "target_seconds": 120,
+            "writer_progress_upper_bound_seconds": [
+              44.46706101100426,
+              33.71219489106443,
+              44.46706101100426,
+              44.46706101100426
+            ],
+            "observed_within_target": true
+          }
+        ],
+        "namespace_removed": true,
+        "provider_cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 1336
+        },
+        "evidence_sha256": {
+          ".tools/retirement-b2/kubernetes.json": "95b3edcefd07fe2bf1258cde9d1685d65be5ac8a1d1e6e99ca7183b36911e851",
+          ".tools/retirement-b2/kubernetes.history.jsonl": "ba846b6da876a9f7d3a5621aa357f846795acce73f80e91ea17b9c7d10453e88",
+          ".tools/retirement-b2/result.json": "1d60db54fee65210ea301756a2dd817ec5b60163aa4b5f094e7304a7a4c1a208",
+          ".tools/retirement-b2/history-check.json": "427c57dc41cb67b6d8730d591dbc9a297f7194432168a4c11e8d605c16d29b7c",
+          ".tools/retirement-b2.log": "d268e69266b62b22d83783cf9fcaa5d40e8f9ea32a37a139a976e192801576d4"
+        }
+      },
+      {
+        "binary_source_commit": "9121e49b327008466eb226ed8b20e15d840a9a82",
+        "harness_source_commit": "402f57570c0e7db92384d3f33c88287040dfb314",
+        "binary_sha256": "70a3399650deeb31a0b39fd62ae95c7df80543cdfbf8ae872f04ab3a784290b5",
+        "image_digest": "sha256:1427a3305771227d8e758a15b2100b45a3bdbc949404b913fda198e2d63ab376",
+        "configuration": {
+          "cpu_request": "25m",
+          "cpu_limit": "250m",
+          "memory_request": "96Mi",
+          "memory_limit": "384Mi",
+          "scenario": "peer-isolation",
+          "client_origin": "http://durable-db:7654",
+          "database_prefix": "app",
+          "writer_origins": [
+            "http://durable-db:7654"
+          ],
+          "memory_cache_mib": 8,
+          "resident_memory_mib": 128,
+          "partitions": 16,
+          "discovery": "headless DNS",
+          "disk_cache": false,
+          "maintenance_seconds": 60,
+          "controller": "StatefulSet",
+          "placement_identity": "pod name",
+          "rollout_unavailable": 1,
+          "rollout_deadline_seconds": 240,
+          "per_writer_readbacks_before_phase": 2,
+          "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+          "process_pause": {
+            "shared_pid_namespace": true,
+            "liveness_probe": false,
+            "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+            "sidecar_cpu_limit": "100m",
+            "sidecar_memory_limit": "128Mi"
+          },
+          "upload_budget": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "tenant_upload_budget": {
+            "bytes": 1073741824,
+            "attempts": 100000
+          },
+          "steady_seconds": 0,
+          "memory_observation": false,
+          "maximum_write_intents": 100000,
+          "peer_ingress": "shared",
+          "peer_fault": {
+            "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+            "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+            "capability": "NET_ADMIN",
+            "uid": 0,
+            "host_network": false,
+            "hold_seconds": 90
+          },
+          "ingress_observation": {
+            "fresh_connections": true,
+            "timeout_seconds": 5,
+            "read_concurrency": 1,
+            "writers": [
+              0,
+              1
+            ],
+            "outside_measured_hold": true
+          }
+        },
+        "writes_acknowledged": 1015,
+        "recovered_keys": 1015,
+        "independent_history_check": {
+          "complete": true,
+          "histories": 4,
+          "acknowledged": 1015,
+          "check": "sequential append identity, invocation order, value hashes and recovered totals",
+          "readback_windows": [],
+          "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+        },
+        "holds": [
+          {
+            "name": "asymmetric-peer-isolation-held",
+            "time_utc": "2026-11-13T15:38:18.201459+00:00",
+            "before": [
+              54,
+              63,
+              63,
+              57
+            ],
+            "after": [
+              107,
+              117,
+              119,
+              112
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "name": "symmetric-peer-isolation-held",
+            "time_utc": "2026-11-13T15:41:53.684856+00:00",
+            "before": [
+              167,
+              183,
+              191,
+              174
+            ],
+            "after": [
+              173,
+              220,
+              229,
+              188
+            ],
+            "writer_progress": [
+              true,
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "retirements": {
+          "durable-db-1/05fbda4b-a0af-431a-9c6e-06556e1f145a": [
+            {
+              "time_utc": "2026-11-13T15:36:54.409335Z",
+              "owner": "1cb9de13-dc38-40ab-a9bd-f725d65c7af3",
+              "reason": "unresolved_upload"
+            },
+            {
+              "time_utc": "2026-11-13T15:36:57.058125Z",
+              "owner": "1cb9de13-dc38-40ab-a9bd-f725d65c7af3",
+              "reason": "unready"
+            }
+          ],
+          "durable-db-2/35c250ec-bd19-4964-94b1-d4f09bf05bc9": [
+            {
+              "time_utc": "2026-11-13T15:38:04.279506Z",
+              "owner": "8f318d2f-8dda-447d-8235-4cf322a7e4cc",
+              "reason": "unresolved_upload"
+            },
+            {
+              "time_utc": "2026-11-13T15:38:04.675190Z",
+              "owner": "8f318d2f-8dda-447d-8235-4cf322a7e4cc",
+              "reason": "unready"
+            }
+          ]
+        },
+        "retired_owner_partitions": {
+          "durable-db-1/05fbda4b-a0af-431a-9c6e-06556e1f145a": [
+            {
+              "time_utc": "2026-11-13T15:34:44.571304Z",
+              "partition": 12,
+              "owner": "1cb9de13-dc38-40ab-a9bd-f725d65c7af3"
+            }
+          ],
+          "durable-db-2/35c250ec-bd19-4964-94b1-d4f09bf05bc9": [
+            {
+              "time_utc": "2026-11-13T15:34:45.733846Z",
+              "partition": 2,
+              "owner": "8f318d2f-8dda-447d-8235-4cf322a7e4cc"
+            }
+          ]
+        },
+        "ingress_observations": [
+          {
+            "mode": "asymmetric",
+            "time_utc": "2026-11-13T15:38:13.622431+00:00",
+            "endpoints_ready": true,
+            "rows": [
+              {
+                "target": "durable-db-0",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 321
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 1762
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-1",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 91
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 80
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-2",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 81
+                  },
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2178
+                  }
+                ]
+              },
+              {
+                "target": "Service",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 95
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 868
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "mode": "symmetric",
+            "time_utc": "2026-11-13T15:41:43.493313+00:00",
+            "endpoints_ready": true,
+            "rows": [
+              {
+                "target": "durable-db-0",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2005
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 500
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-1",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2171
+                  },
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 3523
+                  }
+                ]
+              },
+              {
+                "target": "durable-db-2",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 200,
+                    "valid": true,
+                    "elapsed_ms": 87
+                  },
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2186
+                  }
+                ]
+              },
+              {
+                "target": "Service",
+                "ready_status": 200,
+                "reads": [
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2114
+                  },
+                  {
+                    "status": 503,
+                    "elapsed_ms": 2095
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "recovery_observations": [
+          {
+            "name": "asymmetric-peer-isolation-healed",
+            "started_at": "2026-11-13T15:38:18.204463+00:00",
+            "basis": "before fault or replica change",
+            "target_seconds": 60,
+            "writer_progress_upper_bound_seconds": [
+              19.398854548926465,
+              25.02144530194346,
+              25.02144530194346,
+              19.398854548926465
+            ],
+            "observed_within_target": true
+          },
+          {
+            "name": "symmetric-peer-isolation-healed",
+            "started_at": "2026-11-13T15:41:53.688862+00:00",
+            "basis": "before fault or replica change",
+            "target_seconds": 60,
+            "writer_progress_upper_bound_seconds": [
+              18.016661271918565,
+              14.390342844999395,
+              18.016661271918565,
+              21.620642602909356
+            ],
+            "observed_within_target": true
+          },
+          {
+            "name": "cold-three",
+            "started_at": "2026-11-13T15:42:51.346223+00:00",
+            "basis": "after cold API readiness",
+            "target_seconds": 120,
+            "writer_progress_upper_bound_seconds": [
+              48.72751429700293,
+              45.13719102705363,
+              30.230847932049073,
+              45.13719102705363
+            ],
+            "observed_within_target": true
+          }
+        ],
+        "namespace_removed": true,
+        "provider_cleanup": {
+          "bucket_removed": true,
+          "workload_key_revoked": true,
+          "physical_versions_deleted": 1840
+        },
+        "evidence_sha256": {
+          ".tools/retirement-long-b2/kubernetes.json": "d8b88f3784563aa31204832a4872b8d473e4493ebb6f8bbb95c5e0edc82387ab",
+          ".tools/retirement-long-b2/kubernetes.history.jsonl": "5646c3054ff7299ace89cf667649409235a31437f50efe751fbfc198488cd280",
+          ".tools/retirement-long-b2/result.json": "37f479ec303bf1459999cdda52013fe5f5cc28bd142aef61d5b07fe572539728",
+          ".tools/retirement-long-b2/history-check.json": "15fb1ece91478b77553bf05ed3091d4ba716194c85e0ca91a54f4d2af16e27ca",
+          ".tools/retirement-long-b2.log": "f7e794542854e4a48c5b11cda0683f1610e712d73526acc5e349469ec8bfe404",
+          ".tools/retirement-long-b2/failed-object-observations.json": "18be0299a6d1b77ea015db2fb9f0cfaddc7effa6e4a07160ae9659661095254b"
+        }
+      }
+    ],
+    "artifact": {
+      "source_commit": "9121e49b327008466eb226ed8b20e15d840a9a82",
+      "pipeline_status_at_verification": "running",
+      "woodpecker_pipeline": 368,
+      "artifact_image_digest": "sha256:3133e0783393de2b2dfbd73317682476020230e5aa551df0ba1231c2921eeff5",
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.23",
+        "archive_sha256": "df62d7f251b18db22c554d1649c58dca3c0fccd0c6854606ba9623b56c456d2b",
+        "binary_sha256": "70a3399650deeb31a0b39fd62ae95c7df80543cdfbf8ae872f04ab3a784290b5",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "standalone_checked_in_woodpecker_and_after_download": true,
+      "archive_bytes": 6420590,
+      "version": "v0.24.23",
+      "experimental": true,
+      "woodpecker": {
+        "pipeline": 368,
+        "url": "https://ci.eflorenzano.com/repos/18/pipeline/368/1",
+        "status": "success",
+        "steps": [
+          {
+            "name": "clone",
+            "state": "success"
+          },
+          {
+            "name": "dependency-audit",
+            "state": "success"
+          },
+          {
+            "name": "javascript-audit",
+            "state": "success"
+          },
+          {
+            "name": "verify-and-build",
+            "state": "success"
+          },
+          {
+            "name": "publish-docs",
+            "state": "success"
+          }
+        ]
+      },
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "native_client_contract": {
+        "artifact_success_marker": true,
+        "fresh_contract_stdout": true
+      },
+      "capacity_test_passed": true,
+      "github_actions_disabled": true,
+      "artifact_image_local_ref": "127.0.0.1:19092/durable-db-artifacts@sha256:3133e0783393de2b2dfbd73317682476020230e5aa551df0ba1231c2921eeff5",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.23",
+      "published_at": "2026-11-13T15:47:52Z",
+      "github_asset_digest_matches": true
+    },
+    "scope": "Counters can progress across a hold containing outages. Serial cross-host probes do not establish simultaneous availability or exact outage duration. An absent journal after an uncertain PUT does not prove abort or authorize replay. The failure classification behind the PUT remains unknown. No new AWS, rollout or production SLO claim.",
+    "next": "Classify upload failures without exposing provider error text; distinguish proven-unsent attempts from genuinely ambiguous PUTs and qualify the required recovery.",
+    "removed": [
+      "sleep after each challenge I/O round",
+      "superseded generic worker-retirement warning",
+      "redundant endpoint/baseline copies in the new candidate evidence; raw hashes preserved"
+    ]
   }
 }
