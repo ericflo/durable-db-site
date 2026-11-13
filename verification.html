@@ -762,7 +762,8 @@ the fixed cadence answers within it and invalidates a captured stale claim.
 Eight focused challenge/HTTP cluster tests pass in 0.36 seconds. This removes an
 avoidable delay, not the possibility of false takeover under arbitrary provider
 delays. Eligibility changes and answer outcomes now log only the incarnation,
-fixed stage/outcome, and elapsed time; the cloud harness retains those samples.
+fixed stage/outcome, and elapsed time; the cloud harness retains at most 256
+eligibility transitions and 1,024 reply samples per pod incarnation across rounds.
 The unchanged model below abstracts polling and I/O failures as stuttering;
 the test is not a timing guarantee on deployment hosts.</p>
 <p>A timeout is a failure suspicion, never serving authority or a clock-error bound.
