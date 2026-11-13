@@ -31161,5 +31161,684 @@
       ".tools/pacing-repeat-b2/checkpoint-spans.json": "e83b86647ee3ab14c380d85da65b42ce6df07512b7372c6636a42311d6ab4133",
       ".tools/pacing-repeat-b2.log": "02c44d32bda2d4528e2ed23dc9ee121edbd27c84528479c89bb777450a4d0f6d"
     }
+  },
+  "host_process_route_baseline": {
+    "version": "0.24.25",
+    "date": "2026-11-13",
+    "runtime_source_commit": "cc9b1c42e8e01cd15e6b7872a58bb95a593b9821",
+    "runtime_binary_sha256": "d7715a602982bb36307eaa9f81ce849289c5ba6c4b83f17261c66a5d8265a5a4",
+    "runtime_image_digest": "sha256:1c76a85cb060e22b183feadb24c97c3722b09e7e6d9f088aeda71113ed50a6b7",
+    "artifact_reference": "answered_challenge_pacing.artifact",
+    "harness_source_commit": "f4f3bb08952cc15bc3c99ba4bd7734afcc558d44",
+    "harness_sha256": "e19af65c4464aca6447d6f9ebe51d307bf90e2ae5d13c77597862a0082e0a9f4",
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "recovery",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "client_transport": "SDK per-database HTTP/1 pools: 64 scopes, 16 requests per scope, 128 aggregate, one idle socket per scope",
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "64Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 120,
+      "memory_observation": true,
+      "maximum_write_intents": 100000
+    },
+    "complete": true,
+    "writes_acknowledged": 1873,
+    "verified_keys": 1873,
+    "independent_history": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 1873,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "one-host-process-pause",
+          "duration_seconds": 87.41701618100001,
+          "readbacks": [
+            4,
+            41,
+            87,
+            8
+          ],
+          "max_completed_readback_gap_seconds": [
+            82.31686462599998,
+            25.876376843999935,
+            6.422847263000051,
+            76.444684994
+          ],
+          "open_readback_gap_seconds": [
+            0.1828478490000407,
+            0.5276128419999964,
+            4.243583053999998,
+            0.26455060800003594
+          ],
+          "target_seconds": 60,
+          "observed_within_target": false
+        },
+        {
+          "name": "one-host-processes-resumed",
+          "duration_seconds": 15.30588627200001,
+          "readbacks": [
+            14,
+            15,
+            6,
+            12
+          ],
+          "max_completed_readback_gap_seconds": [
+            3.2180604139999787,
+            5.043873539000003,
+            11.706169983999985,
+            2.110356655999965
+          ],
+          "open_readback_gap_seconds": [
+            1.1979923930000496,
+            0.520668220999994,
+            0.11548730100003013,
+            4.524729650999973
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement",
+          "duration_seconds": 111.07159592400001,
+          "readbacks": [
+            35,
+            58,
+            55,
+            33
+          ],
+          "max_completed_readback_gap_seconds": [
+            55.52504077800006,
+            42.874502971000084,
+            48.79277186499996,
+            52.18050159100005
+          ],
+          "open_readback_gap_seconds": [
+            0.47060853900006805,
+            0.30718631299998833,
+            0.26902213400001074,
+            3.03116434399999
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T17:44:33.212343+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          16.414039670024067,
+          16.414039670024067,
+          19.789724956965074,
+          16.414039670024067
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T17:45:19.838646+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          13.836934164050035,
+          13.836934164050035,
+          13.836934164050035,
+          13.836934164050035
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "one-host-process-pause",
+        "started_at": "2026-11-13T17:48:23.954396+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          86.71744524303358,
+          32.91308724996634,
+          18.579894658993,
+          83.13886986707803
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "one-host-processes-resumed",
+        "started_at": "2026-11-13T17:50:02.201226+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          11.103263015043922,
+          11.103263015043922,
+          14.687619455042295,
+          11.103263015043922
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-dns-replacement",
+        "started_at": "2026-11-13T17:50:54.450195+00:00",
+        "basis": "after sole replacement API readiness with old peers stopped",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          54.357402244000696,
+          79.18538676004391,
+          86.44092822005041,
+          50.90153726399876
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-processes-resumed",
+        "started_at": "2026-11-13T17:52:38.790595+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          41.4542100969702,
+          19.477319116936997,
+          19.477319116936997,
+          41.4542100969702
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "resume-scale-six",
+        "started_at": "2026-11-13T17:53:27.197781+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          6.119808512041345,
+          45.45959489606321,
+          48.864903281093575,
+          6.119808512041345
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "forced-api-pod-loss",
+        "started_at": "2026-11-13T17:54:22.064875+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.814854681957513,
+          15.814854681957513,
+          15.814854681957513,
+          15.814854681957513
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "rolling-replacement",
+        "started_at": "2026-11-13T17:54:44.593183+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          99.79524946201127,
+          110.56849181698635,
+          89.04681272699963,
+          92.64111573796254
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "provider-restored",
+        "started_at": "2026-11-13T17:57:53.539925+00:00",
+        "basis": "before restoring provider egress",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          17.977284904918633,
+          17.977284904918633,
+          17.977284904918633,
+          14.380262815975584
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T17:58:16.616547+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          60.49314748798497,
+          85.74459183693398,
+          89.34032403398305,
+          60.49314748798497
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T18:00:25.041287+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          55.13113583205268,
+          47.96485176309943,
+          62.1886354960734,
+          55.13113583205268
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "namespace_removed": true,
+    "provider_cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 1762
+    },
+    "host_pause_diagnosis": {
+      "partition": 2,
+      "owner_ready_seconds_after_pause": 42.819235,
+      "following_checkpoint_seconds": 7.091,
+      "writer_0_gap_seconds": 82.316864626,
+      "writer_0_read_request_seconds": 80.4921,
+      "writer_0_read_transport_failures": 3,
+      "writer_3_gap_seconds": 76.444684994,
+      "writer_3_commit_request_seconds": 75.441,
+      "writer_3_commit_transport_failures": 3,
+      "observation": "Different ingress caches sent to the stopped predecessor after the successor was ready; captured forwarding cancellations each consume about 25 seconds. TCP ACKs from the live host kernel do not establish application progress."
+    },
+    "scope": "Four sequential writers; host-local database process stops preserve DNS and exact process identities, with live host kernel and kubelet. Physical host power loss, node-controller replacement, sustained memory and performance remain unqualified. Host-pause direct gaps miss 60 seconds; rollout direct gaps pass despite larger controller bounds.",
+    "evidence_sha256": {
+      ".tools/pacing-host-recovery-b2/result.json": "b7d4a379baa5ed55dceef57dde23505b6a53d2b02c0e9b4177689d5f74fae66a",
+      ".tools/pacing-host-recovery-b2/kubernetes.json": "c14a3b3a40c3a4ea514e2f8411229d1a10aa93072bcc9ee03038e760194f3259",
+      ".tools/pacing-host-recovery-b2/kubernetes.history.jsonl": "8f0345a73dba0102eff8934469793fe5c76fd43ce4945b93d5bafa71767e54b0",
+      ".tools/pacing-host-recovery-b2/history-check.json": "83766d0aec2ecd75ca8dd7ff7c1782f059cc1d4861b997b7ebcd05bb94ac26f6",
+      ".tools/pacing-host-recovery-b2/host-pause-acquisition.json": "b4f2d14272ef2ce6b86a9034a82c20a2231714f48cb68b7d6e0a3ba43c62a6f9",
+      ".tools/pacing-host-recovery-b2/host-pause-checkpoint.json": "f95950da86daf138c89856b5a6090c24cc8c272ab0e8a226acb27d939f3f9a69",
+      ".tools/pacing-host-recovery-b2/host-pause-readbacks.json": "d5cdd0cf36eeee2130a8513a2df1fff7e305745c06225dc7f7f36d268e8c64e6",
+      ".tools/pacing-host-recovery-b2/host-pause-slow-requests.json": "2e38de11cf07a3f090645582c56671a48c8766c92bdc865a49a249e0efded3aa",
+      ".tools/pacing-host-recovery-b2.log": "4a738640fba27371f49f9d79742a6be9b3da108aced659b2830d2d8a61640799"
+    }
+  },
+  "host_process_route_expiry": {
+    "version": "0.24.26",
+    "date": "2026-11-13",
+    "runtime_source_commit": "59a961f5c5570fca5fa1a9b0c860c764492f1e85",
+    "runtime_binary_sha256": "f75f3fe4e584a088b93992afb580d0d29586df94a1f3103fa808fb54af6b3882",
+    "runtime_image_digest": "sha256:9fba655c7cc8af6c5cc52e47bf199570616a5588473c69f21f79084e122389f3",
+    "runtime_matches_verified_artifact": true,
+    "harness_source_commit": "59a961f5c5570fca5fa1a9b0c860c764492f1e85",
+    "harness_sha256": "e19af65c4464aca6447d6f9ebe51d307bf90e2ae5d13c77597862a0082e0a9f4",
+    "configuration_reference": "host_process_route_baseline.configuration",
+    "complete": true,
+    "writes_acknowledged": 1933,
+    "verified_keys": 1933,
+    "independent_history": {
+      "complete": true,
+      "histories": 4,
+      "acknowledged": 1933,
+      "check": "sequential append identity, invocation order, value hashes and recovered totals",
+      "readback_windows": [
+        {
+          "name": "one-host-process-pause",
+          "duration_seconds": 58.49360385699998,
+          "readbacks": [
+            9,
+            6,
+            53,
+            9
+          ],
+          "max_completed_readback_gap_seconds": [
+            48.02987615899997,
+            54.405292516999964,
+            4.430894918000035,
+            48.11098861900001
+          ],
+          "open_readback_gap_seconds": [
+            0.44017787699999644,
+            0.14284268600005134,
+            3.229180649,
+            0.07799543900000572
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "one-host-processes-resumed",
+          "duration_seconds": 37.51394387300007,
+          "readbacks": [
+            13,
+            13,
+            43,
+            12
+          ],
+          "max_completed_readback_gap_seconds": [
+            26.86214042900002,
+            19.435923619999983,
+            2.7645253179999827,
+            15.398598418000006
+          ],
+          "open_readback_gap_seconds": [
+            1.7046859290000498,
+            1.1250951260000193,
+            1.4909658940000554,
+            1.875595841000063
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        },
+        {
+          "name": "rolling-replacement",
+          "duration_seconds": 110.67974370899992,
+          "readbacks": [
+            48,
+            47,
+            67,
+            45
+          ],
+          "max_completed_readback_gap_seconds": [
+            29.184730236000064,
+            44.29786824600001,
+            26.97652969000012,
+            29.56649370699995
+          ],
+          "open_readback_gap_seconds": [
+            0.28057395799987717,
+            0.5802643429998398,
+            0.12188260099992476,
+            0.2872746019999113
+          ],
+          "target_seconds": 60,
+          "observed_within_target": true
+        }
+      ],
+      "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+    },
+    "recovery_observations": [
+      {
+        "name": "scale-3",
+        "started_at": "2026-11-13T18:21:14.521839+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.299214106984437,
+          40.08204731193837,
+          15.299214106984437,
+          15.299214106984437
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-6",
+        "started_at": "2026-11-13T18:22:06.849111+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          33.7773300500121,
+          15.906281839008443,
+          33.7773300500121,
+          33.7773300500121
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "one-host-process-pause",
+        "started_at": "2026-11-13T18:25:06.566518+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          58.03282425098587,
+          58.03282425098587,
+          18.746952526038513,
+          58.03282425098587
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "one-host-processes-resumed",
+        "started_at": "2026-11-13T18:26:18.458303+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          36.86867970600724,
+          12.021819561021402,
+          12.021819561021402,
+          36.86867970600724
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-dns-replacement",
+        "started_at": "2026-11-13T18:27:32.477886+00:00",
+        "basis": "after sole replacement API readiness with old peers stopped",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          40.674982340075076,
+          79.73291793605313,
+          79.73291793605313,
+          40.674982340075076
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "paused-processes-resumed",
+        "started_at": "2026-11-13T18:29:12.588396+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          15.44444679201115,
+          15.44444679201115,
+          15.44444679201115,
+          15.44444679201115
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "resume-scale-six",
+        "started_at": "2026-11-13T18:29:34.603972+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          20.090120455017313,
+          51.729305964079686,
+          55.31160729296971,
+          20.090120455017313
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "forced-api-pod-loss",
+        "started_at": "2026-11-13T18:30:36.084300+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          19.266301269992255,
+          15.690773001057096,
+          15.690773001057096,
+          19.266301269992255
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "rolling-replacement",
+        "started_at": "2026-11-13T18:31:01.291374+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          88.41935411503073,
+          110.0318440310657,
+          92.0282639140496,
+          88.41935411503073
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "provider-restored",
+        "started_at": "2026-11-13T18:34:08.742606+00:00",
+        "basis": "before restoring provider egress",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          18.278595334035344,
+          18.278595334035344,
+          18.278595334035344,
+          18.278595334035344
+        ],
+        "observed_within_target": true
+      },
+      {
+        "name": "scale-one",
+        "started_at": "2026-11-13T18:34:31.924554+00:00",
+        "basis": "before fault or replica change",
+        "target_seconds": 60,
+        "writer_progress_upper_bound_seconds": [
+          76.27534531301353,
+          54.818795920931734,
+          90.63086788891815,
+          76.27534531301353
+        ],
+        "observed_within_target": false
+      },
+      {
+        "name": "cold-three",
+        "started_at": "2026-11-13T18:36:42.007910+00:00",
+        "basis": "after cold API readiness",
+        "target_seconds": 120,
+        "writer_progress_upper_bound_seconds": [
+          50.43586131406482,
+          53.939354395028204,
+          61.15958312910516,
+          50.43586131406482
+        ],
+        "observed_within_target": true
+      }
+    ],
+    "namespace_removed": true,
+    "provider_cleanup": {
+      "bucket_removed": true,
+      "workload_key_revoked": true,
+      "physical_versions_deleted": 2250
+    },
+    "change": "Expire cached forwarding routes absent from the existing membership health view. A fresh storage hint may still route to an excluded peer. No new worker, timer, retry, authority or storage-format transition.",
+    "artifact": {
+      "source_commit": "59a961f5c5570fca5fa1a9b0c860c764492f1e85",
+      "version": "v0.24.26",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.26",
+      "published_at": "2026-11-13T18:41:47Z",
+      "artifact_image_digest": "sha256:2f18ddf2818bfd68da3f493bc2a09a54317d97a1c077a844a7ee2ef0ce91df79",
+      "archive_bytes": 6421459,
+      "static_pie": true,
+      "standalone": {
+        "version": "0.24.26",
+        "archive_sha256": "18a0df6a23034f0d63acb43cf99a3580d7db710e894f284af806da99789619c8",
+        "binary_sha256": "f75f3fe4e584a088b93992afb580d0d29586df94a1f3103fa808fb54af6b3882",
+        "empty_toolchain_path": true,
+        "protected_creation_and_replay": true,
+        "commit_and_exact_retry": true,
+        "point_and_ordered_reads": true,
+        "export_inspect_restore": true,
+        "kill_and_reopen": true,
+        "temporary_server_data_and_tokens_removed": true
+      },
+      "woodpecker": {
+        "pipeline": 381,
+        "url": "https://ci.eflorenzano.com/repos/18/pipeline/381/1",
+        "status": "success",
+        "steps": [
+          {
+            "name": "clone",
+            "state": "success"
+          },
+          {
+            "name": "dependency-audit",
+            "state": "success"
+          },
+          {
+            "name": "javascript-audit",
+            "state": "success"
+          },
+          {
+            "name": "verify-and-build",
+            "state": "success"
+          },
+          {
+            "name": "publish-docs",
+            "state": "success"
+          }
+        ]
+      },
+      "build": {
+        "rust": "1.90.0",
+        "rust_wrapper": "kache",
+        "target": "x86_64-unknown-linux-musl",
+        "static_pie": true
+      },
+      "github_asset_digest_matches": true,
+      "github_actions_disabled": true
+    },
+    "verification": {
+      "focused_routing_tests": 9,
+      "focused_seconds": 4.2,
+      "ordinary_rust_tests": 384,
+      "clippy_and_formatting": true,
+      "model": {
+        "name": "OwnerRouting",
+        "distinct_states": 728,
+        "generated_states": 3285,
+        "depth": 11,
+        "negative_controls": 9,
+        "state_variables_added": 0
+      },
+      "rust_negative_control": "Old cache predicate fails the one-second replacement-routing deadline after health exclusion. Healthy-cache reuse and fresh excluded-peer hints are also checked.",
+      "tlc_scratch_directories_removed": 10,
+      "following_scale_down_window_harness_tests": 3,
+      "harness_seconds": 8.228
+    },
+    "host_pause_diagnosis": {
+      "partition": 2,
+      "owner_ready_seconds_after_pause": 42.380213,
+      "baseline_owner_ready_seconds_after_pause": 42.819235,
+      "worst_writer": 1,
+      "worst_gap_seconds": 54.405292516999964,
+      "worst_commit_request_seconds": 53.77756250100001,
+      "worst_commit_transport_failures": 2,
+      "scope": "In-flight response timeouts remain. Separate host placements/provider conditions, not a matched latency benchmark."
+    },
+    "scope": "Host-local database processes stopped/resumed with live kernel/kubelet. Direct host-pause, return and rollout windows pass 60 seconds. Scale-one controller bound 90.63 seconds does not establish a direct gap bound; subsequent harness adds that window. Physical host power loss, node-controller replacement, sustained memory/performance and AWS remain unqualified.",
+    "evidence_sha256": {
+      ".tools/excluded-route-recovery-b2/result.json": "da56da8d850e02d684fb884df588c65412c5175aad66ce4fbb876fae13a07e4d",
+      ".tools/excluded-route-recovery-b2/kubernetes.json": "575d534908382153d55ec4268b9e0a7fdab0c2d5258a687f296b814d1b360487",
+      ".tools/excluded-route-recovery-b2/kubernetes.history.jsonl": "d5eaf4d8353a2d7c36e2990cbe9710046fe9b344b76db39fa16a65eb93d97d30",
+      ".tools/excluded-route-recovery-b2/history-check.json": "0d27eae03a2329779a2c44dcdb9ac65e190a1f5b869d15946560e2d8a1e1ba85",
+      ".tools/excluded-route-recovery-b2/stage-samples.json": "c5806c2dacdb8c948b603065f5f3a7c6b3e4d3296c9bc026130ee3ff5070ad55",
+      ".tools/excluded-route-recovery-b2/host-pause-readbacks.json": "1490b491a6220cc94c1e45d463feff4d5b0e7132e22f25828cf0c555caf42e81",
+      ".tools/excluded-route-recovery-b2/host-pause-acquisition.json": "b6bbacb8f804a4e45107a738a0a2450c5e2af8991eb1b27a4b33ecb13d463e43",
+      ".tools/excluded-route-recovery-b2.log": "e12096bdc30cccea4219cf2b0de5eec5654ef0b561363e56002da4d152acb906"
+    }
   }
 }
