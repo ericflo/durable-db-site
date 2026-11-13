@@ -18,6 +18,15 @@ await db.transaction(async (tx) =&gt; {
 <p>The SDK stores no hidden application receipts. Across separate application requests, use stable business identities or application idempotency records where needed. Credentials belong on the application server, never in a browser bundle.</p>
 <h2 id="wire-api-and-provisioning">Wire API and provisioning<a class="anchor" href="#wire-api-and-provisioning" aria-label="Link to this section">#</a></h2>
 <p><code>DurableDb</code> is the lower-level binary wire client used by the Pi adapters and provisioning tools. It exposes <code>read</code>, <code>commit</code>, <code>encode</code>, explicit revisions and request IDs. Each call makes one HTTP attempt. Retry uncertain commits unchanged. Redirects are refused; connect directly to the final HTTPS origin.</p>
+<p>The Node.js SDK now reuses HTTP/1 connections separately for each origin and
+database, with at most 64 cached pools, 16 outstanding requests per pool, 128
+overall and one idle socket per pool. Active pools are not evicted; local
+capacity refusal returns <code>DbError</code> status 429 before sending. HTTPS trust and
+hostname checks remain enabled, and the 35-second request deadline includes
+body reads. Bodies are bounded to 1 MiB. This replaces global fetch pooling;
+it preserves the one-attempt wire contract and identical retry rules. The bounds
+apply to one loaded SDK module, not across Node workers. Pooling cannot guarantee
+availability behind every external proxy or permanent split.</p>
 <p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
 <h2 id="pi-150-indexed-adapter">Pi 1.5.0 indexed adapter<a class="anchor" href="#pi-150-indexed-adapter" aria-label="Link to this section">#</a></h2>
 <p>v0.7.0 includes <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
