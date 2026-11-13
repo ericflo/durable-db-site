@@ -20646,5 +20646,61 @@
         }
       ]
     }
+  },
+  "checkpoint_shared_staging": {
+    "status": "Local candidate verified; exact-runtime B2 rollout qualification pending",
+    "routine_rust_checks_passed": 370,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_live_checks": 15,
+    "focused_live_seconds": 0.24,
+    "focused_http_checks": 14,
+    "focused_http_seconds": 1.57,
+    "regression": "Paused table PUT permits point, ordered scan, info and previous ACK; revoked permit returns 503; exact receipt replay after publication. Old exclusive path misses the one-second read deadline.",
+    "models": {
+      "LiveTransactions": {
+        "distinct_states": 19220,
+        "generated_states": 104871,
+        "depth": 21,
+        "fault_controls": 9,
+        "reachability_controls": 1
+      },
+      "Checkpoint": {
+        "distinct_states": 144288,
+        "generated_states": 386208,
+        "depth": 13,
+        "fault_controls": 9
+      },
+      "PublicationSafety": {
+        "distinct_states": 175546,
+        "generated_states": 810459,
+        "depth": 16,
+        "fault_controls": 4
+      },
+      "scope": "Two request identities, two writes, one checkpoint; frozen durable cut and concurrent reads. Exclusive publication/collection remain separate component obligations, not a Rust refinement or deployment liveness proof."
+    },
+    "removed": "Implicit foreground maintenance helper and all six call sites; no duplicated projection or checkpoint implementation. Superseded clock wording removed from model.",
+    "local_tlc_scratch_directories_removed": 26,
+    "source_sha256": {
+      "src/api/native.rs": "3f493d9f9385770c4a38fc9423f27fe91f72f2406092aae40645962630ff9a82",
+      "src/transactions/live.rs": "8c848093183ecfc67a1dea8491b2008520f0b069c136295f75bade9d2a8552fa",
+      "src/transactions/live/checkpoint.rs": "19d00b5338e6a1c3ca0a0c397ae09420df0c29e7de3009eaae384c12e2d48545",
+      "src/transactions/live/catalog.rs": "00d61b99dd70daec80af74149fa0e30782b4f461f3e9e2e7c7d7096e6720db72",
+      "src/transactions/live/commit.rs": "963cf671a364fdc96a9f10602ea24b97cb3013cfd402ea7746d4240693fc3376",
+      "src/ownership/root/tests/http.rs": "e9c130e9c37787bfe9d6306348fd9cb072b3d1c1d4ec69e84d1e38a25997e842",
+      "spec/LiveTransactions.tla": "d1c386c804c9d2a7ec16554d6c0d289e94b668ce075b2d338a5258794d57fa60"
+    },
+    "raw_log_sha256": {
+      ".tools/checkpoint-read-staging-before.log": "4025756f533603d734033d4cca0dcdd7692fd6efaab9ee85a8fbce8f3fc4c845",
+      ".tools/checkpoint-read-staging-focused.log": "38bd47daf405c39eb1f2ce282382f53479c30aaec05d6f315d7c9e5a6faff1d0",
+      ".tools/checkpoint-read-live-tests.log": "224ba08719919c06d7bccc0ba46edeb0692c6dd0301f2a116b30c674ac321920",
+      ".tools/checkpoint-read-http-tests.log": "08ae9dca258e6c8712bf49ad5fef4d117784e6606d973428eb0073577b9abbb5",
+      ".tools/checkpoint-read-tests.log": "8ef14ff1751e803feabb538632aafc9448a8e00d0ea528f48658015f6b7ee81a",
+      ".tools/checkpoint-read-clippy.log": "ec17e3f0c3f228ed53d62f80db81df603aa3ec903044f077f8c601400c5b3b98",
+      ".tools/checkpoint-read-staging-model.log": "19fa91c77b52e80a5fe87af39f74a776a0c01b12850b4dc3c9a1e68950101e23",
+      ".tools/checkpoint-read-checkpoint-model.log": "26022dbca2a0baaf7b2d10b52516ee939c3f4b694392872c8890b8e372126237",
+      ".tools/checkpoint-read-collection-model.log": "1eab3bc4efb150324aa7d1c2c569f450621a5d967819250b3bb309b60a493020",
+      ".tools/checkpoint-read-site.log": "454480442f9bfa5620c52610d3429187d2f2b38e8cdaf6e95bc55d4e17291f48"
+    }
   }
 }
