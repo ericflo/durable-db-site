@@ -24795,7 +24795,7 @@
     }
   },
   "concurrent_http_shutdown": {
-    "status": "Local lifecycle verification passes; exact-runtime B2 CLI rollout qualification pending",
+    "status": "Exact static binary passed B2 rollout and peer-isolation healing/cold recovery; side-pinned writers can stall during isolation; experimental, not production qualified",
     "change": "Close admission and notify graceful HTTP shutdown before awaiting provider I/O; await both admitted HTTP requests and bounded best-effort route withdrawal.",
     "production_net_lines": 18,
     "new_background_workers": 0,
@@ -24843,6 +24843,542 @@
       "Obsolete shutdown ordering guidance",
       "Eleven TLC scratch directories"
     ],
-    "scope": "Stock hosts and the unchanged B2/S3 algorithm. Socket closure is asynchronously scheduled; racing requests can still be refused. No claim that all 429/503 responses or rollout delays are eliminated."
+    "scope": "Stock hosts and the unchanged B2/S3 algorithm. Socket closure is asynchronously scheduled; racing requests can still be refused. No claim that all 429/503 responses or rollout delays are eliminated.",
+    "source_commit": "3dafec0ef60383d2fab9637f0e0e0caac610c722",
+    "measurement_scope": "Whole-rollout progress upper bounds include serial pod readiness and polling. Above-target bounds do not prove an application outage; direct per-writer readback gaps measure observed silence in the fixture.",
+    "prior_acquisition_diagnosis": {
+      "release": "0.24.18",
+      "completed_calls_sampled": 174,
+      "ready_calls_sampled": 76,
+      "ready_calls_with_repeated_claims": 0,
+      "longest_ready_ms": 20659,
+      "longest_claim_wait_ms": 6606,
+      "scope": "Bounded sampled acquisitions only; incomplete events and inter-call scheduling are excluded. Not a causal explanation of the workload gaps.",
+      "raw_sha256": "52c88f13426136418a7ac2068c53980d5e9ec96209fdd9e3a728dc9c73fad2f6"
+    },
+    "qualification_interruption": {
+      "stage": "Artifact download before cloud provisioning",
+      "cause": "Shared registry scaled to zero for registry-gc job; original port-forward lost its pod sandbox",
+      "b2_resources_created": false,
+      "database_namespace_created": false,
+      "source_build_passed": true,
+      "wrapper_exit_code": 1,
+      "raw_sha256": {
+        "qualification.log": "f40b78fe884307776841b02de897e336a61acaf01146f0bd8043d6e3d1f5463a",
+        "registry-forward.log": "747feefc3d7c986e5ad521e4e0665531054d87d727d0a3d1967e993954b05457",
+        "artifact-download/pull.log": "e55626ca2f3c7ed4e574bbbfe18f2e198768b117c25e64be40557e353866175a",
+        "result.json": "8a9e8f9db1f0c31c137226b4fb862cfc321e7a2021b02ce11177c32377e0d903"
+      }
+    },
+    "woodpecker": {
+      "source_pipeline": 345,
+      "source_status": "success",
+      "capacity_entries_each_budget_format": 10005,
+      "musl_capacity_seconds": 139.97,
+      "native_javascript_contract_seconds": 68.69
+    },
+    "artifact": {
+      "version": "0.24.19",
+      "archive_sha256": "e3ca856bf9c9465d408faf2aec06724432dab1bd79178a8ab673165cb9805fe7",
+      "binary_sha256": "a57d5694d8ed0af870aa61bfdb987f83f71855dc8c3f0144e843aa1b06c86538",
+      "empty_toolchain_path": true,
+      "protected_creation_and_replay": true,
+      "commit_and_exact_retry": true,
+      "point_and_ordered_reads": true,
+      "export_inspect_restore": true,
+      "kill_and_reopen": true,
+      "temporary_server_data_and_tokens_removed": true
+    },
+    "b2_rollout": {
+      "source_commit": "3dafec0ef60383d2fab9637f0e0e0caac610c722",
+      "runtime_image_digest": "sha256:d1838491cd999ea0f1e10e0f07cd63f034a783abc394100f6f68e980186a2dd9",
+      "runtime_matches_verified_artifact": true,
+      "started_at": "2026-11-13T10:20:44.226978+00:00",
+      "finished_at": "2026-11-13T10:29:47.918287+00:00",
+      "configuration_reference": "journal_discovery_prefetch.b2_rollout.configuration (unchanged and asserted equal)",
+      "nodes": [
+        "epsilon-1",
+        "epsilon-2",
+        "epsilon-3"
+      ],
+      "acknowledged": 800,
+      "readbacks": 800,
+      "recovered_keys": 800,
+      "campaign_exit_code": 0,
+      "qualification_wrapper_exit_code": 0,
+      "history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 800,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [
+          {
+            "name": "rolling-replacement-1",
+            "duration_seconds": 100.00891952500001,
+            "readbacks": [
+              57,
+              57,
+              67,
+              54
+            ],
+            "max_completed_readback_gap_seconds": [
+              31.437724179999975,
+              29.291915087999996,
+              30.24363360199999,
+              43.091816574000006
+            ],
+            "open_readback_gap_seconds": [
+              2.6232301699999994,
+              0.0733096680000358,
+              2.59297015300001,
+              2.244355401000007
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          },
+          {
+            "name": "rolling-replacement-2",
+            "duration_seconds": 104.98966371300003,
+            "readbacks": [
+              47,
+              59,
+              51,
+              51
+            ],
+            "max_completed_readback_gap_seconds": [
+              40.52113563500001,
+              43.784757533000004,
+              50.40125773300008,
+              30.562002916999973
+            ],
+            "open_readback_gap_seconds": [
+              0.623661602000027,
+              0.0795376529999885,
+              0.4903487870000163,
+              0.08971236999997245
+            ],
+            "target_seconds": 60,
+            "observed_within_target": true
+          }
+        ],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "recovery_targets": [
+        {
+          "name": "scale-3",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            15.897567358915694,
+            15.897567358915694,
+            15.897567358915694,
+            15.897567358915694
+          ],
+          "met": true
+        },
+        {
+          "name": "scale-6",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            13.40542277903296,
+            13.40542277903296,
+            13.40542277903296,
+            13.40542277903296
+          ],
+          "met": true
+        },
+        {
+          "name": "rolling-replacement-1",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            81.69272008200642,
+            99.62946666497737,
+            81.69272008200642,
+            81.69272008200642
+          ],
+          "met": false
+        },
+        {
+          "name": "rolling-replacement-2",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "upper_bounds_seconds": [
+            90.14554590906482,
+            104.3770648749778,
+            82.8014231370762,
+            90.14554590906482
+          ],
+          "met": false
+        },
+        {
+          "name": "cold-three",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "upper_bounds_seconds": [
+            51.937815708923154,
+            26.08020185190253,
+            40.23859877791256,
+            51.937815708923154
+          ],
+          "met": true
+        }
+      ],
+      "rpc_statuses": {
+        "commit_rpc": {
+          "200": 800,
+          "503": 130
+        },
+        "read_rpc": {
+          "200": 800,
+          "503": 251,
+          "transport_or_decode_error": 52
+        }
+      },
+      "rpc_scope": "Recorded acknowledged commit/readback RPCs only; excludes controls. Different histories are not a causal rate comparison.",
+      "sampled_stage_maxima_ms": {
+        "activation_events": 7573,
+        "selection_events": 9256,
+        "checkpoint_events": 11307
+      },
+      "publication_observation": {
+        "queued_receipts": {
+          "sampled_completions": 14,
+          "longest_elapsed_ms": 3687,
+          "longest_queue_ms": 2247,
+          "scope": "Complete standalone receipt observations while waiting for a helper. Queue duration includes probe I/O. Bounded log sample, not population rates or the time the exact proposal first became visible."
+        },
+        "helping_receipts": {
+          "sampled_completions": 107,
+          "longest_elapsed_ms": 8841,
+          "longest_queue_ms": 6472,
+          "scope": "Exact receipt observed after admission; interrupted helper work may have staged pages or issued comparisons. Observer zeroes do not measure interrupted helper cost. Bounded sampled completions, not population rates."
+        }
+      },
+      "longest_complete_publication": {
+        "pod": "durable-db-0/a6ebac82-1e85-4c5d-8024-4f4518c2c0d0",
+        "publication": "2ea4ec6e-473d-4b57-aaa1-15fd6785e724",
+        "outcome": "confirmed",
+        "elapsed_ms": 7391,
+        "initial_ms": 713,
+        "queue_ms": 5963,
+        "prepare_total_ms": 613,
+        "compare_total_ms": 101,
+        "longest_single_comparison_ms": 101,
+        "comparison_attempts": 1,
+        "conflicts": 0
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1771,
+        "namespace_removed": true
+      },
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim."
+      ],
+      "harness_sha256": "53e6e9c0fbd07c35ae53cb883ea817a1f60205fc1a22368ccf70aa8c5457c81e",
+      "workload_sha256": "685048b5e49469b274d43a0187e571f168e52b54a1d539dc497dcd655138dc8c",
+      "raw_sha256": {
+        "kubernetes.json": "cf6088e4b29825c4d885079ee10d1ecc475c26ec4858778ca03224ac8cae6130",
+        "kubernetes.history.jsonl": "b0002bdf99a2b482405eb80d5a77b253fe243d81d67e5fd7ae7bc9f4d2b2e57e",
+        "history-check.json": "a01e36dd6caed34358ff072ffb6ca274fad8dee2e3de652c49e5ee41b76ff148",
+        "cost-summary.json": "d05a724d54cb9d9d41f268f51d3fbb13d29e511672b4f4c09e7b0d8ac7f6273b",
+        "result.json": "7691dfe4e15d64006020efea82b37301dc706a62b02ec6df41a2d12b2bb92236",
+        "gap-breakdown.json": "7f4481567288eff5f83784d0d1f03c21cf97249a41ff231bf5e781a4a633a8b3"
+      },
+      "worst_readback_gaps": [
+        {
+          "name": "rolling-replacement-1",
+          "writer": 3,
+          "partition": 2,
+          "gap_seconds": 43.091816574000006,
+          "before_commit_seconds": 0.25026034499998673,
+          "commit_seconds": 42.763889285000005,
+          "after_ack_seconds": 0.07766694400001484,
+          "revision": 43,
+          "start_seconds": 163.462790936,
+          "end_seconds": 206.55460751,
+          "commit_rpc": {
+            "request_seconds": 19.258531358000006,
+            "backoff_seconds": 23.504864235000152,
+            "statuses": {
+              "200": 1,
+              "503": 28
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 0.07756250500000897,
+            "backoff_seconds": 0,
+            "statuses": {
+              "200": 1
+            }
+          }
+        },
+        {
+          "name": "rolling-replacement-2",
+          "writer": 2,
+          "partition": 14,
+          "gap_seconds": 50.40125773300008,
+          "before_commit_seconds": 0.24999660100002075,
+          "commit_seconds": 3.437949446999994,
+          "after_ack_seconds": 46.713311685000065,
+          "revision": 148,
+          "start_seconds": 282.86978389399997,
+          "end_seconds": 333.27104162700005,
+          "commit_rpc": {
+            "request_seconds": 3.4378952149999678,
+            "backoff_seconds": 0,
+            "statuses": {
+              "200": 1
+            }
+          },
+          "read_rpc": {
+            "request_seconds": 29.20956716499996,
+            "backoff_seconds": 17.503338305000042,
+            "statuses": {
+              "200": 1,
+              "503": 22
+            }
+          }
+        }
+      ],
+      "all_rpc_statuses_including_controls": {
+        "200": 1636,
+        "429": 125,
+        "503": 429,
+        "transport_or_decode_error": 52
+      }
+    },
+    "release": {
+      "version": "0.24.19",
+      "tag_source_commit": "3dafec0ef60383d2fab9637f0e0e0caac610c722",
+      "url": "https://github.com/ericflo/durable-db/releases/tag/v0.24.19",
+      "experimental": true,
+      "tag_woodpecker_pipeline": 346,
+      "tag_woodpecker_status": "success"
+    },
+    "b2_peer_isolation": {
+      "source_commit": "3dafec0ef60383d2fab9637f0e0e0caac610c722",
+      "runtime_image_digest": "sha256:d1838491cd999ea0f1e10e0f07cd63f034a783abc394100f6f68e980186a2dd9",
+      "runtime_matches_verified_artifact": true,
+      "started_at": "2026-11-13T10:31:12.209680+00:00",
+      "finished_at": "2026-11-13T10:38:12.998333+00:00",
+      "configuration_reference": "b2_rollout, except three initial replicas, side-pinned client URLs, 30-second asymmetric/two-way peer-only holds and no rollout/scale-up phases",
+      "peer_fault": {
+        "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+        "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+        "capability": "NET_ADMIN",
+        "uid": 0,
+        "host_network": false,
+        "hold_seconds": 30
+      },
+      "client_origins": [
+        "http://durable-db-isolated:7654",
+        "http://durable-db-majority:7654"
+      ],
+      "configuration_sha256": "e237f1ca408a9eb6cd8940efebb80478db5c2c5ca24c50f8b725493ab5ce1438",
+      "acknowledged": 535,
+      "readbacks": 535,
+      "recovered_keys": 535,
+      "campaign_exit_code": 0,
+      "history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 535,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "fresh_and_retained_peer_matrices_checked": true,
+      "b2_control_read_statuses_on_every_side": [
+        200,
+        200,
+        200
+      ],
+      "pod_identities_and_restart_counts_unchanged_during_isolation": true,
+      "hold_progress": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "before": [
+            43,
+            49,
+            31,
+            40
+          ],
+          "after": [
+            49,
+            80,
+            31,
+            46
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            true
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-0/4f1dcb42-363f-4b12-976a-f258b39b4c06": [],
+            "durable-db-1/3702f34d-ce64-4da7-afef-743047d533e6": [],
+            "durable-db-2/7d6994cf-41da-4357-b78d-79d2d46299c0": [
+              {
+                "time_utc": "2026-11-13T10:33:24.158205Z",
+                "outcome": "progress",
+                "partition": 2,
+                "stage": "claim",
+                "elapsed_ms": 163
+              }
+            ]
+          },
+          "readback_increments": [
+            6,
+            31,
+            0,
+            6
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "before": [
+            97,
+            129,
+            63,
+            75
+          ],
+          "after": [
+            109,
+            146,
+            63,
+            75
+          ],
+          "writer_progress": [
+            true,
+            true,
+            false,
+            false
+          ],
+          "claim_attempts_during_hold": {
+            "durable-db-0/4f1dcb42-363f-4b12-976a-f258b39b4c06": [],
+            "durable-db-1/3702f34d-ce64-4da7-afef-743047d533e6": [],
+            "durable-db-2/7d6994cf-41da-4357-b78d-79d2d46299c0": []
+          },
+          "readback_increments": [
+            12,
+            17,
+            0,
+            0
+          ]
+        }
+      ],
+      "preferred_placement": [
+        {
+          "writer": 0,
+          "partition": 2,
+          "ingress_side": "isolated",
+          "preferred_member": "durable-db-2"
+        },
+        {
+          "writer": 1,
+          "partition": 12,
+          "ingress_side": "majority",
+          "preferred_member": "durable-db-1"
+        },
+        {
+          "writer": 2,
+          "partition": 14,
+          "ingress_side": "isolated",
+          "preferred_member": "durable-db-1"
+        },
+        {
+          "writer": 3,
+          "partition": 2,
+          "ingress_side": "majority",
+          "preferred_member": "durable-db-2"
+        }
+      ],
+      "interpretation": "Zero-progress writers match blocked forwarding directions under preferred placement. No new claim sampled during the two-way hold; bounded logs cannot exclude all churn. Pinned-side ingress does not qualify ordinary shared Service ingress or continuous split availability.",
+      "recovery_observations": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T10:34:02.916867+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.80422592908144,
+            10.80422592908144,
+            10.80422592908144,
+            10.80422592908144
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "started_at": "2026-11-13T10:35:31.604774+00:00",
+          "basis": "before fault or replica change",
+          "target_seconds": 60,
+          "writer_progress_upper_bound_seconds": [
+            10.82664261595346,
+            17.86152187292464,
+            10.82664261595346,
+            10.82664261595346
+          ],
+          "observed_within_target": true
+        },
+        {
+          "name": "cold-three",
+          "started_at": "2026-11-13T10:36:27.013590+00:00",
+          "basis": "after cold API readiness",
+          "target_seconds": 120,
+          "writer_progress_upper_bound_seconds": [
+            44.09312601108104,
+            33.49717949400656,
+            44.09312601108104,
+            44.09312601108104
+          ],
+          "observed_within_target": true
+        }
+      ],
+      "rpc_statuses": {
+        "commit_rpc": {
+          "200": 535,
+          "503": 60,
+          "transport_or_decode_error": 14,
+          "429": 1
+        },
+        "read_rpc": {
+          "200": 535,
+          "503": 77,
+          "transport_or_decode_error": 43
+        }
+      },
+      "all_rpc_statuses_including_controls": {
+        "200": 1096,
+        "429": 39,
+        "503": 140,
+        "transport_or_decode_error": 57
+      },
+      "cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1100,
+        "namespace_removed": true
+      },
+      "limitations": [
+        "Manual replica changes; no CPU-driven HPA claim.",
+        "Only the selected scenario is exercised; no host shutdown, node drain, rack failure or control-plane failure.",
+        "Short sequential append fixture; no production SLO, arbitrary contention linearizability, sustained-load or AWS claim.",
+        "Thirty-second holds and aggregate counters do not establish a production availability SLO. Campaign success requires healed recovery, not progress from every writer during isolation."
+      ],
+      "raw_sha256": {
+        "kubernetes.json": "79a33da961eed81e1aa94135a75b8e4d94bea3e490045fbe0795686d9a0a4d6e",
+        "kubernetes.history.jsonl": "6b0e39471aed8588c998386f4802284130f9731022db92d6f1f73d11e330dc0f",
+        "history-check.json": "dd4f170b0a1b0de5b1635e680f0567557a93a2ecbc5df8429a49e2085da16068",
+        "result.json": "774213a5ac0811573208c93c93d6240cfc8f3c45e013aef9eb98c9b2c8f3bb9f"
+      }
+    }
   }
 }
