@@ -24094,5 +24094,68 @@
       "experimental": true,
       "tag_woodpecker_pipeline": 336
     }
+  },
+  "suppress_self_forwarding": {
+    "status": "Local verification passes; exact-runtime cloud qualification pending",
+    "change": "Cluster forwarders refuse their own advertised address before constructing an HTTP client or caching the route. Local recovery returns unavailable without a second HTTP admission. Explicit callers retry; no authority, format, deadline or admission-limit change.",
+    "tcp_regression": {
+      "paused_after_open_route_before_local_installation": true,
+      "http_capacities": [
+        4,
+        8
+      ],
+      "tenant_slots": [
+        1,
+        2
+      ],
+      "old_status": 429,
+      "new_status": 503,
+      "requests_each_case": 2,
+      "admitted_each_case": 2,
+      "rejected_each_case": 0,
+      "local_service_resumes": true,
+      "seconds": 0.05
+    },
+    "rust_checks_passed": 376,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "model": {
+      "name": "OwnerRouting",
+      "transition_system_unchanged": true,
+      "distinct_states": 728,
+      "generated_states": 3197,
+      "depth": 11,
+      "negative_controls": 9,
+      "scope": "Bounded routing/response-authority safety. Self-address detection and admission-slot usage are Rust implementation obligations, not new model properties."
+    },
+    "source_sha256": {
+      "spec/OwnerRouting.tla": "5ce7181a56ec4cab0012200480d913d7e1be293924fb9013fb6781edf0a54ff5",
+      "src/api/forward.rs": "c3b75047f7eb9b2b8fad842d55aa5c2462473261476342d54f78986c40c959df",
+      "src/api/cluster.rs": "c7e1944aba14b7b53a3d2e5c66db107ddccfbebe8c5cca38cddcf0a890aad5eb",
+      "src/ownership/root/tests/cluster.rs": "ee7ffc35831ec9a40c79498541a27296236beddee00c98227c9dd16ca8dde739"
+    },
+    "raw_log_sha256": {
+      "self-forward-before.log": "6d3ed7ad64b4916f2b72e61b8ca4febf9b04cf2d08ce1536db00ddc91085c239",
+      "self-forward-focused.log": "a43d30c8ff4c1eef7f947595f4cba815eec8ab45e9fa4945df42ba8c79a0a044",
+      "self-forward-model.log": "5e9f11abf3c195e198a4568fad077e725cc5424756a56d107cf1dee450a7fcb3",
+      "self-forward-clippy.log": "90b5001c3d81f22ba61bbb83b4a94cfc8c124243fb99c9e7e687b57cb6f7789c",
+      "self-forward-tests.log": "a5837cb73e10b28d205a93fe98937d6b3d7bab391d0f1eeb6515ea3b6dba79f3"
+    },
+    "removed": [
+      "Redundant HTTP self-hop during cluster recovery",
+      "Replaced direct forwarder construction with the local-address-aware instance"
+    ],
+    "tlc_scratch_directories_removed": [
+      "tlc-owner-routing",
+      "tlc-route-identity",
+      "tlc-route-retry",
+      "tlc-route-rebind",
+      "tlc-route-busy",
+      "tlc-route-cancel",
+      "tlc-route-readiness",
+      "tlc-route-idle",
+      "tlc-route-placement",
+      "tlc-route-unavailable"
+    ]
   }
 }
