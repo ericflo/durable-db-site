@@ -24407,5 +24407,56 @@
       "tag_woodpecker_pipeline": 340,
       "tag_woodpecker_status": "success"
     }
+  },
+  "helping_receipt_observation": {
+    "rust_checks_passed": 377,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "focused_checks": 5,
+    "focused_wall_seconds": 0.03,
+    "negative_controls": [
+      "Original helper-only admission observer misses confirmed receipt deadline",
+      "Nine probes exceed the retained allowance after admission"
+    ],
+    "model": {
+      "name": "PublicationCombining",
+      "positive_transition_system_unchanged": true,
+      "distinct_states": 1736213,
+      "generated_states": 15818936,
+      "depth": 25,
+      "unsafe_mutations": 6,
+      "coverage_controls": 2,
+      "stronger_receipt_coverage": "Receipt arrives while a helper still holds that exact proposal in its selected set; not merely an unrelated busy helper.",
+      "scope": "Finite component checking under immutable object and exact conditional-publication assumptions; not a Rust, provider or composed protocol proof."
+    },
+    "source_sha256": {
+      "Cargo.toml": "61fa4ca7397e8966f3af978f1743d9ecb51e225e9cc7d59a7ea1bd887ef65022",
+      "Cargo.lock": "96f84d283439d1811d1f5eda4c310e0f23bb5ceeb1e53adbe96263784549688c",
+      "scripts/qualify-multinode.py": "53e6e9c0fbd07c35ae53cb883ea817a1f60205fc1a22368ccf70aa8c5457c81e",
+      "spec/PublicationCombining.tla": "f291ca099e8a80d6a47b149b2a3fe756f38a907ba607b3a0106920a6cbf7f704",
+      "src/publication/proposal.rs": "81bdb5b051f02b5907dcbe81004acf0cb7f4bdd69edbec3375eb59ee18427862",
+      "tests/publication.rs": "a82ebae51d0c2c27dad4a4ba7211de71bbe44c7abfc837f13248653af1676a79"
+    },
+    "raw_log_sha256": {
+      "helping-receipt-focused.log": "31f821be4cc43e056f7feb90d3c525084a5275a67c5cd6c1cddf7538d3998402",
+      "helping-receipt-negative.log": "1c6214c00f52ecc9d20a901d6b5798a5a4007258065bc483642f5837fda60c46",
+      "helping-receipt-negative-budget.log": "f7d6a3b9b451efc84dfa80614306b1772c6aade298e7dd927345b87c9032f48f",
+      "helping-receipt-model.log": "17e0db8204c13c51e277c8435c44485d323a3f98e8d68a87581c212ec59f8eb1",
+      "helping-receipt-clippy.log": "eb2ca1874d2ed9e7d2cb013e494e0b30717ab1a2e6b45a80e0e90b92fa87c817",
+      "helping-receipt-tests.log": "796ce18c6543a0de1e73e492d4a2df25edfd9031ba341a956915df622b150f8a"
+    },
+    "status": "Local verification passes; exact-runtime cloud qualification pending",
+    "change": "One bounded receipt observer spans helper admission and work. An exact published pointer can cancel redundant local helping; normal helper completion cancels a stalled observation. Original target/fence checks and uncertain provider outcomes remain.",
+    "probe_attempts_per_invocation": 8,
+    "probe_interval_seconds": 1,
+    "maximum_simultaneous_probes_per_connection": 1,
+    "probe_allowance_resets_at_admission": false,
+    "extra_io_scope": "Long uncontended helpers may now use observation reads inside the same cap; no claim of unchanged request cost.",
+    "removed": [
+      "Helper-admission-only observation scope",
+      "Obsolete queued-only regression assertions and guidance",
+      "Temporary isolated checkout, patch and its TLC working directories"
+    ],
+    "qualification_checkout": "Six source-file hashes matched on transfer to main; no parallel implementation retained."
   }
 }

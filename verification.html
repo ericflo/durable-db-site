@@ -131,23 +131,36 @@ The existing suite covers competing writes, collected selections, abandoned
 origins, bounded batches and subsequent progress. Fixed diagnostic fields split
 initial work, local helper queueing, preparation and comparison duration without
 logging database names, keys, values or provider errors.</p>
-<p>Queued publications can now observe that exact receipt without taking the helper
-slot. After each one-second delay, at most eight attempts check the original
-proposal identity; only one such probe may be in flight per shared connection.
-Busy probe admission skips that attempt. These read-only checks never list
-proposals, upload objects, compare the authority or grant serving permission.
-A missing/changed head, failed read or collected directory cannot supply a
-receipt. The caller keeps its FIFO helper position; admission cancels an in-flight
-probe, and cancellation leaves no detached polling task. Once the probe budget
-is exhausted, ordinary helper admission and its uncertainty rules still apply.
-There is no fairness or cloud-latency guarantee for these optional checks.</p>
-<p>Two virtual-time regressions cover another replica publishing the queued proposal
-while the local helper is stalled, including a lost publication reply. They also
-check the eight-probe bound, absent/different pointers, a failed read, one-probe
-concurrency and helper admission cancelling a stalled observation. The original
-semaphore-only path fails the receipt regression. <code>queued_receipt</code> diagnostics
-record no comparison attempt; their queue duration includes observation work.
-The uncontended helper path starts no probe.</p>
+<p>After submission, the same receipt observer runs while queued or actively
+helping. Each one-second interval permits at most one attempt, up to <strong>eight per
+invocation</strong>, with one probe in flight per shared connection. Busy admission
+spends that attempt; entering the helper does not reset the allowance. Only the
+exact proposal pointer confirms success. Missing/different pointers, failed reads
+or collected directories leave the normal helper and its uncertainty rules in
+control. Probes neither list proposals nor upload, compare or grant permission.</p>
+<p>Normal helper completion cancels a stalled probe. A confirmed receipt can instead
+cancel redundant local helper work, including a stalled comparison; any already
+issued provider operation may still finish under its original target/fence.
+Spent upload credit is never refunded. Neither branch leaves a detached worker.
+Helpers finishing before the first interval start no probe; longer uncontended
+helpers can now issue extra observations within that same bound. There is no
+fairness or cloud-latency guarantee.</p>
+<p>Three virtual-time regressions cover queued and admitted helpers, lost replies,
+absent/different pointers, failed reads, one-probe concurrency, and cancellation
+of stalled observations by helper completion. The allowance test spends four
+probes while queued and permits only four after admission. The old observer scope
+misses the confirmed-receipt deadline; a nine-probe mutation exceeds the retained
+allowance. Five focused checks pass in <strong>0.03s</strong>, and all <strong>377 routine Rust checks</strong>,
+formatting and strict clippy pass. <code>PublicationCombining</code> retains <strong>1,736,213 states</strong>,
+15,818,936 generated, depth 25, six unsafe mutations and two coverage controls.
+The receipt coverage now requires that the busy helper holds that same proposal
+at acknowledgement. These are bounded component checks, not Rust or composition
+proofs. Exact-runtime cloud qualification is pending.</p>
+<p><code>queued_receipt</code> and <code>helping_receipt</code> distinguish the observer’s completion point.
+Their zero attempt/preparation/comparison fields describe observation work only;
+an interrupted helper may already have staged writes or issued a comparison.
+Queue duration stops at admission when it occurred. Existing fixed fields expose
+no database names, keys, values or provider errors.</p>
 <p>Publication receipts now return the directory’s exact published pointer, including
 when another helper confirmed it. They do not require a subsequent metadata
 read. The premature-receipt control rejects unconfirmed success. A two-job,
