@@ -1,30 +1,68 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.0 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verification results · durable-db</title><meta name="description" content="Dated experiments and release qualification."><meta property="og:title" content="Verification results · durable-db"><meta property="og:description" content="Dated experiments and release qualification."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.1 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html" aria-current="page">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="verification-results">Verification results</h1>
 <h2 id="requested-partitions-recover-first-2026-11-13">Requested partitions recover first (2026-11-13)<a class="anchor" href="#requested-partitions-recover-first-2026-11-13" aria-label="Link to this section">#</a></h2>
-<p>The native controller now considers partitions with unresolved client requests
-before background recovery, preserving round-robin order within each group and
-the existing four acquisition slots. A fixed atomic hint per partition clears
-when its local backend is installed. This changes scheduling only: no additional
-provider calls, claim rights, cancellation, receipt replay or memory reservation
-is introduced. It does not preempt already-running recovery or guarantee fairness
-under hostile traffic.</p>
-<p>The motivation is the existing-host 1.0 qualification run: during scale-down,
-partition 14 does not reach its claim stage until <strong>19:03:15.840Z</strong>, after
-partition 2 reaches that stage at <strong>19:02:39.329Z</strong>. These are observations on
-the same surviving process, not a cross-host clock comparison or proof that all
-delay is queueing. The complete run’s largest readback gap is <strong>74.68s</strong>.</p>
-<p>The existing paused-provider regression now also requests the last of eight
-partitions through real HTTP before membership arrives. It verifies priority,
+<p><strong>v1.0.1</strong>, the exact <code>b441e2c</code> static artifact from Woodpecker <strong>387</strong>, passes
+the focused B2/Kubernetes scale-down campaign and recovers every acknowledged
+write after total API replacement. The preceding v1.0.0 run uses the same
+harness and configuration on the existing hosts:</p>
+<table>
+<thead>
+<tr>
+<th>Release</th>
+<th style="text-align:right">Acknowledged writes recovered</th>
+<th style="text-align:right">Largest scale-down readback gap</th>
+<th style="text-align:right">Cold progress bound after readiness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.0.0</td>
+<td style="text-align:right">353 / 353</td>
+<td style="text-align:right">111.92s</td>
+<td style="text-align:right">50.44s</td>
+</tr>
+<tr>
+<td>v1.0.1</td>
+<td style="text-align:right">422 / 422</td>
+<td style="text-align:right">68.27s</td>
+<td style="text-align:right">57.89s</td>
+</tr>
+</tbody>
+</table>
+<p>All four independent histories pass in each campaign. Every writer’s maximum
+scale-down gap is lower in the candidate, but the <strong>60-second target still misses</strong>.
+Cold recovery has a higher controller bound, below its 120-second target.
+Direct gaps and controller bounds are different measurements. These are separate
+short samples on shared hosts, with provider/host variation and differing
+publication retries; they neither isolate a causal speedup nor establish an SLO.
+The direct gap includes the last completed readback before the fault window;
+not all of that elapsed time can be attributed to scale-down.</p>
+<p>The remaining 68.27s gap contains <strong>35 HTTP 503 responses</strong>, <strong>42.01s in HTTP
+requests</strong> and <strong>26.01s in retry backoff</strong>, measured on the workload clock.
+This separates client waiting from the owner-acquisition trace; it does not
+attribute each server-side delay or justify weakening fresh permit validation.</p>
+<p>Requested partitions now enter recovery before background work, preserving
+round-robin order within each group and the existing four acquisition slots.
+One fixed atomic hint per partition clears after local installation. The change
+adds no provider operation, reservation, task or serving authority. It does not
+preempt in-flight recovery or promise fairness under hostile traffic.</p>
+<p>The existing paused-provider regression also requests the last of eight
+partitions through real HTTP before membership arrives. It checks priority,
 continued progress for the other seven and recovery after release. The old
 scheduler fails the priority assertion; the updated check passes in <strong>0.14s</strong>.
 All <strong>26 controller checks pass in 6.12s</strong>, with strict Clippy and formatting.
 The unchanged <code>OwnerResidency</code> transition system checks <strong>19 distinct states</strong>,
-depth 5, and detects both reservation faults. No new state or model was added.</p>
-<p>The maintained harness adds <code>--scenario scale-down</code>, reusing 1→3→6→1 scaling,
-zero-compute recovery, four writers, budgets, history checks and cleanup.
-All four adversarial harness checks pass in <strong>8.66s</strong>. The old single-priority
-scan is replaced; no parallel scheduler or qualification runner is added.
-Real B2 timing for the candidate is pending; this local result is not a cloud
-latency claim. The supported release remains v1.0.0 until qualification finishes.</p>
+depth 5, and detects both reservation faults. No model state or new model is added.
+Woodpecker passes the full required Rust/client, audit, capacity and formal checks.
+The downloaded archive independently passes exact retries, ordered reads,
+export/restore and kill/reopen; the GitHub asset digests match those files.</p>
+<p><code>--scenario scale-down</code> reuses the maintained harness’s 1→3→6→1→0→3 sequence,
+four writers, budgets, histories and cleanup. All four adversarial harness checks
+pass in <strong>8.66s</strong>. The single-priority scan and expired first-release instructions
+are replaced. Removed three generated model-state directories and Python caches.
+Cloud cleanup removes both namespaces, buckets and scoped keys, plus <strong>1,250</strong>
+physical versions for the baseline and <strong>1,039</strong> for the candidate.</p>
+<p><a href="evidence/requested-recovery-2026-11-13.json">Exact artifacts, histories, model bounds, claim traces and cleanup</a>
+retain both failed scale-down targets. The scoped 1.0 support contract is unchanged.</p>
 <h2 id="scoped-10-release-and-whole-worker-recovery-2026-11-13">Scoped 1.0 release and whole-worker recovery (2026-11-13)<a class="anchor" href="#scoped-10-release-and-whole-worker-recovery-2026-11-13" aria-label="Link to this section">#</a></h2>
 <p><strong>v1.0.0</strong> supports B2-backed Kubernetes and local deployments within one
 application or organization trust domain. The <a href="production-readiness.html">release scope</a>
