@@ -56,9 +56,10 @@ recovery refusals behind backoff: one partition records six challenge deferrals,
 then an 18.47-second acquisition. Its stage timings are cumulative, and do not
 attribute all client delay to that partition.</p>
 <p>The existing cache, model, TCP fixtures and campaign harness are reused. Ten
-generated model-state directories are removed. The disposable namespace, bucket,
-scoped key and <strong>1,245 physical object versions</strong>
-are removed. Cleanup retried a truncated B2 version listing; the final empty
+generated model-state directories are removed. The disposable namespace, bucket
+and scoped key are removed. Cleanup retried a truncated B2 version listing;
+the successful retry removed <strong>1,245 remaining physical object versions</strong>.
+Any deletions before the interrupted listing are not counted. The final empty
 listing, bucket removal and key revocation are confirmed.</p>
 <h2 id="tenant-funding-reuses-bounded-metadata-cache-2026-11-13">Tenant funding reuses bounded metadata cache (2026-11-13)<a class="anchor" href="#tenant-funding-reuses-bounded-metadata-cache-2026-11-13" aria-label="Link to this section">#</a></h2>
 <p><strong>v1.0.4</strong>, the exact <code>1640827</code> artifact from Woodpecker <strong>397</strong>, recovers all

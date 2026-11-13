@@ -328,7 +328,8 @@
       "bucket_removed": true,
       "workload_key_revoked": true,
       "physical_versions_deleted": 1245,
-      "retried_after": "Truncated initial B2 version-list response (IncompleteRead); no versions deleted before retry.",
+      "retried_after": "Truncated B2 version-list response (IncompleteRead).",
+      "physical_versions_count_scope": "Final successful cleanup retry; any deletions before the interrupted listing are not counted.",
       "namespace_removed": true
     },
     "slow_prepare_during_scale_down": [
