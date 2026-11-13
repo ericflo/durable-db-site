@@ -26939,5 +26939,533 @@
       "tag_woodpecker_pipeline": 353,
       "tag_woodpecker_status": "success"
     }
+  },
+  "ingress_readiness": {
+    "status": "diagnostic milestone; production gate remains open; no runtime or model change",
+    "date": "2026-11-13",
+    "runtime_release": "0.24.21",
+    "harness_source_commit": "514c64a04e8a08d8ded1e5fa44f812834d9bb710",
+    "binary_source_commit": "b60112ec56c40590d5bcb0f011e828fde341fa19",
+    "binary_sha256": "13f940ef926c54b253b7f9a027924814c6dc655f532f5e37e9c6662e79640230",
+    "runtime_image_digest": "sha256:8de2b7af59e64cb8609fffd331917636a11b269379832ebb136a93845d11cb48",
+    "runtime_matches_verified_artifact": true,
+    "binary_woodpecker_pipeline": 352,
+    "harness_woodpecker_pipelines": [
+      {
+        "number": 355,
+        "status": "success"
+      },
+      {
+        "number": 356,
+        "status": "success"
+      }
+    ],
+    "configuration": {
+      "cpu_request": "25m",
+      "cpu_limit": "250m",
+      "memory_request": "96Mi",
+      "memory_limit": "384Mi",
+      "scenario": "peer-isolation",
+      "client_origin": "http://durable-db:7654",
+      "database_prefix": "app",
+      "writer_origins": [
+        "http://durable-db:7654"
+      ],
+      "memory_cache_mib": 8,
+      "resident_memory_mib": 128,
+      "partitions": 16,
+      "discovery": "headless DNS",
+      "disk_cache": false,
+      "maintenance_seconds": 60,
+      "controller": "StatefulSet",
+      "placement_identity": "pod name",
+      "rollout_unavailable": 1,
+      "rollout_deadline_seconds": 240,
+      "per_writer_readbacks_before_phase": 2,
+      "process_pause": {
+        "shared_pid_namespace": true,
+        "liveness_probe": false,
+        "sidecar_image": "docker.io/library/node:24-bookworm-slim@sha256:c0a93797ee78814ae6d32fcca2561fdbbe423149c3f5389aad32d86e9fd85bd4",
+        "sidecar_cpu_limit": "100m",
+        "sidecar_memory_limit": "128Mi"
+      },
+      "upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "tenant_upload_budget": {
+        "bytes": 1073741824,
+        "attempts": 100000
+      },
+      "steady_seconds": 0,
+      "memory_observation": false,
+      "maximum_write_intents": 100000,
+      "peer_ingress": "shared",
+      "peer_fault": {
+        "image": "docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61",
+        "method": "pod-local nftables OUTPUT drops to peer TCP port 7654",
+        "capability": "NET_ADMIN",
+        "uid": 0,
+        "host_network": false,
+        "hold_seconds": 30
+      },
+      "ingress_observation": {
+        "fresh_connections": true,
+        "timeout_seconds": 5,
+        "read_concurrency": 1,
+        "writers": [
+          0,
+          1
+        ],
+        "outside_measured_hold": true
+      }
+    },
+    "probe_scope": "Fresh one-at-a-time administrator reads after the measured hold; no retry/redirect. 5s per request, 64KiB response bound, known synthetic value checked but never logged. Status 0 means incomplete/failed probe. Endpoint and request observations are not atomic; direct pods may forward. Additional probes prolong the fault outside the measured 30s interval.",
+    "observations": [
+      {
+        "mode": "connected",
+        "time_utc": "2026-11-13T12:56:01.511511+00:00",
+        "all_three_endpoints_ready_serving_nonterminating_before_and_after": true,
+        "all_readiness_statuses_200": true,
+        "targets": [
+          "durable-db-0",
+          "durable-db-1",
+          "durable-db-2",
+          "Service"
+        ],
+        "read_status_ms": [
+          [
+            [
+              200,
+              89
+            ],
+            [
+              200,
+              1367
+            ]
+          ],
+          [
+            [
+              200,
+              177
+            ],
+            [
+              200,
+              87
+            ]
+          ],
+          [
+            [
+              200,
+              86
+            ],
+            [
+              200,
+              81
+            ]
+          ],
+          [
+            [
+              200,
+              80
+            ],
+            [
+              200,
+              95
+            ]
+          ]
+        ]
+      },
+      {
+        "mode": "asymmetric",
+        "time_utc": "2026-11-13T12:57:17.614848+00:00",
+        "all_three_endpoints_ready_serving_nonterminating_before_and_after": true,
+        "all_readiness_statuses_200": true,
+        "targets": [
+          "durable-db-0",
+          "durable-db-1",
+          "durable-db-2",
+          "Service"
+        ],
+        "read_status_ms": [
+          [
+            [
+              200,
+              81
+            ],
+            [
+              200,
+              80
+            ]
+          ],
+          [
+            [
+              200,
+              81
+            ],
+            [
+              200,
+              83
+            ]
+          ],
+          [
+            [
+              200,
+              78
+            ],
+            [
+              503,
+              2098
+            ]
+          ],
+          [
+            [
+              200,
+              85
+            ],
+            [
+              503,
+              2091
+            ]
+          ]
+        ]
+      },
+      {
+        "mode": "connected",
+        "time_utc": "2026-11-13T12:57:57.990922+00:00",
+        "all_three_endpoints_ready_serving_nonterminating_before_and_after": true,
+        "all_readiness_statuses_200": true,
+        "targets": [
+          "durable-db-0",
+          "durable-db-1",
+          "durable-db-2",
+          "Service"
+        ],
+        "read_status_ms": [
+          [
+            [
+              200,
+              80
+            ],
+            [
+              200,
+              89
+            ]
+          ],
+          [
+            [
+              200,
+              84
+            ],
+            [
+              200,
+              92
+            ]
+          ],
+          [
+            [
+              200,
+              79
+            ],
+            [
+              200,
+              234
+            ]
+          ],
+          [
+            [
+              200,
+              80
+            ],
+            [
+              200,
+              86
+            ]
+          ]
+        ]
+      },
+      {
+        "mode": "symmetric",
+        "time_utc": "2026-11-13T12:59:18.224374+00:00",
+        "all_three_endpoints_ready_serving_nonterminating_before_and_after": true,
+        "all_readiness_statuses_200": true,
+        "targets": [
+          "durable-db-0",
+          "durable-db-1",
+          "durable-db-2",
+          "Service"
+        ],
+        "read_status_ms": [
+          [
+            [
+              503,
+              2090
+            ],
+            [
+              200,
+              211
+            ]
+          ],
+          [
+            [
+              503,
+              2275
+            ],
+            [
+              200,
+              102
+            ]
+          ],
+          [
+            [
+              200,
+              85
+            ],
+            [
+              503,
+              2089
+            ]
+          ],
+          [
+            [
+              200,
+              86
+            ],
+            [
+              503,
+              2092
+            ]
+          ]
+        ]
+      }
+    ],
+    "outcome": {
+      "acknowledged": 643,
+      "readbacks": 643,
+      "recovered_keys": 643,
+      "independent_history_check": {
+        "complete": true,
+        "histories": 4,
+        "acknowledged": 643,
+        "check": "sequential append identity, invocation order, value hashes and recovered totals",
+        "readback_windows": [],
+        "readback_scope": "Workload monotonic clock only. Completed gaps include the last readback before window start; the open gap ends at the closing observation and is right-censored. No cross-host clock comparison, attribution of all delay to the fault, or production SLO."
+      },
+      "holds": [
+        {
+          "name": "asymmetric-peer-isolation-held",
+          "readback_increments": [
+            13,
+            21,
+            22,
+            13
+          ],
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        },
+        {
+          "name": "symmetric-peer-isolation-held",
+          "readback_increments": [
+            2,
+            16,
+            17,
+            3
+          ],
+          "writer_progress": [
+            true,
+            true,
+            true,
+            true
+          ]
+        }
+      ],
+      "recovery": [
+        {
+          "name": "asymmetric-peer-isolation-healed",
+          "max_upper_bound_seconds": 22.23893151897937,
+          "target_seconds": 60,
+          "within_target": true
+        },
+        {
+          "name": "symmetric-peer-isolation-healed",
+          "max_upper_bound_seconds": 10.689553468022496,
+          "target_seconds": 60,
+          "within_target": true
+        },
+        {
+          "name": "cold-three",
+          "max_upper_bound_seconds": 48.22871433501132,
+          "target_seconds": 120,
+          "within_target": true
+        }
+      ],
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 1308
+      }
+    },
+    "socket_observation": {
+      "rpc_statuses": {
+        "commit_rpc": {
+          "200": 643,
+          "503": 76,
+          "429": 2,
+          "transport_or_decode_error": 13
+        },
+        "read_rpc": {
+          "200": 643,
+          "503": 103,
+          "transport_or_decode_error": 50
+        }
+      },
+      "identified_connections": 141,
+      "maximum_503_per_identified_socket": 1,
+      "unidentified_statuses": {
+        "overflow": {
+          "200": 7,
+          "503": 52
+        },
+        "unobserved": {
+          "transport_or_decode_error": 63
+        }
+      },
+      "example": {
+        "writer": 0,
+        "revision": 115,
+        "rpc": "read_rpc",
+        "start": 237.148901117,
+        "end": 252.129890985,
+        "duration_seconds": 14.980989867999995,
+        "timing": {
+          "request_seconds": 12.880035791999981,
+          "backoff_seconds": 2.1006664070000407,
+          "statuses": {
+            "200": 1,
+            "503": 6
+          },
+          "connections": {
+            "52": {
+              "503": 1
+            },
+            "54": {
+              "503": 1
+            },
+            "56": {
+              "503": 1
+            },
+            "60": {
+              "503": 1
+            },
+            "61": {
+              "503": 1
+            },
+            "64": {
+              "503": 1
+            },
+            "70": {
+              "200": 1
+            }
+          }
+        },
+        "successful_other_database_rpcs_on_five_failed_sockets": [
+          {
+            "connection": 54,
+            "writer": 1,
+            "revision": 144,
+            "rpc": "commit_rpc",
+            "start": 238.794289917,
+            "end": 239.212864194
+          },
+          {
+            "connection": 56,
+            "writer": 1,
+            "revision": 144,
+            "rpc": "read_rpc",
+            "start": 239.212864194,
+            "end": 239.29784901500003
+          },
+          {
+            "connection": 60,
+            "writer": 1,
+            "revision": 145,
+            "rpc": "commit_rpc",
+            "start": 239.547937384,
+            "end": 242.10979407
+          },
+          {
+            "connection": 61,
+            "writer": 1,
+            "revision": 146,
+            "rpc": "read_rpc",
+            "start": 242.818901671,
+            "end": 242.89657482
+          },
+          {
+            "connection": 64,
+            "writer": 2,
+            "revision": 151,
+            "rpc": "read_rpc",
+            "start": 246.247734669,
+            "end": 246.329417056
+          }
+        ]
+      },
+      "scope": "Numeric IDs identify pooled sockets, not backend pods. Other successes are wholly inside the failing RPC interval; per-attempt timestamps and overflow identities are unavailable. This demonstrates cross-database reuse, not the amount of total latency it caused."
+    },
+    "interrupted_parallel_probe_run": {
+      "harness_source_commit": "2afb0a1193396c5906ec4a40d6f6e03b1d048cba",
+      "complete": false,
+      "reason": "Administrator diagnostic fan-out exhausted its principal data admission even at connected baseline; interrupted after asymmetric healing and before symmetric injection.",
+      "campaign_exit_code": -2,
+      "namespace_removed": true,
+      "provider_cleanup": {
+        "bucket_removed": true,
+        "workload_key_revoked": true,
+        "physical_versions_deleted": 572
+      },
+      "no_full_recovery_claim": true
+    },
+    "local_validation": {
+      "tests": 3,
+      "duration_seconds": 7.49,
+      "negative_controls": [
+        "accept incorrect HTTP200 value",
+        "restore parallel diagnostic fan-out"
+      ],
+      "command": "node --test scripts/test-autoscaling.mjs",
+      "python_parse": true,
+      "diff_check": true
+    },
+    "removed": [
+      "parallel diagnostic reads",
+      "duplicate raw probe observations",
+      "generated Python bytecode"
+    ],
+    "next": "Test bounded per-database reuse of a working ingress path under mixed-database traffic and owner changes; preserve exact uncertain retries. Do not remove both sides with all-peer readiness.",
+    "limits": [
+      "No rollout/AWS result this turn",
+      "Short, changed-harness runs are not a causal performance comparison or production SLO",
+      "Continuous availability through arbitrary ingress and repeatable recovery remain unqualified"
+    ],
+    "evidence_sha256": {
+      ".tools/ingress-readiness-serial-b2/kubernetes.json": "3cb0f619bab4c2323c663a1d02ea7b6d5f79f7f9993e550331154db44da431c1",
+      ".tools/ingress-readiness-serial-b2/kubernetes.history.jsonl": "87a89df687c3e5b8de5c22b1f620851e57ecd58d10f679329cf0cf22cd5dfd65",
+      ".tools/ingress-readiness-serial-b2/result.json": "98be30198ea6129169e03417c578f001bba99b98b2e337a0bb1f48cc3ef24dc8",
+      ".tools/ingress-readiness-serial-b2/history-check.json": "828712003313d781106ae3315530ce4b1880f56762c16b6fb2d5dfecca51a212",
+      ".tools/ingress-readiness-serial-b2/connection-summary.json": "5e85bb96365379a798323f244a3cb538bc55491f5d949c8b6be32c03a149785b",
+      ".tools/ingress-readiness-b2/kubernetes.json": "7ea96ae2b70662dc995395d07fcacb1efa00172b9e8dbedf0920ea28a36fe6d5",
+      ".tools/ingress-readiness-b2/result.json": "40ca40b7c875495941cabac169979a1ab1ef2555f42c433ec5255c898464366e",
+      ".tools/ingress-readiness-serial-b2.log": "d7431f62d08d0ee5d6265915007dcf7a8ba07600c26884d7a6379a19e1405a1d",
+      ".tools/ingress-readiness-b2.log": "a842fffa9d8e5531a7317905a34441a404a141eeb819eb61398d3541a1e205f2",
+      ".tools/ingress-probe-tests.log": "c6243f473fa7cce584680e75b1c3092daf561a14dde005037863bad1488d324d",
+      ".tools/ingress-probe-negative.log": "b33f7324ef4560fe20d930dd18e56ad1a56d274ff452d5710fbed0f438ca4de2",
+      ".tools/ingress-probe-negative-parallel.log": "f66afe1260132b7744c9906163dea9ebe038f06efa3875de3693014a93788707"
+    }
   }
 }

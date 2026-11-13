@@ -22,7 +22,7 @@
 <tr>
 <td><strong>1</strong></td>
 <td><strong>Native clustered serving — medium to large</strong></td>
-<td>v0.24.21 bounds unacknowledged peer traffic without shortening acknowledged requests’ HTTP deadline. All 608 isolation writes and 838 rollout writes recover on B2. Direct rollout gaps are 66.73s / 51.97s: the first misses 60s. Only two writers pass the progress check during two-way isolation; one RPC still receives 21 HTTP 503s over 65.62s. Next compare Service endpoint readiness with direct per-pod reads to separate ingress selection, advertised owner reachability and actual owner availability. Short samples establish no overall performance improvement or SLO. Physical-host loss, memory and funded administration remain open. <a href="verification-results.html">Measurements and failed runs</a>.</td>
+<td>The latest v0.24.21 B2 isolation run recovers 643 writes and all four writers progress in both holds. Probes show all three pods Ready while different databases remain available through opposite sides of the split; shared connections work for one database and fail for another. Next qualify a bounded way to reuse a working path per database, preserving exact retries, rather than treating pod readiness as universal reachability. Previous direct rollout gaps remain 66.73s / 51.97s, with the first missing 60s. Physical-host loss, memory and funded administration remain open. These short samples establish no SLO. <a href="verification-results.html">Measurements and failed runs</a>.</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
