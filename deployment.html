@@ -73,7 +73,15 @@ honor the member preference; mixed-version convergence remains unqualified.</p>
 Use <code>--scenario rollout</code> for two consecutive replacements after 1→3→6 scaling,
 followed by zero-compute cold recovery; <code>recovery</code> retains the broader fault campaign.
 All scenarios use the same writers, budget checks and independent history verification.
-The harness uses a stable client Service through scaling and replacement and requires two
+<code>--scenario worker-loss</code> additionally requires a local context named
+<code>kind-durable-db-test-&lt;10 hex digits&gt;</code> with three workers. It validates the selected
+worker’s kind labels, node address and immutable Docker ID before SIGKILL, observes
+the node controller detecting loss, then restarts that worker and cold-verifies all
+data. The workload stays on the control plane. This scenario kills no production
+host and changes no cluster object outside its test namespace; its Docker worker
+containers share one host kernel. The caller creates and removes the disposable
+kind cluster. Physical power and rack-loss qualification are separate.</p>
+<p>The harness uses a stable client Service through scaling and replacement and requires two
 new verified readbacks from every writer before each fault. Fixed writer names
 map to partitions 2, 12, 14 and 2, preserving shared-partition contention across
 runs. The provider-egress fault allows peer forwarding and verifies a ten-second

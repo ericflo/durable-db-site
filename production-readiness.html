@@ -1,104 +1,70 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Production readiness · durable-db</title><meta name="description" content="Release gates and the evidence needed to close them."><meta property="og:title" content="Production readiness · durable-db"><meta property="og:description" content="Release gates and the evidence needed to close them."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v0.24.26 · experimental</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html" aria-current="page">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html" aria-current="page">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Verify</p><h1 id="production-readiness">Production readiness</h1>
-<p><strong>Release decision: not ready for production.</strong> v0.24.26 is the latest experimental release. The passing models, cloud tests, and 100,005-entry directory qualification establish a useful foundation. They do not establish safe public multitenancy, an operating envelope, disaster recovery, or a proof of the implementation.</p>
-<p>The production release must retain one installable executable, directory-backed laptop development, and Kubernetes deployments on the existing hosts that scale down to one node. A special clock/compute profile is not an acceptable substitute. Cluster data stays authoritative in B2 or S3 through one common storage algorithm, with bounded disposable caches and automatic maintenance. Performance, tenant protection and correctness are joint acceptance criteria.</p>
-<p>This document tracks the gates for the first production release. A gate closes only with reproducible evidence tied to a commit and configuration. A design, a passing happy-path test, or a successful deployment is not sufficient. The <a href="verification-results.html">verification record</a> separates completed experiments from planned qualification.</p>
-<h2 id="contract-to-qualify">Contract to qualify<a class="anchor" href="#contract-to-qualify" aria-label="Link to this section">#</a></h2>
-<p>The initial contract is atomic, revision-checked transactions and ordered scans within one database. Acknowledged writes must survive the loss of every API process and cache. Uncertain writes require identical retries; the recent receipt window is bounded. Cross-database transactions are outside this contract.</p>
-<p>Current per-database limits are 256 MiB, 1,000,000 keys, with smaller request and rewrite budgets. Large database counts and high active throughput are different requirements. The directory has been tested at 100,005 entries with sequential insertion, periodic collection, pagination, and an uncached reopen of every head. Concurrent HTTP provisioning and collection at that population, and a declared active workload, remain capacity gates. This synthetic-provider result is not a cloud capacity guarantee.</p>
-<p>Total databases, active databases, peak read/write arrival rates, value sizes, contention, and p99 latency targets must be recorded before choosing a production topology. Measure B2 first, then AWS S3, using the same implementation and workload. Include physical object versions, provider calls, and bandwidth when estimating cost. A laptop-to-cloud measurement is not a regional Kubernetes SLO.</p>
-<p>The first production release needs automatic, independently stored backups with a declared backup interval, retention bound and measured restore time. Continuous point-in-time recovery and a 30-day history are optional later features, not requirements of the original brief. Neither is currently implemented or promised.</p>
+<p><strong>1.0 release candidate: qualification in progress.</strong> The latest published release is v0.24.26. The first production release is deliberately limited to one application or organization trust domain per deployment. Shared hosting of mutually untrusted tenants is a later release. This replaces the broader six-gate release plan; it does not describe those deferred capabilities as complete.</p>
+<h2 id="supported-10-scope">Supported 1.0 scope<a class="anchor" href="#supported-10-scope" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>One static Linux x86_64 executable; directory-backed laptop development and native serving on ordinary Kubernetes hosts, scaling down to one replica. No calibrated clock, special VM profile, external consensus service or persistent API-node disk is required.</li>
+<li>One dedicated B2 bucket per deployment, containing many logical databases. B2 remains authoritative; bounded memory and optional local-disk caches are disposable. The common S3 implementation remains available, with MinIO integration coverage; AWS production qualification is deferred.</li>
+<li>Atomic revision-checked transactions, exact retries within the bounded receipt window and ordered snapshot reads/scans within one database. Cross-database transactions are outside the API contract. Existing key, value, request and database limits remain enforced.</li>
+<li>Database-scoped, revocable capabilities, administrator-only provisioning, logical quotas, bounded admission and cumulative upload funding. These protect access and limit work; they are not fair billing or availability isolation between hostile tenants. Keep all databases in one administrative trust domain.</li>
+<li>Automatic checkpoints and physical collection. Upload ceilings require operator funding; deletion does not refund cumulative allowances. Reads, control traffic and egress are not capped by the immutable-upload ceiling.</li>
+<li>Manual consistent export, archive inspection and verified resumable restore into a fresh destination. Pause application writes for a reliable export window, store the archive under independent protection, and verify restoration before routing traffic. No scheduled backup, continuous PITR or restore-time SLO is promised.</li>
+</ul>
+<p>Use trusted private networking for peer traffic and TLS at application ingress. Keep signing keys and provider credentials on servers. Do not configure external lifecycle expiration on database objects. Set Kubernetes CPU/memory limits, concurrency and maximum replica count together. In-process cache budgets are not an RSS ceiling. See <a href="deployment.html">deployment</a>, <a href="security.html">security</a>, <a href="recovery.html">recovery</a> and <a href="api.html#errors-and-bounds">API bounds</a>.</p>
+<p>A logical directory has been tested at 100,005 entries; this is not a promise of 100,005 simultaneously active databases. The short cloud campaigns are four sequential writers. No p99 latency, throughput or availability SLO is declared. Capacity-test the intended workload before admitting it; published measurements retain their exact scope and failures.</p>
 <h2 id="remaining-production-gates-in-order">Remaining production gates, in order<a class="anchor" href="#remaining-production-gates-in-order" aria-label="Link to this section">#</a></h2>
-<p>The critical path is qualifying clustered recovery and performance. The native cloud cutover is implemented; membership churn, collection and provider failures must now meet a declared operating envelope. A release number is not a readiness measure. Close usable end-to-end capabilities, use focused checks during development, and run full qualification when a capability is ready.</p>
-<p>Sizes describe remaining engineering scope: <strong>medium</strong> means a few focused implementation and validation changes; <strong>large</strong> means substantial integration and a failure campaign. They are estimates, not calendar delivery promises. Gate 1 now qualifies the integrated native cloud CLI, DNS membership and bounded residency on the existing hosts.</p>
+<p>The target is a release in hours, not completion of every long-term feature. A data-loss, authorization or bounded-resource failure blocks release. A missed engineering latency target remains visible and motivates later work; it is not converted into an SLO or silently removed from the evidence.</p>
+<ol>
+<li><strong>Close the worker-loss durability check.</strong> Kill a whole disposable Kubernetes worker, including kubelet and its database processes; keep the remaining workers serving from B2, return the worker, remove all API processes and verify every acknowledged write. The existing-host campaign separately records direct scale-down gaps. Containerized workers share a host kernel; physical power and rack-loss qualification are deferred.</li>
+<li><strong>Review the actual supported boundary.</strong> Keep exact-retry, authorization, quota/admission, corruption, collection, export/restore and failure tests green. Existing small TLA+ models and negative controls, plus abstract publication/journal proofs, remain required. They are not a composed proof of the entire protocol or of Rust. Review the changed release path; comprehensive independent review is deferred.</li>
+<li><strong>Ship the checked artifact and operating instructions.</strong> Run kache/Woodpecker audits and release checks, verify the downloaded binary and installer, publish the supported scope and measured limits, and remove all disposable qualification resources. Experimental-version migration uses export/restore; mixed-version rolling upgrades are not a 1.0 guarantee.</li>
+</ol>
+<h2 id="changes-to-the-previous-six-gate-plan">Changes to the previous six-gate plan<a class="anchor" href="#changes-to-the-previous-six-gate-plan" aria-label="Link to this section">#</a></h2>
 <table>
 <thead>
 <tr>
-<th>Order</th>
-<th>Gate and rough size</th>
-<th>What must be true for 1.0</th>
+<th>Previous gate</th>
+<th>Required for this 1.0</th>
+<th>Deferred</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>1</strong></td>
-<td><strong>Native clustered serving — medium to large</strong></td>
-<td>Repeated v0.24.25 B2 isolation campaigns meet the 60-second gap target. With cached-route expiry, v0.24.26 host-local process pause, return and rollout maxima are 54.41s / 26.86s / 44.30s. The scale-down controller bound is still 90.63s; direct gap measurement comes next. Physical power loss and node-controller replacement remain distinct checks. Memory and funded administration remain open. These short runs establish no SLO. <a href="verification-results.html">Measurements and failed runs</a>.</td>
+<td>1. Clustered serving</td>
+<td>Existing-host scaling/recovery and whole Kubernetes worker loss, with histories and cold readback</td>
+<td>Exhaustive topology tests, physical power/rack loss, permanent-partition availability and availability SLOs</td>
 </tr>
 <tr>
-<td><strong>2</strong></td>
-<td><strong>Tenant isolation and lifecycle — medium to large</strong></td>
-<td>Finish charging administrative work and retries, reduce unused tenant-credit loss across handoffs, bound creation/request/egress costs across replicas, and prevent an exhausted tenant from stopping funded neighbors’ ordinary operation. Verify credential rotation/revocation, tenant deletion and data isolation. Existing logical quotas and durable admission/reserve funding cover only part of this.</td>
+<td>2. Tenant isolation</td>
+<td>Access controls, logical quotas and bounded work within one trust domain</td>
+<td>Mutually untrusted tenant hosting, complete administrative attribution, fair shared-maintenance progress and billing isolation</td>
 </tr>
 <tr>
-<td><strong>3</strong></td>
-<td><strong>Automatic maintenance and recovery — medium</strong></td>
-<td>Bound growth of every physical object class, including registrations and catalog headers; qualify large-image cleanup and concurrent readers. Schedule bounded backups to independently protected storage, recover interrupted jobs and demonstrate restore after source loss. The retained checkpoint/export primitives already exist.</td>
+<td>3. Maintenance/recovery</td>
+<td>Automatic checkpoint/collection and verified manual export/restore</td>
+<td>Backup scheduling/orchestration, continuous PITR and broad large-image retention campaigns</td>
 </tr>
 <tr>
-<td><strong>4</strong></td>
-<td><strong>Performance and autoscaling qualification — large, plus a 72-hour run</strong></td>
-<td>Declare workload and latency/throughput targets, then measure the native serving path on B2 and AWS S3 using the same algorithm. Exercise Pi and web-app workloads, contention, provider failures, scale up/down, rolling replacement and whole-host loss. Check histories, memory, object growth and cost throughout a sustained run. Earlier shared-engine tests do not qualify the replacement.</td>
+<td>4. Performance</td>
+<td>Publish current measurements, costs/bounds and missed targets honestly</td>
+<td>The 72-hour soak, AWS production qualification and throughput/p99 commitments</td>
 </tr>
 <tr>
-<td><strong>5</strong></td>
-<td><strong>Composed correctness and security review — large</strong></td>
-<td>Connect the TLA+ ownership, journal, transaction, admission, retention and collection arguments under explicit provider/platform assumptions. Keep bounded checks and negative controls small; verify the implementation’s corresponding boundaries with adversarial tests. Resolve independent protocol and tenant-isolation review findings. Do not present bounded exploration as an unbounded proof or as a proof of Rust.</td>
+<td>5. Correctness/security</td>
+<td>Existing model/proof controls, implementation fault tests and focused release review</td>
+<td>Comprehensive protocol composition, full Rust refinement and independent security review</td>
 </tr>
 <tr>
-<td><strong>6</strong></td>
-<td><strong>Operational release — medium</strong></td>
-<td>Verify installation, supported-version upgrades, interruption/rollback or export/restore, alert delivery and operator recovery procedures on the existing Kubernetes hosts. Keep dependency audits, kache/Woodpecker builds, checked release artifacts, README and Pages current. Publish the supported operating envelope and remaining exclusions.</td>
+<td>6. Operations</td>
+<td>Checked Linux executable/installer, resource settings and recovery procedure</td>
+<td>Additional binary platforms and broader upgrade/rollback coverage</td>
 </tr>
 </tbody>
 </table>
-<p>The next engineering targets for the existing four-writer failure fixture are
-<strong>60 seconds for every writer to resume acknowledged/read-back progress after
-single-process loss or a replica change</strong>, and <strong>120 seconds after a cold API
-process becomes ready following total compute loss</strong>. These are targets to test,
-not achieved SLOs. Measure from fault injection or readiness to each writer’s
-progress, separately from budget inspection and diagnostic collection. Provider
-outage recovery starts when connectivity is restored; the outage duration must
-also remain visible. Broader production targets still need a declared workload,
-region, provider conditions and repeatability.</p>
-<p>The current harness retains its outer 180-second identical-request retry limit
-and 240-second readiness/progress checks, with two further verified readbacks
-from every writer before each next fault. Passing those ceilings alone does not
-meet the engineering targets. New reports record controller-monotonic upper bounds from the fault command
-(or cold readiness) to two further readbacks per writer after readiness. They
-include readiness and polling delay, exclude subsequent budget/diagnostic work,
-and report target attainment separately from campaign success. Earlier
-phase-to-phase durations include diagnostics and are not direct measurements
-of the new targets.</p>
-<p>An upper bound below the target establishes that fixture’s progress within the
-target. A bound above it is inconclusive: serial pod replacement and delayed
-polling can inflate the bound while writers continue serving. Use the direct
-per-writer readback gaps below to assess observed silence during a rollout;
-retain the controller bounds as separate rollout/recovery diagnostics.</p>
-<p>Schema 2 records each successful readback only after validating its revision
-and value. Rollout, peer-isolation, host-process pause/resume and scale-down windows use the workload’s own monotonic clock and per-writer
-counters. The independent checker reports the largest completed readback gap
-per writer, including the last readback before the window, and the unfinished
-gap at window close. That final gap is right-censored: later silence is unknown.
-The windows end before subsequent diagnostics. These observations do not compare
-clocks across hosts or attribute all delay to the rollout. Older schema 1
-histories remain checkable but cannot supply verified readback timings.</p>
-<p>The host-process fixture stops every database process placed on one host while
-retaining its pod identities and DNS records, then resumes those same processes.
-Its two readback windows include the fault or resumption through verified progress
-from every writer. The host kernel, kubelet and unrelated services stay running;
-this does not qualify physical power loss or node-controller replacement.</p>
-<p>Gate 1 now follows <a href="design-owned-partitions.html#revocable-writer-permits">revocable writer permits</a>: fresh per-writer object validation, permanent revocation before journal recovery, no bounded-clock assumption and no bucket-wide conditional update for ordinary requests. The ownership, routing, layout and residency models establish separate bounded properties; their composition and implementation correspondence remain open. The integrated CLI has completed per-writer handoff, provider-interruption and cold-replacement checks on B2. Repeatability, host failures and declared latency/concurrency targets remain decisive checks. Restricted-profile and ClockBound findings remain <a href="design-owned-partitions.html#serving-authority-remains-the-central-decision">fallback evidence</a>; they do not narrow the required hosts.</p>
-<p>Gate 5 starts with every protocol change and reviews the integrated result; it is not a postponed proof-writing phase. The <a href="verification.html">verification record</a> and <a href="verification-results.html">results</a> retain the detailed checked bounds, negative controls, provider observations and unfinished obligations. Existing evidence includes native local recovery, native HTTP B2/MinIO tests with revocable permits and independent partitions, historical clock experiments, older-engine Kubernetes/physical-host campaigns, and standalone release tests. Those scopes remain distinct.</p>
-<h2 id="scope-that-can-wait-until-after-10">Scope that can wait until after 1.0<a class="anchor" href="#scope-that-can-wait-until-after-10" aria-label="Link to this section">#</a></h2>
-<p>These are recommended deferrals within the original brief, not claims that they are implemented:</p>
-<ul>
-<li><strong>Continuous PITR, a 30-day history and arbitrary historical queries.</strong> Keep scheduled retained backups, bounded retention and tested restore in 1.0.</li>
-<li><strong>Additional binary platforms.</strong> Additional architectures and operating systems may follow the existing Linux x86_64 binary/local-directory path. Supporting the existing Kubernetes hosts, including pause and replacement safety without special clock hardware, cannot be deferred.</li>
-<li><strong>Exposing key/range validation in the public API.</strong> Keep the existing per-database revision transaction contract initially; independent databases must still scale and meet the declared performance target.</li>
-<li><strong>A complete mechanized proof of the Rust program.</strong> The brief calls for a TLA-based correctness argument from the start. Composed protocol reasoning, explicit assumptions, negative controls and implementation validation remain gates; full source-language refinement is separate research work.</li>
-<li><strong>Optional packaging and presentation breadth.</strong> Extra package-manager channels, a hosted dashboard and additional deployment examples can follow. Keep the single-file installer, dependency checks, usable documentation and basic operational tooling.</li>
-</ul>
-<p>Correctness, meaningful performance, one-node/laptop operation, shared B2/S3 storage semantics, tenant protection, automatic maintenance, Kubernetes scaling, and clear docs remain required. None is traded away to label a release production-ready.</p>
+<p>These remain follow-up work, not discarded goals. The intended multi-tenant hosted service must not adopt the single-trust-domain 1.0 scope as evidence that its stronger isolation needs are met.</p>
+<h2 id="qualification-interpretation">Qualification interpretation<a class="anchor" href="#qualification-interpretation" aria-label="Link to this section">#</a></h2>
+<p><a href="verification-results.html">Verification results</a> retain passing and failed campaigns. Direct readback windows use the workload’s monotonic clock and per-writer counters. They include the largest completed gap and the right-censored unfinished gap at close. Controller bounds include readiness/polling delays and are separate diagnostics; a bound over 60 seconds does not alone establish a 60-second service gap.</p>
+<p>The engineering targets remain 60 seconds for each writer to resume after a replica change or single failure, and 120 seconds after API readiness following total compute loss. The harness keeps its outer 180-second identical-request retry limit and 240-second readiness/progress checks. These are fixture targets, not production commitments. Acknowledged data recovery is mandatory even when a timing target is missed.</p>
+<p>Native ownership uses <a href="design-owned-partitions.html#revocable-writer-permits">revocable writer permits</a>: fresh object validation and predecessor revocation before recovery, without a bounded-clock assumption. Historical shared-engine and restricted-clock results do not qualify this serving path. <a href="verification.html">Verification</a> records each current model’s bounds, assumptions and unfinished composition obligations.</p>
 <h2 id="reproducible-load-baseline">Reproducible load baseline<a class="anchor" href="#reproducible-load-baseline" aria-label="Link to this section">#</a></h2>
 <p><code>scripts/benchmark-http.mjs</code> creates synthetic databases on a <strong>disposable test deployment</strong>. It seeds one value per database, measures writes and reads with a configured number of workers, then verifies all seeded databases. The caller owns cleanup. Use scoped test-bucket credentials on the servers; the benchmark takes an administrator token from a file and does not print it.</p>
 <pre><code class="language-sh">node scripts/benchmark-http.mjs \
@@ -111,4 +77,4 @@ this does not qualify physical power loss or node-controller replacement.</p>
 <p>Each worker owns one database so publication conflicts can retry the same request without recomputing application state. Ambiguous retries retain the exact ID, revision, and body. Reports include attempted/failed/not-started operations, HTTP statuses, full operation latency including backoff, successful latency separately, elapsed throughput, verification, and binary hash. A failed worker stops instead of issuing a new write ID after an unresolved outcome. The harness writes partial results and exits unsuccessfully on any failed phase or verification.</p>
 <p>After a failed measured phase, the harness still checks final state, allowing an uncertain write to be either visible or absent at that read. This does not turn the timed-out operation into a success or establish that a delayed write can never arrive later. A lost-acknowledgement fixture checks failure accounting and identical retry bodies.</p>
 <p>This is a closed-loop baseline: each worker waits for its preceding operation. It does not measure queue growth under a fixed arrival rate, establish a p99 SLO from a small sample, measure provider billing, or replace an open-loop overload test and soak campaign. The first B2 run <a href="verification-results.html#b2-contention-baseline-release-gate-failed">failed its progress gate</a>; that older serving path remains a baseline for the native replacement.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="development.html"><span>Previous</span>Development</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#contract-to-qualify">Contract to qualify</a></li><li><a href="#remaining-production-gates-in-order">Remaining production gates, in order</a></li><li><a href="#scope-that-can-wait-until-after-10">Scope that can wait until after 1.0</a></li><li><a href="#reproducible-load-baseline">Reproducible load baseline</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<nav class="pager" aria-label="Pagination"><a class="previous" href="development.html"><span>Previous</span>Development</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#supported-10-scope">Supported 1.0 scope</a></li><li><a href="#remaining-production-gates-in-order">Remaining production gates, in order</a></li><li><a href="#changes-to-the-previous-six-gate-plan">Changes to the previous six-gate plan</a></li><li><a href="#qualification-interpretation">Qualification interpretation</a></li><li><a href="#reproducible-load-baseline">Reproducible load baseline</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>An experimental transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release gates</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
