@@ -24793,5 +24793,56 @@
       "tag_woodpecker_pipeline": 343,
       "tag_woodpecker_status": "success"
     }
+  },
+  "concurrent_http_shutdown": {
+    "status": "Local lifecycle verification passes; exact-runtime B2 CLI rollout qualification pending",
+    "change": "Close admission and notify graceful HTTP shutdown before awaiting provider I/O; await both admitted HTTP requests and bounded best-effort route withdrawal.",
+    "production_net_lines": 18,
+    "new_background_workers": 0,
+    "route_withdrawal_bound_seconds": 5,
+    "authority_or_format_changed": false,
+    "focused_checks": 2,
+    "focused_seconds": 0.03,
+    "regressions": [
+      "Held withdrawal does not keep listener or idle keep-alive open",
+      "HTTP completion preserves pending withdrawal",
+      "Withdrawal timeout preserves an admitted request"
+    ],
+    "negative_controls": [
+      "Original serialized shutdown misses 250 ms listener-close test deadline",
+      "Returning after either drain instead of both fails both lifecycle tests"
+    ],
+    "rust_checks_passed": 379,
+    "ignored_opt_in_checks": 20,
+    "formatting_and_strict_clippy_passed": true,
+    "model": {
+      "name": "OwnerChallenge",
+      "transition_system_unchanged": true,
+      "distinct_states": 3968,
+      "generated_states": 24897,
+      "depth": 14,
+      "fault_and_coverage_controls": 10,
+      "scope": "Finite routing-hint protocol only; transport shutdown stutters. Rust lifecycle tests check socket behavior and both drains; no new timing or composed correctness proof."
+    },
+    "source_sha256": {
+      "Cargo.toml": "349cf5519752e2e6d03287b9296589a8af0ce20ac801cda62ef0dc7f1cb33025",
+      "Cargo.lock": "dc38d0afd468dd5c43d46c1f64a4b851f5313069467736c2b069b420930cbcb6",
+      "src/main.rs": "8e1b9eec87920db205e0ed0b5bee37bc249cb688b98b677ae1e911daf656741a",
+      "spec/OwnerChallenge.tla": "618f33ba0ae60a005c1ec476baad2f26d41593b72e829bcb24453c79be114772"
+    },
+    "raw_log_sha256": {
+      "shutdown-before.log": "e3da5b5a801f44a23d2c2deefb57865e721e5724014bf2d297d7154d74bec0aa",
+      "shutdown-negative-join.log": "03fac14370eaf7fe1dccc4312e7fd2b7b1ddb56282060e8e36c005045e257bf6",
+      "shutdown-focused.log": "b5c270917ced23128cc36c21d10bc525354bf38a9ccb523c40986659703d3a11",
+      "shutdown-clippy.log": "1d9d794671943eae1c015c012866d3f5ba5085f71dbef0df510144b9fe04bc23",
+      "shutdown-tests.log": "27af71a8b0bbce96cd9f0a746989ef689b49de6ad2b2b4a7c9ad78ea15d60580",
+      "shutdown-model.log": "432fb082ddfeed68dea9cf3e998e904637eeb3bb799dbef86dff75e24e5013ac"
+    },
+    "removed": [
+      "Serialized withdrawal-before-HTTP-shutdown sequence",
+      "Obsolete shutdown ordering guidance",
+      "Eleven TLC scratch directories"
+    ],
+    "scope": "Stock hosts and the unchanged B2/S3 algorithm. Socket closure is asynchronously scheduled; racing requests can still be refused. No claim that all 429/503 responses or rollout delays are eliminated."
   }
 }
