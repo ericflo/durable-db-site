@@ -269,6 +269,20 @@ checks the last value/revision and upload counters. Resource reports retain
 kubelet RSS, working set, CPU counters and restart counts; ten-second sampling
 can miss peaks. Setup is excluded from phase throughput, but retries and backoff
 are included. These runs do not establish sustained-load or latency SLOs.</p>
+<p>For a focused long-journal cold-recovery check, add
+<code>--cold-recovery --databases 1 --workers 1 --operations 100 --value-bytes 65536</code>.
+The workload retains expected values and exact acknowledged requests in its own
+process. The controller freezes every database process using the existing
+same-UID pause helper, removes all pods, confirms zero remain, and starts three
+new pod identities without disk caches. Freezing first prevents graceful
+shutdown from checkpointing away the suffix. A nonce-bound file barrier then
+releases point/scan checks, exact receipt retries and a new write/readback.
+Reports retain separate warm/cold resource epochs and server logs. Confirm the
+cold selection logs actually discover the intended long suffix; a successful
+read from a recent checkpoint alone does not qualify this case. The optional
+fault sidecars are confined to this disposable fixture. Run
+<code>node scripts/test-benchmark.mjs</code> for fast controls that reject corrupt cold
+values and incorrect retry receipts.</p>
 <p>The runner removes its namespace and retains workload results and bounded server
 logs even on failure. The caller must remove all bucket versions, delete the
 dedicated bucket and revoke its scoped key afterward. Never reuse a result
