@@ -44,18 +44,19 @@
 <li><strong>Durability and one history.</strong> Every acknowledged transaction, together with the exact sequence of transactions before it, can be reconstructed from the bucket alone. All acknowledged histories are therefore prefixes of a single sequence: nothing acknowledged is lost, reordered or forked, whatever servers crash, pause, race or are replaced.</li>
 <li><strong>Linearizable reads.</strong> A <code>strong</code> read reflects every transaction acknowledged before the read began.</li>
 <li><strong>Safe collection.</strong> No server deletes an object that the current owner, or any later owner, needs.</li>
+<li><strong>Final deletion.</strong> Once any server has concluded that a database is deleted, no server acknowledges anything for it again. A deletion that did not complete leaves the database either intact or deleted, never in between.</li>
 </ol>
 <h2 id="assumptions">Assumptions<a class="anchor" href="#assumptions" aria-label="Link to this section">#</a></h2>
 <ul>
-<li><strong>Storage</strong> provides read-after-write consistency for PUT, DELETE, GET, HEAD and LIST, and never exposes a partial object. It may be arbitrarily slow, fail any request, and lose any response.</li>
+<li><strong>Storage</strong> provides read-after-write consistency for PUT, DELETE, GET, HEAD and LIST, and never exposes a partial object. It may be arbitrarily slow, fail any request, and lose any response. A listing reports each key as it was at some moment during the listing, in key order.</li>
 <li><strong>Servers</strong> stop without warning, pause for any length of time and resume, and run with arbitrary relative speeds. They do not run corrupted code or forge each other's objects: all servers of a deployment are trusted with the bucket.</li>
 <li><strong>Uploads</strong> a server has sent may arrive late, more than once, and after the server has crashed.</li>
 <li><strong>Clocks</strong> are not assumed to agree, or to be correct at all. Token expiry is the only place a clock is read, and it affects authorization only.</li>
 <li><strong>Membership</strong> may be wrong or disagree between servers.</li>
 </ul>
 <h2 id="the-model">The model<a class="anchor" href="#the-model" aria-label="Link to this section">#</a></h2>
-<p><a href="https://github.com/ericflo/durable-db/blob/main/spec/DurableDb.tla"><code>spec/DurableDb.tla</code></a> specifies taking ownership, committing, linearizable reads, checkpointing and collection for one database, as atomic steps on a store of claims, manifests and frames. Writers crash at any step. Any upload ever sent may arrive at any later time, any number of times, including after its object was collected.</p>
-<p>Three invariants are checked in every reachable state:</p>
+<p><a href="https://github.com/ericflo/durable-db/blob/main/spec/DurableDb.tla"><code>spec/DurableDb.tla</code></a> specifies creating a database, taking ownership, committing, linearizable reads, checkpointing, collection and deletion for one database, as atomic steps on a store of claims, manifests, frames and the tombstone. The store starts empty. Writers crash at any step. Any upload ever sent may arrive at any later time, any number of times, including after its object was collected.</p>
+<p>Four invariants are checked in every reachable state:</p>
 <table>
 <thead>
 <tr>
@@ -66,7 +67,7 @@
 <tbody>
 <tr>
 <td><code>Durable</code></td>
-<td>Every acknowledged history is a prefix of what a reader reconstructs from the store.</td>
+<td>Every acknowledged history is a prefix of what a reader reconstructs from the store, unless the database was deleted.</td>
 </tr>
 <tr>
 <td><code>FreshReads</code></td>
@@ -76,14 +77,46 @@
 <td><code>OwnerIntact</code></td>
 <td>The newest checked manifest of a writer whose claim still stands has not been deleted.</td>
 </tr>
+<tr>
+<td><code>Final</code></td>
+<td>Once a writer has concluded that the database is deleted, no writer is serving with a claim that stands.</td>
+</tr>
 </tbody>
 </table>
-<pre><code class="language-sh">scripts/check-model.sh        # about four minutes; capped at 2 GiB heap and four workers
+<pre><code class="language-sh">scripts/check-model.sh        # about three minutes; capped at 2 GiB heap, four workers and ten minutes a configuration
 </code></pre>
-<p><strong>Result</strong> (TLC 2.19, 2026-11-14): with 2 writers, epoch numbers up to 2 and 2 transactions, TLC explored the state space exhaustively: 57,978,436 states generated, 7,153,234 distinct, depth 62, no violation.</p>
+<p><strong>Results</strong> (TLC 2.19, 2026-11-14), each an exhaustive search with no violation:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Bounds</th>
+<th>States generated</th>
+<th>Distinct states</th>
+<th>Depth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DurableDb</code></td>
+<td>2 writers, epoch numbers up to 2, 2 transactions, no deletion</td>
+<td>27,663,022</td>
+<td>3,585,296</td>
+<td>61</td>
+</tr>
+<tr>
+<td><code>Deletion</code></td>
+<td>2 writers, epoch numbers up to 2, 1 transaction, deletion at any time</td>
+<td>23,717,105</td>
+<td>4,110,075</td>
+<td>67</td>
+</tr>
+</tbody>
+</table>
+<p>The two configurations exist because deletion with two transactions is a much larger state space. <code>spec/DeepDeletion.cfg</code> is that combination; it is not part of the default run and has not been run to completion: one run was stopped after 24 minutes and 92 million distinct states with no violation found, which is not an exhaustive result.</p>
 <p>The epoch number a writer chooses is unconstrained in the model (any unused number), so safety does not depend on the hint the implementation uses.</p>
 <h3 id="negative-controls">Negative controls<a class="anchor" href="#negative-controls" aria-label="Link to this section">#</a></h3>
-<p>Each protocol rule is a switch in the model. Turning one off must produce a counterexample; if it did not, the model would not be testing that rule. All eight are refuted:</p>
+<p>Each protocol rule is a switch in the model. Turning one off must produce a counterexample; if it did not, the model would not be testing that rule. All eleven are refuted:</p>
 <table>
 <thead>
 <tr>
@@ -129,9 +162,24 @@
 <td><code>Durable</code></td>
 </tr>
 <tr>
+<td>After revoking, give the claim back only when a higher epoch outranks this one</td>
+<td><code>UnsafeGiveBackAfterRevoke</code></td>
+<td><code>Durable</code></td>
+</tr>
+<tr>
 <td>Expose recovered state only after a claim check that follows the first manifest</td>
 <td><code>UnsafeServeBeforeCheck</code></td>
 <td><code>Durable</code></td>
+</tr>
+<tr>
+<td>Write the tombstone only after a claim check that began after a manifest marked deleted was stored</td>
+<td><code>UnsafeTombstoneWithoutCheck</code></td>
+<td><code>Final</code></td>
+</tr>
+<tr>
+<td>Remove a deleted database's objects only once the tombstone is stored</td>
+<td><code>UnsafePurgeBeforeTombstone</code></td>
+<td><code>Final</code></td>
 </tr>
 </tbody>
 </table>
@@ -139,9 +187,9 @@
 <ul>
 <li><strong>Tables</strong> are folded into the manifest's state. Their collection follows the same rule as superseded manifests, which is modelled.</li>
 <li><strong>Transactions are unconditional.</strong> Version checks, range checks and idempotency keys are not modelled. A refusal is treated by the implementation as a read: it is reported only after a claim check of its own.</li>
-<li><strong>Deleting a database</strong> (the tombstone) is not modelled.</li>
+<li><strong>Deletes are atomic steps.</strong> A delete request that takes effect long after its sender gave up is not modelled. The argument that it is harmless is informal: a delete is sent only for an object the sender was entitled to remove for good, and the only object whose reappearance would matter, a claim, is uploaded once. The chaos test does inject such deletes.</li>
 <li><strong>Only safety</strong> is checked. That some server eventually makes progress is not.</li>
-<li><strong>The bounds are small.</strong> Two writers, two epochs and two transactions cover every interleaving of one takeover with commits, a flush, collection and late uploads, not longer chains.</li>
+<li><strong>The bounds are small.</strong> Two writers, two epochs and one or two transactions cover every interleaving of one takeover with commits, a flush, collection, a deletion and late uploads, not longer chains.</li>
 <li><strong>Nothing connects the model to the Rust code</strong> except that the code is written to follow it step for step and the tests below.</li>
 </ul>
 <h2 id="tests-of-the-implementation">Tests of the implementation<a class="anchor" href="#tests-of-the-implementation" aria-label="Link to this section">#</a></h2>
@@ -156,12 +204,22 @@
 <tbody>
 <tr>
 <td><code>tests/chaos.rs</code></td>
-<td>Three nodes share a store that delays every request, drops 4%, and applies another 4% while reporting failure. Nodes crash without releasing, are released at random, and stale owners keep running. Checked: every acknowledged append is present at its revision; a compare-and-set counter equals the acknowledged increments; no linearizable read returns a revision older than a prior acknowledgement; a released database leaves no claim and no log.</td>
-<td>200 seeds pass (<code>CHAOS_SEEDS=200</code>, release build, 128 s). Three run on every <code>cargo test</code>.</td>
+<td>Three nodes share a store that delays every request, drops 4%, applies another 4% while reporting failure, and applies 3% up to 1.5 s after reporting failure. Its purges remove one key at a time and can stop partway. Nodes crash without releasing, are released at random, and stale owners keep running. Checked: every acknowledged append is present at its revision; a compare-and-set counter equals the acknowledged increments; no linearizable read returns a revision older than a prior acknowledgement; a released database leaves no claim and no log. Then six databases are deleted under the same faults, by a node that was cut off and replaced, by nodes that stop after a few writes, and by repeated requests; no write is acknowledged once any client was told the database is gone, and only the tombstone remains.</td>
+<td>200 seeds pass (<code>CHAOS_SEEDS=200</code>, release build, 124 s). Three run on every <code>cargo test</code>.</td>
+</tr>
+<tr>
+<td><code>tests/interleavings.rs</code></td>
+<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created.</td>
+<td>11 pass.</td>
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
 <td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption.</td>
+<td>12 pass.</td>
+</tr>
+<tr>
+<td><code>tests/storage.rs</code></td>
+<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. The directory store against the in-memory one. One order of directory names on all three.</td>
 <td>12 pass.</td>
 </tr>
 <tr>
@@ -176,8 +234,8 @@
 </tr>
 <tr>
 <td><code>tests/bucket.rs</code></td>
-<td>On a real bucket: the storage contract including versions and delete markers; read-after-write (8 workers × 40 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); the engine with a takeover, a release and a deletion.</td>
-<td>3 pass on Backblaze B2.</td>
+<td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 40 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; the engine with a takeover, a release and a deletion.</td>
+<td>4 pass on Backblaze B2.</td>
 </tr>
 <tr>
 <td><code>durable-db bench --workload ledger</code></td>
@@ -198,6 +256,15 @@
 <li>State recovered at takeover, including transactions the previous owner stored but never acknowledged, was visible before a claim check confirmed it. Now the <code>UnsafeServeBeforeCheck</code> control.</li>
 <li>A stale owner could answer &quot;conflict&quot; from old state, so a client concluded that a transaction it had in fact committed was not applied. Refusals now wait for a claim check.</li>
 </ol>
+<p>Release 2.0.0 was then reviewed in three parts (the engine, the storage layer, and the HTTP and tenant boundary) by automated reviewers instructed to break it and to prove each finding with a failing test. What they confirmed in the engine and the storage layer, all fixed since, each with a test that fails on the old code:</p>
+<ol start="4">
+<li><strong>Deletion was outside the protocol.</strong> The owner checked its claim and then wrote the tombstone. A server that took over between the two served the database and acknowledged writes, and the tombstone then arrived and deleted it. Deletion is now a manifest settled by a claim check that follows it, modelled, with the <code>UnsafeTombstoneWithoutCheck</code> and <code>UnsafePurgeBeforeTombstone</code> controls.</li>
+<li><strong>A takeover that failed after revoking gave its claim back.</strong> The revoked epoch's first manifest could still arrive. A third server could then choose a number below it, serve, and have its acknowledged writes hidden when that manifest landed. Now the <code>UnsafeGiveBackAfterRevoke</code> control.</li>
+<li><strong>A purge could make a revoked claim readable again</strong> on a bucket that keeps versions, when a listing page ended between the claim's delete marker and the version under it. On Backblaze B2 the old code showed the key during the purge; <code>tests/bucket.rs</code> reproduces that arrangement.</li>
+<li><strong>A listing page that held nothing but said there was more</strong> ended the listing, so a claim could be missed at takeover. Whether a provider sends such a page was not established; the client no longer depends on it.</li>
+<li><strong>Two directory stores on one directory could exchange temporary files</strong> when they shared a process id, as two containers on one volume do, and acknowledge an object holding another's bytes.</li>
+<li>A lookup that overlapped the owner's own merge reported the database lost and closed it. An inverted range stopped the writer. A refusal could report a conflict with a write that was never committed. A crafted table footer panicked instead of reporting damage. Keys that are not UTF-8, accepted only by the library interface, became unreadable once flushed; they are now refused.</li>
+</ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
 <thead>
@@ -214,6 +281,14 @@
 <tr>
 <td>Memory</td>
 <td>yes</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>S3 stand-in (in process)</td>
+<td>storage tests only</td>
 <td></td>
 <td></td>
 <td></td>
@@ -247,12 +322,13 @@
 </table>
 <h2 id="remaining-obligations">Remaining obligations<a class="anchor" href="#remaining-obligations" aria-label="Link to this section">#</a></h2>
 <ul>
-<li>Run the bucket tests and benchmarks on Amazon S3 and at least one other S3-compatible store. The code path is shared with B2 except for the upload call, but it has not been exercised there.</li>
+<li>Run the bucket tests and benchmarks on Amazon S3 and at least one other S3-compatible store. The code path is shared with B2 except for the upload call, and is exercised against a stand-in written from the S3 documentation, but not against those services.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
-<li>Model database deletion, and conditional transactions with idempotent retries.</li>
+<li>Model conditional transactions with idempotent retries, and a delete request that arrives late.</li>
+<li>Run the deletion model with two transactions (<code>spec/DeepDeletion.cfg</code>) to completion.</li>
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
-<li>An independent review of the protocol and of <code>src/db.rs</code>.</li>
-<li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only.</li>
+<li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
+<li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="performance.html"><span>Previous</span>Performance</a><a class="next" href="development.html"><span>Next</span>Development</a></nav></main>
 <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-is-claimed">What is claimed</a></li><li class="h2"><a href="#assumptions">Assumptions</a></li><li class="h2"><a href="#the-model">The model</a></li><li class="h3"><a href="#negative-controls">Negative controls</a></li><li class="h3"><a href="#what-the-model-leaves-out">What the model leaves out</a></li><li class="h2"><a href="#tests-of-the-implementation">Tests of the implementation</a></li><li class="h3"><a href="#what-these-checks-found">What these checks found</a></li><li class="h3"><a href="#what-has-been-run-where">What has been run where</a></li><li class="h2"><a href="#remaining-obligations">Remaining obligations</a></li></ul></nav>

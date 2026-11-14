@@ -41,7 +41,7 @@
 <h1 id="hero-title">A transactional <span class="nowrap">key-value</span> database stored in a bucket.</h1>
 <p class="lead">durable-db is one static Rust binary that serves atomic transactions and ordered scans of JSON values over HTTP. The data is immutable objects in Backblaze B2 or another S3-compatible bucket, so servers keep no state: add them, remove them or kill every one, and nothing is lost.</p>
 <div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="#how">How it works</a></div>
-<div class="install"><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh</code></pre></div>
+<div class="install"><pre data-copy><code>curl -fsSL <span>https://ericflo.github.io/durable-db-site/install.sh | sh</span></code></pre></div>
 <ul class="facts" aria-label="At a glance"><li>One binary, about 8 MB</li><li>B2, S3-compatible or a local directory</li><li>No conditional writes, leases or synchronized clocks</li><li>Modelled in TLA+</li><li>Apache-2.0</li></ul>
 </div>
 <div class="code-card" data-tabs>
@@ -183,14 +183,14 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <!-- VERIFICATION NUMBERS. These repeat docs/verification.md; keep the two in step. -->
 <section class="band band-dark" aria-labelledby="verification-title" id="verification">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Verification</p><h2 id="verification-title">What was checked</h2><p>The protocol is one TLA+ model of ownership, commit, checkpoint and collection. The Rust code is written to follow it step for step, and is tested with injected faults, real server processes and a real bucket.</p></div>
+<div class="section-head"><p class="eyebrow">Verification</p><h2 id="verification-title">What was checked</h2><p>The protocol is one TLA+ model of ownership, commit, checkpoint, collection and deletion. The Rust code is written to follow it step for step, and is tested with injected faults, real server processes and a real bucket.</p></div>
 <div class="stats">
-<a href="verification.html#the-model"><strong>7.15 million</strong><span>distinct states. TLC explores the model exhaustively at 2 writers, 2 epochs and 2 transactions and finds no violation.</span></a>
-<a href="verification.html#negative-controls"><strong>8 of 8</strong><span>negative controls refuted. Each turns off one protocol rule in the model and must produce a counterexample.</span></a>
-<a href="verification.html#tests-of-the-implementation"><strong>200 seeds</strong><span>of a randomized fault-injection test pass: three nodes, dropped and half-applied storage requests, crashes and stale owners.</span></a>
-<a href="verification.html#tests-of-the-implementation"><strong>18,838 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled 2 → 3 → 2 and a pod was force-killed. No request failed.</span></a>
+<a href="verification.html#the-model"><strong>3.59 million</strong><span>distinct states at 2 writers, 2 epochs and 2 transactions, and 4.11 million more with deletion and 1 transaction. TLC explores both exhaustively and finds no violation.</span></a>
+<a href="verification.html#negative-controls"><strong>11 of 11</strong><span>negative controls refuted. Each turns off one protocol rule in the model and must produce a counterexample.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>200 seeds</strong><span>of a randomized fault-injection test pass: three nodes, dropped, half-applied and late storage requests, crashes, stale owners and deletions.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>18,838 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled <span class="nowrap">2 → 3 → 2</span> and a pod was force-killed. No request failed.</span></a>
 </div>
-<p class="caveat">Bounded model checking is evidence about a model. It is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification page</a> lists the assumptions, what the model leaves out, three defects these tests found, and the obligations that remain.</p>
+<p class="caveat">Bounded model checking is evidence about a model. It is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification page</a> lists the assumptions, what the model leaves out, the defects that these tests and a review found, and the obligations that remain.</p>
 </div>
 </section>
 
@@ -218,7 +218,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <li><strong>No point-in-time restore.</strong> Deletions are permanent. Protect the bucket with your provider's replication.</li>
 <li><strong>The prebuilt binary is Linux x86_64 only.</strong> Other platforms <a href="development.html">build from source</a>.</li>
 <li><strong>The repository is private for now.</strong> The installer uses the <code>gh</code> CLI, signed in to an account with access.</li>
-<li><strong>No independent review yet.</strong> The model does not cover database deletion, conditional transactions or liveness.</li>
+<li><strong>No independent review yet.</strong> The model does not cover conditional transactions or liveness.</li>
 </ul>
 <a class="more" href="verification.html#remaining-obligations">Remaining obligations →</a>
 </div>
@@ -250,7 +250,7 @@ durable-db serve \
 
 <section class="wrap section" aria-labelledby="docs-title" id="docs">
 <div class="section-head"><p class="eyebrow">Documentation</p><h2 id="docs-title">Every page</h2></div>
-<ul class="directory"><li><a href="deployment.html"><strong>Deployment</strong><span>Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.</span></a></li><li><a href="api.html"><strong>HTTP API</strong><span>Reads, scans, commits, checks, idempotency keys, errors and limits.</span></a></li><li><a href="clients.html"><strong>TypeScript SDK</strong><span>The typed client for Node.js and the pi-durable storage adapter.</span></a></li><li><a href="architecture.html"><strong>Architecture</strong><span>The objects in the bucket, taking ownership, committing, reading, collection and failures.</span></a></li><li><a href="performance.html"><strong>Performance</strong><span>Benchmark tables and the commands that reproduce them.</span></a></li><li><a href="verification.html"><strong>Verification</strong><span>What is claimed, the assumptions, the TLA+ model, the tests and what remains unchecked.</span></a></li><li><a href="development.html"><strong>Development</strong><span>Build from source, run the checks, repository layout, releases and CI.</span></a></li></ul>
+<ul class="directory"><li><a href="deployment.html"><strong>Deployment</strong><span>Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.</span></a></li><li><a href="api.html"><strong>HTTP API</strong><span>Reads, scans, commits, checks, idempotency keys, errors and limits.</span></a></li><li><a href="clients.html"><strong>TypeScript SDK</strong><span>The typed client: reads, transactions, checks, errors and retries. The pi-durable storage adapter.</span></a></li><li><a href="architecture.html"><strong>Architecture</strong><span>The objects in the bucket, taking ownership, committing, reading, collection and failures.</span></a></li><li><a href="performance.html"><strong>Performance</strong><span>Benchmark tables and the commands that reproduce them.</span></a></li><li><a href="verification.html"><strong>Verification</strong><span>What is claimed, the assumptions, the TLA+ model, the tests and what remains unchecked.</span></a></li><li><a href="development.html"><strong>Development</strong><span>Build from source, run the checks, repository layout, releases and CI.</span></a></li></ul>
 </section>
 
 </main>

@@ -36,7 +36,7 @@ for (const pre of document.querySelectorAll('pre[data-copy], .docs article pre')
   button.textContent = 'Copy';
   button.addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText(pre.querySelector('code').innerText.trim());
+      await navigator.clipboard.writeText(pre.querySelector('code').textContent.trim());
       button.textContent = 'Copied';
     } catch {
       button.textContent = 'Copy failed';

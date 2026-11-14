@@ -68,7 +68,15 @@ scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter a
 </tr>
 <tr>
 <td><code>cargo test --test chaos</code></td>
-<td>Three nodes on storage that delays, drops and half-applies requests, with crashes and zombie owners. Checks that nothing acknowledged is lost, nothing is applied twice, and linearizable reads never go backwards. <code>CHAOS_SEEDS=50</code> runs more schedules; <code>CHAOS_FIRST=n</code> starts at seed <code>n</code>.</td>
+<td>Three nodes on storage that delays, drops, half-applies and belatedly applies requests, with crashes and zombie owners. Checks that nothing acknowledged is lost, nothing is applied twice, linearizable reads never go backwards, and a deleted database stays deleted. <code>CHAOS_SEEDS=50</code> runs more schedules; <code>CHAOS_FIRST=n</code> starts at seed <code>n</code>.</td>
+</tr>
+<tr>
+<td><code>cargo test --test interleavings</code></td>
+<td>Single schedules that a random test seldom finds, built by holding or failing chosen storage requests.</td>
+</tr>
+<tr>
+<td><code>cargo test --test storage</code></td>
+<td>The S3 binding against an in-process stand-in that keeps versions, pages its listings and verifies signatures; the directory store against the in-memory one.</td>
 </tr>
 <tr>
 <td><code>cargo test --test http</code></td>
@@ -89,7 +97,7 @@ scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter a
 export DDB_S3_ACCESS_KEY_ID=... DDB_S3_SECRET_ACCESS_KEY=...
 cargo test --test bucket
 </code></pre>
-<p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. The full suite takes about four minutes.</p>
+<p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. All configurations take about three minutes. <code>scripts/check-model.sh DeepDeletion</code> runs the one configuration that is left out because it takes far longer.</p>
 <h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to this section">#</a></h2>
 <pre><code>src/store/      the storage contract and its three bindings: memory, directory, S3-compatible
 src/layout.rs   object names, manifests, frames

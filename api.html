@@ -107,11 +107,11 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 <tr>
 <td><code>DELETE /v1/databases/{name}</code></td>
-<td>Delete permanently. The name cannot be reused.</td>
+<td>Delete permanently. The name cannot be reused. Repeating the request is safe and answers <code>200</code> again. If it fails with <code>503</code> the outcome is unknown; repeat it.</td>
 </tr>
 <tr>
 <td><code>GET /v1/databases?after=&amp;limit=</code></td>
-<td><code>{&quot;databases&quot;: [...], &quot;next&quot;: &quot;name&quot; or null}</code>, in name order.</td>
+<td><code>{&quot;databases&quot;: [...], &quot;next&quot;: &quot;name&quot; or null}</code>. Pass <code>next</code> as <code>after</code> to continue. Names come in the order of the bucket's keys, which is name order except that a name follows the names that extend it with <code>-</code> or <code>.</code>: <code>app-2</code> and <code>app.old</code> come before <code>app</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -170,7 +170,7 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 </tbody>
 </table>
-<p><code>next</code> is the last key returned when more keys remain, otherwise <code>null</code>. A page also ends early at 8 MiB.</p>
+<p><code>next</code> is the last key returned when more keys remain, otherwise <code>null</code>. A page also ends early at 8 MiB. Fields that together select nothing, such as a <code>start</code> that follows the <code>end</code>, give an empty page.</p>
 <p>For <code>&quot;consistency&quot;: &quot;session&quot;</code>, add <code>&quot;min_revision&quot;: N</code> with the highest revision you have seen from this database. If that revision is still being stored, the read waits for it. A <code>min_revision</code> the database has never reached is a <code>400</code>.</p>
 <h2 id="commit">Commit<a class="anchor" href="#commit" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-http">POST /v1/databases/{name}/commit
