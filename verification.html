@@ -255,7 +255,7 @@
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Three runs with 2.1.1 and one more with 2.1.0, each scaled 2 → 5 → 2 with a pod force-deleted: 22,756, 23,567 and 20,678 transfers in 240 s verified with 2.1.1, 18,250 with 2.1.0. Of 9 to 11 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 47 were told to wait. The reads were a sixth to a quarter fewer with 2.1.1 than with 2.1.0, for a reason not established (<a href="performance.html#on-kubernetes">performance</a>).</td>
+<td>Nine runs, four with 2.1.0 and five with 2.1.1, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 18,250 to 23,567 transfers in 240 s. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 47 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
 </tr>
 <tr>
 <td><code>scripts/test-upgrade.sh</code></td>
@@ -327,6 +327,9 @@
 </li>
 <li>
 <p><strong>A test of flushing and merging expected what a fast machine does.</strong> <code>flushes_merges_and_collects</code> unwrapped 1,300 commits to a small database, waited 200 ms, and expected four tables at most. A database refuses a write while more than four flushes' worth is waiting, and a merge takes as long as the machine makes it: of 40 runs on a processor held to 40% of one core, three failed on a refused write and one on a fifth table. The fifth table is not only a matter of time. With the test waiting for the flush instead, five tables were still at rest in two runs of 160, which the merge rule allows: runs are merged from the newest while they are together at least half the size of the next, and up to twelve may remain. The pipeline of the commit that carried release 2.1.1 failed in its test step. Its log was not read, so which test failed there is not known; this is the one that failed when the suite was run ten times on a slowed processor, and <code>scripts/test-slow.sh</code>, which runs each test once, had passed it. The test now sends a refused write again, waits for the flush instead of for a time, and expects the rule's own bound. It then passed 150 runs at 40%.</p>
+</li>
+<li>
+<p><strong>Five runs of the Kubernetes test were read as a difference between two releases.</strong> Its read load measured 115,943, 119,493 and 115,589 session reads a second with 2.1.1 and 163,283 and 139,882 with 2.1.0, and the notes of release 2.1.1 said that the figure had gone the wrong way for a reason not established. Four more runs measured 118,284 and 159,921 with 2.1.0 and 144,577 and 130,334 with 2.1.1: the figure moves by a third from run to run with either release. The notes were corrected the same day. Looking for the reason found what the figure mostly measures: a read that reaches a pod not holding its database is relayed to the one that does, at two and a half times the cost, and more than half of the test's reads are relayed. The test now prints how many. <a href="performance.html#on-kubernetes">Performance</a> has the nine runs and what was ruled out.</p>
 </li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>

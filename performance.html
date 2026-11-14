@@ -357,80 +357,61 @@
 </tbody>
 </table>
 <h3 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h3>
-<p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service. 192 clients send session reads to four databases for 80 seconds, during which the autoscaler goes from two pods to five and one pod is force-deleted. Beside them a ledger of read-then-commit transfers from 16 clients over 8 databases runs for four minutes, through the scale-out, the force-deleted pod and the scale-in, and is then verified. Five runs, in the order they were made: the first was published with release 2.1.0, the others were made within forty minutes of each other.</p>
+<p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service. 192 clients send session reads to four databases for 80 seconds, during which the autoscaler goes from two pods to five and one pod is force-deleted. Beside them a ledger of read-then-commit transfers from 16 clients over 8 databases runs for four minutes, through the scale-out, the force-deleted pod and the scale-in, and is then verified. Nine runs, each column in the order they were made; the first of 2.1.0 was published with that release, and the rest were made in turn on one afternoon.</p>
 <table>
 <thead>
 <tr>
 <th></th>
-<th style="text-align:right">2.1.0</th>
-<th style="text-align:right">2.1.1</th>
-<th style="text-align:right">2.1.1</th>
-<th style="text-align:right">2.1.0</th>
-<th style="text-align:right">2.1.1</th>
+<th>Release 2.1.0, four runs</th>
+<th>Release 2.1.1, five runs</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Session reads/s</td>
-<td style="text-align:right">163,283</td>
-<td style="text-align:right">115,943</td>
-<td style="text-align:right">119,493</td>
-<td style="text-align:right">139,882</td>
-<td style="text-align:right">115,589</td>
+<td>163,283; 139,882; 118,284; 159,921</td>
+<td>115,943; 119,493; 115,589; 144,577; 130,334</td>
 </tr>
 <tr>
 <td>Reads that failed</td>
-<td style="text-align:right">102</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">86</td>
-<td style="text-align:right">102</td>
-<td style="text-align:right">110</td>
+<td>102; 102; 0; 106</td>
+<td>0; 86; 110; 100; 0</td>
 </tr>
 <tr>
 <td>Reads told to wait</td>
-<td style="text-align:right">46</td>
-<td style="text-align:right">0</td>
-<td style="text-align:right">47</td>
-<td style="text-align:right">26</td>
-<td style="text-align:right">22</td>
+<td>46; 26; 0; 0</td>
+<td>0; 47; 22; 0; 0</td>
 </tr>
 <tr>
 <td>Ledger transfers/s</td>
-<td style="text-align:right">87</td>
-<td style="text-align:right">95</td>
-<td style="text-align:right">98</td>
-<td style="text-align:right">76</td>
-<td style="text-align:right">84</td>
+<td>87; 76; 89; 88</td>
+<td>95; 98; 84; 96; 97</td>
 </tr>
 <tr>
 <td>Transfer, p50</td>
-<td style="text-align:right">120 ms</td>
-<td style="text-align:right">117 ms</td>
-<td style="text-align:right">113 ms</td>
-<td style="text-align:right">136 ms</td>
-<td style="text-align:right">125 ms</td>
+<td>120; 136; 121; 124 ms</td>
+<td>117; 113; 125; 114; 115 ms</td>
 </tr>
 <tr>
 <td>Transfer, p99</td>
-<td style="text-align:right">647 ms</td>
-<td style="text-align:right">606 ms</td>
-<td style="text-align:right">611 ms</td>
-<td style="text-align:right">706 ms</td>
-<td style="text-align:right">687 ms</td>
+<td>647; 706; 641; 611 ms</td>
+<td>606; 611; 687; 614; 602 ms</td>
 </tr>
 <tr>
 <td>Slowest transfer</td>
-<td style="text-align:right">14.6 s</td>
-<td style="text-align:right">12.2 s</td>
-<td style="text-align:right">25.4 s</td>
-<td style="text-align:right">16.3 s</td>
-<td style="text-align:right">16.6 s</td>
+<td>14.6; 16.3; 8.4; 9.7 s</td>
+<td>12.2; 25.4; 16.6; 6.2; 6.5 s</td>
 </tr>
 </tbody>
 </table>
-<p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in each of the last three runs; the test used to report the first count it saw above two, which is all that is known of the first two.</p>
-<p><strong>Release 2.1.1 read a sixth to a quarter less than 2.1.0 in this test, in every run, and the cause is not established.</strong> Two things it is not. It is not the server's read path, which the release does not change: one server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn. With 2.1.0 it read 166,199 and 166,497 times a second while the ledger made 100 and 101 transfers a second; with 2.1.1 it read 168,024 and 167,313 times a second while the ledger made 121 and 118. It is not how soon a new pod is ready: fifteen starts of each release on the bucket took 1.07 s and 1.02 s at the median from start to ready. What remains is how the pods share the work, and there a read costs more than it does on one server.</p>
-<p><strong>A read that reaches a pod not holding its database is relayed to the one that does, and a relayed read costs two and a half times a direct one.</strong> Two servers of 2.1.1, each held to two CPUs, were given the session reads of one database from 192 clients, all sent to the first server. In the three runs where the first server held the database it read 173,685, 178,573 and 178,865 times a second. In the five where the second held it and the first relayed, it read 64,966 to 71,776 times a second. Behind a Service a connection reaches the holder one time in as many as there are pods, so five pods read less in this test than one server does alone, and the figure moves with the share of reads that were relayed, which depends on when in the 80 seconds the new pods took databases over. Whether that share is what differs between the two releases has not been checked (<a href="#what-is-not-measured-yet">below</a>). Each server counts the requests it relays in <code>durable_db_forwarded_requests_total</code>.</p>
+<p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in every run that recorded it; the test used to report the first count it saw above two, which is all that is known of the first run of each release.</p>
+<p><strong>The read figure moves by a third from run to run, with either release.</strong> Nine runs do not show a difference between the releases and do not rule one out. After the first five, every run of 2.1.1 lay below every run of 2.1.0, and the notes of release 2.1.1 said that the figure had gone the wrong way for a reason not established; the next four runs, two of each release, came out the other way round once and did not bear that out. What is established:</p>
+<ul>
+<li>A single server reads the same with both. One server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn: 166,199 and 166,497 reads a second with 2.1.0 while the ledger made 100 and 101 transfers a second, 168,024 and 167,313 with 2.1.1 while the ledger made 121 and 118.</li>
+<li>A new pod is ready as soon: fifteen starts of each release on the bucket took 1.07 s and 1.02 s at the median from start to ready.</li>
+<li><strong>A read that reaches a pod not holding its database is relayed to the one that does, and a relayed read costs two and a half times a direct one.</strong> Two servers of 2.1.1, each held to two CPUs, were given the session reads of one database from 192 clients, all sent to the first server. In the three runs where the first server held the database it read 173,685, 178,573 and 178,865 times a second. In the five where the second held it and the first relayed, it read 64,966 to 71,776 times a second. Behind a Service a connection reaches the holder one time in as many as there are pods, which is why five pods read less in this test than one server does alone. In the last four runs the test counted them: the pods still running when the reads ended had answered 9.5 to 12.2 million reads and relayed 5.7 to 8.9 million requests, between 55% and 73%. Each server counts what it relays in <code>durable_db_forwarded_requests_total</code>.</li>
+</ul>
+<p>The share relayed does not by itself account for the spread: the run with the smallest share, 55%, read 130,334 times a second, and one with 73% read 159,921. Which pod is killed, what it held, and when in the 80 seconds the new pods take databases over differ in every run, and their effect has not been separated (<a href="#what-is-not-measured-yet">below</a>).</p>
 <p>With release 2.0.0 the same test measured 30,114 session reads/s and the autoscaler stopped at three pods: its binary read at the speed of one core (<a href="#the-allocator">the allocator</a>).</p>
 <h2 id="the-allocator">The allocator<a class="anchor" href="#the-allocator" aria-label="Link to this section">#</a></h2>
 <p>The binary carries its own allocator, jemalloc, held to eight arenas and set to give freed memory back to the system within a second. Which allocator a server uses decided two things: how fast it reads, and whether it stays inside a memory limit. The source of release 2.1.0 was built with each candidate and put through <code>scripts/benchmark.sh</code> on a local directory and through the soak described <a href="#memory-under-load">below</a>, on the desktop described above:</p>
@@ -553,7 +534,7 @@
 <ul>
 <li>B2 from a server in a data centre, on a wired link. Every B2 figure here was measured over Wi-Fi from one desktop, for minutes at a time, and that includes the measurements behind the choice of storage pods.</li>
 <li>More databases committing at once on B2 than a server knows fast pods for.</li>
-<li>Why the Kubernetes test read less with release 2.1.1 than with 2.1.0: whether more of its reads were relayed.</li>
+<li>What sets the read figure of the Kubernetes test, which moves by a third from run to run, beyond the share of reads that are relayed.</li>
 <li>Amazon S3 or any provider other than B2.</li>
 <li>A server in the same region as its bucket.</li>
 <li>Many hours of sustained load.</li>
