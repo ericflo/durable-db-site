@@ -1160,7 +1160,13 @@ first fails on the old reader and then requires each caller to receive an error
 when virtual time crosses the deadline. A second fixture checks bounded retries
 for transient failures, one attempt for permanent refusals, and no redirects.
 The existing lost-upload and redirect regressions continue to protect the
-mutation boundary. Ownership, uncertainty and revocation rules are unchanged;
+mutation boundary. The shared HTTP connector records numeric failed-PUT statuses
+and typed transport failures without changing the original SDK result. Its TCP
+fixtures check empty/nonempty PUTs across success, redirects, 400/403/412/429/500/503,
+lost replies and timed-out replies; each still sends exactly once. Captured logs
+verify journal owner/position correlation and exclude endpoint, path, credential
+and payload sentinels. These diagnostics do not change protocol state or prove
+that a rejected or interrupted upload cannot arrive later. Ownership, uncertainty and revocation rules are unchanged;
 subsequent exact-executable B2/Kubernetes campaigns pass, including provider
 interruption and peer-only isolation; recovery targets remain unmet in several
 phases. See the <a href="verification-results.html">current results</a>.</p>
