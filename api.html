@@ -1,217 +1,397 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>HTTP API · durable-db</title><meta name="description" content="Endpoints, snapshots, commits, retries, errors and limits."><meta property="og:title" content="HTTP API · durable-db"><meta property="og:description" content="Endpoints, snapshots, commits, retries, errors and limits."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html" aria-current="page">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html" aria-current="page">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Start</p><h1 id="http-api">HTTP API</h1>
-<p>Local and cloud CLI serving use the native backend. Cloud membership, ownership and forwarding are integrated. The <a href="production-readiness.html">1.0 scope</a> covers B2 deployments within one trust domain; throughput/latency commitments and AWS qualification are deferred.</p>
-<p>Native protected creation also charges the target database’s admission budget. Exhaustion returns <code>413 limit_exceeded</code>; identical retries reuse admission. Policy changes remain namespace-funded so tenant exhaustion cannot prevent credential revocation. This also applies to cloud CLI serving.</p>
-<p>Administrator tokens from current <code>token --admin</code> are expiring <code>ddb_control_</code> capabilities. Token TTL defaults to one hour and is bounded to 30 days. See the <a href="design-signing-rotation.html">key rollout procedure</a> before migrating control clients or rotating keys.</p>
-<p>Every data endpoint requires <code>Authorization: Bearer &lt;token&gt;</code>. JSON uses UTF-8. Keys are ordered by their UTF-8 bytes, independent of locale. Values are standard base64. <code>null</code> means absent in a read/check and delete in a write; an empty string is a present zero-byte value.</p>
-<p>The shared router can also serve a recovered native owner through <code>api::Native::new(owner, capacity)</code> and <code>App::new</code>. This library path supports protected creation, info, reads, commits, tokens, and access-policy changes with the same authentication and request budgets. Its bounded server-owned worker continues accepted writes after a caller disconnects, pipelines immutable uploads outside the owner lock, resolves unknown PUT outcomes by exact GET, and retries checkpoint maintenance. Capacity bounds queued, executing and pending replies, including duplicate requests. Each HTTP commit currently occupies one journal frame; cross-request batching remains open.</p>
-<p>Cloud readiness keeps routing and administration reachable during partition recovery. It grants no permission to serve database responses. Native worker health checks local retirement state without provider I/O or waiting behind maintenance; a failed provider observation alone does not require replacing an idle owner. Local serving retains the directory lock; remote native serving uses <code>api::Native::new(owner, capacity)</code> with a recovered owner and no clock or renewal task. Results are prepared before a fresh uncached permit GET; one validation can release a sealed group of durable replies. Missing/corrupt permission and provider errors refuse service. Cloud election, routing and placement use the native controller and DNS membership. Native legacy POST creation and <code>/gc</code> return <code>501 unsupported_operation</code>; use protected PUT creation and automatic maintenance. Namespace upload ceilings and per-database admission are implemented. Maintenance collects obsolete budget/catalog metadata, covered journals, table/manifest objects and abandoned permits. Complete tenant cost attribution remains outside the 1.0 supported scope.</p>
-<h2 id="endpoints">Endpoints<a class="anchor" href="#endpoints" aria-label="Link to this section">#</a></h2>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP API · durable-db</title>
+<meta name="description" content="Reads, scans, commits, checks, idempotency keys, errors and limits.">
+<meta property="og:title" content="HTTP API · durable-db">
+<meta property="og:description" content="Reads, scans, commits, checks, idempotency keys, errors and limits.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html" aria-current="page">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
+
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html" aria-current="page">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>HTTP API</h1>
+<p>Everything is JSON over HTTP under <code>/v1</code>. A database is an ordered map from string keys to JSON values, changed by atomic transactions.</p>
+<pre><code class="language-sh">export URL=http://127.0.0.1:7654/v1/databases/demo
+export AUTH=&quot;Authorization: Bearer $(durable-db create demo)&quot;
+
+curl -X PUT $URL/keys/greeting -H &quot;$AUTH&quot; -d '&quot;hello&quot;'       # {&quot;revision&quot;:1}
+curl $URL/keys/greeting -H &quot;$AUTH&quot;                            # &quot;hello&quot;
+</code></pre>
+<h2 id="concepts">Concepts<a class="anchor" href="#concepts" aria-label="Link to this section">#</a></h2>
+<p><strong>Revision.</strong> Each committed transaction increases the database's revision by one. Revision 0 is the empty database.</p>
+<p><strong>Version.</strong> A key's version is the revision of the transaction that last wrote it. An absent key has version 0. Versions let a transaction say &quot;only if this key is unchanged since I read it&quot;.</p>
+<p><strong>Keys</strong> are UTF-8 strings of 1 to 1,024 bytes that do not begin with U+0000, ordered by their bytes. <strong>Values</strong> are any JSON value except <code>null</code>, stored as the exact text sent.</p>
+<p><strong>Consistency.</strong> Writes are strictly serializable: every transaction takes effect at one instant, in revision order, and an acknowledged transaction is durable in the bucket. Reads offer two levels:</p>
 <table>
 <thead>
 <tr>
-<th>Method and path</th>
+<th>Level</th>
+<th>Guarantee</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>strong</code> (default)</td>
+<td>Linearizable: reflects every transaction acknowledged before the read was sent.</td>
+<td>One storage round trip, shared by all reads waiting at that moment.</td>
+</tr>
+<tr>
+<td><code>session</code></td>
+<td>A consistent snapshot at revision <code>min_revision</code> or newer. Reading your own writes and never going backwards are guaranteed when you pass the highest revision you have seen.</td>
+<td>Served from memory.</td>
+</tr>
+</tbody>
+</table>
+<p>A <code>session</code> read can lag behind another client's very recent write, and only while a database is moving between servers. Transactions are unaffected: a commit that depends on a stale read fails its check and is retried.</p>
+<h2 id="authentication">Authentication<a class="anchor" href="#authentication" aria-label="Link to this section">#</a></h2>
+<p>Send <code>Authorization: Bearer &lt;token&gt;</code>. An <strong>administrator token</strong> manages databases. A <strong>database token</strong> grants <code>read</code> or <code>write</code> on one database. Tokens are signed with the deployment's key and checked without touching storage.</p>
+<pre><code class="language-sh">durable-db token --admin                                  # from the signing key
+durable-db token --database demo --access read --ttl 3600
+</code></pre>
+<p>Or ask a server, which also stamps the database's current token generation:</p>
+<pre><code class="language-http">POST /v1/databases/demo/tokens
+{&quot;access&quot;: &quot;write&quot;, &quot;ttl_seconds&quot;: 86400}
+
+{&quot;token&quot;: &quot;ddb_...&quot;}
+</code></pre>
+<p><code>PATCH /v1/databases/demo</code> with <code>{&quot;revoke_tokens&quot;: true}</code> invalidates every token issued for that database so far.</p>
+<h2 id="databases">Databases<a class="anchor" href="#databases" aria-label="Link to this section">#</a></h2>
+<p>Administrator token required, except <code>GET</code> on one database, which any token for it may call.</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT /v1/databases/{name}</code></td>
+<td>Create. Body (optional): <code>{&quot;max_bytes&quot;: 1073741824, &quot;max_requests_per_second&quot;: 0}</code>. <code>201</code> when created, <code>200</code> when it already exists with these settings, <code>409</code> when it exists with others.</td>
+</tr>
+<tr>
+<td><code>GET /v1/databases/{name}</code></td>
+<td><code>{&quot;name&quot;, &quot;revision&quot;, &quot;bytes&quot;, &quot;max_bytes&quot;, &quot;max_requests_per_second&quot;, &quot;tables&quot;}</code></td>
+</tr>
+<tr>
+<td><code>PATCH /v1/databases/{name}</code></td>
+<td>Change <code>max_bytes</code> or <code>max_requests_per_second</code>, or set <code>&quot;revoke_tokens&quot;: true</code>.</td>
+</tr>
+<tr>
+<td><code>DELETE /v1/databases/{name}</code></td>
+<td>Delete permanently. The name cannot be reused.</td>
+</tr>
+<tr>
+<td><code>GET /v1/databases?after=&amp;limit=</code></td>
+<td><code>{&quot;databases&quot;: [...], &quot;next&quot;: &quot;name&quot; or null}</code>, in name order.</td>
+</tr>
+</tbody>
+</table>
+<p>A name is 1 to 128 characters from <code>A-Z a-z 0-9 . _ -</code> and does not begin with <code>.</code>.</p>
+<p><code>bytes</code> counts stored table bytes plus unflushed writes. When it would exceed <code>max_bytes</code>, transactions that add data fail with <code>507</code>; deletes still succeed.</p>
+<h2 id="read">Read<a class="anchor" href="#read" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-http">POST /v1/databases/{name}/read
+{
+  &quot;keys&quot;: [&quot;users/42&quot;, &quot;users/43&quot;],
+  &quot;scans&quot;: [{&quot;prefix&quot;: &quot;tasks/&quot;, &quot;limit&quot;: 50}],
+  &quot;consistency&quot;: &quot;strong&quot;
+}
+</code></pre>
+<pre><code class="language-json">{
+  &quot;revision&quot;: 1207,
+  &quot;values&quot;: [{&quot;value&quot;: {&quot;name&quot;: &quot;Ada&quot;}, &quot;version&quot;: 1190}, null],
+  &quot;scans&quot;: [{
+    &quot;items&quot;: [{&quot;key&quot;: &quot;tasks/0001&quot;, &quot;value&quot;: {&quot;done&quot;: false}, &quot;version&quot;: 88}],
+    &quot;next&quot;: &quot;tasks/0001&quot;
+  }]
+}
+</code></pre>
+<p>Every key and scan in one request is read at the same revision. <code>values</code> has one entry per requested key, <code>null</code> for an absent key.</p>
+<p>A scan selects keys by any combination of:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>PUT /v1/databases/{db}</code></td>
-<td>Admin: idempotent protected creation with a permanent request identity</td>
+<td><code>prefix</code></td>
+<td>Keys beginning with this string.</td>
 </tr>
 <tr>
-<td><code>POST /v1/databases/{db}</code></td>
-<td>Returns <code>501</code>; use protected PUT creation</td>
+<td><code>start</code></td>
+<td>Keys greater than or equal to this.</td>
 </tr>
 <tr>
-<td><code>GET /v1/databases/{db}</code></td>
-<td>Revision, live key/byte usage, access policy, and limits</td>
+<td><code>end</code></td>
+<td>Keys less than this.</td>
 </tr>
 <tr>
-<td><code>POST /v1/databases/{db}/read</code></td>
-<td>Atomic read of keys and/or ordered scans</td>
+<td><code>after</code></td>
+<td>Continue past this key, in the scan's direction. Pass the previous page's <code>next</code>.</td>
 </tr>
 <tr>
-<td><code>POST /v1/databases/{db}/commit</code></td>
-<td>Revision-checked atomic writes and optional value checks</td>
+<td><code>reverse</code></td>
+<td><code>true</code> returns keys in descending order.</td>
 </tr>
 <tr>
-<td><code>POST /v1/databases/{db}/gc</code></td>
-<td>Returns <code>501</code>; native maintenance runs automatically</td>
-</tr>
-<tr>
-<td><code>POST /v1/databases/{db}/access</code></td>
-<td>Admin: revoke a token ID or rotate its credential generation</td>
-</tr>
-<tr>
-<td><code>POST /v1/tokens</code></td>
-<td>Admin: mint a database-scoped token</td>
-</tr>
-<tr>
-<td><code>GET /v1/storage/upload-budget</code></td>
-<td>Admin: authoritative cumulative upload ceilings and allocation, or <code>null</code> when unbudgeted</td>
-</tr>
-<tr>
-<td><code>POST /v1/storage/upload-budget</code></td>
-<td>Admin: revision-checked, idempotent increase of upload ceilings</td>
-</tr>
-<tr>
-<td><code>GET /v1/databases/{db}/upload-budget</code></td>
-<td>Admin, native backend: database admission/reserve allowance and allocation; a missing ledger reports zeros</td>
-</tr>
-<tr>
-<td><code>POST /v1/databases/{db}/upload-budget</code></td>
-<td>Admin, native backend: preprovision or increase the database admission/reserve allowance</td>
-</tr>
-<tr>
-<td><code>GET /metrics</code></td>
-<td>Administrator or metrics-only credential: bounded Prometheus latency, outcomes, provider, cache, admission, and maintenance metrics; see <a href="observability.html">observability</a></td>
-</tr>
-<tr>
-<td><code>GET /health/live</code></td>
-<td>Process is serving HTTP</td>
-</tr>
-<tr>
-<td><code>GET /health/ready</code></td>
-<td>HTTP routing/administration is available and server is not draining; individual cloud partitions may still be recovering</td>
+<td><code>limit</code></td>
+<td>At most this many items; default 100, maximum 10,000.</td>
 </tr>
 </tbody>
 </table>
-<p>Database info reports logical usage. The experimental <code>pages</code> field has been removed: native tables are shared across databases, so a per-database physical page count is not a useful API contract.</p>
-<p>Readiness does not continuously probe the object provider; provider outages return 503 from data requests. Liveness never depends on storage availability, avoiding restart storms.</p>
-<p>Authenticated requests share a weighted <a href="deployment.html#request-budgets">request budget</a> per principal and pod. Commits cost five units; other requests cost one. Default refill is 20 units/second with a burst of 40. HTTP 429 means a request or engine capacity limit was reached; back off and retry the identical request. An earlier attempt with that identity may still be pending. These configurable policy limits are separate from database quotas and measured engine capacity.</p>
-<h2 id="create-a-protected-database">Create a protected database<a class="anchor" href="#create-a-protected-database" aria-label="Link to this section">#</a></h2>
-<p>Use <code>PUT /v1/databases/{db}</code> with an administrator credential:</p>
-<pre><code class="language-json">{
-  &quot;request_id&quot;: &quot;persist-this-unique-provisioning-id&quot;,
-  &quot;limits&quot;: {&quot;max_bytes&quot;: 67108864, &quot;max_keys&quot;: 100000}
-}
-</code></pre>
-<p>The operation atomically creates a protected database with revocable tokens enabled from the start. The response is <code>{info, replayed}</code>; initial <code>info.policy</code> has a fresh incarnation, generation zero, policy revision one, and no revocations. Legacy application tokens cannot access it. Mint scoped tokens through <code>POST /v1/tokens</code> after creation.</p>
-<p>Persist the exact creation request in your provisioning system before sending it. A retry with the same ID and limits returns the original initial info even after later data writes, policy changes, and collection. Its receipt lasts for the database lifetime, independently of the bounded transaction/policy receipt windows. A different creation ID returns 409; reusing the original ID with different limits returns 400. PUT never replaces an existing database. On a transport failure or 503, retry the identical creation request; observing only that the name exists is insufficient evidence that your creation succeeded.</p>
-<h2 id="read-a-snapshot">Read a snapshot<a class="anchor" href="#read-a-snapshot" aria-label="Link to this section">#</a></h2>
-<pre><code class="language-json">{
-  &quot;expected_revision&quot;: 12,
-  &quot;keys&quot;: [&quot;settings/theme&quot;],
-  &quot;scans&quot;: [{
-    &quot;prefix&quot;: &quot;entries/&quot;,
-    &quot;start&quot;: &quot;entries/000010&quot;,
-    &quot;end&quot;: &quot;entries/000100&quot;,
-    &quot;after&quot;: &quot;entries/000020&quot;,
-    &quot;reverse&quot;: false,
-    &quot;limit&quot;: 50
-  }]
-}
-</code></pre>
-<p><code>expected_revision</code> is optional for the first read. All keys and scans in one request observe one committed snapshot. Subsequent requests in the same transaction must send the returned revision. A revision change is a 409; restart the whole transaction. This is optimistic snapshot validation, not a pinned long-running historical snapshot.</p>
-<p><code>start</code> is inclusive, <code>end</code> exclusive. <code>after</code> is exclusive in the chosen direction. Prefix and bounds are conjunctive. A scan returns <code>{items: [{key, value}], next}</code>; <code>next</code> is the last returned key when another matching item exists. Repeat the query with that cursor and revision. Zero-length prefixes are allowed.</p>
+<p><code>next</code> is the last key returned when more keys remain, otherwise <code>null</code>. A page also ends early at 8 MiB.</p>
+<p>For <code>&quot;consistency&quot;: &quot;session&quot;</code>, add <code>&quot;min_revision&quot;: N</code> with the highest revision you have seen from this database. If that revision is still being stored, the read waits for it. A <code>min_revision</code> the database has never reached is a <code>400</code>.</p>
 <h2 id="commit">Commit<a class="anchor" href="#commit" aria-label="Link to this section">#</a></h2>
-<pre><code class="language-json">{
-  &quot;expected_revision&quot;: 12,
-  &quot;request_id&quot;: &quot;d338624a-86b4-4128-85fb-2a31a86b4e60&quot;,
-  &quot;checks&quot;: [{&quot;key&quot;:&quot;settings/theme&quot;,&quot;value&quot;:&quot;ZGFyaw==&quot;}],
+<pre><code class="language-http">POST /v1/databases/{name}/commit
+{
+  &quot;checks&quot;: [{&quot;key&quot;: &quot;accounts/a&quot;, &quot;version&quot;: 1190}],
   &quot;writes&quot;: [
-    {&quot;key&quot;:&quot;settings/theme&quot;,&quot;value&quot;:&quot;bGlnaHQ=&quot;},
-    {&quot;key&quot;:&quot;obsolete&quot;,&quot;value&quot;:null}
-  ]
+    {&quot;key&quot;: &quot;accounts/a&quot;, &quot;value&quot;: {&quot;balance&quot;: 70}},
+    {&quot;key&quot;: &quot;accounts/b&quot;, &quot;value&quot;: {&quot;balance&quot;: 130}},
+    {&quot;key&quot;: &quot;pending/9&quot;, &quot;delete&quot;: true}
+  ],
+  &quot;idempotency_key&quot;: &quot;transfer-7f3a&quot;
 }
 </code></pre>
-<p>Checks observe the pre-commit snapshot. Writes are applied in order, so repeated writes to a key end with the final value. The response is <code>{revision, replayed}</code>. Each nonempty accepted commit increments the logical revision once, including a logical no-op. A fresh fence also protects storage maintenance but is not a public revision.</p>
-<p>A client must retain its exact serialized operation intent across transport retries. Do not mint a new request ID or read a new revision after an unknown write outcome and blindly reapply a non-idempotent operation. The last 128 receipts are retained. Beyond that window, an unchanged retry fails its original revision; the application may need to inspect state to resolve the outcome.</p>
-<p>Only <code>409 conflict</code> authorizes a fresh transaction attempt before any uncertain write outcome. The native server also distinguishes <code>409 receipt_expired</code>: the receipt no longer establishes the original outcome, so reconcile using the original request instead of generating a new ID. The JSON SDK raises <code>UncertainCommitError</code> for this case; Pi adapters stop instead of rebuilding the write.</p>
-<h2 id="durable-token-revocation">Durable token revocation<a class="anchor" href="#durable-token-revocation" aria-label="Link to this section">#</a></h2>
-<p>PUT creation starts protected. Use an administrator credential and the current policy revision to change access through <code>POST /v1/databases/{db}/access</code>. For example, invalidate all currently issued database tokens:</p>
-<pre><code class="language-json">{
-  &quot;request_id&quot;: &quot;a-unique-policy-operation-id&quot;,
-  &quot;expected_policy_revision&quot;: 1,
-  &quot;change&quot;: {&quot;action&quot;: &quot;rotate&quot;}
-}
+<pre><code class="language-json">{&quot;revision&quot;: 1208}
 </code></pre>
-<p>The response is <code>{policy: {incarnation, generation, revision, revoked_tokens}, replayed}</code>. Rotation changes the database credential generation; it does not change the shared signing key. Older storage formats require <a href="recovery.html#local-format-upgrades">export and restore</a>, not in-place policy activation.</p>
-<p><code>POST /v1/tokens</code> accepts <code>{database, write, ttl_seconds}</code> and returns <code>{token, token_id}</code> bound to the current incarnation and generation. Issuance racing a generation change may return a token that is already invalid; request another token after observing the current policy. For offline issuance, supply both <code>--incarnation</code> and <code>--generation</code> from fresh administrator info to <code>durable-db token</code>. Omitting both produces a legacy token, which protected databases refuse.</p>
-<p>To revoke one token, submit a new policy request ID and the current <strong>policy</strong> revision, with <code>&quot;change&quot;: {&quot;action&quot;: &quot;revoke&quot;, &quot;token_id&quot;: &quot;&lt;issued UUID&gt;&quot;}</code>. To invalidate all tokens and clear the revocation set, use <code>&quot;change&quot;: {&quot;action&quot;: &quot;rotate&quot;}</code>. At most 128 token IDs can be revoked per generation. Rotation is required before adding another ID when that set is full. Revocations never expire based on a server’s clock.</p>
-<p>Policy changes leave the <strong>data</strong> revision unchanged and advance the separate policy revision. They retain the last 32 policy receipts, independent of data-write receipts. After an unknown outcome, retry the identical request ID, expected policy revision, and body. A retained receipt returns its original policy result, which may precede the current policy; use administrator info for the latest state. Beyond the receipt window, the old expected revision prevents reapplication and returns 409. Reusing a retained request ID with different content returns 400. A conflict requires inspecting fresh policy state before deciding on a new administrative operation.</p>
-<p>Info, reads, writes and write-receipt replay check the policy in their committed view. Policy changes share journal order with data writes. A pending revocation blocks new affected writes; a committed revocation also fences receipt replies. A read already in flight may finish from its earlier authorized snapshot; an operation invoked after an acknowledged revocation cannot use that old policy. Administrator operations remain privileged. <a href="security.html">Security boundaries</a> and <a href="verification.html#durable-authorization-lifecycle">verification limits</a> still apply.</p>
-<h2 id="cumulative-upload-admission">Cumulative upload admission<a class="anchor" href="#cumulative-upload-admission" aria-label="Link to this section">#</a></h2>
-<p>The native cloud CLI uses a format-6 shared partition directory with <a href="design-upload-admission.html">upload admission</a> for fresh B2/S3 namespaces. Initialize with both <code>--upload-budget-bytes</code> and <code>--upload-budget-attempts</code>. These are cumulative ceilings for immutable payload bytes and PUT attempts, shared by every database and process using the authority. They do not measure logical live data or the complete provider bill. Earlier cloud storage formats require export with their previous binary and restore into a fresh namespace; local storage is unbudgeted.</p>
-<p>The administrator GET returns <code>configuration_revision</code>, <code>limits: {bytes, attempts}</code>, and <code>allocated: {bytes, attempts}</code>. Allocation includes whole grants, uncertain allocations, and unused credit lost with a process. It is deliberately conservative. POST takes absolute replacement ceilings:</p>
-<pre><code class="language-json">{&quot;request_id&quot;:&quot;fund-next&quot;,&quot;expected_configuration_revision&quot;:0,&quot;limits&quot;:{&quot;bytes&quot;:2147483648,&quot;attempts&quot;:200000}}
-</code></pre>
-<p>At least one ceiling must increase and neither may decrease. The result contains current <code>status</code> and <code>replayed</code>. Eight administrative receipts retain exact request identity; an evicted request’s stale expected revision conflicts. Retry an uncertain change with its identical ID and body. Startup flags never reset an initialized ledger. Administrative refill stays available before owner readiness. Existing owners can read while immutable upload credit is exhausted; acquiring an owner, publishing checkpoints and writing data require funded uploads. Fenced physical collection itself needs no immutable PUT credit, but virtual partition-control publication still uses the shared directory allowance. Exhaustion returns <code>503 storage_unavailable</code> because a previously submitted proposal may still commit. Resolve the original write identity after a refill; do not reinterpret exhaustion as a definite abort.</p>
-<h2 id="errors-and-bounds">Errors and bounds<a class="anchor" href="#errors-and-bounds" aria-label="Link to this section">#</a></h2>
-<p>Errors use <code>{error,message}</code>: 400 invalid request, 401 invalid/mismatched credentials, 404 missing database, 409 conflict, 413 resource limit, 429 admission limit, 503 provider failure or deadline. Axum’s malformed-JSON/body-extraction errors may use plain text. Provider error details, object names, secrets, and values are not returned to callers.</p>
-<p>An API 503 response over HTTP/1 includes <code>Connection: close</code>: the complete error
-reply precedes closure, allowing the next explicit retry to select a new Service
-connection. Keep the identical request ID, revision and body for an uncertain
-write. This does not replay requests or guarantee a different or healthy pod.
-Other API responses retain normal connection reuse; HTTP/2 responses never carry
-this hop-by-hop header. A provider-wide outage can still cause connection churn.</p>
+<p>All writes apply together or not at all. A transaction needs at least one write and may write each key once.</p>
+<p><strong>Checks</strong> make it conditional. If any check fails the response is <code>409</code> with code <code>conflict</code> and nothing is written:</p>
 <table>
 <thead>
 <tr>
-<th>Resource</th>
-<th>Initial bound</th>
+<th>Check</th>
+<th>Passes when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Database name</td>
-<td>1–64 lowercase ASCII letters, digits, <code>_</code> or <code>-</code></td>
+<td><code>{&quot;key&quot;: K, &quot;version&quot;: V}</code></td>
+<td>Key <code>K</code> is at version <code>V</code>. Use <code>0</code> for &quot;must not exist&quot;.</td>
 </tr>
 <tr>
-<td>Key</td>
-<td>1–1,024 UTF-8 bytes; no NUL</td>
+<td><code>{&quot;range&quot;: {...}, &quot;revision&quot;: R}</code></td>
+<td>No key in the range was written after revision <code>R</code>. The range takes <code>prefix</code>, <code>start</code> and <code>end</code> as in a scan. Use the <code>revision</code> of the read that scanned it.</td>
 </tr>
 <tr>
-<td>Value</td>
-<td>64 KiB decoded</td>
-</tr>
-<tr>
-<td>Request body</td>
-<td>1 MiB</td>
-</tr>
-<tr>
-<td>Operations</td>
-<td>128 checks+writes, or keys+scans</td>
-</tr>
-<tr>
-<td>Scan page</td>
-<td>1–1,000 entries</td>
-</tr>
-<tr>
-<td>Read result data</td>
-<td>1 MiB across all values and scan keys</td>
-</tr>
-<tr>
-<td>Immutable data loaded/rewritten per operation</td>
-<td>8 MiB each</td>
-</tr>
-<tr>
-<td>Manifest</td>
-<td>512 KiB; at most 2,048 pages</td>
-</tr>
-<tr>
-<td>Database logical quota</td>
-<td>Configurable up to 256 MiB and 1,000,000 keys</td>
-</tr>
-<tr>
-<td>Default cache</td>
-<td>64 MiB accounted encoded bytes; at most 4,096 entries</td>
-</tr>
-<tr>
-<td>Default concurrent admitted requests</td>
-<td>8 tenant slots plus 2 administrator/metrics slots per pod</td>
-</tr>
-<tr>
-<td>Per-database admission</td>
-<td>20 tokens/sec, burst 40 per pod; commit costs 5, other requests 1</td>
-</tr>
-<tr>
-<td>Request deadline</td>
-<td>30 seconds</td>
+<td>top-level <code>&quot;if_revision&quot;: R</code></td>
+<td>The whole database is still at revision <code>R</code>.</td>
 </tr>
 </tbody>
 </table>
-<p>Quota accounting includes user key and value bytes. Physical object bytes, receipts, manifests, and transient orphan uploads are additional. Limits reject before publishing; they never silently truncate. Use bounded scans and values, and choose an ingress spend/rate budget for an Internet-facing deployment.</p>
-<p>Native database budgets use these same request/result shapes at <code>/v1/databases/{db}/upload-budget</code>, with an additional <code>maintenance: {funded_bytes, allocated: {bytes, attempts}}</code> in status. Defaults on protected creation are 64 MiB of combined admission/reserve funding and 16,384 transaction admissions; an administrator-preprovisioned ledger is preserved. Each byte grant divides its allocation equally between volatile admission rights and durable maintenance reserve. The nested counter counts construction claims and their conservative byte allowance, including lost replies; the outer allocation includes all grants and reserve funding.</p>
-<p>Write-admission exhaustion returns <code>413 limit_exceeded</code> before journal order, so funded neighbors can continue. Admission prepays construction reserve; retries or recovery claim fresh allowance before construction. If repeated failures exhaust reserve and the remaining ceiling, shared checkpointing can stop until an explicit refill. Neither credential rotation, checkpoints nor process replacement resets spent credit. See <a href="design-upload-admission.html#native-serving">native upload admission</a> for units and exclusions. The native cloud CLI implements database-specific budget routes; unbudgeted local mode returns <code>501</code>.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="deployment.html"><span>Previous</span>Deployment</a><a class="next" href="clients.html"><span>Next</span>Clients</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#endpoints">Endpoints</a></li><li><a href="#create-a-protected-database">Create a protected database</a></li><li><a href="#read-a-snapshot">Read a snapshot</a></li><li><a href="#commit">Commit</a></li><li><a href="#durable-token-revocation">Durable token revocation</a></li><li><a href="#cumulative-upload-admission">Cumulative upload admission</a></li><li><a href="#errors-and-bounds">Errors and bounds</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<p>Read, compute, and commit with a check for each key and range you read: the transaction then behaves as if it ran alone. On <code>409</code>, read again and recompute. The conflict carries <code>&quot;revision&quot;</code>: pass it as <code>min_revision</code> and the read is guaranteed to include whatever caused the conflict. Range checks are verified against recent writes only; a range read too long ago fails with <code>409</code> and is simply read again.</p>
+<p>There is no read at an exact past revision. Two separate reads may see different revisions; the checks catch it at commit.</p>
+<p><strong>Idempotency.</strong> With an <code>idempotency_key</code> (1 to 255 bytes), repeating the same transaction returns the original result instead of applying it again, for the next 100,000 revisions. Reusing a key with different writes is a <code>400</code>. Always send one when a retry is possible.</p>
+<p><strong>Several transactions</strong> in one request are applied in order, each atomically, each with its own revision:</p>
+<pre><code class="language-http">{&quot;transactions&quot;: [{&quot;writes&quot;: [...]}, {&quot;checks&quot;: [...], &quot;writes&quot;: [...]}]}
+</code></pre>
+<pre><code class="language-json">{&quot;results&quot;: [{&quot;revision&quot;: 1209}, {&quot;error&quot;: {&quot;code&quot;: &quot;conflict&quot;, &quot;message&quot;: &quot;...&quot;, &quot;retryable&quot;: false}}]}
+</code></pre>
+<p>Each transaction takes the same fields as a single one, including its own <code>idempotency_key</code>; nothing but <code>transactions</code> may appear at the top level. The first failure stops the request; later transactions report <code>conflict</code> with the message &quot;not attempted&quot;. The status is <code>200</code> whenever the request itself was understood. If any transaction is malformed the whole request is a <code>400</code> and none is applied.</p>
+<h2 id="single-keys">Single keys<a class="anchor" href="#single-keys" aria-label="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /v1/databases/{name}/keys/{key}</code></td>
+<td>The value as the response body, with <code>x-ddb-version</code> and <code>x-ddb-revision</code> headers. <code>404</code> when absent. Add <code>?consistency=session</code> for a read from memory.</td>
+</tr>
+<tr>
+<td><code>PUT /v1/databases/{name}/keys/{key}</code></td>
+<td>Store the body, which must be JSON. Returns <code>{&quot;revision&quot;: N}</code>.</td>
+</tr>
+<tr>
+<td><code>DELETE /v1/databases/{name}/keys/{key}</code></td>
+<td>Delete the key. Returns <code>{&quot;revision&quot;: N}</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Percent-encode the key in the path; <code>/</code> may be left as is.</p>
+<h2 id="errors">Errors<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-json">{&quot;error&quot;: {&quot;code&quot;: &quot;conflict&quot;, &quot;message&quot;: &quot;key \&quot;accounts/a\&quot; is at version 1201, not 1190&quot;, &quot;retryable&quot;: false}}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Code</th>
+<th>Meaning</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td><code>invalid</code></td>
+<td>The request is malformed or exceeds a limit.</td>
+<td>Fix the request.</td>
+</tr>
+<tr>
+<td>401</td>
+<td><code>unauthorized</code></td>
+<td>Missing, forged, expired or revoked token.</td>
+<td>Obtain a token.</td>
+</tr>
+<tr>
+<td>403</td>
+<td><code>forbidden</code></td>
+<td>The token does not cover this database or action.</td>
+<td></td>
+</tr>
+<tr>
+<td>404</td>
+<td><code>not_found</code></td>
+<td>No such database, or no such key on a single-key <code>GET</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>409</td>
+<td><code>conflict</code></td>
+<td>A check failed. The error carries <code>revision</code>.</td>
+<td>Read at that revision or later, and recompute.</td>
+</tr>
+<tr>
+<td>409</td>
+<td><code>exists</code></td>
+<td>The database exists with different settings.</td>
+<td></td>
+</tr>
+<tr>
+<td>410</td>
+<td><code>deleted</code></td>
+<td>The database was deleted.</td>
+<td></td>
+</tr>
+<tr>
+<td>413</td>
+<td><code>too_large</code></td>
+<td>The request body exceeds 32 MiB.</td>
+<td>Split the request.</td>
+</tr>
+<tr>
+<td>429</td>
+<td><code>rate_limited</code></td>
+<td>The database's request budget is spent.</td>
+<td>Retry after <code>Retry-After</code> seconds.</td>
+</tr>
+<tr>
+<td>503</td>
+<td><code>busy</code>, <code>ownership_moved</code>, <code>storage_unavailable</code></td>
+<td>The request could not be completed now: ownership is moving, storage did not answer, or the server is shedding load.</td>
+<td>Repeat the identical request.</td>
+</tr>
+<tr>
+<td>507</td>
+<td><code>quota_exceeded</code></td>
+<td>The database is at <code>max_bytes</code>.</td>
+<td>Delete data or raise the quota.</td>
+</tr>
+</tbody>
+</table>
+<p>A <code>503</code> on a commit means the outcome is <strong>unknown</strong>: the transaction may have been applied. Repeating it with the same <code>idempotency_key</code> is always safe and returns the definite result. Servers repeat such commits themselves when a key is present, so clients see this rarely.</p>
+<h2 id="limits">Limits<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key</td>
+<td>1 to 1,024 bytes</td>
+</tr>
+<tr>
+<td>Value</td>
+<td>4 MiB (<code>--max-value-bytes</code>)</td>
+</tr>
+<tr>
+<td>Request body</td>
+<td>32 MiB</td>
+</tr>
+<tr>
+<td>Writes plus checks per transaction</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td>Keys plus scans per read</td>
+<td>10,000</td>
+</tr>
+<tr>
+<td>Scan page</td>
+<td>10,000 items or 8 MiB</td>
+</tr>
+<tr>
+<td>One read's result</td>
+<td>64 MiB</td>
+</tr>
+<tr>
+<td>Database size</td>
+<td>1 GiB (<code>max_bytes</code>, per database)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="health-and-metrics">Health and metrics<a class="anchor" href="#health-and-metrics" aria-label="Link to this section">#</a></h2>
+<p><code>GET /healthz</code> answers <code>200</code> while the process runs. <code>GET /readyz</code> answers <code>200</code> when storage is reachable; use it as the readiness probe. <code>GET /metrics</code> returns Prometheus text: request and storage latency histograms, cache statistics and open databases. No key, value, token or database name appears in metrics or logs.</p>
+</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="deployment.html"><span>Previous</span>Deployment</a><a class="next" href="clients.html"><span>Next</span>TypeScript SDK</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#concepts">Concepts</a></li><li class="h2"><a href="#authentication">Authentication</a></li><li class="h2"><a href="#databases">Databases</a></li><li class="h2"><a href="#read">Read</a></li><li class="h2"><a href="#commit">Commit</a></li><li class="h2"><a href="#single-keys">Single keys</a></li><li class="h2"><a href="#errors">Errors</a></li><li class="h2"><a href="#limits">Limits</a></li><li class="h2"><a href="#health-and-metrics">Health and metrics</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html" aria-current="page">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

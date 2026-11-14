@@ -1,165 +1,279 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>durable-db · Transactional key-value storage that lives in your bucket</title><meta name="description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta property="og:title" content="durable-db · Transactional key-value storage that lives in your bucket"><meta property="og:description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main">
-<section class="hero wrap">
-<div class="hero-copy">
-<a class="pill" href="production-readiness.html"><span class="dot dot-ready"></span>v1.0.12 · B2, one trust domain. Read the release scope. <span aria-hidden="true">→</span></a>
-<h1>Transactional <span class="nowrap">key-value</span> storage that lives in your bucket.</h1>
-<p class="lead">durable-db is one Rust binary that serves atomic transactions and ordered scans over HTTP. S3 or Backblaze B2 holds the authoritative data. API servers keep only disposable state, so you can add, replace or stop all of them without moving the database. On a laptop, a local directory replaces the bucket.</p>
-<div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="api.html">HTTP API reference</a></div>
-<ul class="facts" aria-label="At a glance"><li>One static binary</li><li>S3, B2 or a local directory</li><li>TypeScript SDK</li><li>Specified in TLA+</li><li>Apache-2.0</li></ul>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>durable-db · A transactional key-value database stored in a bucket</title>
+<meta name="description" content="A transactional, ordered key-value database in one static Rust binary. The data is immutable objects in Backblaze B2, an S3-compatible bucket or a local directory, so servers keep no state.">
+<meta property="og:title" content="durable-db · A transactional key-value database stored in a bucket">
+<meta property="og:description" content="A transactional, ordered key-value database in one static Rust binary. The data is immutable objects in Backblaze B2, an S3-compatible bucket or a local directory, so servers keep no state.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
 </div>
-<div class="code-card hero-code" data-tabs>
-<div class="code-head"><div role="tablist" aria-label="Example language" hidden><button type="button" role="tab" id="tab-ts" aria-controls="panel-ts">TypeScript</button><button type="button" role="tab" id="tab-http" aria-controls="panel-http">HTTP</button></div></div>
-<div role="tabpanel" id="panel-ts" aria-labelledby="tab-ts"><p class="panel-label">TypeScript</p><pre><code><span class="k">import</span> { Database } <span class="k">from</span> <span class="s">'@durable-db/client'</span>;
+</header>
+<main id="main">
 
-<span class="k">const</span> db = <span class="k">new</span> Database({ url, database: <span class="s">'my-app'</span>, token });
+<section class="hero wrap" aria-labelledby="hero-title">
+<div class="hero-copy">
+<a class="pill" href="#limits">v2.0.0 · Read the limits and what is not done yet <span aria-hidden="true">→</span></a>
+<h1 id="hero-title">A transactional <span class="nowrap">key-value</span> database stored in a bucket.</h1>
+<p class="lead">durable-db is one static Rust binary that serves atomic transactions and ordered scans of JSON values over HTTP. The data is immutable objects in Backblaze B2 or another S3-compatible bucket, so servers keep no state: add them, remove them or kill every one, and nothing is lost.</p>
+<div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="#how">How it works</a></div>
+<div class="install"><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh</code></pre></div>
+<ul class="facts" aria-label="At a glance"><li>One binary, about 8 MB</li><li>B2, S3-compatible or a local directory</li><li>No conditional writes, leases or synchronized clocks</li><li>Modelled in TLA+</li><li>Apache-2.0</li></ul>
+</div>
+<div class="code-card" data-tabs>
+<div class="code-head"><div role="tablist" aria-label="Example" hidden><button type="button" role="tab" id="tab-ts" aria-controls="panel-ts">TypeScript SDK</button><button type="button" role="tab" id="tab-http" aria-controls="panel-http">HTTP with curl</button></div></div>
+<div role="tabpanel" id="panel-ts" aria-labelledby="tab-ts"><p class="panel-label">TypeScript SDK</p><pre tabindex="0"><code><span class="k">import</span> { Database } <span class="k">from</span> <span class="s">'@durable-db/client'</span>;
 
-<span class="c">// One atomic read-modify-write. A conflict reruns the</span>
-<span class="c">// callback; a lost response retries the identical commit.</span>
+<span class="k">const</span> db = <span class="k">new</span> Database({ url, database: <span class="s">'demo'</span>, token });
+
+<span class="k">await</span> db.set(<span class="s">'users/ada'</span>, { name: <span class="s">'Ada'</span> });
+<span class="k">const</span> ada = <span class="k">await</span> db.get&lt;{ name: string }&gt;(<span class="s">'users/ada'</span>);
+
+<span class="c">// Atomic. If another transaction changes a key this one</span>
+<span class="c">// read, nothing is written and the callback runs again.</span>
 <span class="k">await</span> db.transaction(<span class="k">async</span> (tx) =&gt; {
-  <span class="k">const</span> task = <span class="k">await</span> tx.get&lt;Task&gt;(<span class="s">`tasks/${id}`</span>);
-  <span class="k">if</span> (!task || task.done) <span class="k">return</span>;
-  <span class="k">const</span> done = (<span class="k">await</span> tx.get&lt;number&gt;(<span class="s">'stats/done'</span>)) ?? <span class="n">0</span>;
-  tx.set(<span class="s">`tasks/${id}`</span>, { ...task, done: <span class="k">true</span> });
-  tx.set(<span class="s">'stats/done'</span>, done + <span class="n">1</span>);
+  <span class="k">const</span> from = (<span class="k">await</span> tx.get&lt;number&gt;(<span class="s">'accounts/a'</span>)) ?? <span class="n">0</span>;
+  <span class="k">const</span> to = (<span class="k">await</span> tx.get&lt;number&gt;(<span class="s">'accounts/b'</span>)) ?? <span class="n">0</span>;
+  <span class="k">if</span> (from &lt; <span class="n">30</span>) <span class="k">throw</span> <span class="k">new</span> Error(<span class="s">'insufficient funds'</span>);
+  tx.set(<span class="s">'accounts/a'</span>, from - <span class="n">30</span>);
+  tx.set(<span class="s">'accounts/b'</span>, to + <span class="n">30</span>);
 });
 
-<span class="c">// Ordered scans, a page at a time.</span>
-<span class="k">const</span> { items, cursor } = <span class="k">await</span> db.list&lt;Task&gt;({
-  prefix: <span class="s">'tasks/'</span>, limit: <span class="n">20</span>,
-});</code></pre></div>
-<div role="tabpanel" id="panel-http" aria-labelledby="tab-http"><p class="panel-label">HTTP</p><pre><code><span class="c"># Commit against the revision you read. If the response is</span>
-<span class="c"># lost, resend the identical request ID, revision and body.</span>
-<span class="k">POST</span> /v1/databases/my-app/commit
-<span class="k">Authorization:</span> Bearer $TOKEN
+<span class="c">// An ordered scan of a prefix, one page at a time.</span>
+<span class="k">const</span> page = <span class="k">await</span> db.list({ prefix: <span class="s">'accounts/'</span>, limit: <span class="n">20</span> });</code></pre></div>
+<div role="tabpanel" id="panel-http" aria-labelledby="tab-http"><p class="panel-label">HTTP with curl</p><pre tabindex="0"><code><span class="k">export</span> URL=http://127.0.0.1:7654/v1/databases/demo
+<span class="k">export</span> AUTH=<span class="s">"Authorization: Bearer $(durable-db create demo)"</span>
 
-{
-  <span class="s">"expected_revision"</span>: <span class="n">12</span>,
-  <span class="s">"request_id"</span>: <span class="s">"complete-task-42"</span>,
-  <span class="s">"checks"</span>: [{ <span class="s">"key"</span>: <span class="s">"tasks/42"</span>, <span class="s">"value"</span>: <span class="s">"eyJkb25lIjpmYWxzZX0="</span> }],
-  <span class="s">"writes"</span>: [
-    { <span class="s">"key"</span>: <span class="s">"tasks/42"</span>, <span class="s">"value"</span>: <span class="s">"eyJkb25lIjp0cnVlfQ=="</span> },
-    { <span class="s">"key"</span>: <span class="s">"stats/done"</span>, <span class="s">"value"</span>: <span class="s">"OA=="</span> }
-  ]
-}
+<span class="c"># Two keys written by one transaction.</span>
+curl $URL/commit -H <span class="s">"$AUTH"</span> -d <span class="s">'{"writes": [
+  {"key": "accounts/a", "value": {"balance": 100}},
+  {"key": "accounts/b", "value": {"balance": 100}}]}'</span>
+<span class="c"># {"revision":1}</span>
 
-<span class="c"># 200 {"revision": 13, "replayed": false}</span>
-<span class="c"># 409 another commit won: read again and recompute</span></code></pre></div>
+<span class="c"># Move 30, only if accounts/a is still at version 1.</span>
+<span class="c"># Sent again with the same key, it is applied once.</span>
+curl $URL/commit -H <span class="s">"$AUTH"</span> -d <span class="s">'{
+  "checks": [{"key": "accounts/a", "version": 1}],
+  "writes": [
+    {"key": "accounts/a", "value": {"balance": 70}},
+    {"key": "accounts/b", "value": {"balance": 130}}],
+  "idempotency_key": "transfer-7f3a"}'</span>
+<span class="c"># {"revision":2}</span>
+
+<span class="c"># An ordered scan of a prefix, read at one revision.</span>
+curl $URL/read -H <span class="s">"$AUTH"</span> \
+  -d <span class="s">'{"scans": [{"prefix": "accounts/"}]}'</span></code></pre></div>
 </div>
 </section>
 
-<section class="band" aria-labelledby="status-title">
+<section class="band" aria-labelledby="how-title" id="how">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>Use one dedicated bucket per deployment, private peer networking and TLS at
-application ingress. Fund upload allowances, set process/replica limits and
-keep independently protected backups. The latest fix wakes placement immediately
-when a serving worker retires. Failed uploads report their HTTP status or
-transport-error class without exposing request data or changing retry policy.</p>
-<p>The latest B2 run completes <strong>6,400 operations</strong> and verifies <strong>32 final states</strong>.
-At 32 workers it measures <strong>12.65 writes/s, 4.44s write p95 and an 80.52s worst
-write</strong>. Four ambiguous journal uploads return HTTP 500; one has a transport
-failure. Recovery starts within <strong>81–122ms</strong>, though full owner recovery still
-takes <strong>11.85–30.40s</strong>. Reads measure <strong>184.01/s and 254ms p95</strong>. The shorter
-control run has no upload failures and reaches 20.41 writes/s; these differing
-runs do not establish a general speedup. Recovery and funding stalls remain
-the next performance priority.</p>
-<p>A separate B2 cold-start check recovers a <strong>102-frame uncheckpointed journal</strong>
-after replacing every database process, including the exact retry receipt and
-a subsequent write. Its first correct read takes <strong>37.67s after client retries
-resume</strong>. These short fixtures do not establish latency or availability SLOs.
-See the <a href="verification-results.html">measured results</a>,
-<a href="production-readiness.html">operating scope and deferrals</a>, and <a href="recovery.html">recovery procedure</a>.</p>
-</div>
-<div class="status-grid">
-<article class="status-card"><h3><span class="dot dot-ready"></span>Supported in 1.0</h3><ul><li>Local-directory and B2 deployments within one administrative trust domain</li><li>Transactions, ordered scans, scoped credentials, quotas and bounded admission</li><li>Native Kubernetes serving, automatic checkpoints and physical collection</li><li>The TypeScript KV SDK and manual export/verified restore</li></ul></article>
-<article class="status-card"><h3><span class="dot dot-experimental"></span>Operating boundary</h3><ul><li>Dedicated bucket, private peer network, TLS ingress and operator-funded upload allowances</li><li>Backups require an operator-controlled export window and independent storage</li><li>Failover and scaling can interrupt requests; no latency or availability SLO</li><li>AWS and broader cloud Pi Harness qualification remain open</li></ul></article>
-<article class="status-card"><h3><span class="dot dot-pending"></span>Deferred</h3><ul><li>Hosting mutually untrusted tenants and complete shared-cost isolation</li><li>Scheduled backups and point-in-time recovery</li><li>The 72-hour soak, independent review and broad upgrade coverage</li><li>Additional prebuilt binary platforms</li></ul></article>
-</div>
-<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#classify-failed-uploads-and-wake-recovery-2026-11-14"><span>Classify failed uploads and wake recovery</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#confirm-uncertain-tenant-funding-2026-11-14"><span>Confirm uncertain tenant funding</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#long-journal-cold-recovery-on-b2-2026-11-14"><span>Long-journal cold recovery on B2</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#reclaim-overwritten-values-before-checkpointing-2026-11-14"><span>Reclaim overwritten values before checkpointing</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#larger-attempt-grants-reduce-funding-contention-2026-11-14"><span>Larger attempt grants reduce funding contention</span><time>2026-11-14</time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
-</div>
-</section>
-
-<section class="wrap section" aria-labelledby="how-title" id="how-it-works">
-<div class="section-head"><p class="eyebrow">How it works</p><h2 id="how-title">The bucket is the database.<br>Servers are replaceable.</h2><p>Every server uses the same bucket and prefix. DNS membership places native partition owners; object-store permits authorize serving. No attached volume or separate coordinator is required.</p></div>
+<div class="section-head"><p class="eyebrow">How it works</p><h2 id="how-title">One writer per database, decided by a claim object in the bucket</h2><p>Storage needs only PUT, GET, HEAD, LIST and DELETE with read-after-write consistency. There are no conditional writes, no leases, no synchronized clocks and no consensus service. Backblaze B2 and S3 run the same algorithm.</p></div>
 <div class="how-grid">
 <figure class="arch">
-<div class="arch-node arch-app"><strong>Your application</strong><span>TypeScript SDK or HTTP · scoped bearer tokens</span></div>
-<div class="arch-link" aria-hidden="true"></div>
-<div class="arch-pods"><div class="arch-node arch-pod"><strong>API server</strong><span>bounded cache</span></div><div class="arch-node arch-pod"><strong>API server</strong><span>bounded cache</span></div><div class="arch-node arch-pod arch-ghost"><strong>0 to N</strong><span>add or remove</span></div></div>
-<div class="arch-link" aria-hidden="true"><span>immutable uploads · conditional writes</span></div>
-<div class="arch-node arch-store"><strong>S3 or B2 bucket</strong><span>The source of truth</span><ul><li>Immutable, uniquely named data objects</li><li>A small authority record, changed only by conditional writes</li></ul></div>
-<figcaption>Remove every server and the database stays in the bucket. Start one and service resumes from storage alone, with an empty cache.</figcaption>
+<div class="arch-node arch-app"><strong>Your application</strong><span>TypeScript SDK or plain HTTP, one bearer token per database</span></div>
+<div class="arch-link"><span>JSON over HTTP</span></div>
+<div class="arch-pods"><div class="arch-node arch-pod"><strong>Server</strong><span>writes databases A and B</span></div><div class="arch-node arch-pod"><strong>Server</strong><span>writes database C</span></div><div class="arch-node arch-pod arch-ghost"><strong>Any number</strong><span>no volume, disposable caches</span></div></div>
+<div class="arch-link"><span>PUT · GET · HEAD · LIST · DELETE</span></div>
+<div class="arch-node arch-store"><strong>Bucket: Backblaze B2, S3-compatible, or a local directory</strong><span>The objects of one database, here named app. Each is written once and never changed.</span>
+<dl>
+<dt>db/app/c/&lt;epoch&gt;</dt><dd>Claim. The permit of the one server allowed to write.</dd>
+<dt>db/app/l/&lt;epoch&gt;/&lt;number&gt;</dt><dd>Frame. One group of committed transactions.</dd>
+<dt>db/app/t/&lt;epoch&gt;/&lt;id&gt;</dt><dd>Table. Sorted, compressed key-value blocks with an index.</dd>
+<dt>db/app/m/&lt;epoch&gt;/&lt;generation&gt;</dt><dd>Manifest. The list of tables that make up the state.</dd>
+</dl>
+</div>
+<figcaption>Any server accepts a request and relays it to the server that holds the database. With every server gone, the data is still in the bucket. Start one and it opens each database from the bucket on first use.</figcaption>
 </figure>
-<ol class="principles">
-<li><h3>Immutable journals, owned partitions</h3><p>Each partition orders transactions and uploads immutable journal frames. Ownership and checkpoints publish through conditional writes. Responses validate a fresh writer permit; competing commits from one database revision cannot both succeed.</p></li>
-<li><h3>Caches can be lost</h3><p>Servers keep bounded memory and disk caches and rebuild everything else from object storage. Cached bytes are verified by SHA-256. Losing a cache costs time, never data.</p></li>
-<li><h3>Uncertain writes have an answer</h3><p>If a commit’s response is lost, send the identical request again. A stored receipt returns the original result, and the old revision check stops a second application.</p></li>
-<li><h3>No clocks or leases in cleanup</h3><p>Garbage collection lists candidates, fences the state with a conditional write, and only then deletes. Pod-local locks, clocks, caches and Kubernetes leases never decide what is safe to delete.</p></li>
+<ol class="mechanism">
+<li><h3>Every object is immutable</h3><p>A database is frames, tables, manifests and a claim. A server writes them under an epoch name with a fresh random part, so two servers never write the same key. That is why no write needs to be conditional.</p></li>
+<li><h3>One server writes a database, and holds a claim</h3><p>To take a database, a server lists the claims, picks a higher epoch and PUTs its own claim object. If it then lists a claim higher than its own, it deletes its own and stops.</p></li>
+<li><h3>A successor deletes the old claim before it reads</h3><p>It deletes every lower claim first. Only then does it read the newest manifest and the frames that follow it. Nothing the previous owner acknowledges after that point can be missed.</p></li>
+<li><h3>Every acknowledgement waits for a HEAD on the claim</h3><p>A commit is one PUT of a frame, then one HEAD. If the claim still exists, the frame was stored before any successor began to read, so the successor has it. If the claim is gone, the server acknowledges nothing and the client retries with its idempotency key.</p></li>
+<li><h3>Strong reads and cleanup use the same check</h3><p>A strong read waits for a HEAD that began after the read arrived. The owner deletes superseded objects only after a HEAD that began after its newest manifest was stored. A server that has been replaced fails the check. It acknowledges nothing and deletes nothing.</p></li>
 </ol>
 </div>
-<p class="note">On a laptop, the same API runs over a local directory held by an exclusive OS lock. See the <a href="architecture.html">architecture</a> for the full protocol.</p>
+<p class="note">On one machine the same binary runs the same protocol over a local directory. The <a href="architecture.html">architecture page</a> has every step, a table of <a href="architecture.html#what-happens-when-things-fail">what happens when things fail</a>, and the reasoning for each rule.</p>
+</div>
+</section>
+
+<!-- ============================================================================
+     MEASURED NUMBERS. Every performance figure on this page is inside this
+     section. Update the conditions and the two tables here after re-measuring;
+     docs/performance.md holds the full tables and the commands.
+     ============================================================================ -->
+<section class="wrap section" aria-labelledby="measured-title" id="measured">
+<div class="section-head"><p class="eyebrow">Performance</p><h2 id="measured-title">Measured on Backblaze B2 and on a local directory</h2><p>A commit costs one upload and one HEAD, so storage latency is the floor. One database has one writer. Its throughput comes from grouping: every transaction that arrives while an upload is in flight joins the next frame.</p></div>
+<div class="measured">
+<div class="card">
+<h3>Backblaze B2</h3>
+<p class="conditions">Bucket in <code>us-west-002</code>. One server on a desktop 22 ms away. 256-byte values. Measured 2026-11-14, in an hour when B2 uploads were slow; an hour earlier a commit took 77 ms.</p>
+<table class="figures">
+<tbody>
+<tr><th scope="row">One commit, median</th><td>118 ms</td></tr>
+<tr><th scope="row">Commits, 32 clients on one database</th><td>156 /s</td></tr>
+<tr><th scope="row">Commits, 256 clients on one database</th><td>866 /s</td></tr>
+<tr><th scope="row">Commits, 64 clients across 64 databases</th><td>314 /s</td></tr>
+<tr><th scope="row">One linearizable read, median</th><td>39 ms</td></tr>
+<tr><th scope="row">Linearizable reads, 256 clients</th><td>6,342 /s</td></tr>
+<tr><th scope="row">Session reads, 32 clients</th><td>244,743 /s</td></tr>
+<tr><th scope="row">One session read, median</th><td>0.11 ms</td></tr>
+</tbody>
+</table>
+</div>
+<div class="card">
+<h3>Local directory</h3>
+<p class="conditions">The same desktop. NVMe disk. fsync on, so every write is flushed to disk before it is acknowledged.</p>
+<table class="figures">
+<tbody>
+<tr><th scope="row">One commit, median</th><td>5.9 ms</td></tr>
+<tr><th scope="row">Commits, 256 clients on one database</th><td>17,166 /s</td></tr>
+<tr><th scope="row">Linearizable reads, 256 clients</th><td>335,187 /s</td></tr>
+<tr><th scope="row">Session reads, 32 clients</th><td>276,569 /s</td></tr>
+<tr><th scope="row">Linearizable scans of 20 keys, 32 clients</th><td>239,280 /s</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<a class="more" href="performance.html">Full tables and the commands that reproduce them →</a>
+</section>
+<!-- ============================ END MEASURED NUMBERS ============================ -->
+
+<section class="band" aria-labelledby="features-title" id="features">
+<div class="wrap">
+<div class="section-head"><p class="eyebrow">What you get</p><h2 id="features-title">Transactions, scans and per-database limits over HTTP</h2><p>One deployment serves many databases. Give each tenant or application its own database and its own token.</p></div>
+<ul class="features">
+<li class="card"><h3>Atomic transactions</h3><p>All writes of a transaction apply together or not at all. Checks on key versions and key ranges make it conditional. Writes are strictly serializable, and transaction scope is one database.</p></li>
+<li class="card"><h3>Ordered scans</h3><p>Keys are strings ordered by their bytes. Scan by prefix, start and end, in either direction, one page at a time. Every key and scan in one request is read at the same revision.</p></li>
+<li class="card"><h3>Two read consistency levels</h3><p><code>strong</code>, the default, is linearizable and costs one storage round trip, shared by all reads waiting at that moment. <code>session</code> returns a consistent snapshot at the revision you have seen or newer, from memory.</p></li>
+<li class="card"><h3>Idempotent retries</h3><p>With an idempotency key, a repeated transaction returns the original result instead of applying twice. A <code>503</code> on a commit means the outcome is unknown, and repeating the request is always safe.</p></li>
+<li class="card"><h3>Tokens, quotas and rate limits</h3><p>A database token grants read or write on one database and is checked before anything touches storage. Each database has its own byte quota and request rate. One request revokes all of its tokens.</p></li>
+<li class="card"><h3>Autoscaling with no volumes</h3><p>A Kubernetes Deployment with no persistent volume, scaled by an ordinary HorizontalPodAutoscaler. A pod that is told to stop hands its databases over first. A pod that is killed loses nothing.</p></li>
+<li class="card"><h3>Automatic cleanup</h3><p>The owning server deletes the frames, manifests and tables its newest manifest no longer needs, including every old version on a versioned bucket. No lifecycle rule is needed.</p></li>
+<li class="card"><h3>The same binary everywhere</h3><p>One binary serves a laptop from a directory and a cluster from a bucket. It exposes Prometheus metrics for requests and storage calls, and a readiness probe that reports whether storage is reachable.</p></li>
+</ul>
+<p class="note">Details: <a href="api.html">HTTP API</a> for transactions, scans and errors, <a href="deployment.html#tokens-and-tenants">tokens and tenants</a>, and <a href="deployment.html#on-kubernetes">Kubernetes</a>.</p>
+</div>
+</section>
+
+<!-- VERIFICATION NUMBERS. These repeat docs/verification.md; keep the two in step. -->
+<section class="band band-dark" aria-labelledby="verification-title" id="verification">
+<div class="wrap">
+<div class="section-head"><p class="eyebrow">Verification</p><h2 id="verification-title">What was checked</h2><p>The protocol is one TLA+ model of ownership, commit, checkpoint and collection. The Rust code is written to follow it step for step, and is tested with injected faults, real server processes and a real bucket.</p></div>
+<div class="stats">
+<a href="verification.html#the-model"><strong>7.15 million</strong><span>distinct states. TLC explores the model exhaustively at 2 writers, 2 epochs and 2 transactions and finds no violation.</span></a>
+<a href="verification.html#negative-controls"><strong>8 of 8</strong><span>negative controls refuted. Each turns off one protocol rule in the model and must produce a counterexample.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>200 seeds</strong><span>of a randomized fault-injection test pass: three nodes, dropped and half-applied storage requests, crashes and stale owners.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>18,838 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled 2 → 3 → 2 and a pod was force-killed. No request failed.</span></a>
+</div>
+<p class="caveat">Bounded model checking is evidence about a model. It is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification page</a> lists the assumptions, what the model leaves out, three defects these tests found, and the obligations that remain.</p>
+</div>
+</section>
+
+<section class="wrap section" aria-labelledby="limits-title" id="limits">
+<div class="section-head"><p class="eyebrow">Limits</p><h2 id="limits-title">Limits, stated plainly</h2><p>Read these before you choose it.</p></div>
+<div class="two-up">
+<div class="card">
+<h3>By design</h3>
+<ul>
+<li><strong>One writer per database at a time.</strong> Spread load by using more databases, not more servers per database.</li>
+<li><strong>A commit costs one upload and one HEAD.</strong> A strong read costs one HEAD, shared among concurrent reads. Session reads cost none.</li>
+<li><strong>Transactions do not span databases.</strong></li>
+<li><strong>No historical reads.</strong> Only the current state is kept.</li>
+<li><strong>A deleted database's name cannot be reused.</strong></li>
+<li><strong>Merges build a table in memory</strong>, so a database should fit in a server's memory when merged. The default quota is 1 GiB per database.</li>
+<li><strong>Servers of a deployment trust each other.</strong> They talk plain HTTP inside the cluster, and all are trusted with the bucket. Per-tenant CPU accounting and billing are not provided.</li>
+</ul>
+<a class="more" href="architecture.html#limits-of-this-design">Limits of this design →</a>
+</div>
+<div class="card">
+<h3>Not done yet</h3>
+<ul>
+<li><strong>Only Backblaze B2 has been exercised</strong> among cloud providers. Amazon S3 and other S3-compatible stores share the code path except for the upload call, but have not been run.</li>
+<li><strong>No soak of many hours</strong> on a real multi-node cluster. The Kubernetes test ran on kind.</li>
+<li><strong>No point-in-time restore.</strong> Deletions are permanent. Protect the bucket with your provider's replication.</li>
+<li><strong>The prebuilt binary is Linux x86_64 only.</strong> Other platforms <a href="development.html">build from source</a>.</li>
+<li><strong>The repository is private for now.</strong> The installer uses the <code>gh</code> CLI, signed in to an account with access.</li>
+<li><strong>No independent review yet.</strong> The model does not cover database deletion, conditional transactions or liveness.</li>
+</ul>
+<a class="more" href="verification.html#remaining-obligations">Remaining obligations →</a>
+</div>
+</div>
 </section>
 
 <section class="band" aria-labelledby="quickstart-title" id="quickstart">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on your laptop in a minute</h2><p>No bucket, container or extra service needed. v1.0.12 ships a static binary for Linux x86_64; other platforms can <a href="development.html">build from source</a>.</p></div>
+<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on one machine, then on a bucket</h2><p>The first three steps need no bucket, container or other service.</p></div>
 <ol class="steps">
-<li><div><h3>Install</h3><p>The installer verifies the release checksum and installs one file in <code>~/.local/bin</code>. While the repository is private, authenticate the <code>gh</code> CLI with an account that has access.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
-export PATH="$HOME/.local/bin:$PATH"</code></pre></li>
-<li><div><h3>Start a server</h3><p>It listens on <code>127.0.0.1:7654</code>. The first start creates <code>data/admin.key</code>, which signs administrator tokens. Keep it private.</p></div><pre data-copy><code>durable-db serve --data ./data</code></pre></li>
-<li><div><h3>Create a database and commit</h3><p>In another terminal. Values are base64, so <code>d29ybGQ=</code> is <code>world</code>. A read returns the revision to send with your next commit.</p></div><pre data-copy><code>export DDB_TOKEN=$(durable-db token --key-file ./data/admin.key --admin)
-curl -X PUT http://127.0.0.1:7654/v1/databases/demo \
-  -H "Authorization: Bearer $DDB_TOKEN" -H 'Content-Type: application/json' \
-  -d '{"request_id":"create-demo","limits":{"max_bytes":67108864,"max_keys":100000}}'
-curl http://127.0.0.1:7654/v1/databases/demo/commit \
-  -H "Authorization: Bearer $DDB_TOKEN" -H 'Content-Type: application/json' \
-  -d '{"expected_revision":0,"request_id":"first-write","writes":[{"key":"hello","value":"d29ybGQ="}]}'
-curl http://127.0.0.1:7654/v1/databases/demo/read \
-  -H "Authorization: Bearer $DDB_TOKEN" -H 'Content-Type: application/json' \
-  -d '{"keys":["hello"]}'</code></pre></li>
+<li><div><h3>Install</h3><p>The script downloads the release for Linux x86_64, verifies its checksum and puts <code>durable-db</code> in <code>~/.local/bin</code>. While the repository is private it uses the <code>gh</code> CLI, which must be signed in to an account with access.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh</code></pre></li>
+<li><div><h3>Start a server</h3><p>It listens on <code>127.0.0.1:7654</code> and stores everything in <code>./data</code>. The first start creates <code>./data/admin.key</code>, the signing key for tokens.</p></div><pre data-copy><code>durable-db serve --data ./data</code></pre></li>
+<li><div><h3>Create a database, write and read</h3><p>In a second terminal, from the same directory. <code>durable-db create</code> creates the database and prints a write token for it.</p></div><pre data-copy><code>export URL=http://127.0.0.1:7654/v1/databases/demo
+export AUTH="Authorization: Bearer $(durable-db create demo)"
+
+curl -X PUT $URL/keys/greeting -H "$AUTH" -d '"hello"'       # {"revision":1}
+curl $URL/keys/greeting -H "$AUTH"                            # "hello"</code></pre></li>
+<li><div><h3>Serve from a bucket</h3><p>For Backblaze B2, create a private bucket and an application key restricted to it. Every server of a deployment needs the same signing key. At startup the server probes the bucket and refuses to start if storage does not behave as required.</p></div><pre data-copy><code>openssl rand -hex 32 &gt; admin.key &amp;&amp; chmod 600 admin.key
+
+export AWS_ACCESS_KEY_ID=&lt;keyID&gt; AWS_SECRET_ACCESS_KEY=&lt;applicationKey&gt;
+durable-db serve \
+  --bucket my-bucket \
+  --endpoint https://s3.us-west-002.backblazeb2.com \
+  --key-file admin.key</code></pre></li>
 </ol>
-<p class="next-steps">Next: <a href="clients.html">use the TypeScript SDK</a>, <a href="web-app.html">read the web app example</a>, or <a href="deployment.html">deploy on S3, B2 or Kubernetes</a>.</p>
-</div>
-</section>
-
-<section class="wrap section" aria-labelledby="contract-title">
-<div class="section-head"><p class="eyebrow">The contract</p><h2 id="contract-title">What you can rely on</h2><p>The contract the first production release must qualify. Transactions are scoped to one database; use one database per tenant or application.</p></div>
-<div class="contract-grid">
-<ul class="guarantees">
-<li><strong>Serializable transactions within a database.</strong> Every commit names the revision it read. If anything committed since, it gets 409 and the client recomputes.</li>
-<li><strong>Durable acknowledgements.</strong> An acknowledged write must survive the loss of every API server and every cache.</li>
-<li><strong>Ordered reads.</strong> Keys sort by UTF-8 bytes. Scans take a prefix, a range, a cursor and a direction, and every key and scan in a request reads one snapshot.</li>
-<li><strong>Exact retries.</strong> Receipts for the last 128 commits return the original result to an identical retry.</li>
-<li><strong>Limits that refuse instead of truncating.</strong> Quotas, request sizes, caches and per-principal request budgets reject work before anything is published.</li>
-<li class="excluded"><strong>Out of scope.</strong> Transactions that span databases, and long-running historical snapshots.</li>
-</ul>
-<div class="table-wrap"><table class="limits"><caption>Initial limits</caption><tbody>
-<tr><th scope="row">Database</th><td>Up to 256 MiB and 1,000,000 keys</td></tr>
-<tr><th scope="row">Key</th><td>1–1,024 UTF-8 bytes</td></tr>
-<tr><th scope="row">Value</th><td>64 KiB</td></tr>
-<tr><th scope="row">Request</th><td>1 MiB and 128 operations</td></tr>
-<tr><th scope="row">Scan page</th><td>Up to 1,000 entries</td></tr>
-<tr><th scope="row">Read result</th><td>1 MiB</td></tr>
-<tr><th scope="row">Request deadline</th><td>30 seconds</td></tr>
-</tbody></table><a class="more" href="api.html#errors-and-bounds">All limits and error codes →</a></div>
-</div>
-</section>
-
-<section class="band band-dark" aria-labelledby="verification-title">
-<div class="wrap">
-<div class="section-head"><p class="eyebrow">Verification</p><h2 id="verification-title">Correctness you can inspect</h2><p>Protocol changes start as TLA+ models, which ship with deliberately broken variants that must produce counterexamples. The Rust implementation faces fault injection against real B2, MinIO and Kubernetes.</p></div>
-<div class="stats">
-<a href="verification-results.html#repeated-overwrites-reuse-funded-checkpoint-copies-2026-11-14"><strong>2,120 operations</strong><span>64 KiB B2 matrix completes at unchanged allowances. At 32 workers: 7.27 writes/s, 82.60 reads/s. Write performance remains poor; all final values verified.</span></a>
-<a href="proof-publication.html"><strong>35</strong><span>obligations in an unbounded TLAPS proof of abstract page reachability</span></a>
-<a href="verification-results.html#recovery-reuses-authenticated-catalog-pages-2026-11-13"><strong>41.31s</strong><span>largest scale-down readback gap on v1.0.6; 385/385 acknowledged writes recovered. This meets the 60s target. The preceding run measured 41.55s. Short samples; no SLO.</span></a>
-<a href="verification-results.html#directory-capacity-at-100005-entries"><strong>100,005</strong><span>databases in the directory capacity check, every head reopened without a cache</span></a>
-</div>
-<p class="caveat">Bounded model checking is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification record</a> lists every assumption, checked bound and remaining obligation.</p>
+<p class="note">Next: <a href="deployment.html#on-kubernetes">run it on Kubernetes</a>, use the <a href="clients.html">TypeScript SDK</a>, or read the <a href="api.html">HTTP API</a>.</p>
 </div>
 </section>
 
 <section class="wrap section" aria-labelledby="docs-title" id="docs">
-<div class="section-head"><p class="eyebrow">Documentation</p><h2 id="docs-title">Read further</h2></div>
-<div class="directory"><section><h3>Start</h3><ul><li><a href="deployment.html"><strong>Deployment</strong><span>Install, run locally, then deploy on S3, B2 or Kubernetes.</span></a></li><li><a href="api.html"><strong>HTTP API</strong><span>Endpoints, snapshots, commits, retries, errors and limits.</span></a></li><li><a href="clients.html"><strong>Clients</strong><span>The TypeScript SDK, the wire client and pi-durable adapters.</span></a></li><li><a href="web-app.html"><strong>Web app example</strong><span>A task board built on the TypeScript SDK.</span></a></li></ul></section><section><h3>Understand</h3><ul><li><a href="architecture.html"><strong>Architecture</strong><span>Authority, the commit protocol and fenced collection.</span></a></li><li><a href="b2.html"><strong>B2 protocol</strong><span>How Backblaze B2 provides conditional publication.</span></a></li><li><a href="security.html"><strong>Security</strong><span>Trust boundaries, credentials and resource isolation.</span></a></li></ul></section><section><h3>Operate</h3><ul><li><a href="recovery.html"><strong>Backup and restore</strong><span>Consistent export, resumable restore and format upgrades.</span></a></li><li><a href="observability.html"><strong>Observability</strong><span>Prometheus metrics, alerts and incident response.</span></a></li><li><a href="development.html"><strong>Development</strong><span>Building from source, focused checks and CI.</span></a></li></ul></section><section><h3>Verify</h3><ul><li><a href="production-readiness.html"><strong>Production readiness</strong><span>Supported 1.0 scope, evidence and deferred work.</span></a></li><li><a href="verification.html"><strong>Verification</strong><span>Models, assumptions, checked bounds and open obligations.</span></a></li><li><a href="verification-results.html"><strong>Verification results</strong><span>Dated experiments and release qualification.</span></a></li><li><a href="proof-publication.html"><strong>Publication proof</strong><span>An unbounded TLAPS proof of abstract page reachability.</span></a></li></ul></section><section><h3>Design notes</h3><ul><li><a href="design-owned-partitions.html"><strong>Owned partitions</strong><span>The native serving and durable-log replacement.</span></a></li><li><a href="design-upload-admission.html"><strong>Upload admission</strong><span>Durable, cumulative limits on immutable uploads.</span></a></li><li><a href="design-budgetless-collection.html"><strong>Budgetless collection</strong><span>Collecting data pages without upload credit.</span></a></li><li><a href="design-signing-rotation.html"><strong>Signing key rotation</strong><span>Overlapping signing keys and rolling rotation.</span></a></li></ul></section></div>
+<div class="section-head"><p class="eyebrow">Documentation</p><h2 id="docs-title">Every page</h2></div>
+<ul class="directory"><li><a href="deployment.html"><strong>Deployment</strong><span>Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.</span></a></li><li><a href="api.html"><strong>HTTP API</strong><span>Reads, scans, commits, checks, idempotency keys, errors and limits.</span></a></li><li><a href="clients.html"><strong>TypeScript SDK</strong><span>The typed client for Node.js and the pi-durable storage adapter.</span></a></li><li><a href="architecture.html"><strong>Architecture</strong><span>The objects in the bucket, taking ownership, committing, reading, collection and failures.</span></a></li><li><a href="performance.html"><strong>Performance</strong><span>Benchmark tables and the commands that reproduce them.</span></a></li><li><a href="verification.html"><strong>Verification</strong><span>What is claimed, the assumptions, the TLA+ model, the tests and what remains unchecked.</span></a></li><li><a href="development.html"><strong>Development</strong><span>Build from source, run the checks, repository layout, releases and CI.</span></a></li></ul>
 </section>
+
 </main>
-<footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

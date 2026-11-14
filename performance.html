@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Performance · durable-db</title>
+<meta name="description" content="Benchmark tables and the commands that reproduce them.">
+<meta property="og:title" content="Performance · durable-db">
+<meta property="og:description" content="Benchmark tables and the commands that reproduce them.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html" aria-current="page">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
+
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html" aria-current="page">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>Performance</h1>
+<p>Every number here was measured with <code>durable-db bench</code>, which is part of the binary, on 2026-11-14 with release 2.0.0. The load is closed-loop: each client sends one request and waits for the answer, so latency is what a caller observes and throughput is completed requests over wall time. Values are 256 bytes of JSON. Reproduce any table with:</p>
+<pre><code class="language-sh">scripts/benchmark.sh          # against DURABLE_DB_URL, using DURABLE_DB_KEY_FILE
+</code></pre>
+<h2 id="what-a-request-costs">What a request costs<a class="anchor" href="#what-a-request-costs" aria-label="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Storage work</th>
+<th>Typical time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commit</td>
+<td>One upload and one HEAD, shared by every transaction in the same group</td>
+<td>The store's upload time plus a HEAD</td>
+</tr>
+<tr>
+<td>Strong read</td>
+<td>One HEAD, shared by every read waiting at that moment</td>
+<td>The store's HEAD time</td>
+</tr>
+<tr>
+<td>Session read</td>
+<td>None</td>
+<td>Memory speed</td>
+</tr>
+<tr>
+<td>Opening a database</td>
+<td>About six small requests and two uploads</td>
+<td>A few hundred milliseconds on a bucket</td>
+</tr>
+</tbody>
+</table>
+<p>Throughput on one database comes from grouping: all transactions that arrive during an upload ride the next one. More clients mean larger groups, not more uploads.</p>
+<h2 id="local-directory">Local directory<a class="anchor" href="#local-directory" aria-label="Link to this section">#</a></h2>
+<p>One server, <code>durable-db serve --data</code>, writes flushed to disk before they are acknowledged. A 32-core desktop with a consumer NVMe drive on which one flush takes about 3 ms; a commit needs two (the file and its directory entry).</p>
+<table>
+<thead>
+<tr>
+<th>Workload</th>
+<th style="text-align:right">Requests/s</th>
+<th style="text-align:right">p50</th>
+<th style="text-align:right">p99</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commit, 1 client</td>
+<td style="text-align:right">173</td>
+<td style="text-align:right">5.9 ms</td>
+<td style="text-align:right">11.0 ms</td>
+</tr>
+<tr>
+<td>Commit, 32 clients, one database</td>
+<td style="text-align:right">2,168</td>
+<td style="text-align:right">14.8 ms</td>
+<td style="text-align:right">19.9 ms</td>
+</tr>
+<tr>
+<td>Commit, 256 clients, one database</td>
+<td style="text-align:right">17,166</td>
+<td style="text-align:right">14.9 ms</td>
+<td style="text-align:right">20.7 ms</td>
+</tr>
+<tr>
+<td>Commit, 64 clients over 64 databases</td>
+<td style="text-align:right">5,310</td>
+<td style="text-align:right">12.0 ms</td>
+<td style="text-align:right">15.1 ms</td>
+</tr>
+<tr>
+<td>Commit with an idempotency key, 32 clients</td>
+<td style="text-align:right">2,154</td>
+<td style="text-align:right">14.9 ms</td>
+<td style="text-align:right">20.2 ms</td>
+</tr>
+<tr>
+<td>Strong read, 32 clients</td>
+<td style="text-align:right">194,523</td>
+<td style="text-align:right">0.14 ms</td>
+<td style="text-align:right">0.44 ms</td>
+</tr>
+<tr>
+<td>Strong read, 256 clients</td>
+<td style="text-align:right">335,187</td>
+<td style="text-align:right">0.70 ms</td>
+<td style="text-align:right">1.79 ms</td>
+</tr>
+<tr>
+<td>Session read, 32 clients</td>
+<td style="text-align:right">276,569</td>
+<td style="text-align:right">0.10 ms</td>
+<td style="text-align:right">0.35 ms</td>
+</tr>
+<tr>
+<td>Strong scan of 20 keys, 32 clients</td>
+<td style="text-align:right">239,280</td>
+<td style="text-align:right">0.12 ms</td>
+<td style="text-align:right">0.34 ms</td>
+</tr>
+<tr>
+<td>Half reads, half commits, 64 clients over 8 databases</td>
+<td style="text-align:right">8,603</td>
+<td style="text-align:right">0.49 ms</td>
+<td style="text-align:right">20.8 ms</td>
+</tr>
+</tbody>
+</table>
+<p>Commit latency is the disk's flush time and does not grow with load; throughput grows with clients because each flush carries more transactions.</p>
+<h2 id="backblaze-b2">Backblaze B2<a class="anchor" href="#backblaze-b2" aria-label="Link to this section">#</a></h2>
+<p>One server on the same desktop, on a residential connection 22 ms from B2's <code>us-west-002</code> region, with default settings.</p>
+<table>
+<thead>
+<tr>
+<th>Workload</th>
+<th style="text-align:right">Requests/s</th>
+<th style="text-align:right">p50</th>
+<th style="text-align:right">p99</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commit, 1 client</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">118 ms</td>
+<td style="text-align:right">396 ms</td>
+</tr>
+<tr>
+<td>Commit, 32 clients, one database</td>
+<td style="text-align:right">156</td>
+<td style="text-align:right">186 ms</td>
+<td style="text-align:right">452 ms</td>
+</tr>
+<tr>
+<td>Commit, 256 clients, one database</td>
+<td style="text-align:right">866</td>
+<td style="text-align:right">289 ms</td>
+<td style="text-align:right">532 ms</td>
+</tr>
+<tr>
+<td>Commit, 64 clients over 64 databases</td>
+<td style="text-align:right">314</td>
+<td style="text-align:right">162 ms</td>
+<td style="text-align:right">791 ms</td>
+</tr>
+<tr>
+<td>Commit with an idempotency key, 32 clients</td>
+<td style="text-align:right">175</td>
+<td style="text-align:right">161 ms</td>
+<td style="text-align:right">411 ms</td>
+</tr>
+<tr>
+<td>Strong read, 32 clients</td>
+<td style="text-align:right">690</td>
+<td style="text-align:right">43 ms</td>
+<td style="text-align:right">165 ms</td>
+</tr>
+<tr>
+<td>Strong read, 256 clients</td>
+<td style="text-align:right">6,342</td>
+<td style="text-align:right">39 ms</td>
+<td style="text-align:right">126 ms</td>
+</tr>
+<tr>
+<td>Session read, 32 clients</td>
+<td style="text-align:right">244,743</td>
+<td style="text-align:right">0.11 ms</td>
+<td style="text-align:right">0.39 ms</td>
+</tr>
+<tr>
+<td>Strong scan of 20 keys, 32 clients</td>
+<td style="text-align:right">701</td>
+<td style="text-align:right">38 ms</td>
+<td style="text-align:right">270 ms</td>
+</tr>
+<tr>
+<td>Half reads, half commits, 64 clients over 8 databases</td>
+<td style="text-align:right">601</td>
+<td style="text-align:right">76 ms</td>
+<td style="text-align:right">361 ms</td>
+</tr>
+</tbody>
+</table>
+<p><strong>B2's own latency sets these numbers, and it varies.</strong> During this run, individual uploads to B2 took 130 ms at the median and 6% took longer than a second; HEAD requests took about 30 ms. An hour earlier the same benchmark measured a single-client commit at 77 ms and 175 commits/s at 32 clients. Expect a factor of two between good and bad hours, and less latency from a server closer to the bucket.</p>
+<p>Two things keep B2's slow moments from becoming yours:</p>
+<ul>
+<li><strong>Racing uploads.</strong> B2 stores each upload on one of many storage pods, and pods differ: the same 4 KiB upload measured medians from 67 ms to over 900 ms on eight pods at one moment. durable-db remembers which pods were fast, starts two identical uploads at once (a known-fast pod and a new one), and adds another every 150 ms while none has finished. Uploads are free on B2. With a single upload per commit, the 32-client p99 in a bad period was 2.2 s; with racing it was 0.45 s.</li>
+<li><strong>B2's native upload call.</strong> PutObject through B2's S3-compatible gateway measured 150 to 260 ms at the median for the same object; B2's own upload call measured 71 ms. Uploads use the native call; everything else uses the S3 API.</li>
+</ul>
+<h3 id="opening-a-database">Opening a database<a class="anchor" href="#opening-a-database" aria-label="Link to this section">#</a></h3>
+<p>A database is opened by the first request that needs it and stays open while it is used (five minutes idle by default).</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Time to first answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Warm server, database was released cleanly</td>
+<td>0.25 to 0.45 s, 0.3 s typical</td>
+</tr>
+<tr>
+<td>Warm server, creating a database</td>
+<td>0.2 to 0.45 s</td>
+</tr>
+<tr>
+<td>Brand-new server process, database was released cleanly</td>
+<td>1.7 s (includes new connections and a B2 upload session)</td>
+</tr>
+<tr>
+<td>Brand-new server process, previous owner was killed with 30 unflushed commits</td>
+<td>1.3 s</td>
+</tr>
+<tr>
+<td>Server start to ready, including the storage check</td>
+<td>1.1 s</td>
+</tr>
+</tbody>
+</table>
+<h3 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h3>
+<p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service: 30,114 session reads/s from 192 clients with no errors while the autoscaler added a pod; a ledger of read-then-commit transfers from 16 clients over 8 databases ran at 78 transfers/s (p50 150 ms, p99 717 ms) for four minutes through a scale-out, a force-deleted pod and a scale-in. The slowest transfer, during the forced deletion, took 9.9 s.</p>
+<h2 id="what-it-costs-in-requests">What it costs in requests<a class="anchor" href="#what-it-costs-in-requests" aria-label="Link to this section">#</a></h2>
+<p>Uploads are free on B2; HEAD and GET are billed per call, LIST at a higher rate. Per request:</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Billable calls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commit</td>
+<td>One HEAD per group of transactions; uploads (two to four racing on B2)</td>
+</tr>
+<tr>
+<td>Strong read</td>
+<td>One HEAD per group of concurrent reads, at most two groups in flight</td>
+</tr>
+<tr>
+<td>Session read from cache</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Flush (every 8 MiB, 512 groups, or 5 s of quiet)</td>
+<td>Two uploads, one HEAD, two version listings, deletes</td>
+</tr>
+<tr>
+<td>Opening a database</td>
+<td>Six or seven listings (two of them a background sweep for leftovers), one GET, one HEAD, two uploads</td>
+</tr>
+<tr>
+<td>An idle database</td>
+<td>Nothing</td>
+</tr>
+</tbody>
+</table>
+<p>A database committing as fast as B2 allows from one location runs about ten groups a second, which is under a million HEADs a day. Check your provider's current price list for what that means on your bill.</p>
+<h2 id="what-is-not-measured-yet">What is not measured yet<a class="anchor" href="#what-is-not-measured-yet" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>Amazon S3 or any provider other than B2.</li>
+<li>A server in the same region as its bucket.</li>
+<li>Many hours of sustained load.</li>
+<li>Databases larger than a few hundred megabytes.</li>
+</ul>
+</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="architecture.html"><span>Previous</span>Architecture</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html" aria-current="page">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

@@ -1,192 +1,332 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Deployment and operations · durable-db</title><meta name="description" content="Install, run locally, then deploy on S3, B2 or Kubernetes."><meta property="og:title" content="Deployment and operations · durable-db"><meta property="og:description" content="Install, run locally, then deploy on S3, B2 or Kubernetes."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html" aria-current="page">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Start</p><h1 id="deployment-and-operations">Deployment and operations</h1>
-<p>The 1.0 deployment scope is one application or organization trust domain, with a dedicated B2 bucket or a local directory. AWS and mutually untrusted shared hosting remain outside that scope. The <a href="verification-results.html">verification results</a> record passing phases, failed deadlines and exact configurations.</p>
-<p>The <a href="https://github.com/ericflo/durable-db/releases">release</a> provides a static Linux x86_64 binary. While the repository is private, <code>gh</code> must be authenticated with repository access. Install without root or a Rust toolchain:</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deployment · durable-db</title>
+<meta name="description" content="Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.">
+<meta property="og:title" content="Deployment · durable-db">
+<meta property="og:description" content="Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
+
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html" aria-current="page">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>Deployment</h1>
+<p>durable-db is one static binary. The same binary serves a laptop from a directory and a Kubernetes cluster from a bucket.</p>
+<h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-sh">curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
-export PATH=&quot;$HOME/.local/bin:$PATH&quot;
-durable-db serve --data ./data
 </code></pre>
-<p>For laptop use, run <code>durable-db serve --data ./data</code>. This selects native serving with automatic checkpoints and collection. The process exclusively locks its store directory, including while stopped or suspended; no physical ownership clock is required. Stop it before opening the same directory elsewhere. Local mode must not be shared across pods, placed on a network filesystem, or cloned from live process memory. Older directories require <a href="recovery.html#local-format-upgrades">export and restore</a>.</p>
-<p>For S3, every pod receives the same bucket, prefix, and administrator signing key file. Supply AWS credentials through the provider’s environment or workload identity. For a single process, run <code>durable-db serve --bucket BUCKET --admin-key-file /run/secrets/admin.key --upload-budget-bytes 1073741824 --upload-budget-attempts 100000</code>. This listens on loopback. Multiple processes require <code>--discovery-service</code>; wildcard listeners also require <code>--advertise-ip</code>. The Kubernetes base supplies both. A startup probe rejects providers that fail conditional object writes. B2 uses the same publication implementation through its native revision binding; see <a href="b2.html">B2 configuration</a>.</p>
-<p>Use <code>/health/live</code> for liveness and <code>/health/ready</code> for readiness. On SIGTERM the server closes admission, drops readiness and signals graceful HTTP shutdown without waiting for provider I/O. HTTP acceptance and idle connections close while admitted requests and routing withdrawal drain concurrently. Withdrawal retains its five-second bound; process exit waits for both drains. The cluster retires every local resident before starting storage I/O; up to four conditional withdrawals run concurrently. In-flight requests may retain their backend until completion. A confirmed withdrawal records the departing stable member: its replacement skips the 15-second challenge wait, while another member waits before fallback. A replacement that still observes the address uses the ordinary challenge path, including after a crash or failed hint. The successor still revokes old permits and recovers journals. Shutdown hooks are never a correctness dependency. Completed cloud writes survive pod removal because their authority is object storage; clients retry ambiguous writes with identical request bodies and IDs. Local readiness checks its worker and recovered ownership. Cloud readiness exposes routing and administration once this process appears in valid discovery membership, even while partitions recover or upload credit is exhausted. Unavailable partitions return retryable errors; healthy partitions remain reachable. Data responses still require recovered ownership and fresh permit validation. Readiness is not a guarantee of continuous provider reachability.</p>
-<p>During peer isolation, a Ready pod can serve its own databases yet fail to reach
-another owner. All pods can therefore remain eligible for the shared Service
-while only some can serve a particular request. An HTTP/1 503 closes its client
-connection so an explicit retry can select another endpoint, but a shared pool
-can reuse connections that work for other databases. Readiness and connection
-reuse do not currently guarantee availability through an arbitrary ingress.
-Requiring every peer to be reachable would risk removing all endpoints during a
-split. The <a href="verification-results.html">isolation measurements</a> retain this open gate.</p>
-<p>Set pod CPU/memory limits and concurrency/cache limits together. Memory cache bytes are a payload budget, not a process RSS ceiling. Bound ingress body size, authenticate at the service, terminate TLS at trusted ingress, and retain provider credentials only on the service side. See <a href="security.html">security</a> for the remaining cluster-wide abuse protection work.</p>
-<p>Provider HTTP requests do not follow redirects. Configure the final regional S3 endpoint directly. The shared S3 connector preserves the SDK’s environment-configured timeouts, connection pooling, HTTP version, randomized DNS, proxy/exclusions/proxy CA, content type, and certificate validation settings. It uses system trust roots; <code>disable_system_certificates</code> fails startup because this CLI has no replacement-root configuration. SDK-only programmatic custom resolvers, root certificates, and default headers are not exposed. AWS credential providers and server-side encryption configuration remain handled by the SDK. Immutable uploads have one attempt per invocation; reads retain bounded SDK retries.</p>
-<p>Each native owner performs bounded scheduled maintenance. Collection uses a durable publication fence; it does not depend on pod leases or reliable termination hooks. Failed deletion is retried in later sweeps. Both providers delete obsolete physical file versions. S3 also collects superseded versions of its directory control object. External retention must not prevent reclamation or delete live files.</p>
-<h2 id="kubernetes-manifests">Kubernetes manifests<a class="anchor" href="#kubernetes-manifests" aria-label="Link to this section">#</a></h2>
-<p><code>deploy/kubernetes/</code> is a Kustomize base with a StatefulSet, client Service, headless discovery Service, HPA (1–8 replicas), and disruption budget. It uses a read-only root filesystem, unprivileged UID, bounded disposable disk cache, startup/readiness/liveness probes, and graceful drain. CPU-based autoscaling requires Metrics Server; provider latency can limit throughput even when CPU is low. Calibrate scaling against real workload measurements.</p>
-<p>Each pod advertises its stable name through <code>DURABLE_DB_MEMBER_ID</code>; placement
-hashes this identity, while routing uses its current IP. <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-identity">StatefulSet pod identities</a>
-survive replacement. Scale operations run in parallel; rolling updates replace one
-pod at a time. There are no PVCs: the bucket remains authoritative and <code>emptyDir</code>
-caches remain disposable. Replacement still needs fenced recovery, and temporary
-membership loss can still move partitions.</p>
-<p>Outside Kubernetes, set <code>--member-id</code> to a stable unique name per logical process.
-The existing <code>/health/live</code> response advertises <code>x-durable-db-member</code>; IDs are
-bounded to 253 ASCII characters. Missing headers fall back to address identity for
-older peers. Duplicate IDs exclude all ambiguous destinations while retaining
-unrelated members. These unauthenticated discovery hints belong on a trusted peer
-network and never grant permission to read or write data. Mixed-version placement
-is transitional and has not been qualified for continuous availability.</p>
-<p>Existing Deployment installations need a controller migration: scale the old
-Deployment to zero and wait for its pods to terminate, remove that Deployment,
-then apply the StatefulSet overlay. Preserve the namespace, Services, Secrets and
-bucket. This procedure has a cold-recovery interruption; applying the new base
-alone does not delete an existing Deployment.</p>
-<p>Build/pull the runtime image, then set its immutable digest in an overlay. The base’s <code>durable-db:local</code> is a deliberate image placeholder, not a published registry claim. Woodpecker publishes each successful commit’s image in the configured private registry.</p>
-<p>Create namespace <code>durable-db</code>, a <code>durable-db-signing</code> Secret containing <code>admin.key</code>, and a <code>durable-db-storage</code> Secret containing either <code>DURABLE_DB_B2_BUCKET</code>, <code>B2_APPLICATION_KEY_ID</code>, <code>B2_APPLICATION_KEY</code>, or <code>DURABLE_DB_BUCKET</code> and the S3 provider settings. Include <code>DURABLE_DB_UPLOAD_BUDGET_BYTES</code> and <code>DURABLE_DB_UPLOAD_BUDGET_ATTEMPTS</code> for initial shared ceilings. Existing counters/ceilings are preserved on reopen; refill them through the administrator API. Keep secrets out of Git. When changing provider type in an existing Secret, replace its complete <code>data</code> map and remove the old provider fields; applying new <code>stringData</code> alone may leave old environment variables behind. Startup refuses simultaneous B2 and S3 selection. Never mount a shared local store directory across pods. Apply the configured overlay with <code>kubectl apply -k</code>.</p>
-<p>The headless service publishes not-ready addresses so discovery does not depend on acquisition completing first. Discovery admits candidates only after an HTTP 200 from <code>/health/live</code>, and excludes an established peer after two missed observations even if DNS still lists it. Probes run independently of DNS refresh, with sixteen requests at most and a one-second request deadline. Three-second rounds do not overlap; large peer lists can take longer. Permit fencing, not this failure suspicion, authorizes takeover. Allow peer HTTP traffic on the advertised port. All pods must use the same peer port, IP family and fixed layout. Defaults are 16 partitions and a 128 MiB aggregate resident payload allowance (<code>--partitions</code>, <code>--resident-memory-mib</code>). The partition count does not cap database count and does not change when pods scale. Too-small per-partition shares fail startup. Frame/window/checkpoint thresholds remain per partition; the cloud receipt window is 128 commits. Journal bytes retain a 256 MiB aggregate component ceiling. Cache, transient checkpoint/HTTP/provider buffers and allocator overhead are separate from resident payload accounting; qualify peak RSS against pod limits.</p>
-<p>Before taking over from an excluded incumbent, the candidate publishes or joins a
-storage-path challenge and waits 15 seconds for an answer. The incumbent answers
-through the bucket even when peer HTTP is blocked. Pending waits release acquisition
-slots; the three-second scheduler revisits them while other partitions recover.
-A response defers takeover. The candidate waits out that challenge’s deadline
-before issuing another, leaving checkpoint comparisons a quiet interval. If the
-owner answers and then dies, takeover waits the remainder of that interval plus
-a fresh challenge wait. A timeout only schedules the existing fenced recovery. Slow storage or pauses
-can still cause false suspicions. This adds failure-detection latency and does
-not make every partition reachable through every isolated pod. Upgrade all
-servers before relying on this behavior; older binaries do not answer challenges.</p>
-<p>A preference change keeps the current healthy backend serving until actual
-revocation; leaving membership still removes it. While yielding to another
-preferred process, the incumbent stops answering challenges so asymmetric peer
-reachability cannot prevent that successor from taking over. The existing
-resident budget covers this overlap. Once a claim is confirmed, recovery also
-continues while the process remains a member, even if preference changes before
-activation finishes. A later takeover still fences it. Candidates without a
-confirmed claim continue to yield immediately. No extra settling timer is used.</p>
-<p>Graceful shutdown leaves the departing stable member’s fingerprint in the existing
-owner-bound hint. A replacement of that member skips the challenge wait; another
-member waits the same 15 seconds before falling back. This avoids a temporary
-claim when the original member returns promptly. Scale-down still permits takeover,
-and a late return can still interrupt recovery. Failed shutdown hints retain the
-ordinary recovery path. The hint grants no authority: every successor must claim,
-revoke the old permit and recover. Older binaries preserve this field but do not
-honor the member preference; mixed-version convergence remains unqualified.</p>
-<p><code>scripts/qualify-multinode.py</code> is the maintained native deployment/fault campaign.
-Use <code>--scenario rollout</code> for two consecutive replacements after 1→3→6 scaling,
-followed by zero-compute cold recovery; <code>recovery</code> retains the broader fault campaign.
-<code>--scenario scale-down</code> focuses on 1→3→6→1 scaling, then zero-compute cold recovery.
-All scenarios use the same writers, budget checks and independent history verification.
-<code>--scenario worker-loss</code> additionally requires a local context named
-<code>kind-durable-db-test-&lt;10 hex digits&gt;</code> with three workers. It validates the selected
-worker’s kind labels, node address and immutable Docker ID before SIGKILL, observes
-the node controller detecting loss, then restarts that worker and cold-verifies all
-data. The workload stays on the control plane. This scenario kills no production
-host and changes no cluster object outside its test namespace; its Docker worker
-containers share one host kernel. The caller creates and removes the disposable
-kind cluster. Physical power and rack-loss qualification are separate.</p>
-<p>The harness uses a stable client Service through scaling and replacement and requires two
-new verified readbacks from every writer before each fault. Fixed writer names
-map to partitions 2, 12, 14 and 2, preserving shared-partition contention across
-runs. The provider-egress fault allows peer forwarding and verifies a ten-second
-workload blackout after thirty seconds of settling; a new-connection probe alone
-cannot establish that existing connections were blocked.</p>
-<p>The host-pause phase stops every database process on the preferred host of an
-active writer, retains its DNS records and requires recovery without adding pods.
-The all-process pause then requires a sole new process to recover all writers.
-Both verify the stopped identities before resume. The same-UID control sidecar,
-shared PID namespace and disabled liveness restart apply only to the disposable
-fixture. This simulates process loss on a host, not physical power loss or a
-network partition. <a href="verification-results.html">Current measurements and historical failures</a>
-remain separate from the declared recovery targets.</p>
-<p>For the focused network experiment, add <code>--scenario peer-isolation</code> to the same
-qualification command. It starts three processes on three hosts, sends writers
-through stable services on both sides of a one-versus-two split by default, and
-exercises one-way then two-way peer isolation. Add <code>--peer-ingress shared</code> to
-send all writers through the ordinary <code>durable-db</code> Service instead, without
-creating side-specific Services. HTTPS/DNS and workload ingress remain open.
-A pinned test helper uses <code>NET_ADMIN</code> as root inside each disposable pod’s private
-network namespace, dropping only traffic to peer addresses on TCP port 7654.
-Host networking is refused. Long-lived observers check fresh and retained peer
-connections; every process
-must also complete a fresh provider-backed administrative read. Each split is
-held for thirty seconds after its network checks pass. Per-writer progress during
-the split is recorded separately from recovery after healing. Both ingress modes
-share cold replacement, full history verification and namespace cleanup. The
-harness records bounded claim-attempt samples during each hold independently of
-writer progress. Outside the measured 30-second interval it snapshots the shared
-Service’s EndpointSlices before and after fresh readiness and known-key read
-probes through each pod and the Service. Reads use administrator authorization;
-200 replies must contain the expected synthetic value, which is never logged.
-Diagnostic reads run one at a time to avoid exhausting per-principal admission.
-Each probe has a five-second deadline and 64 KiB response bound, with no retries
-or redirect following. Status zero denotes an incomplete/failed probe, not an
-HTTP status. Statuses and elapsed times distinguish ingress selection
-from availability through each pod; a direct pod request can itself forward and
-does not identify the owner. Endpoint and request observations are not atomic;
-probes prolong isolation outside the measured hold. The workload uses the SDK’s
-bounded per-database transport and observes its actual pooled sockets through
-<a href="https://nodejs.org/docs/latest-v24.x/api/diagnostics_channel.html#http">Node HTTP diagnostics</a>, recording
-response counts for at most eight numeric connection identities per RPC, plus
-an overflow bucket. <code>unobserved</code> means no socket assignment was seen. It does not
-record headers, addresses or credentials. The report hashes the shared transport
-source and identifies its bounds; older runs used fetch’s shared origin pool.
-Explicit retry bodies and deadlines remain unchanged. <a href="verification-results.html">Current results and missed targets</a>
-retain exact binaries, configurations and timings. These short runs qualify their
-bounded fault/recovery histories, not permanent-partition availability or a
-production SLO. Rolling and scale-down still need broader qualification. Recovery campaigns now
-record a direct scale-down readback window; older reports retain only the
-controller progress bound for that phase.
-The initial NetworkPolicy attempt
-failed injection validation because established connections remained usable;
-<a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/#networkpolicy-s-impact-on-existing-connections">that behavior is implementation-defined</a>.</p>
-<p>Use a registry address reachable by the <strong>nodes’ container runtime</strong>, not just by pods. For example, a build may push through a cluster DNS service while the nodes pull the same registry through a configured NodePort alias. The qualification run used this arrangement; it did not modify cluster-wide registry or metrics settings.</p>
-<h2 id="request-budgets">Request budgets<a class="anchor" href="#request-budgets" aria-label="Link to this section">#</a></h2>
-<p>Peer forwarding keeps a 25-second HTTP operation deadline and a two-second
-connection deadline. Linux peer sockets also set a two-second TCP user timeout
-for unacknowledged traffic, including reused connections. This is a kernel timer,
-not a hard real-time guarantee or a health/ownership signal. Acknowledged requests
-retain their operation deadline; a missing response still leaves writes uncertain.
-The forwarder returns the failure and releases its slot without replaying. Clients
-must retry the identical write identity. Before a new attempt, cluster forwarders
-expire cached routes to peers excluded by the existing health view. A fresh
-storage observation can still route to an excluded peer; health does not grant
-or revoke serving authority. This avoids repeatedly spending the operation
-deadline on a stale cached owner, but cannot cancel an already-sent request.
-See the <a href="verification.html#owner-discovery-and-forwarding">transport checks</a>.</p>
-<p><code>--concurrency</code> bounds admitted tenant HTTP requests. Two additional slots are
-reserved for authenticated budget, access-policy, token and metrics operations; these requests
-retain their per-principal rate/concurrency limits. Budget for at most
-<code>concurrency + 2</code> admitted HTTP requests per process. Tenant traffic cannot use
-the control reserve, even with a control-like path or database name.</p>
-<p>Two settings control per-principal, per-pod overload:</p>
+<p>This downloads the release for Linux x86_64, verifies its checksum and puts <code>durable-db</code> in <code>~/.local/bin</code> (set <code>DURABLE_DB_INSTALL_DIR</code> to change that). While the repository is private the script uses the <code>gh</code> CLI, which must be signed in to an account with access. On other platforms, <a href="development.html">build from source</a>.</p>
+<h2 id="on-one-machine">On one machine<a class="anchor" href="#on-one-machine" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-sh">durable-db serve --data ./data
+</code></pre>
+<p>The server listens on <code>127.0.0.1:7654</code> and stores everything in <code>./data</code>. The first start creates <code>./data/admin.key</code>, the signing key for tokens, readable only by you.</p>
+<pre><code class="language-sh">durable-db create my-app      # creates the database, prints a write token
+</code></pre>
+<p>Writes are flushed to disk before they are acknowledged. <code>--no-fsync</code> skips that for tests and throwaway data.</p>
+<p>Several processes may serve the same directory; they coordinate exactly as servers on a bucket do. A directory on a network filesystem is not supported.</p>
+<h2 id="on-a-bucket">On a bucket<a class="anchor" href="#on-a-bucket" aria-label="Link to this section">#</a></h2>
+<p>Use one bucket (or one prefix) per deployment and nothing else in it. Do not put lifecycle rules, object lock or replication deletes on it: durable-db removes what it no longer needs, including old versions on a versioned bucket.</p>
+<p>Every server of a deployment needs the same signing key:</p>
+<pre><code class="language-sh">openssl rand -hex 32 &gt; admin.key &amp;&amp; chmod 600 admin.key
+</code></pre>
+<h3 id="backblaze-b2">Backblaze B2<a class="anchor" href="#backblaze-b2" aria-label="Link to this section">#</a></h3>
+<p>Create a private bucket and an application key restricted to it with the capabilities <code>listBuckets</code>, <code>listFiles</code>, <code>readFiles</code>, <code>writeFiles</code> and <code>deleteFiles</code>.</p>
+<pre><code class="language-sh">export AWS_ACCESS_KEY_ID=&lt;keyID&gt; AWS_SECRET_ACCESS_KEY=&lt;applicationKey&gt;
+durable-db serve \
+  --bucket my-bucket \
+  --endpoint https://s3.us-west-002.backblazeb2.com \
+  --key-file admin.key
+</code></pre>
+<p>The endpoint is shown on the bucket's page. <code>B2_APPLICATION_KEY_ID</code> and <code>B2_APPLICATION_KEY</code> are accepted in place of the AWS variable names.</p>
+<p>Reads, lists and deletes use B2's S3-compatible API. Uploads use B2's own upload call with the same key, because it measured two to three times faster than PutObject through B2's S3 gateway; <code>--s3-uploads-only</code> turns that off. Two identical uploads race for each small object, since B2 uploads are free and their latency varies widely between storage pods.</p>
+<h3 id="amazon-s3-and-other-s3-compatible-storage">Amazon S3 and other S3-compatible storage<a class="anchor" href="#amazon-s3-and-other-s3-compatible-storage" aria-label="Link to this section">#</a></h3>
+<pre><code class="language-sh">export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=...
+durable-db serve --bucket my-bucket --endpoint https://s3.us-east-1.amazonaws.com --key-file admin.key
+</code></pre>
+<p>For other providers pass <code>--region</code> as well. The server signs requests with static credentials from the environment and addresses the bucket path-style. Only Backblaze B2 has been exercised by the test suite and benchmarks so far; see <a href="verification.html#what-has-been-run-where">verification</a>.</p>
+<p>At startup the server writes, reads, lists and deletes one probe object and refuses to start if storage does not behave as required.</p>
+<h2 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h2>
+<p>The manifests in <a href="https://github.com/ericflo/durable-db/tree/main/deploy/kubernetes"><code>deploy/kubernetes</code></a> run durable-db as a Deployment with no persistent volume, a Service for applications, a headless Service through which servers find each other, a CPU autoscaler and a disruption budget.</p>
+<pre><code class="language-sh">kubectl create namespace durable-db
+kubectl -n durable-db create secret generic durable-db-keys --from-file=admin.key
+kubectl -n durable-db create secret generic durable-db-storage \
+  --from-literal=DURABLE_DB_BUCKET=my-bucket \
+  --from-literal=DURABLE_DB_ENDPOINT=https://s3.us-west-002.backblazeb2.com \
+  --from-literal=AWS_ACCESS_KEY_ID=&lt;keyID&gt; \
+  --from-literal=AWS_SECRET_ACCESS_KEY=&lt;applicationKey&gt;
+
+cd deploy/kubernetes
+kustomize edit set image durable-db=&lt;registry&gt;/durable-db@sha256:&lt;digest&gt;
+kubectl -n durable-db apply -k .
+</code></pre>
+<p>Applications connect to <code>http://durable-db.durable-db.svc:7654</code>. Put TLS and any public exposure in front of it at your ingress; servers talk to each other in plain HTTP inside the cluster and trust the network they are on.</p>
+<p><strong>Scaling.</strong> Any number of replicas from one up is correct. When a pod becomes ready, the others hand it the databases that hash to it. When a pod is told to stop, it reports not-ready, hands every database over, relays stray requests to its peers for <code>--drain-seconds</code>, and exits. A pod that is killed outright loses nothing: the next request for one of its databases makes another pod take it over. Scaling to zero stops service and loses nothing; starting one pod restores it.</p>
+<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so.</p>
+<p><strong>Resources.</strong> Memory use is bounded by <code>--cache-bytes</code> (table blocks) plus <code>--memtable-bytes</code> (unflushed writes) plus working memory for requests and merges. The manifest's 1 GiB limit fits its 256 MiB + 128 MiB settings. The cache volume is an <code>emptyDir</code>; losing it costs bucket requests, not data.</p>
+<h2 id="configuration">Configuration<a class="anchor" href="#configuration" aria-label="Link to this section">#</a></h2>
+<p>Every option is a flag and an environment variable.</p>
 <table>
 <thead>
 <tr>
 <th>Flag</th>
-<th>Environment variable</th>
+<th>Environment</th>
 <th>Default</th>
-<th>Accepted range</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>--request-units-per-second</code></td>
-<td><code>DURABLE_DB_REQUEST_UNITS_PER_SECOND</code></td>
-<td>20</td>
-<td>1–1,000,000</td>
+<td><code>--listen</code></td>
+<td><code>DURABLE_DB_LISTEN</code></td>
+<td><code>127.0.0.1:7654</code></td>
+<td>Address to listen on.</td>
 </tr>
 <tr>
-<td><code>--request-burst-units</code></td>
-<td><code>DURABLE_DB_REQUEST_BURST_UNITS</code></td>
-<td>40</td>
-<td>5–1,000,000</td>
+<td><code>--data</code></td>
+<td><code>DURABLE_DB_DATA</code></td>
+<td><code>data</code></td>
+<td>Directory storage. Used when no bucket is given.</td>
+</tr>
+<tr>
+<td><code>--bucket</code></td>
+<td><code>DURABLE_DB_BUCKET</code></td>
+<td></td>
+<td>Bucket storage. Needs <code>--endpoint</code>.</td>
+</tr>
+<tr>
+<td><code>--endpoint</code></td>
+<td><code>DURABLE_DB_ENDPOINT</code></td>
+<td></td>
+<td>The bucket's S3 endpoint URL.</td>
+</tr>
+<tr>
+<td><code>--region</code></td>
+<td><code>DURABLE_DB_REGION</code></td>
+<td>from endpoint</td>
+<td>Signing region.</td>
+</tr>
+<tr>
+<td><code>--prefix</code></td>
+<td><code>DURABLE_DB_PREFIX</code></td>
+<td></td>
+<td>Key prefix inside the bucket.</td>
+</tr>
+<tr>
+<td><code>--key-file</code></td>
+<td><code>DURABLE_DB_KEY_FILE</code></td>
+<td><code>&lt;data&gt;/admin.key</code></td>
+<td>Token signing key. Required with a bucket.</td>
+</tr>
+<tr>
+<td><code>--peers</code></td>
+<td><code>DURABLE_DB_PEERS</code></td>
+<td></td>
+<td>DNS name resolving to every server, or a list of <code>host:port</code>.</td>
+</tr>
+<tr>
+<td><code>--advertise</code></td>
+<td><code>DURABLE_DB_ADVERTISE</code></td>
+<td></td>
+<td>This server's <code>host:port</code> as peers reach it. Required with <code>--peers</code>.</td>
+</tr>
+<tr>
+<td><code>--cache-bytes</code></td>
+<td><code>DURABLE_DB_CACHE_BYTES</code></td>
+<td>256 MiB</td>
+<td>Memory for cached table blocks.</td>
+</tr>
+<tr>
+<td><code>--cache-dir</code></td>
+<td><code>DURABLE_DB_CACHE_DIR</code></td>
+<td></td>
+<td>Directory for a disk cache of tables.</td>
+</tr>
+<tr>
+<td><code>--cache-dir-bytes</code></td>
+<td><code>DURABLE_DB_CACHE_DIR_BYTES</code></td>
+<td>4 GiB</td>
+<td>Size of the disk cache.</td>
+</tr>
+<tr>
+<td><code>--memtable-bytes</code></td>
+<td><code>DURABLE_DB_MEMTABLE_BYTES</code></td>
+<td>256 MiB</td>
+<td>Unflushed writes across all databases before the largest are flushed.</td>
+</tr>
+<tr>
+<td><code>--max-open</code></td>
+<td><code>DURABLE_DB_MAX_OPEN</code></td>
+<td>4096</td>
+<td>Databases kept open.</td>
+</tr>
+<tr>
+<td><code>--idle-seconds</code></td>
+<td><code>DURABLE_DB_IDLE_SECONDS</code></td>
+<td>300</td>
+<td>Release a database unused for this long.</td>
+</tr>
+<tr>
+<td><code>--requests-per-second</code></td>
+<td><code>DURABLE_DB_REQUESTS_PER_SECOND</code></td>
+<td>0 (unlimited)</td>
+<td>Per-database request budget unless the database sets its own.</td>
+</tr>
+<tr>
+<td><code>--max-value-bytes</code></td>
+<td><code>DURABLE_DB_MAX_VALUE_BYTES</code></td>
+<td>4 MiB</td>
+<td>Largest value accepted.</td>
+</tr>
+<tr>
+<td><code>--drain-seconds</code></td>
+<td><code>DURABLE_DB_DRAIN_SECONDS</code></td>
+<td>5</td>
+<td>Time to relay requests after a termination signal.</td>
+</tr>
+<tr>
+<td><code>--upload-attempts</code></td>
+<td><code>DURABLE_DB_UPLOAD_ATTEMPTS</code></td>
+<td>2</td>
+<td>Identical uploads that may race for one small object.</td>
+</tr>
+<tr>
+<td><code>--hedge-ms</code></td>
+<td><code>DURABLE_DB_HEDGE_MS</code></td>
+<td>0 on B2, else 150</td>
+<td>Delay before each further racing upload.</td>
+</tr>
+<tr>
+<td><code>--s3-uploads-only</code></td>
+<td><code>DURABLE_DB_S3_UPLOADS_ONLY</code></td>
+<td>off</td>
+<td>Use PutObject on Backblaze too.</td>
+</tr>
+<tr>
+<td><code>--no-fsync</code></td>
+<td><code>DURABLE_DB_NO_FSYNC</code></td>
+<td>off</td>
+<td>Directory storage only: do not flush before acknowledging.</td>
 </tr>
 </tbody>
 </table>
-<p>A commit attempt costs five units; other authenticated requests cost one. A new principal starts with the burst allowance, which refills continuously up to that ceiling. With defaults, an otherwise idle principal can attempt eight commits immediately and sustain at most four per second. Mixed requests share the same budget. Raising concurrency alone does not raise this ceiling.</p>
-<p>All tokens for one database share its budget. All administrator credentials share one administrator budget across databases; metrics-only credentials have their own budget. Applications should use database-scoped credentials. Rate or concurrency rejection returns HTTP 429 before the handler runs; clients should back off. Invalid configuration fails before storage initialization.</p>
-<p>Choose these settings alongside concurrency, memory and measured provider capacity, and keep them consistent across the pod template. They are policy limits, not measured database throughput. Scaling and process restarts create additional initial allowances; these transient limits do not replace durable quotas or cluster-wide spending controls. See <a href="security.html">security</a>.</p>
-<h2 id="signing-key-changes">Signing-key changes<a class="anchor" href="#signing-key-changes" aria-label="Link to this section">#</a></h2>
-<p>v0.19.0 reads either the original hex key file or a bounded JSON keyring through the same <code>--admin-key-file</code> setting. Follow the <a href="design-signing-rotation.html">expansion, promotion, and retirement procedure</a>. Key files are loaded at startup: update the Secret and complete the corresponding rolling restart, including the template used by new autoscaled pods. A still-serving process outside the current control-plane view must be fenced from clients or included in the completion check. Keep the old key trusted during an availability rollback; a compromised or deliberately retired key must not be reintroduced by restoring an old Secret.</p>
-<p>For isolated qualification on an existing cluster, <code>scripts/qualify-multinode.py</code> creates a fresh namespace with explicit CPU/memory/pod quotas, private fixture Secrets, an authenticated control channel, and only namespace-scoped faults. It never drains or reboots nodes. Supply a dedicated disposable provider configuration and an image reference supported by the nodes’ container runtime, pinned by digest; a registry address usable inside pods may not be a valid host pull address. The script deletes its own namespace on exit; its caller must remove the disposable provider bucket and key. <code>scripts/check-autoscaling-history.py</code> checks its resulting append history.</p>
-<p>The qualifier optionally holds six replicas at its four-writer workload for <code>--steady-seconds 3600</code> before disruption. This pilot is bounded to one hour and 100,000 write intents, with unchanged 1 GiB/100,000-attempt upload ceilings. <code>--observe-memory</code> samples RSS, working set, cumulative CPU, pod identity, and restart counters from the kubelet statistics API; it requires the operator’s existing node-proxy read permission and retains only the new namespace’s API-container counters. An unplanned restart/replacement fails that steady memory phase instead of hiding growth behind a reset. Lightweight control polling excludes the append history; full histories are retrieved for final or failed-run evidence. This pilot does not substitute for the 72-hour declared-load campaign, which is deferred beyond the scoped 1.0.</p>
-<p>Inspect and replenish <code>/v1/storage/upload-budget</code> through the normal authenticated client Service, including when upload credit is exhausted. Refilling does not require a recovered partition. If discovery or Service routing itself is unavailable, use <code>kubectl port-forward pod/&lt;pod&gt; 7654:7654</code> for administrative access.</p>
-<nav class="pager" aria-label="Pagination"><span></span><a class="next" href="api.html"><span>Next</span>HTTP API</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#kubernetes-manifests">Kubernetes manifests</a></li><li><a href="#request-budgets">Request budgets</a></li><li><a href="#signing-key-changes">Signing-key changes</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default).</p>
+<h2 id="tokens-and-tenants">Tokens and tenants<a class="anchor" href="#tokens-and-tenants" aria-label="Link to this section">#</a></h2>
+<p>One deployment serves many databases. Give each tenant, site or application its own database and its own token:</p>
+<pre><code class="language-sh">durable-db create tenant-42 --max-bytes 268435456        # prints a write token
+curl -X POST $URL/v1/databases/tenant-42/tokens \
+  -H &quot;Authorization: Bearer $(durable-db token --admin)&quot; \
+  -d '{&quot;access&quot;: &quot;read&quot;, &quot;ttl_seconds&quot;: 3600}'
+</code></pre>
+<p>What keeps one tenant from harming another:</p>
+<ul>
+<li><strong>Access.</strong> A database token works on its database only. Tokens are verified before anything touches storage, so requests without a valid token cost nothing but CPU.</li>
+<li><strong>Storage.</strong> <code>max_bytes</code> per database; writes that add data beyond it are refused.</li>
+<li><strong>Request rate.</strong> <code>max_requests_per_second</code> per database, or <code>--requests-per-second</code> for all.</li>
+<li><strong>Request size.</strong> Key, value, transaction and page limits are enforced before any work is done (<a href="api.html#limits">limits</a>).</li>
+<li><strong>Memory.</strong> The block cache is bounded for the whole server. A database whose unflushed writes exceed four times the flush size gets <code>503</code> until a flush catches up. Request bodies in memory are budgeted across all requests (512 MiB), and one read returns at most 64 MiB. At most two table merges run at once.</li>
+<li><strong>Revocation.</strong> <code>{&quot;revoke_tokens&quot;: true}</code> voids every token of a database at once.</li>
+</ul>
+<p>Tokens belong on your servers, not in browsers. To rotate the signing key, put the new key on the first line of the key file and keep the old one below it until tokens signed with it have expired; all servers must have the file before the new key is used.</p>
+<p>What it does not do: per-tenant CPU accounting, or billing. A tenant inside its limits can still use its full request rate around the clock.</p>
+<h2 id="operations">Operations<a class="anchor" href="#operations" aria-label="Link to this section">#</a></h2>
+<p><code>GET /metrics</code> exposes, in Prometheus text format:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>durable_db_request_seconds{kind}</code></td>
+<td>Latency histogram for <code>read</code>, <code>commit</code>, <code>admin</code> and <code>open</code> (taking ownership of a database).</td>
+</tr>
+<tr>
+<td><code>durable_db_request_failures_total{kind}</code></td>
+<td>Requests of that kind that failed.</td>
+</tr>
+<tr>
+<td><code>durable_db_storage_seconds{op}</code></td>
+<td>Latency histogram of storage calls: <code>put</code>, <code>get</code>, <code>exists</code>, <code>list</code>, <code>delete</code>, <code>purge</code>.</td>
+</tr>
+<tr>
+<td><code>durable_db_storage_failures_total{op}</code></td>
+<td>Storage calls that failed.</td>
+</tr>
+<tr>
+<td><code>durable_db_storage_sent_bytes_total</code>, <code>..._received_bytes_total</code></td>
+<td>Bytes uploaded and downloaded.</td>
+</tr>
+<tr>
+<td><code>durable_db_forwarded_requests_total</code></td>
+<td>Requests relayed to the owning server.</td>
+</tr>
+<tr>
+<td><code>durable_db_rejected_requests_total</code></td>
+<td>Requests refused because the server was at its request limit.</td>
+</tr>
+<tr>
+<td><code>durable_db_open_databases</code></td>
+<td>Databases this server holds.</td>
+</tr>
+<tr>
+<td><code>durable_db_block_cache_bytes</code>, <code>..._hits_total</code>, <code>..._misses_total</code></td>
+<td>Memory cache use.</td>
+</tr>
+</tbody>
+</table>
+<p>Watch storage latency and failures first: every commit is one upload and one HEAD, so they are the service's latency floor.</p>
+<p><code>durable-db bench</code> measures a running deployment, and <code>durable-db bench --workload ledger</code> checks it: it moves money between accounts while you add, remove or kill servers, then verifies that no transfer was lost or applied twice. See <a href="performance.html">performance</a>.</p>
+<p><strong>Backups.</strong> The bucket is the database, so protect the bucket: restrict its keys, and use your provider's replication to a second bucket or region if you need protection against losing it. durable-db keeps only the current state; it has no point-in-time restore, and deletions it performs are permanent.</p>
+</article><nav class="pager" aria-label="Previous and next page"><a class="next" href="api.html"><span>Next</span>HTTP API</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#install">Install</a></li><li class="h2"><a href="#on-one-machine">On one machine</a></li><li class="h2"><a href="#on-a-bucket">On a bucket</a></li><li class="h3"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#amazon-s3-and-other-s3-compatible-storage">Amazon S3 and other S3-compatible storage</a></li><li class="h2"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#configuration">Configuration</a></li><li class="h2"><a href="#tokens-and-tenants">Tokens and tenants</a></li><li class="h2"><a href="#operations">Operations</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html" aria-current="page">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

@@ -1,106 +1,364 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Clients and pi-durable · durable-db</title><meta name="description" content="The TypeScript SDK, the wire client and pi-durable adapters."><meta property="og:title" content="Clients and pi-durable · durable-db"><meta property="og:description" content="The TypeScript SDK, the wire client and pi-durable adapters."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html" aria-current="page">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Start</p><h1 id="clients-and-pi-durable">Clients and pi-durable</h1>
-<p>The TypeScript JSON API provides <code>get</code>, <code>set</code>, <code>delete</code>, ordered <code>list</code> and atomic <code>transaction</code> calls:</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JavaScript and TypeScript client · durable-db</title>
+<meta name="description" content="The typed client for Node.js and the pi-durable storage adapter.">
+<meta property="og:title" content="JavaScript and TypeScript client · durable-db">
+<meta property="og:description" content="The typed client for Node.js and the pi-durable storage adapter.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html" aria-current="page">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
+
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html" aria-current="page">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>JavaScript and TypeScript client</h1>
+<p><code>@durable-db/client</code> is the TypeScript client for durable-db's <a href="api.html">HTTP API</a>. It has no runtime dependencies and uses the global <code>fetch</code>, so it runs on Node.js 22 or later and other runtimes with <code>fetch</code> and Web Crypto. It also contains a storage adapter for <a href="#pi-durable-storage">pi-durable</a>.</p>
+<p>The package is not on npm. Build it in this repository and add it to an application by path:</p>
+<pre><code class="language-sh">npm ci --prefix clients/javascript     # installs and builds dist/
+npm install ./clients/javascript       # run in your application, with the path to this directory
+</code></pre>
+<h2 id="quick-start">Quick start<a class="anchor" href="#quick-start" aria-label="Link to this section">#</a></h2>
+<p>Start a server and create a database. <code>create</code> prints a token that can read and write it.</p>
+<pre><code class="language-sh">durable-db serve --data ./data
+export DURABLE_DB_TOKEN=$(durable-db create demo)
+</code></pre>
 <pre><code class="language-ts">import { Database } from '@durable-db/client';
 
-const db = new Database({ url, database: 'my-app', token: scopedApplicationToken });
-await db.set('settings', { theme: 'dark' });
-const settings = await db.get&lt;{ theme: string }&gt;('settings');
-
-await db.transaction(async (tx) =&gt; {
-  const count = (await tx.get&lt;number&gt;('views')) ?? 0;
-  tx.set('views', count + 1);
+const db = new Database({
+  url: 'http://127.0.0.1:7654',
+  database: 'demo',
+  token: process.env.DURABLE_DB_TOKEN!,
 });
-</code></pre>
-<p>The <a href="web-app.html">web application example</a> uses this API for a task board, preferences and an atomic completion counter. The package is private; the source example links <code>@durable-db/client</code> locally and builds it with <code>npm ci</code>. Node.js 24 is the tested runtime. Type parameters describe application schemas and do not validate stored data at runtime.</p>
-<h2 id="json-api-behavior">JSON API behavior<a class="anchor" href="#json-api-behavior" aria-label="Link to this section">#</a></h2>
-<p>Missing keys return <code>undefined</code>. Values are plain finite JSON, bounded to 64 KiB and 64 nesting levels. Transactions allow 128 distinct read keys, 128 write keys and a 1 MiB encoded request; reads see earlier staged writes. <code>list</code> returns <code>{ items: [{ key, value }], cursor }</code>, with 1–1,000 records per page. Cursors bind prefix and revision; a write between pages returns 409 and requires restarting the listing.</p>
-<p>The callback can rerun after a definite conflict, up to five attempts. Await every transaction read and keep external side effects outside the callback. Lost commit acknowledgements retry the identical request up to five times. If publication remains unresolved, <code>UncertainCommitError</code> exposes the original wire request for reconciliation; do not blindly repeat a non-idempotent operation. <code>RetryLimitError</code> reports exhausted retries without uncertain publication. Individual HTTP attempts time out after 35 seconds; these bounds do not impose a deadline on arbitrary callback code.</p>
-<p>The SDK stores no hidden application receipts. Across separate application requests, use stable business identities or application idempotency records where needed. Credentials belong on the application server, never in a browser bundle.</p>
-<h2 id="wire-api-and-provisioning">Wire API and provisioning<a class="anchor" href="#wire-api-and-provisioning" aria-label="Link to this section">#</a></h2>
-<p><code>DurableDb</code> is the lower-level binary wire client used by the Pi adapters and provisioning tools. It exposes <code>read</code>, <code>commit</code>, <code>encode</code>, explicit revisions and request IDs. Each call makes one HTTP attempt. Retry uncertain commits unchanged. Redirects are refused; connect directly to the final HTTPS origin.</p>
-<p>The Node.js SDK now reuses HTTP/1 connections separately for each origin and
-database, with at most 64 cached pools, 16 outstanding requests per pool, 128
-overall and one idle socket per pool. Active pools are not evicted; local
-capacity refusal returns <code>DbError</code> status 429 before sending. HTTPS trust and
-hostname checks remain enabled, and the 35-second request deadline includes
-body reads. Bodies are bounded to 1 MiB. HTTP 429/503 discards only the refused
-request’s connection, preserving other in-flight requests. This replaces global fetch pooling;
-it preserves the one-attempt wire contract and identical retry rules. The bounds
-apply to one loaded SDK module, not across Node workers. Pooling cannot guarantee
-availability behind every external proxy or permanent split.</p>
-<p>For provisioning with a current source build, persist a creation intent and call <code>await db.createProtected({request_id, limits})</code> using administrator credentials. Retry that same object after an unknown outcome. It returns <code>{info, replayed}</code> with the original creation info. <code>db.create(limits)</code> remains the legacy format-1 operation for compatibility. <code>db.changeAccess({request_id, expected_policy_revision, change})</code> exposes the administrative <a href="api.html#durable-token-revocation">policy API</a> with explicit retry identity. Use <code>await db.issueToken({write: true, ttl_seconds: 3600})</code> for a database-scoped application credential. Protected databases return its <code>token_id</code> alongside the bearer token for later revocation. Tenant applications receive this scoped token instead of the provisioning credential.</p>
-<h2 id="pi-150-indexed-adapter">Pi 1.5.0 indexed adapter<a class="anchor" href="#pi-150-indexed-adapter" aria-label="Link to this section">#</a></h2>
-<p>v0.7.0 includes <code>clients/javascript/pi-indexed.mjs</code> and its <code>indexed/</code> modules:</p>
-<pre><code class="language-js">import { DurableDb } from '@durable-db/client';
-import { openIndexedPiStorage } from '@durable-db/client/pi-indexed';
 
-const piDatabase = new DurableDb({ url, database: 'pi-app', token: scopedApplicationToken });
-const storage = await openIndexedPiStorage(piDatabase);
-// Pass storage to Harness.open(storage, options, context).
-// Close it after the Harness stops issuing operations.
+await db.set('users/ada', { name: 'Ada', logins: 1 });
+const ada = await db.get&lt;{ name: string; logins: number }&gt;('users/ada');
+await db.delete('users/ada');
 </code></pre>
-<p>Use a protected database and a scoped application token. The default prefix is <code>pi-indexed/</code>; choose another ASCII prefix explicitly when sharing a database among trusted applications. Only the adapter may write within its prefix. Database credentials authorize the entire database, so an untrusted application needs a separate database, not merely a separate prefix.</p>
-<p>Conversations, entries, tasks, submissions, and documents have direct records and ordered indexes. Opening reads one metadata value and claims a fresh owner; it does not reconstruct a journal. Reads validate current ownership and use one database revision across all lookups. Fork-aware entry scans clip ancestor segments at their fork points. Document lookups use live-address and historical-incarnation indexes; rewindable content finds a base and applies its following deltas. Latest-only content is stored separately from document metadata, so scanning records does not read large values.</p>
-<p>One Session owns each prefix. After a crashed host, <code>openIndexedPiStorage(piDatabase, {takeover: true})</code> explicitly replaces it. Takeover pins the first observed owner: it can retry a definite fence conflict or that owner’s ongoing writes, but refuses a different owner appearing during retry/backoff. Old owners cannot publish, serve fresh reads, or release the new owner’s claim. API pods remain interchangeable; this owner belongs to the Harness Session. Host scheduling and external tool effects still need their own fencing protocol. Normal close drains admitted operations before releasing ownership.</p>
-<p>A commit stages the valid prefix of the supplied batches and atomically writes its records, indexes, document content, and metadata. Receipts follow durable publication. Unknown responses retry the identical request; the adapter’s last-commit nonce can resolve publication after the database’s 128-receipt window rolls over. An unresolved provider or ownership error fails the adapter until reopen. A semantic refusal changes none of the refused batch while retaining earlier valid batches in that call. A callback throwing after publication does not undo the durable data.</p>
+<p>A key is a string of 1 to 1,024 bytes. A value is any JSON except <code>null</code>, up to 4 MiB. <code>get</code> returns <code>undefined</code> for a key that does not exist. The type argument describes what your application stored; the client does not validate it. Keep tokens on the server, never in a browser bundle.</p>
 <table>
 <thead>
 <tr>
-<th>Bound</th>
-<th>Default / behavior</th>
+<th>Method</th>
+<th>Result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Serialized record or content</td>
-<td>512 KiB; large values use at most sixteen chunks in the same transaction</td>
+<td><code>get(key)</code></td>
+<td>The value, or <code>undefined</code>.</td>
 </tr>
 <tr>
-<td>Commit</td>
-<td>Database’s 1 MiB JSON and 128 operations, including indexes, chunk deletions, metadata, and checks; oversized staging rejects before publication</td>
+<td><code>getEntry(key)</code></td>
+<td><code>{ key, value, version }</code>, or <code>undefined</code>. The version is the revision of the transaction that last wrote the key.</td>
 </tr>
 <tr>
-<td>Snapshot read work</td>
-<td>8 MiB accounted encoded payload, 4,096 keys/scan results, and 256 logical HTTP reads; each transient retry is separately bounded</td>
+<td><code>getMany(keys)</code></td>
+<td>The values in order, all read at one revision.</td>
 </tr>
 <tr>
-<td>Fork ancestry</td>
-<td>256 conversations; cycles reject</td>
+<td><code>set(key, value)</code>, <code>delete(key)</code></td>
+<td><code>{ revision }</code>: the database revision the write created.</td>
 </tr>
 <tr>
-<td>Rewindable document replay</td>
-<td>At most 1,024 deltas and 2 MiB serialized base-plus-delta content; another delta requires a checkpoint before exceeding the bound</td>
+<td><code>list(options)</code></td>
+<td>One page: <code>{ items, cursor, revision }</code>.</td>
 </tr>
 <tr>
-<td>Scan results</td>
-<td>1–1,000 entries; sparse residual filters may exhaust the scan budget and require a narrower query</td>
+<td><code>scan(options)</code></td>
+<td>An async iterator over every matching entry.</td>
+</tr>
+<tr>
+<td><code>transaction(callback)</code></td>
+<td>The callback's result, after its writes are committed.</td>
+</tr>
+<tr>
+<td><code>commit(commit)</code>, <code>commitAll(commits)</code></td>
+<td>Atomic writes with checks you choose.</td>
+</tr>
+<tr>
+<td><code>read({ keys, scans })</code></td>
+<td>Any number of keys and scans in one round trip, at one revision.</td>
 </tr>
 </tbody>
 </table>
-<p>The read, ancestry, scan, and delta bounds can be reduced with <code>maxReadBytes</code>, <code>maxRequests</code>, <code>maxScanned</code>, <code>maxAncestry</code>, and <code>maxDeltas</code>. These bound encoded work, not exact JavaScript heap/RSS. Rewindable history remains stored for as-of reads and consumes the database quota. Latest-only replacement and retirement remove obsolete content chunks atomically. There is no automatic conversion from the reference journal; use a fresh prefix/database for the indexed adapter. The adapter and schema are experimental, pinned to Pi 1.5.0, and still subject to cloud/upgrade qualification and independent review.</p>
-<h2 id="running-and-recovering-a-harness">Running and recovering a Harness<a class="anchor" href="#running-and-recovering-a-harness" aria-label="Link to this section">#</a></h2>
-<p>Give the Harness the indexed adapter, a host-owned model collection and registry, and a Chord context:</p>
-<pre><code class="language-js">import { BACKGROUND_CONTEXT } from '@earendil-works/chord/context';
+<h2 id="listing">Listing<a class="anchor" href="#listing" aria-label="Link to this section">#</a></h2>
+<p>Keys are ordered by their UTF-8 bytes. A range is selected by <code>prefix</code>, <code>start</code> (inclusive) and <code>end</code> (exclusive), in any combination.</p>
+<pre><code class="language-ts">const page = await db.list&lt;{ title: string }&gt;({ prefix: 'tasks/', limit: 20 });
+for (const { key, value, version } of page.items) console.log(key, value.title, version);
+
+if (page.cursor !== undefined) {
+  const next = await db.list({ prefix: 'tasks/', limit: 20, cursor: page.cursor });
+}
+
+for await (const entry of db.scan({ prefix: 'tasks/', reverse: true })) {
+  console.log(entry.key);
+}
+</code></pre>
+<p><code>limit</code> defaults to 100 and is at most 10,000. <code>cursor</code> is the last key of the page, present only when more keys remain. Pages are read independently, so a key written between two pages can appear in the later one. <code>scan</code> fetches pages of 1,000 as the loop consumes them; its <code>limit</code> bounds the total.</p>
+<h2 id="transactions">Transactions<a class="anchor" href="#transactions" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-ts">await db.transaction(async (tx) =&gt; {
+  const from = (await tx.get&lt;number&gt;('accounts/a')) ?? 0;
+  const to = (await tx.get&lt;number&gt;('accounts/b')) ?? 0;
+  if (from &lt; 30) throw new Error('insufficient funds');
+  tx.set('accounts/a', from - 30);
+  tx.set('accounts/b', to + 30);
+});
+</code></pre>
+<p>The callback reads with <code>tx.get</code>, <code>tx.getMany</code> and <code>tx.list</code>, and buffers writes with <code>tx.set</code> and <code>tx.delete</code>. Reads see the callback's own buffered writes. When the callback returns, the client commits the writes with a version check for every key the callback read and a range check for every range it listed. The commit succeeds only if none of them changed, so the result is the one the callback would have produced running alone.</p>
+<p>If something the callback read did change, nothing is written, and the callback runs again after a short random delay, up to <code>maxAttempts</code> times (default 10), after which <code>transaction</code> throws <code>ConflictError</code>. The server's conflict names a revision that includes the change, and the rerun reads at that revision or later, so it sees what caused the conflict. Because the callback can run more than once, send emails and charge cards outside it. If the callback throws, nothing is written and the error is passed on. A callback that buffers no write commits nothing.</p>
+<p>Two reads in one callback are separate requests, so while another client is writing they can return values from different revisions. Such a transaction never commits: its checks fail and the callback runs again. Do not treat a mismatch between two values read in a callback as corrupt data.</p>
+<h2 id="commit-with-your-own-checks">Commit with your own checks<a class="anchor" href="#commit-with-your-own-checks" aria-label="Link to this section">#</a></h2>
+<p><code>commit</code> applies one atomic transaction: every write, or none.</p>
+<pre><code class="language-ts">const entry = await db.getEntry&lt;{ stock: number }&gt;('items/42');
+if (entry === undefined) throw new Error('no such item');
+
+await db.commit({
+  checks: [
+    { key: 'items/42', version: entry.version }, // unchanged since it was read
+    { key: 'orders/1001', version: 0 }, // does not exist yet
+  ],
+  writes: [
+    { key: 'items/42', value: { stock: entry.value.stock - 1 } },
+    { key: 'orders/1001', value: { item: 42 } },
+    { key: 'carts/7', delete: true },
+  ],
+});
+</code></pre>
+<p>When a check fails, <code>commit</code> throws <code>ConflictError</code> and nothing is written. The checks are:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Passes while</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{ key, version }</code></td>
+<td>The key is at this version. Version 0 means it does not exist.</td>
+</tr>
+<tr>
+<td><code>{ range: { prefix, start, end }, revision }</code></td>
+<td>No key in the range was written after this revision. Use the <code>revision</code> of the <code>list</code> or <code>read</code> that scanned it.</td>
+</tr>
+<tr>
+<td><code>ifRevision</code> on the commit</td>
+<td>The whole database is at this revision.</td>
+</tr>
+</tbody>
+</table>
+<p>A transaction holds at most 10,000 writes and checks. <code>commitAll([...])</code> sends several transactions in one round trip. They apply in order, each atomic and with its own revision, and it returns one <code>{ revision }</code> or <code>{ error }</code> per transaction. The first failure stops the rest.</p>
+<p>Every commit carries an idempotency key, by default a random one. Pass <code>idempotencyKey</code> to make your own retries safe: a commit repeated with the same key and the same contents returns the first result instead of applying again.</p>
+<h2 id="consistency">Consistency<a class="anchor" href="#consistency" aria-label="Link to this section">#</a></h2>
+<p>Reads are <code>strong</code> by default: they reflect every transaction acknowledged before the read was sent, at the cost of one storage round trip on the server. A <code>session</code> read is served from the server's memory.</p>
+<pre><code class="language-ts">const fast = new Database({ url, database, token, consistency: 'session' });
+await fast.get('settings'); // session
+await fast.get('settings', { consistency: 'strong' }); // one strong read
+</code></pre>
+<p>The client remembers the highest revision it has seen, in <code>db.revision</code>, and sends it with every session read. A session read therefore always includes this client's own writes and never goes back in time. It can miss a write another client made a moment ago. Reads inside <code>transaction</code> are session reads; the checks at commit make that safe.</p>
+<h2 id="errors-and-retries">Errors and retries<a class="anchor" href="#errors-and-retries" aria-label="Link to this section">#</a></h2>
+<p>Every failed request throws a <code>DatabaseError</code> with <code>status</code>, <code>code</code> (the server's error code), <code>retryable</code> and <code>message</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>InvalidError</code></td>
+<td>400</td>
+<td>The request is malformed or exceeds a limit.</td>
+</tr>
+<tr>
+<td><code>UnauthorizedError</code></td>
+<td>401</td>
+<td>The token is missing, forged, expired or revoked.</td>
+</tr>
+<tr>
+<td><code>ForbiddenError</code></td>
+<td>403</td>
+<td>The token does not cover this database or action.</td>
+</tr>
+<tr>
+<td><code>NotFoundError</code></td>
+<td>404, 410</td>
+<td>No such database, or it was deleted.</td>
+</tr>
+<tr>
+<td><code>ConflictError</code></td>
+<td>409</td>
+<td>A check failed. Read again and recompute.</td>
+</tr>
+<tr>
+<td><code>RateLimitError</code></td>
+<td>429</td>
+<td>The database's request budget is spent.</td>
+</tr>
+<tr>
+<td><code>UnavailableError</code></td>
+<td>503</td>
+<td>The server could not complete the request now.</td>
+</tr>
+<tr>
+<td><code>QuotaError</code></td>
+<td>507</td>
+<td>The database is at its storage quota. Deletes still succeed.</td>
+</tr>
+<tr>
+<td><code>NetworkError</code></td>
+<td>none</td>
+<td>No response arrived: the connection failed or timed out.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-ts">import { ConflictError, QuotaError } from '@durable-db/client';
+
+try {
+  await db.commit({ checks: [{ key: 'slug/hello', version: 0 }], writes: [{ key: 'slug/hello', value: 1 }] });
+} catch (error) {
+  if (error instanceof ConflictError) console.log('the slug is taken');
+  else if (error instanceof QuotaError) console.log('the database is full');
+  else throw error;
+}
+</code></pre>
+<p>The client repeats the identical request after a network error, a <code>503</code>, or a <code>429</code> (after the server's <code>Retry-After</code>), up to <code>maxRetries</code> times (default 5) with exponential backoff and jitter. This is safe for commits because of the idempotency key. Each attempt is abandoned after <code>timeoutMs</code> (default 30,000). A <code>Retry-After</code> longer than 10 seconds is not waited for; the <code>RateLimitError</code> carries it as <code>retryAfterMs</code>.</p>
+<p>If a commit still fails with <code>NetworkError</code> or <code>UnavailableError</code>, the server may or may not have applied it. The error then has <code>outcomeUnknown: true</code> and <code>commit</code>, the commit that was sent with its idempotency key. This applies to <code>set</code>, <code>delete</code> and <code>transaction</code> too. <code>await db.commit(error.commit)</code> settles it: it returns the revision if the commit was or now is applied, and throws <code>ConflictError</code> if a check no longer holds.</p>
+<p><code>new Database({ ..., fetch })</code> takes a custom <code>fetch</code>, for example to add tracing.</p>
+<h2 id="administration">Administration<a class="anchor" href="#administration" aria-label="Link to this section">#</a></h2>
+<p><code>Admin</code> manages databases with an administrator token (<code>durable-db token --admin</code>).</p>
+<pre><code class="language-ts">import { Admin } from '@durable-db/client';
+
+const admin = new Admin({ url: 'http://127.0.0.1:7654', token: process.env.DURABLE_DB_ADMIN_TOKEN! });
+await admin.createDatabase('reports', { maxBytes: 64 * 1024 * 1024 });
+const token = await admin.createToken('reports', { access: 'read', ttlSeconds: 3600 });
+const { revision, bytes } = await admin.getDatabase('reports');
+await admin.deleteDatabase('reports');
+</code></pre>
+<p><code>createDatabase</code> succeeds if the database already exists with the same limits. A deleted database's name cannot be used again.</p>
+<h2 id="testing-your-application">Testing your application<a class="anchor" href="#testing-your-application" aria-label="Link to this section">#</a></h2>
+<p><code>@durable-db/client/testing</code> starts a throwaway server for tests. It runs the <code>durable-db</code> executable passed as <code>binary</code>, else the one named by <code>DURABLE_DB_BINARY</code>, else the one on the <code>PATH</code>.</p>
+<pre><code class="language-ts">import { startServer } from '@durable-db/client/testing';
+
+const server = await startServer(); // durable-db serve on a free local port, in a temporary directory
+const db = await server.createDatabase(); // a new database and a client with a write token
+await db.set('greeting', 'hello');
+await server.stop(); // stops the server and deletes its data
+</code></pre>
+<p>The <a href="https://github.com/ericflo/durable-db/blob/main/examples/web-app/README.md">task board example</a> uses it.</p>
+<h2 id="pi-durable-storage">pi-durable storage<a class="anchor" href="#pi-durable-storage" aria-label="Link to this section">#</a></h2>
+<p><code>@durable-db/client/pi</code> implements the <code>Storage</code> interface of <a href="https://www.npmjs.com/package/@earendil-works/pi-durable"><code>@earendil-works/pi-durable</code></a> 1.5.2 on one database, so a pi-durable Session or Harness keeps its conversations, tasks and documents in durable-db. Install pi-durable 1.5.2 in the application; this package lists it as an optional peer dependency.</p>
+<pre><code class="language-ts">import { Database } from '@durable-db/client';
+import { openPiStorage } from '@durable-db/client/pi';
 import { Harness } from '@earendil-works/pi-durable';
-const context = BACKGROUND_CONTEXT;
-const storage = await openIndexedPiStorage(piDatabase);
+
+const db = new Database({ url, database: 'agent-1', token });
+const storage = await openPiStorage(db);
 const harness = await Harness.open(storage, { models, registry }, context);
-const root = await harness.root(context, { agent: { model: selectedModel } });
-// Persist requestId in the host's admission record before submitting or retrying.
-const submission = await root.submit({ type: 'input', content, requestId }, context);
-const result = await submission.wait(context);
-await harness.close(context);
 </code></pre>
-<p><code>selectedModel</code> identifies <code>{provider, modelId}</code> from the host’s configured model collection. A browser reconnect should reacquire its submission from the owning Harness, rather than automatically taking over storage. Moving or replacing database API pods requires no Session ownership change. Replacing the Harness host does: open with explicit <code>takeover: true</code>, reopen the Harness, and reacquire the submission by its stored ID or repeat the same request ID. A still-running old owner fails when it next tries to use storage.</p>
-<p>Cancelling the context passed to <code>submission.wait()</code> cancels that wait only. The durable run continues. <code>submission.abort()</code> withdraws queued input; <code>root.abort(context)</code> durably aborts the active conversation’s work and waits for it to settle. A normal Harness close leaves interrupted work recoverable. A killed host leaves its ownership claim behind, requiring the explicit takeover above.</p>
-<p>Pi records a tool’s intent before executing it. After a crash, <code>replay: 'safe'</code> permits re-execution; an unsafe tool instead produces an interruption result. Declaring replay safe is an application responsibility. Database fencing prevents a stale host from storing its result, but cannot undo a payment, message, or other external side effect that the tool already performed. Such tools need an idempotency key or a fence enforced by that external service.</p>
-<p><code>harness.test.mjs</code> runs the actual Pi 1.5.0 Harness with its deterministic faux model, including lost commit acknowledgements, request deduplication after reopen, wait cancellation, queued withdrawal, durable abort, competing live owners, and SIGKILL during model requests and both replay-safe and unsafe tools. Woodpecker runs the current native HTTP contract. The earlier three-process cloud launcher assumed every process could serve every database; it was removed with the native CLI cutover. Its <a href="verification-results.html">historical cloud results</a> retain their original scope. Repeating all Harness cases, including total API-process replacement, on DNS-discovered native Kubernetes serving remains a production gate. These fixtures use no paid model and do not establish exactly-once external effects.</p>
-<h2 id="pi-150-reference-adapter">Pi 1.5.0 reference adapter<a class="anchor" href="#pi-150-reference-adapter" aria-label="Link to this section">#</a></h2>
-<pre><code class="language-js">import { openReferencePiStorage } from '@durable-db/client/pi-reference';
-const storage = await openReferencePiStorage(piDatabase);
-// Pass storage to Harness.open(storage, options, context).
+<p><code>models</code>, <code>registry</code> and <code>context</code> are pi-durable's own; <a href="https://github.com/ericflo/durable-db/blob/main/clients/javascript/test/pi-harness.test.ts">test/pi-harness.test.ts</a> is a complete setup with a scripted model.</p>
+<p><strong>One owner.</strong> A pi-durable Session is the only writer of its storage. <code>openPiStorage</code> records an owner under the storage's prefix and fails if another owner is recorded. <code>storage.close()</code>, which <code>Harness.close()</code> calls, clears it. After a process dies without closing, open with <code>openPiStorage(db, { takeover: true })</code>. A takeover is safe while the old process is still running: every transaction the adapter sends checks the owner, so the old process's next commit fails, and its next read reports the takeover. Decide in your host when to take over; the adapter never does it by itself.</p>
+<p><strong>Prefix.</strong> All keys begin with <code>prefix</code> (default <code>pi/</code>), so one database can hold several storages, or a storage beside your own keys.</p>
+<p><strong>Round trips.</strong> Reads are session reads. One request serves each of these: a task, a conversation, a submission by ID or by request ID, the current document at an address, a document without history, the newest head marker, and a page of a conversation's history, including what it inherits from the conversations it was forked from. An entry looked up by ID alone is one request when the adapter stored or read that entry since it was opened, otherwise two. Scans of conversations, tasks, submissions and documents take two requests per pass, and so does a document with history. The first read through a conversation the adapter has not seen costs one more request per unseen ancestor.</p>
+<p>A commit is one request when it only adds conversations, entries, tasks and submissions with newly minted IDs. Otherwise it is two: one read for everything its checks need, then one request that stores every batch of <code>Storage.commit(batches)</code> as its own transaction. Opening takes three requests, one of them a strong read.</p>
+<p><strong>Limits.</strong> A record or document value is stored as one JSON value, so it is limited by the server's value size (4 MiB by default). One batch is one transaction, limited to 10,000 writes; an entry takes two or three, a new task five. A commit the server refuses for such a limit rejects, which ends the Session, but leaves the storage consistent and closable.</p>
+<p><strong>Reads beside commits.</strong> Reads do not wait for a commit that is being written. A read that needed more than one request while a commit of the same storage was written runs again, so its result never mixes the states before and after that commit.</p>
+<p>The header of <a href="https://github.com/ericflo/durable-db/blob/main/clients/javascript/src/pi/index.ts">src/pi/index.ts</a> lists the keys the adapter writes.</p>
+<h2 id="development">Development<a class="anchor" href="#development" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-sh">npm ci                  # install and build
+npm test                # SDK, retry, adapter, upstream conformance and Harness tests
+npm run typecheck       # this package and examples/web-app
+npm run format:check    # prettier; npm run format rewrites
+npm run bench           # pi-durable's storage benchmarks against the adapter
 </code></pre>
-<p>This adapter verifies end-to-end storage semantics using Pi’s <code>MemoryStorage</code> as an execution reference and durable-db as authority. Commit batches are chunked into bounded KV values and atomically written with their metadata. Pi receives durability receipts only after the database commits. A storage owner token fences old Sessions; normal open refuses an existing owner. After a crashed owner, explicitly pass <code>takeover: true</code>; the old owner can no longer persist changes.</p>
-<p>The adapter replays a log into memory and stages a detached reference state before publication. Its default log budget is 8 MiB. It is suitable for conformance, small examples, and validating crash/reopen behavior. It is <strong>not</strong> the final production storage adapter: open/staging work grows with history, and the log budget eventually stops writes. The database engine itself does not use this full-history design.</p>
-<p>The indexed adapter above implements direct ordered records and indexes. Keep the reference adapter for semantic comparison and fixtures; it remains unsuitable for histories that exceed its bounded replay budget.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="api.html"><span>Previous</span>HTTP API</a><a class="next" href="web-app.html"><span>Next</span>Web app example</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#json-api-behavior">JSON API behavior</a></li><li><a href="#wire-api-and-provisioning">Wire API and provisioning</a></li><li><a href="#pi-150-indexed-adapter">Pi 1.5.0 indexed adapter</a></li><li><a href="#running-and-recovering-a-harness">Running and recovering a Harness</a></li><li><a href="#pi-150-reference-adapter">Pi 1.5.0 reference adapter</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<p><code>npm test</code> and <code>npm run bench</code> start a server on a free port with a temporary data directory and stop it afterwards. They run the executable named by <code>DURABLE_DB_BINARY</code>, else <code>target/release/durable-db</code> in this repository (<code>cargo build --release</code>), else <code>durable-db</code> on the <code>PATH</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/database.ts</code></td>
+<td><code>Database</code> and transactions</td>
+</tr>
+<tr>
+<td><code>src/http.ts</code>, <code>src/errors.ts</code></td>
+<td>Requests, retries and typed errors</td>
+</tr>
+<tr>
+<td><code>src/admin.ts</code></td>
+<td><code>Admin</code></td>
+</tr>
+<tr>
+<td><code>src/testing.ts</code></td>
+<td><code>startServer</code></td>
+</tr>
+<tr>
+<td><code>src/pi/</code></td>
+<td>The pi-durable storage adapter</td>
+</tr>
+<tr>
+<td><code>test/</code></td>
+<td>Tests; <code>test/pi-conformance.test.ts</code> runs pi-durable's complete storage conformance suite</td>
+</tr>
+<tr>
+<td><code>bench/pi.ts</code></td>
+<td>The adapter benchmark</td>
+</tr>
+</tbody>
+</table>
+</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="api.html"><span>Previous</span>HTTP API</a><a class="next" href="architecture.html"><span>Next</span>Architecture</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#quick-start">Quick start</a></li><li class="h2"><a href="#listing">Listing</a></li><li class="h2"><a href="#transactions">Transactions</a></li><li class="h2"><a href="#commit-with-your-own-checks">Commit with your own checks</a></li><li class="h2"><a href="#consistency">Consistency</a></li><li class="h2"><a href="#errors-and-retries">Errors and retries</a></li><li class="h2"><a href="#administration">Administration</a></li><li class="h2"><a href="#testing-your-application">Testing your application</a></li><li class="h2"><a href="#pi-durable-storage">pi-durable storage</a></li><li class="h2"><a href="#development">Development</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html" aria-current="page">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

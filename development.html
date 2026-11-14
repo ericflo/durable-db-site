@@ -1,323 +1,140 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Development · durable-db</title><meta name="description" content="Building from source, focused checks and CI."><meta property="og:title" content="Development · durable-db"><meta property="og:description" content="Building from source, focused checks and CI."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html" aria-current="page">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Operate</p><h1 id="development">Development</h1>
-<p>Use the pinned Rust toolchain in <code>rust-toolchain.toml</code>. All Rust builds use <a href="https://github.com/kunobi-ninja/kache">kache</a>, including local tests. Source builds also need a C toolchain and CMake for AWS-LC; the installed static executable needs neither. Java 11+ runs TLC, and Node 24 runs the client, examples and documentation tools.</p>
-<pre><code class="language-sh">scripts/install-kache.sh
-export PATH=&quot;$PWD/.tools/bin:$PATH&quot;
-export KACHE_CONFIG=&quot;$PWD/.kache.toml&quot;
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Development · durable-db</title>
+<meta name="description" content="Build from source, run the checks, repository layout, releases and CI.">
+<meta property="og:title" content="Development · durable-db">
+<meta property="og:description" content="Build from source, run the checks, repository layout, releases and CI.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
 
-cargo fmt --check
-cargo clippy --locked --all-targets -- -D warnings
-cargo test --locked --all-targets
-cargo test --locked --release --test publication ten_thousand_databases_split_page_recover_and_collect -- --ignored --exact
-scripts/check-model.sh
-scripts/check-proof.sh
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html" aria-current="page">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>Development</h1>
+<h2 id="build">Build<a class="anchor" href="#build" aria-label="Link to this section">#</a></h2>
+<p>The Rust toolchain is pinned in <code>rust-toolchain.toml</code>. Every compiler invocation goes through <a href="https://github.com/kunobi-ninja/kache">kache</a>, a build cache, as configured in <code>.cargo/config.toml</code>.</p>
+<pre><code class="language-sh">scripts/install-kache.sh              # installs the pinned kache into .tools/bin
+export PATH=&quot;$PWD/.tools/bin:$PATH&quot; KACHE_CONFIG=&quot;$PWD/.kache.toml&quot;
+cargo build --release                 # target/release/durable-db
 </code></pre>
-<p>Native client contract checks explicitly provision 1 GiB per database with <code>DURABLE_DB_TEST_ADMISSION_BYTES=1073741824</code>; half funds admission and half prepays durable maintenance. The long document-tail and receipt-eviction cases exceed the default 64 MiB under conservative shared-table pricing; the fixture retains the previous 512 MiB admission allowance. The common JavaScript fixture uses the existing administrator budget endpoint. Runtime defaults and dedicated refusal tests are unchanged. Run this contract locally after admission-pricing changes, before waiting for the release build.</p>
-<p>The backup recovery fixture uses a larger bounded request budget so its 16,641-key interrupted restore tests recovery rather than waiting for the default four-commit-per-second allowance. Admission tests retain default-policy coverage and use a controlled clock for exact refill and eviction checks.</p>
-<p>The two Rust test commands run the complete required suite: the capacity regression is opt-in so ordinary <code>cargo test</code> does not run its large directory sweep in debug mode. CI runs it explicitly in release mode. The local command uses your host target. Woodpecker runs that same regression on musl, sharing the target used by the shipped static binary instead of building a separate optimized GNU target.</p>
-<p>The model command checks every current-engine model and its required controls. The proof command above checks abstract publication safety; journal and research proofs have separate commands below. These checks do not establish that the Rust implementation refines the models. See <a href="verification.html">verification</a> for each theorem’s assumptions and scope.</p>
-<h2 id="work-on-one-component">Work on one component<a class="anchor" href="#work-on-one-component" aria-label="Link to this section">#</a></h2>
-<p>Run the checks affected by a change while iterating. Woodpecker retains the complete required suite. Its client contract finishes before optimized compilation starts, avoiding CPU contention with the contract deadline. Only the successful marker is passed into the optimized build; application source and Node dependencies stay in the client stage.</p>
+<h2 id="check">Check<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+<pre><code class="language-sh">cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo test                            # about 25 seconds
+scripts/check-model.sh                # the TLA+ model and its negative controls
+scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter and example
+</code></pre>
 <table>
 <thead>
 <tr>
-<th>Change</th>
-<th>Focused checks</th>
+<th>Suite</th>
+<th>What it covers</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Native physical upload admission</td>
-<td><code>cargo test --locked --lib native_budget</code>, <code>cargo test --locked --lib database_budget</code>, <code>cargo test --locked --test upload_budget</code>, <code>cargo test --locked --lib root::tests::http</code>, <code>scripts/check-model.sh UploadCredits</code> and <code>scripts/check-model.sh TenantAdmission</code></td>
+<td><code>cargo test --lib</code></td>
+<td>Table format, in-memory table, key layout, tokens, routing, request parsing.</td>
 </tr>
 <tr>
-<td>Native budget metadata cleanup</td>
-<td><code>cargo test --locked --lib database_budget</code>, <code>cargo test --locked --lib automatically_collects</code>, <code>scripts/check-model.sh PublicationSafety</code> and <code>scripts/check-proof.sh PublicationSafety</code></td>
+<td><code>cargo test --test engine</code></td>
+<td>The engine on in-memory and directory storage: transactions, checks, retries, recovery, takeover, flush, merge, collection, quota, deletion, the disk cache.</td>
 </tr>
 <tr>
-<td>HTTP admission</td>
-<td><code>cargo test --locked --lib api::rate</code>, <code>cargo test --locked --test http</code> and <code>scripts/check-model.sh RequestBudget</code></td>
+<td><code>cargo test --test chaos</code></td>
+<td>Three nodes on storage that delays, drops and half-applies requests, with crashes and zombie owners. Checks that nothing acknowledged is lost, nothing is applied twice, and linearizable reads never go backwards. <code>CHAOS_SEEDS=50</code> runs more schedules; <code>CHAOS_FIRST=n</code> starts at seed <code>n</code>.</td>
 </tr>
 <tr>
-<td>Native lifecycle and logical quotas</td>
-<td><code>cargo test --locked --lib native_lifecycle</code> and <code>scripts/check-model.sh MemoryIndex</code></td>
+<td><code>cargo test --test http</code></td>
+<td>The documented HTTP API against a real server process.</td>
 </tr>
 <tr>
-<td>HTTP journal grouping</td>
-<td><code>cargo test --locked --lib native_http_batch</code> and <code>scripts/check-model.sh LiveTransactions</code></td>
+<td><code>cargo test --test cluster</code></td>
+<td>Up to three server processes on one store: routing, a killed owner, a graceful handover, a joining node, a contended counter.</td>
 </tr>
 <tr>
-<td>Upload funding granularity and crash tails</td>
-<td><code>cargo test --locked --test upload_budget</code> and <code>scripts/check-model.sh UploadCredits</code></td>
-</tr>
-<tr>
-<td>Live native transactions</td>
-<td><code>cargo test --locked --lib live_</code> and <code>scripts/check-model.sh LiveTransactions</code></td>
-</tr>
-<tr>
-<td>Transaction validator</td>
-<td><code>cargo test --locked --lib transactions::validation</code> and <code>scripts/check-model.sh TransactionValidation</code></td>
-</tr>
-<tr>
-<td>Native checkpoints</td>
-<td><code>cargo test --locked --lib checkpoint</code> and <code>scripts/check-model.sh Checkpoint</code></td>
-</tr>
-<tr>
-<td>Lazy checkpoint reads</td>
-<td><code>cargo test --locked --lib index::recovery::checkpoint::snapshot</code> and <code>scripts/check-model.sh CheckpointRead</code></td>
-</tr>
-<tr>
-<td>Checkpoint table reuse</td>
-<td><code>cargo test --locked --lib rewrites_reuse</code> and <code>scripts/check-model.sh CheckpointOverlay</code></td>
-</tr>
-<tr>
-<td>Checkpoint/suffix composition</td>
-<td><code>cargo test --locked --lib checkpoint</code> and <code>scripts/check-model.sh CheckpointOverlay</code></td>
-</tr>
-<tr>
-<td>Native memory and recovery</td>
-<td><code>cargo test --locked --lib index::memory</code>, <code>cargo test --locked --lib ownership::root::tests::transactions</code>, <code>scripts/check-model.sh MemoryIndex</code> and <code>scripts/check-model.sh TransactionRecovery</code></td>
-</tr>
-<tr>
-<td>Native table merging</td>
-<td><code>cargo test --locked --lib index::merge</code> and <code>scripts/check-model.sh TableMerge</code></td>
-</tr>
-<tr>
-<td>Native sorted tables</td>
-<td><code>cargo test --locked --lib index::table</code> and <code>scripts/check-model.sh SortedTable</code></td>
-</tr>
-<tr>
-<td>Warm point-read CPU cost</td>
-<td><code>DURABLE_DB_INDEX_READ_REPORT=/tmp/index-reads.json cargo test --release --locked --test index_read_bench -- --ignored --exact cached_native_point_read_cost</code></td>
-</tr>
-<tr>
-<td>Rust journal</td>
-<td><code>cargo test --locked --lib journal</code></td>
-</tr>
-<tr>
-<td>Upload failure classification</td>
-<td><code>cargo test --locked --lib providers::transport::tests</code>, <code>cargo test --locked --lib native_http_refill_resumes_unsent</code>, <code>cargo test --locked --lib absent_uncertain_journal</code> and <code>scripts/check-model.sh Journal</code> / <code>UploadCredits</code></td>
-</tr>
-<tr>
-<td>Common provider register</td>
-<td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-model.sh ProviderRegister</code></td>
-</tr>
-<tr>
-<td>Control request session</td>
-<td><code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh PlacementRequests</code></td>
-</tr>
-<tr>
-<td>Physical process pause (Linux)</td>
-<td><code>cargo test --locked --lib physical_owner_pause</code> (about eight seconds, including the frozen-clock control)</td>
-</tr>
-<tr>
-<td>VM pause/restore clock boundary</td>
-<td><code>scripts/check-vm-clock.py --kernel nosleep --output /tmp/vm-clock.json</code> (Docker + <code>/dev/kvm</code>; first run builds a cached no-sleep kernel)</td>
-</tr>
-<tr>
-<td>ClockBound counter/disruption rejection</td>
-<td><code>python3 scripts/check-clockbound.py --output /tmp/clockbound.json</code> (Docker + <code>/dev/kvm</code>; pinned upstream client, no database dependency; exit zero confirms the expected rejection and controls)</td>
-</tr>
-<tr>
-<td>Kernel sleep admission</td>
-<td><code>scripts/check-vm-clock.py --kernel nosleep --clocksource tsc --scenario sleep-disabled --output /tmp/vm-admission.json</code>; stock kernels must refuse admission</td>
-</tr>
-<tr>
-<td>Native takeover across VM restore</td>
-<td><code>scripts/check-vm-clock.py --kernel nosleep --owner --output /tmp/vm-owner.json</code> (same Rust fixture, guard and required unsafe control; about 23 seconds after guest preparation)</td>
-</tr>
-<tr>
-<td>Native permits</td>
-<td><code>cargo test --locked --lib root::tests::permit</code> and <code>scripts/check-candidate.sh RevocableOwner</code></td>
-</tr>
-<tr>
-<td>Candidate root controller</td>
-<td><code>cargo test --locked --lib ownership::root</code>, <code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh RootAcquisition</code></td>
-</tr>
-<tr>
-<td>Durable root registrations</td>
-<td><code>cargo test --locked --lib ownership::root</code>, <code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh RootRegistration</code></td>
-</tr>
-<tr>
-<td>Durable prefix catalog</td>
-<td><code>cargo test --locked --lib ownership::root</code>, <code>cargo test --locked --lib providers::</code> and <code>scripts/check-candidate.sh RootCatalog</code></td>
-</tr>
-<tr>
-<td>Ordered catalog replay</td>
-<td><code>cargo test --locked --lib ownership::root</code>, <code>cargo test --locked --lib journal</code> and <code>scripts/check-candidate.sh CatalogReplay</code></td>
-</tr>
-<tr>
-<td>Transaction records and recovery</td>
-<td><code>cargo test --locked --lib transactions::</code>, <code>cargo test --locked --lib ownership::root::tests::transactions</code>, <code>cargo test --locked --lib providers::</code> and <code>scripts/check-model.sh TransactionRecovery</code></td>
-</tr>
-<tr>
-<td>Resident value reclamation</td>
-<td><code>cargo test --locked --lib index::memory</code>; <code>cargo test --locked --lib repeated_large_overwrites_reuse_copy_prepayment_and_recover</code>; <code>scripts/check-model.sh MemoryIndex</code></td>
-</tr>
-<tr>
-<td>Candidate root request lifecycle</td>
-<td><code>scripts/check-candidate.sh RootRequests</code> and <code>scripts/check-proof.sh RootRequests</code></td>
-</tr>
-<tr>
-<td>An implemented protocol model</td>
-<td><code>scripts/check-model.sh MODULE</code></td>
-</tr>
-<tr>
-<td>Journal prefix proof</td>
-<td><code>scripts/check-model.sh Journal</code> and <code>scripts/check-proof.sh Journal</code></td>
-</tr>
-<tr>
-<td>SDK or web-app example</td>
-<td><code>scripts/test-client.sh sdk.test.mjs</code></td>
-</tr>
-<tr>
-<td>Local native CLI / exclusion</td>
-<td><code>cargo test --locked --test local_cli</code>; <code>cargo test --locked --lib cancelled_local_cas</code>; <code>scripts/check-model.sh LocalExclusive</code></td>
-</tr>
-<tr>
-<td>Native HTTP and client contract</td>
-<td><code>cargo test --locked --lib root::tests::http</code>; after <code>npm --prefix clients/javascript ci</code>, run <code>DURABLE_DB_TEST_ADMISSION_BYTES=1073741824 cargo test --locked --lib native_http_javascript_contract -- --ignored --nocapture</code></td>
-</tr>
-<tr>
-<td>Native provider qualification</td>
-<td><code>cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::native_http_budgets_cleanup_and_cold_recovery --nocapture</code></td>
-</tr>
-<tr>
-<td>Pi adapter or HTTP client transport</td>
-<td><code>scripts/test-client.sh</code></td>
-</tr>
-<tr>
-<td>Autoscaling workload and history evidence</td>
-<td><code>node --test scripts/test-autoscaling.mjs</code> (Node 24 and Python 3; about eight seconds, including stalled-connection coverage, no cluster)</td>
-</tr>
-<tr>
-<td>Public documentation</td>
-<td><code>npm --prefix site ci</code> and <code>node site/build.mjs</code></td>
+<td><code>cargo test --test bucket</code></td>
+<td>The storage contract, read-after-write, and the engine on a real bucket. Skipped unless configured, see below.</td>
 </tr>
 </tbody>
 </table>
-<p>Build the debug executable before running the client script. Its focused SDK mode still checks types, formatting, the application example and benchmark accounting. Its default mode runs the full client and Pi suite, including both adapters, the 32 upstream Pi cases, indexed-adapter fault/resource tests and real Harness workflows.</p>
-<p><code>spec/candidates/</code> retains both the ownership/control models used by native serving and unselected research alternatives. Its directory name is historical; <a href="verification.html">verification</a> identifies the implemented protocols and their assumptions. An unselected design does not authorize runtime assumption changes.</p>
-<pre><code class="language-sh">scripts/check-candidate.sh PartitionControl
-scripts/check-proof.sh PartitionControl
-scripts/check-candidate.sh PartitionJournal
-scripts/check-proof.sh PartitionJournal
+<p>To run the bucket tests, point them at a bucket you can afford to write to. Each test uses its own random prefix and removes what it wrote.</p>
+<pre><code class="language-sh">export DDB_S3_ENDPOINT=https://s3.us-west-002.backblazeb2.com DDB_S3_BUCKET=my-test-bucket
+export DDB_S3_ACCESS_KEY_ID=... DDB_S3_SECRET_ACCESS_KEY=...
+cargo test --test bucket
 </code></pre>
-<p>The candidate checker also supports <code>RevocableOwner</code>, <code>DelegatedGrant</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>LateControlCoverage</code>, <code>PlacementRequests</code>, <code>PlacementTakeover</code>, <code>RootRequests</code>, <code>RootAcquisition</code>, <code>RootRegistration</code>, <code>RootCatalog</code> and <code>CatalogReplay</code>. The proof checker supports <code>PublicationSafety</code> (the default), <code>Journal</code>, <code>GrantBounds</code>, <code>RootControl</code>, <code>RootJournal</code>, <code>RootRequests</code>, <code>PartitionControl</code> and <code>PartitionJournal</code>. Imported proofs are checked before their dependents. See the <a href="https://github.com/ericflo/durable-db/tree/main/spec/candidates">candidate catalog</a> and <a href="design-owned-partitions.html">owned-partition design</a> for the purpose of each component.</p>
-<h2 id="formal-check-inputs">Formal check inputs<a class="anchor" href="#formal-check-inputs" aria-label="Link to this section">#</a></h2>
-<p>Each model’s <code>.checks</code> descriptor declares every positive configuration, unsafe variant and reachability control. An unsafe variant must violate its named invariant. A reachability control forbids a desired scenario and must produce a counterexample reaching it; this is coverage, not a liveness proof. The candidate wrapper copies the maintained dependencies into a temporary directory and removes it on exit. Logs remain under <code>.tools/candidates/</code>.</p>
-<p>Each proof’s <code>.proof</code> descriptor declares:</p>
-<pre><code class="language-text">tag|log-name
-dependency|ImportedModule
-negative|control-name|focused-theorem|expected-action|sed-mutation
+<p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. The full suite takes about four minutes.</p>
+<h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to this section">#</a></h2>
+<pre><code>src/store/      the storage contract and its three bindings: memory, directory, S3-compatible
+src/layout.rs   object names, manifests, frames
+src/table.rs    immutable sorted tables
+src/mem.rs      the in-memory table of unflushed writes
+src/io.rs       retries, the block cache, the disk cache
+src/db.rs       one database: taking ownership, commits, reads, flush, merge, collection
+src/node.rs     the databases one server holds, and its limits
+src/cluster.rs  membership, routing, relaying
+src/auth.rs     tokens
+src/http.rs     the HTTP API
+src/bench.rs    the load generator and the ledger check
+src/main.rs     the command line
+spec/           the TLA+ model of src/db.rs
+clients/        the TypeScript SDK and the pi-durable storage adapter
+examples/       a small web application
+deploy/         Kubernetes manifests
+site/           the website generator
 </code></pre>
-<p>Dependencies are optional; every proof requires a negative control. An empty theorem field checks the entire mutated proof. Every positive proof uses strict checking and fresh fingerprints. A mutation must change its source and fail its expected obligation; a parser or tool-launch error cannot pass. The runner requires all declared controls to execute and keeps checker input separate from descriptor input.</p>
-<p>Focus a mutation on the first lemma affected by the changed protocol. Checking only a caller could accidentally assume the broken lemma. Large solver queries should be split into explicit proof steps so checks remain reliable on the CI builder; do not hide failures by weakening a property or reusing old fingerprints.</p>
-<p>Adding a proof needs a descriptor and its own Docker stage. It should not require changing the common runner or invalidating unrelated proofs. CI may skip repeated dependency execution only when the stage inherits the exact checked dependency. Local commands check dependencies by default.</p>
-<h2 id="real-provider-checks">Real provider checks<a class="anchor" href="#real-provider-checks" aria-label="Link to this section">#</a></h2>
-<p>Cloud checks are opt-in and require a dedicated disposable bucket. Never run them against application data. Configure credentials privately through the provider environment; do not put them in commands, reports or logs.</p>
-<pre><code class="language-sh">export DURABLE_DB_DISPOSABLE=1
-export DURABLE_DB_TEST_PROVIDER=b2 # or s3
-export DURABLE_DB_TEST_BUCKET=durable-db-test-UNIQUE
-export DURABLE_DB_TEST_CONTEXT='Client placement and provider region'
-export DURABLE_DB_REGISTER_REPORT=&quot;$PWD/register-report.json&quot;
-export DURABLE_DB_JOURNAL_REPORT=&quot;$PWD/journal-report.json&quot;
-
-cargo test --locked --test provider_register -- --ignored --exact unchanged_metadata_still_requires_an_exact_comparison
-cargo test --locked --test journal_cloud -- --ignored --exact journal_reconnect_unknown_responses_and_late_uploads
-</code></pre>
-<p>The register fixture permits at most thirteen conditional attempts, including a bounded reconnect barrier. The journal fixture permits seventeen PUT attempts of at most 33 KiB each. Provisioning, reads, verification and cleanup are additional operations. After success or failure, remove every physical version, the bucket and its temporary credentials. MinIO exercises the S3 binding; it does not qualify AWS. The older publication fixture has its own environment contract in <code>tests/s3.rs</code>.</p>
-<p>For component work, <code>Native::connect_storage</code> and <code>S3::connect_storage</code> return the same <code>providers::Connection</code>. Its <code>objects()</code> and <code>authority()</code> expose transports without initializing publication metadata. <code>into_published</code> explicitly opens the current engine. Each conditional register replacement receives a fresh mutation identity, including replacements with otherwise identical metadata. Raw connections do not grant serving permission or provide tenant admission. <code>objects().get_range(key, range, object_size)</code> reads an exact immutable slice up to 8 MiB, checking the provider’s total size, returned range and body length. It fails rather than downloading a whole object when range semantics are unsupported. HTTP regressions check that immutable writes leave authority metadata untouched and that redirects or lost replies do not cause a second PUT.</p>
-<p><code>Connection::root()</code> creates a fresh clock-independent candidate. Every remote claim uploads one immutable registration and one write-once positive permit before its captured conditional publication. Activation revokes all unresolved predecessor permits, including the checkpoint owner, before recovery. <code>select_prefix</code> persists exact journal discoveries; <code>Opening::recover</code> constructs a private projection. The native HTTP worker seals responses, then validates its permit with a fresh uncached GET. No successful validation can be reused for later requests. Local <code>open_local</code> instead retains the lifetime directory lock, preserving format 15. Remote formats 23 and 23-unbudgeted refuse older timed writers. The cloud CLI now uses the membership-driven native controller. See <a href="verification.html#candidate-root-controller">controller scope</a>.</p>
-<p>For the opt-in large-object range check, use the same disposable provider credentials and set <code>DURABLE_DB_RANGE_REPORT</code> to a local output path:</p>
-<pre><code class="language-sh">cargo test --locked --test provider_ranges -- --ignored --exact bounded_ranges_of_a_large_immutable_object
-</code></pre>
-<p>It writes one 16 MiB object and verifies five bounded slices, missing/size errors and rejection above the 8 MiB cap. It does not retry an uncertain upload. Delete all versions and revoke the temporary key after either outcome. The <a href="verification.html#live-native-transactions">live transaction checks</a> exercise the current grouped-write and selected-recovery path.</p>
-<p>For native tables and their overlapping snapshot merge, set <code>DURABLE_DB_TABLE_REPORT</code> and use the same disposable provider environment:</p>
-<pre><code class="language-sh">cargo test --locked --test native_tables -- --ignored --exact native_tables_use_bounded_blocks_and_recover_revisioned_ordered_rows
-</code></pre>
-<p>This uploads four immutable objects for 3,072 history rows and 1,025 newer rows, checks one-block point reads, bounded caching, merged ordered scans with deletion markers and cache-free reopening. It does not initialize a serving engine or publish a manifest. Remove all four objects’ physical versions and the dedicated bucket, and revoke its temporary key after either outcome. The native index uses the existing Rust toolchain and kache configuration.</p>
-<p>For native cluster integration, <code>api::Cluster::open</code> takes a <code>Partitions</code> directory,
-<code>ClusterConfig</code>, one shared cache, an <code>Arc&lt;Auth&gt;</code> keyring and a Tokio watch receiver
-of peer socket addresses. Bind the listener before advertising its address. The
-caller supplies membership; the controller performs acquisition, recovery,
-placement and retry scheduling. Serve it through the ordinary <code>App</code>/<code>router</code>.
-Keep the layout fixed across restarts and membership changes. A peer list is a
-scheduling hint, never ownership authority. Reproduce the focused checks with
-<code>cargo test --locked --lib cluster::</code> and <code>cargo test --locked --lib layout_</code>.
-The disposable-provider controller fixture is
-<code>cargo test --locked --test checkpoint_cloud -- --ignored --exact native_http::membership_places_partitions_and_recovers_over_http</code>;
-use the provider environment and cleanup rules below. It accepts supplied local
-membership snapshots and does not qualify Kubernetes discovery.</p>
-<h2 id="kubernetes-load-measurements">Kubernetes load measurements<a class="anchor" href="#kubernetes-load-measurements" aria-label="Link to this section">#</a></h2>
-<p><code>scripts/benchmark-kubernetes.py</code> runs the SDK benchmark through the shared
-Service on three distinct hosts, using the maintained deployment manifests and
-an image pinned by digest. Supply a fresh dedicated bucket, its scoped provider
-environment as a private JSON file, a signing key and its administrator token:</p>
-<pre><code class="language-sh">python3 scripts/benchmark-kubernetes.py \
-  --context YOUR_CONTEXT --image REGISTRY/durable-db@sha256:IMAGE_DIGEST \
-  --storage-env-file /private/storage.json \
-  --signing-key-file /private/admin.key --admin-token-file /private/admin.token \
-  --output ./load-result --disposable \
-  --concurrency 32 --value-bytes 65536
-</code></pre>
-<p>The default matrix uses 32 databases, 1/4/16/32 workers and 20 operations per
-worker, with separate closed-loop write/read phases. Override <code>--databases</code>,
-<code>--workers</code> and <code>--operations</code> for a focused regression. Each database gets a
-64 MiB cumulative upload allowance; the namespace gets 1 GiB. A failed worker
-stops, remaining unstarted operations stay visible, and final verification
-checks the last value/revision and upload counters. Resource reports retain
-kubelet RSS, working set, CPU counters and restart counts; ten-second sampling
-can miss peaks. Setup is excluded from phase throughput, but retries and backoff
-are included. These runs do not establish sustained-load or latency SLOs.</p>
-<p>For a focused long-journal cold-recovery check, add
-<code>--cold-recovery --databases 1 --workers 1 --operations 100 --value-bytes 65536</code>.
-The workload retains expected values and exact acknowledged requests in its own
-process. The controller freezes every database process using the existing
-same-UID pause helper, removes all pods, confirms zero remain, and starts three
-new pod identities without disk caches. Freezing first prevents graceful
-shutdown from checkpointing away the suffix. A nonce-bound file barrier then
-releases point/scan checks, exact receipt retries and a new write/readback.
-Reports retain separate warm/cold resource epochs and server logs. Confirm the
-cold selection logs actually discover the intended long suffix; a successful
-read from a recent checkpoint alone does not qualify this case. The optional
-fault sidecars are confined to this disposable fixture. Run
-<code>node scripts/test-benchmark.mjs</code> for fast controls that reject corrupt cold
-values and incorrect retry receipts.</p>
-<p>The runner removes its namespace and retains workload results and bounded server
-logs even on failure. The caller must remove all bucket versions, delete the
-dedicated bucket and revoke its scoped key afterward. Never reuse a result
-directory or omit failed runs from a comparison. The <a href="verification-results.html#native-b2-load-exposes-funding-and-write-tail-costs-2026-11-14">native load evidence</a>
-records the release baseline and its failures.</p>
-<h2 id="ci-and-publication">CI and publication<a class="anchor" href="#ci-and-publication" aria-label="Link to this section">#</a></h2>
-<p>The <a href="verification-results.html">release verification record</a> links source commits, Woodpecker builds, artifact hashes, standalone checks and actual public-installer downloads.</p>
-<p>The website’s release badge comes from the installer’s default tag in <code>scripts/install.sh</code>. Its recent milestones are the newest five <code>##</code> sections of <code>docs/verification-results.md</code>. Releases therefore need no homepage edit; change <code>site/home.html</code> only when the product status or contract changes. The README names the release once, in its opening notice; record per-release details in the verification results rather than the README or homepage. Published pages and their navigation groups are listed in <code>site/build.mjs</code>.</p>
-<p><a href="https://github.com/ericflo/durable-db/blob/main/.woodpecker.yaml">Woodpecker</a> is the only CI system. GitHub Actions are disabled. Changes go directly to <code>main</code> while the repository is private. Successful main builds push the public documentation with a repository-scoped SSH deploy key, then wait up to ten minutes for the public <code>deployment.json</code> marker to match <code>CI_COMMIT_SHA</code>. A successful push alone does not qualify publication: GitHub can fail the later Pages deployment while leaving the previous site live. On failure, inspect the public site’s deployment status and retry the same checked artifact; do not claim the site is current until its marker and evidence match. A newer source push cancels the previous running pipeline in this setup; finish local iteration before pushing and let the required run complete so verification and publication can finish.</p>
-<p>The publisher updates only files that still match its prior generated hashes, preserves independent site edits/deletions and unrelated files, and records preserved paths in <code>deployment.json</code>. It pulls/rebases before every push and rebuilds against the newest site after a push race; it never force-pushes. Obsolete generated files are removed only when still unedited. The first manifest is bootstrapped from the last publisher commit. Site authors may edit the public repo concurrently; preserved overrides need deliberate reconciliation with generator changes.</p>
-<p>If GitHub reports success while the public marker and files remain stale, first compare the site branch with the intended artifact. A Pages rebuild of that existing branch (<code>gh api --method POST repos/ericflo/durable-db-site/pages/builds</code>) can refresh hosting without another content commit. Still require the public marker and installer to match before declaring delivery.</p>
-<p>Within that delivery window, an explicitly failed public deployment permits one empty-commit retry of the identical site tree. The script checks that the remote branch has not moved, uses a normal non-forced push, and never retries merely because the API is unavailable, rate-limited or still pending. Public status inspection needs no API token. Repeated failure still fails CI. <code>node --test scripts/test-publish-docs.mjs</code> checks matching/stale markers, HTTP errors, invalid source identities, recovery, unknown status, a competing publisher and the retry bound using isolated transport/clock doubles.</p>
-<p>The <a href="https://github.com/ericflo/durable-db/blob/main/Dockerfile">Docker build</a> requires Rust formatting, lints and tests; the full client/Pi suite; every active model and its controls; and the publication and journal proofs. It builds the static Linux executable, runtime image and documentation artifacts. The 10,005-database regression retains every assertion and runs in release mode on <code>x86_64-unknown-linux-musl</code>; the rest of the Rust suite runs in debug mode. Before publishing artifacts, <code>scripts/check-release.mjs</code> checks the archive checksum, contents and source version, then runs its binary with an empty <code>PATH</code>: protected creation, exact retries, ordered reads, backup/restore and recovery after a forced stop. It removes its temporary server, data and credentials and writes <code>checks/release.json</code> into the artifact image. Rerun it against a downloaded archive with <code>node scripts/check-release.mjs PATH/TO/durable-db-linux-amd64.tar.gz</code> (optional second argument: an older version to check).</p>
-<p>Rust, JavaScript, autoscaling evidence checks, individual models and individual proofs have separate cache stages. Harness edits do not rerun unchanged Rust or client checks. Client/example README files are excluded from the Docker context because neither tests nor the site generator consume them; guide edits do not invalidate client verification. Changing client code reuses the same source-built executable without repeating unchanged Rust work. A shared lock serializes formal-check heaps on the builder. Compiler stages stop their kache daemon on exit while preserving the compilation cache.</p>
-<p>The build step forwards TERM/INT to its <code>buildctl</code> child and waits for remote cancellation before exiting. This lets the client cancel remote work explicitly before the shell exits. A disposable BuildKit job canceled in 5.8 seconds; success and failure exit codes were also preserved. The <a href="evidence/checkpoint-index-reads-2026-11-10.json">qualification record</a> retains the preceding canceled-build delay and probe setup failures.</p>
-<p>Client contracts use the completed debug executable and finish before optimized
-compilation starts, avoiding CPU contention with the release build and capacity
-regression. The synthetic 10,005-entry check advances Tokio’s timer waits while
-retaining both budget formats, all entries and assertions. It checks capacity
-and correctness, not physical latency. Real network/failure tests retain their
-own deadlines. A local release-mode sample takes 31.01s instead of 87.57s;
-compilation is excluded and CI timing remains platform-dependent.</p>
-<p>The pipeline archives its exact commit with canonical file permissions. Uncommitted files and checkout metadata are excluded, and the temporary context is removed on exit. File metadata matters to Docker cache reuse as well as content. <a href="https://docs.docker.com/build/cache/invalidation/">Docker cache invalidation</a>, <a href="https://git-scm.com/docs/git-archive">Git archive</a>.</p>
-<h2 id="dependency-audits">Dependency audits<a class="anchor" href="#dependency-audits" aria-label="Link to this section">#</a></h2>
-<pre><code class="language-sh">scripts/audit-dependencies.sh
-npm --prefix clients/javascript audit
-npm --prefix examples/web-app audit
-npm --prefix site audit
-</code></pre>
-<p>The Rust audit verifies the pinned cargo-audit binary, fetches current advisories, rejects vulnerabilities and warnings without exemptions, and records the advisory database commit. CI runs dependency audits outside Docker’s layer cache, so new advisories can block an unchanged lockfile. A failed advisory fetch fails the gate. Audit success does not rule out undiscovered vulnerabilities.</p>
-<p>The disposable server started by <code>scripts/test-client.sh</code> uses explicit bounded request budgets of 1,000,000 units/second and burst units. This keeps receipt-eviction and Pi conformance tests from sleeping on production admission defaults. The dedicated Rust and HTTP admission tests still exercise those defaults, refill, shared principals and exhaustion. This fixture setting is not a production recommendation or a database throughput result.</p>
-<p>For checkpoint composition, use the same disposable provider environment, set <code>DURABLE_DB_CHECKPOINT_REPORT</code>, and run:</p>
-<pre><code class="language-sh">cargo test --locked --test checkpoint_cloud -- --ignored --exact native_checkpoints_recover_selected_suffix_across_complete_reopen
-</code></pre>
-<p>This initializes the current native candidate format, writes 1,024 database generations, checkpoints the first 16 selected frames, removes those covered fixture frames, and reconstructs through a fresh provider connection and controller. It checks nine suffix frames, retained receipts, excluded late old-owner data and zero control calls during reconstruction. Before suffix recovery it also checks lazy checkpoint point reads, ordered scans and receipt resolution, including 1,000 warmed iterations with zero provider calls and all 1,024 databases at their checkpoint revision. It rewrites the combined image and reopens it with every resident limit set to one, checking all 1,024 database generations without resident rows or receipts. Its timing samples use a debug build; they are not serving SLOs. It stops writers before takeover; it does not qualify live HTTP serving, automatic collection or AWS. Delete all physical versions and the dedicated bucket and revoke temporary credentials after either outcome. Checkpoint construction itself performs no cleanup.</p>
-<p>The native provider qualification requires a <strong>fresh dedicated disposable bucket</strong> named <code>durable-db-test-*</code>, <code>DURABLE_DB_DISPOSABLE=1</code>, <code>DURABLE_DB_TEST_PROVIDER=b2</code> or <code>s3</code>, <code>DURABLE_DB_TEST_BUCKET</code>, the provider’s credentials, and <code>DURABLE_DB_NATIVE_HTTP_REPORT</code> for JSON evidence. It exercises the real native HTTP path and waits for two normal 60-second cleanup sweeps, including one after takeover publishes a recovery catalog and a new checkpoint. Covered frames in both the earlier and current journals must disappear before the second reopen. Two complete connection/cache reopens then verify values, receipts and spent credit. Recovery must claim retained tenant reserve without allocating new admission rights, and a later cold reopen must preserve those counters. The caller must remove every physical version, the bucket, and any temporary workload key afterward. It keeps the first server alive across clock-independent takeover and requires subsequent reads and receipt retries to fail. Each warmed read validates one fresh permit GET with no authority calls. It does not qualify Kubernetes placement, AWS or a sustained SLO, or establish a production operating envelope.</p>
-<p>The native cloud CLI fixture is <code>cargo test --locked --test cluster_cli -- --ignored --nocapture</code>, with the same disposable-provider/report environment above. It kills all compute, starts with stranded namespace credit, refills through the ready administrator endpoint before owner recovery, then verifies values/receipts, incompatible layout refusal and another cold recovery. The regular test in that file checks invalid CLI settings before provider access. DNS unit checks use <code>cargo test --locked --lib api::membership</code>; the residency model uses <code>scripts/check-model.sh OwnerResidency</code>.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="observability.html"><span>Previous</span>Observability</a><a class="next" href="production-readiness.html"><span>Next</span>Production readiness</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#work-on-one-component">Work on one component</a></li><li><a href="#formal-check-inputs">Formal check inputs</a></li><li><a href="#real-provider-checks">Real provider checks</a></li><li><a href="#kubernetes-load-measurements">Kubernetes load measurements</a></li><li><a href="#ci-and-publication">CI and publication</a></li><li><a href="#dependency-audits">Dependency audits</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<p><code>src/db.rs</code> implements <code>spec/DurableDb.tla</code>; a change to the protocol starts in the model. <a href="verification.html">Verification</a> records what is checked and what is not.</p>
+<h2 id="releases-and-ci">Releases and CI<a class="anchor" href="#releases-and-ci" aria-label="Link to this section">#</a></h2>
+<p>Woodpecker builds every push with the repository's <code>Dockerfile</code>: the model check, the Rust and client tests, a static <code>x86_64-unknown-linux-musl</code> binary, the website, and a <code>scratch</code> runtime image. A tag publishes the binary and its checksum as a release. There are no GitHub Actions workflows.</p>
+<p>Benchmarks quoted anywhere in this repository are reproduced by the commands in <a href="performance.html">performance</a>.</p>
+</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="verification.html"><span>Previous</span>Verification</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#build">Build</a></li><li class="h2"><a href="#check">Check</a></li><li class="h2"><a href="#layout">Layout</a></li><li class="h2"><a href="#releases-and-ci">Releases and CI</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html" aria-current="page">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>

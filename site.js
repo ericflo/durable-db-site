@@ -13,10 +13,19 @@ for (const box of document.querySelectorAll('[data-tabs]')) {
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => select(index));
     tab.addEventListener('keydown', (event) => {
-      const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
-      if (step) select((index + step + tabs.length) % tabs.length, true);
+      const last = tabs.length - 1;
+      const target = {
+        ArrowRight: index === last ? 0 : index + 1,
+        ArrowLeft: index === 0 ? last : index - 1,
+        Home: 0,
+        End: last,
+      }[event.key];
+      if (target === undefined) return;
+      event.preventDefault();
+      select(target, true);
     });
   });
+  box.querySelector('[role=tablist]').hidden = false;
   select(0);
   box.dataset.ready = '';
 }

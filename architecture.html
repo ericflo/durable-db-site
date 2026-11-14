@@ -1,42 +1,224 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Architecture · durable-db</title><meta name="description" content="Authority, the commit protocol and fenced collection."><meta property="og:title" content="Architecture · durable-db"><meta property="og:description" content="Authority, the commit protocol and fenced collection."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.12 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html" aria-current="page">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main" class="docs wrap"><details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><p>Start</p><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">Clients</a></li><li><a href="web-app.html">Web app example</a></li></ul><p>Understand</p><ul><li><a href="architecture.html" aria-current="page">Architecture</a></li><li><a href="b2.html">B2 protocol</a></li><li><a href="security.html">Security</a></li></ul><p>Operate</p><ul><li><a href="recovery.html">Backup and restore</a></li><li><a href="observability.html">Observability</a></li><li><a href="development.html">Development</a></li></ul><p>Verify</p><ul><li><a href="production-readiness.html">Production readiness</a></li><li><a href="verification.html">Verification</a></li><li><a href="verification-results.html">Verification results</a></li><li><a href="proof-publication.html">Publication proof</a></li></ul><p>Design notes</p><ul><li><a href="design-owned-partitions.html">Owned partitions</a></li><li><a href="design-upload-admission.html">Upload admission</a></li><li><a href="design-budgetless-collection.html">Budgetless collection</a></li><li><a href="design-signing-rotation.html">Signing key rotation</a></li></ul></nav></details><article><p class="eyebrow">Understand</p><h1 id="architecture">Architecture</h1>
-<p>Durable DB serves local directories and cloud buckets through the native journal, sorted-table index and checkpoint engine. In cloud mode, the bucket is authoritative and API processes are disposable. One process can own every partition; adding processes moves ownership while database mapping stays fixed. The <a href="production-readiness.html">1.0 scope</a> covers one administrative trust domain on B2 or a local directory; broader performance, multitenant and operational qualification remains follow-up work.</p>
-<h2 id="placement-and-authority">Placement and authority<a class="anchor" href="#placement-and-authority" aria-label="Link to this section">#</a></h2>
-<p>An immutable layout maps database names to fixed partitions with domain-separated SHA-256. Partition count is not a database-count limit. A shared object-backed B+tree stores partition control records; its root fits in B2 bucket metadata or an S3 control object. The same publication algorithm runs on both providers. B2 supplies a conditional bucket revision; S3 supplies an object version comparison.</p>
-<p>Kubernetes supplies peer addresses through a headless Service, including starting pods. Rendezvous ranking chooses a preferred owner for each partition. DNS snapshots can be stale or disagree: they schedule acquisition but grant no serving permission. Each acquisition uses a fresh incarnation, registers it durably, conditionally claims its partition, revokes unresolved predecessor permits and recovers the selected journal history before serving. Confirmed prefix publications retain the immutable ancestry cursor. Unconfirmed outcomes validate the same owner and reuse completed scans only when the full recovery snapshot is unchanged; a changed catalog, checkpoint or collection generation requires fresh discovery. Native workers also observe idle permits every three seconds and retire only on confirmed absence, so rejoining owners do not need incoming traffic to discover revocation. These observations never authorize responses. A local worker retirement wakes placement immediately; the existing three-second poll remains a fallback. Notifications do not bypass resident limits, failed-acquisition pacing or durable ownership checks.</p>
-<p>An excluded incumbent can answer a storage-path challenge to defer replacement
-despite blocked peer HTTP. A completed unanswered wait schedules an ordinary
-conditional claim; it grants no serving authority. Replies use the existing
-partition metadata and introduce no new object class. See the
-<a href="verification.html#storage-path-owner-challenges">challenge protocol and limits</a>.
-On orderly shutdown, the process conditionally removes its routing addresses
-and leaves the departing stable member’s fingerprint. That member’s replacement
-skips the wait; another member waits before fallback. This bounded best-effort
-hint changes no permit or history; an interrupted shutdown retains the ordinary
-challenge path.</p>
-<p>A permit is a write-once positive object. A successor permanently revokes predecessor permits before choosing their durable journal prefixes. Remote responses are sealed before a fresh, uncached permit GET. There is no lease, bounded-clock assumption or bucket-wide conditional write on the ordinary read path. A fresh object GET still has provider latency; this is not an in-memory latency claim. <a href="design-owned-partitions.html#revocable-writer-permits">Protocol details and assumptions</a>.</p>
-<p>If the fresh permit read is unavailable, the response returns HTTP 503 while a locally healthy worker stays resident. An identical retry can resolve its durable receipt without another journal upload. Confirmed revocation and a failed local view still stop serving.</p>
-<p>Requests arriving elsewhere are forwarded once to an advertised owner incarnation. The receiving API pins that backend through authorization and dispatch; address reuse cannot redirect a request to an unrelated incarnation. Tenant claims and policy checks remain intact. Unknown outcomes return to the caller for an identical retry, without hidden forwarding replay.</p>
-<h2 id="commit-protocol">Commit protocol<a class="anchor" href="#commit-protocol" aria-label="Link to this section">#</a></h2>
-<p>A transaction operates within one database and names the revision it read. Admission validates its scope, logical quotas, receipt identity and resource allowances before accepting a new revision. An immutable journal upload can group transactions; only a contiguous durable prefix becomes readable. Acknowledgement also requires current serving permission. A rejected or uncertain upload cannot create a successful receipt by observation alone.</p>
-<p>An uncertain journal PUT is resolved by an exact GET. If its frame is present,
-normal confirmation can continue; if absent, the worker retires so the cluster
-can reacquire, revoke and select the old journal prefix. It never repeats the
-uncertain physical PUT or treats absence as proof of abort. A late old frame
-outside the selected prefix cannot enter recovered state. Local mode reports
-unavailability and requires reopening its directory after this failure.</p>
-<p>Receipts bind the original request body and return its original result on an identical retry. A conflicting body reusing the ID is refused. The cloud CLI retains a 128-commit retry window; callers must resolve uncertainty within that window. Transactions spanning databases are not supported.</p>
-<p>Durable upload allowances cover immutable PUT attempts, including unsuccessful or uncertain attempts. The namespace ceiling covers data and metadata; tenant admission and maintenance reserves supply additional isolation. Volatile unused rights are stranded on process loss rather than recreated from observations. The namespace administrator can inspect and refill its ceiling before partition owners become ready. Full administrative/egress accounting remains deferred beyond the single-trust-domain 1.0 scope.</p>
-<h2 id="index-checkpoints-and-memory">Index, checkpoints and memory<a class="anchor" href="#index-checkpoints-and-memory" aria-label="Link to this section">#</a></h2>
-<p>A bounded recent projection overlays an immutable checkpoint. Shared sorted tables contain values and receipts from multiple database generations; a bounded manifest routes point lookups and ordered scans. Checkpoint publication binds the image to an exact selected journal position. Recovery opens that image lazily and replays its remaining selected suffix before exposing an owner. Under memory pressure, live publication and replay drop superseded value versions at complete frame boundaries. The latest value or deletion marker remains for each key; older affected snapshots fail explicitly. Receipts and conflict history retain their existing limits. This frees disposable memory without publishing a checkpoint or allowing journal collection.</p>
-<p>Checkpoint funding and immutable uploads share the frozen projection with readers. The worker sends durable, permission-validated replies first and pauses new write admission during maintenance. Publication and projection replacement remain exclusive so collection cannot retire tables still used by an active read. No second projection is kept; control publication and provider reads can still add latency.</p>
-<p>Authenticated immutable blocks share a bounded memory cache and optional disposable disk cache. Small journal frames validated during selection also share the memory cache, so selected replay can avoid fetching them again. Discovery still reads storage; disk entries cannot supply journal provenance. Mutable authority and permit validation are not cache hits. Corrupt cached bytes are misses; missing or corrupt authoritative objects are errors.</p>
-<p>Aggregate index/validation counts and payload allowances, and journal bytes, are divided across the fixed layout. A resident-owner reservation follows private recovery, requests, worker state and spawned I/O through retirement. Removing an owner from the routing map does not free its reservation. This bounds those components even during repeated handoffs. Cache, checkpoint scratch, HTTP/provider buffers and allocator overhead remain separate; the configured payload allowance is not a whole-process RSS ceiling.</p>
-<h2 id="collection-without-leases-or-clock-assumptions">Collection without leases or clock assumptions<a class="anchor" href="#collection-without-leases-or-clock-assumptions" aria-label="Link to this section">#</a></h2>
-<p>Each native worker collects its own partition. The peer preferred for partition zero schedules shared-directory cleanup once per interval, independently of readiness; disagreement can run concurrent collectors safely. Checkpoints let collectors reclaim covered journal frames and obsolete tables/manifests while retaining live checkpoint references and explicit retained images. B2 deletion removes physical file versions, rather than leaving billable hidden versions.</p>
-<p>Collection lists candidates before obtaining its publication fence and deletes only listed, unreachable objects. Failed or ambiguous fences grant no deletion authority. A paused publisher must lose the relevant comparison; a restarted collector begins a fresh attempt. External lifecycle/retention rules must neither delete live objects nor prevent required reclamation. Registration/catalog-header reclamation and complete growth qualification remain open.</p>
-<h2 id="provider-and-local-boundaries">Provider and local boundaries<a class="anchor" href="#provider-and-local-boundaries" aria-label="Link to this section">#</a></h2>
-<p>Cloud providers must supply durable immutable uploads, fresh permit reads after revocation and the documented conditional control operations. A startup probe checks stale-write exclusion; it cannot establish the complete provider contract. Raw partition-control observations may be stale and are only hints; claims and activation require exact comparisons. Directory operations that need a fresh snapshot, including public upload-budget status, retain the shared conditional barrier. Ordinary database reads validate their writer permit instead.</p>
-<p>Conditional mutations and immutable uploads have one physical attempt per invocation. Redirects and hidden transport retries are disabled so a committed update with a lost reply cannot become a reported definite conflict. The common object reader allows at most three attempts within a ten-second observation deadline, including range/list results and streamed bodies. A deadline returns an error, never absence or permission; slow transfers must be retried by the caller. The deadline does not bound time while a process is stopped. <a href="b2.html">B2 binding and qualification</a>.</p>
-<p>Local mode holds a lifetime OS lock over one directory and uses fsync plus atomic publication. Blocking mutations retain that lock even if their async waiter is canceled. It needs no ownership clock or remote permit GET. Shared/network filesystems and cloning live process memory are unsupported. <a href="recovery.html#local-format-upgrades">Format compatibility and migration</a>.</p>
-<p>The <a href="verification.html">verification record</a> distinguishes bounded models, abstract proofs, implementation tests and deployment evidence. These components are not yet a complete composed proof of Rust or every deployment.</p>
-<nav class="pager" aria-label="Pagination"><a class="previous" href="web-app.html"><span>Previous</span>Web app example</a><a class="next" href="b2.html"><span>Next</span>B2 protocol</a></nav></article><nav class="toc" aria-label="On this page"><p>On this page</p><ol><li><a href="#placement-and-authority">Placement and authority</a></li><li><a href="#commit-protocol">Commit protocol</a></li><li><a href="#index-checkpoints-and-memory">Index, checkpoints and memory</a></li><li><a href="#collection-without-leases-or-clock-assumptions">Collection without leases or clock assumptions</a></li><li><a href="#provider-and-local-boundaries">Provider and local boundaries</a></li></ol></nav></main><footer class="site-footer"><div class="wrap"><div><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a><p>A transactional key-value database in one Rust binary. Apache-2.0.</p></div><nav aria-label="Footer"><a href="index.html#quickstart">Quick start</a><a href="api.html">HTTP API</a><a href="clients.html">TypeScript SDK</a><a href="verification-results.html">Evidence</a><a href="production-readiness.html">Release scope</a><a href="install.sh">install.sh</a></nav></div></footer></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture · durable-db</title>
+<meta name="description" content="The objects in the bucket, taking ownership, committing, reading, collection and failures.">
+<meta property="og:title" content="Architecture · durable-db">
+<meta property="og:description" content="The objects in the bucket, taking ownership, committing, reading, collection and failures.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="wrap">
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<nav aria-label="Main">
+<a href="index.html#docs">Docs</a>
+<a href="api.html">API</a>
+<a href="clients.html">SDK</a>
+<a href="architecture.html" aria-current="page">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+</nav>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</div>
+</header>
+
+<div class="docs wrap">
+<details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html" aria-current="page">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
+<main id="main"><article><h1>Architecture</h1>
+<p>durable-db stores each database as a set of immutable objects in a bucket. Servers hold nothing that matters: any server can be killed at any moment, and any other server can rebuild every database from the bucket alone. This page describes exactly how.</p>
+<h2 id="what-storage-must-provide">What storage must provide<a class="anchor" href="#what-storage-must-provide" aria-label="Link to this section">#</a></h2>
+<p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup. Two guarantees:</p>
+<ol>
+<li><strong>Read-after-write.</strong> Once a PUT or DELETE has returned, every GET, HEAD and LIST that starts afterwards observes it.</li>
+<li><strong>Whole objects.</strong> A reader sees a complete object or none.</li>
+</ol>
+<p>Nothing else. No conditional writes (<code>If-Match</code>, <code>If-None-Match</code>), no transactions, no locks, no leases, no synchronized clocks. Backblaze B2 rejects conditional writes outright, which is why the protocol is built without them; Amazon S3, Cloudflare R2, MinIO and a local directory satisfy the same contract, so all of them run the same code.</p>
+<h2 id="what-is-in-the-bucket">What is in the bucket<a class="anchor" href="#what-is-in-the-bucket" aria-label="Link to this section">#</a></h2>
+<p>For a database named <code>app</code>, under <code>&lt;prefix&gt;/db/app/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Object</th>
+<th>Written</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>c/&lt;epoch&gt;</code></td>
+<td><strong>Claim.</strong> The permit of the server currently allowed to write.</td>
+<td>Once, when a server takes ownership. Deleted to revoke it.</td>
+</tr>
+<tr>
+<td><code>m/&lt;epoch&gt;/&lt;generation&gt;</code></td>
+<td><strong>Manifest.</strong> A small JSON record: the list of tables that make up the state, the revision they contain, and how many frames they cover.</td>
+<td>At takeover and after every flush or merge.</td>
+</tr>
+<tr>
+<td><code>l/&lt;epoch&gt;/&lt;number&gt;</code></td>
+<td><strong>Frame.</strong> One group of committed transactions.</td>
+<td>Once per group commit.</td>
+</tr>
+<tr>
+<td><code>t/&lt;epoch&gt;/&lt;id&gt;</code></td>
+<td><strong>Table.</strong> Sorted, compressed, checksummed key-value blocks with an index.</td>
+<td>By a flush or a merge.</td>
+</tr>
+<tr>
+<td><code>m/~</code></td>
+<td><strong>Tombstone.</strong> The database was deleted.</td>
+<td>Once.</td>
+</tr>
+</tbody>
+</table>
+<p>An <strong>epoch</strong> is <code>&lt;number&gt;-&lt;random&gt;</code>, written in fixed width so that sorting keys sorts epochs. A server picks a new epoch every time it takes ownership of a database. Because the random part is fresh, every key below an epoch is written by exactly one process. That is the reason no write ever needs to be conditional: two servers can never write the same key.</p>
+<p>Every object is immutable. An upload may be repeated, but always with identical bytes.</p>
+<h2 id="taking-ownership">Taking ownership<a class="anchor" href="#taking-ownership" aria-label="Link to this section">#</a></h2>
+<p>A server that wants to serve a database does this, in order:</p>
+<ol>
+<li><strong>List</strong> claims and manifests, and choose an epoch number one higher than any it sees.</li>
+<li><strong>PUT its claim</strong>, once. If the upload's outcome is unknown, the claim is abandoned and never used.</li>
+<li><strong>List claims.</strong> If a higher claim exists, another server is ahead: delete the own claim and stop. Otherwise <strong>delete every lower claim</strong>. This is revocation.</li>
+<li><strong>List manifests.</strong> If a manifest of a higher epoch exists, stop. Otherwise take the newest manifest of the highest lower epoch.</li>
+<li><strong>Read</strong> that manifest, then list and read the frames that follow it, keeping the unbroken run.</li>
+<li>If frames were replayed, write them into a new table. <strong>PUT the first manifest</strong> of the new epoch.</li>
+<li><strong>Check the claim</strong> (HEAD). If it still exists, start serving.</li>
+</ol>
+<p>The order matters. Revocation (3) happens before reading (4, 5), so nothing the previous owner acknowledges afterwards can be missed. The final check (7) happens after the manifest is stored, so everything recovered, including transactions the previous owner stored but never acknowledged, is permanent before anyone sees it.</p>
+<p>A server that leaves gracefully flushes, writes a manifest marked <code>sealed</code>, and deletes its own claim. The next owner then has nobody to revoke and no frames to replay.</p>
+<h2 id="committing">Committing<a class="anchor" href="#committing" aria-label="Link to this section">#</a></h2>
+<p>One task per open database orders its transactions.</p>
+<ol>
+<li>Transactions that arrive together are validated in order against the newest state: version checks, range checks, quota, and whether the idempotency key was already used.</li>
+<li>The survivors are appended to an in-memory table as not-yet-visible versions and encoded as one <strong>frame</strong>.</li>
+<li>The frame is <strong>PUT</strong> to <code>l/&lt;epoch&gt;/&lt;n&gt;</code>. On Backblaze, two identical uploads race to different storage pods and the first to finish wins; elsewhere a second upload starts only if the first is slow.</li>
+<li>When the frame and all earlier frames are stored, the server <strong>checks its claim</strong> with one HEAD.</li>
+<li>If the claim exists, the transactions become visible and are acknowledged.</li>
+</ol>
+<p>Why this is safe: suppose server A acknowledges a transaction and server B takes over. A's claim check found the claim present, so the check began before B's revocation finished. A's frame was stored before that check began, so before B's revocation finished, so before B listed A's frames. B therefore read the frame. Conversely, if B revoked A first, A's check finds no claim and A acknowledges nothing; the client is told the outcome is unknown and retries with its idempotency key.</p>
+<p>A refusal is held to the same standard. &quot;Conflict&quot; is a statement about the current state, so a server reports it only after a claim check of its own. A stale server answers &quot;ownership moved&quot;, never &quot;conflict&quot;.</p>
+<p>Throughput comes from grouping: every transaction that arrives while an upload is in flight joins the next frame. Two frames may upload at once. More would not help, because acknowledgement is in order and every commit would wait for the slowest of many uploads.</p>
+<h2 id="reading">Reading<a class="anchor" href="#reading" aria-label="Link to this section">#</a></h2>
+<p>Readers never block writers. A read takes, under one short lock, the acknowledged revision, the current list of tables and the matching entries of the in-memory table. It then looks through tables from newest to oldest.</p>
+<ul>
+<li>A <strong>strong</strong> read also waits for a claim check that began after the read arrived. If the claim still stands, no other server can have acknowledged anything this server has not seen, so the answer is linearizable. All reads waiting at the same moment share one HEAD.</li>
+<li>A <strong>session</strong> read skips the check. It returns a consistent snapshot at the revision the client asked for or newer. If the server has not reached that revision, it checks its claim, discovers it was replaced, and the request is routed to the new owner.</li>
+</ul>
+<h2 id="tables-flush-and-merge">Tables, flush and merge<a class="anchor" href="#tables-flush-and-merge" aria-label="Link to this section">#</a></h2>
+<p>Writes accumulate in memory and in frames. A <strong>flush</strong> writes the acknowledged in-memory entries as a new table, stores a manifest that lists it, checks the claim, switches readers to the new table list, and deletes the frames the manifest covers. It runs when unflushed data reaches 8 MiB or 512 frames, after 5 seconds without a commit, and at release.</p>
+<p>Tables are merged so that the newest tables stay small and the count stays logarithmic: the newest tables are merged whenever together they are at least half the size of the next one. Deleted keys are dropped when a merge includes the oldest table.</p>
+<p>A table is blocks of about 32 KiB, compressed with LZ4, each with a CRC, followed by an index of the last key of each block. A lookup reads the index once, then one block. Small tables arrive whole in a single request.</p>
+<p>Two caches hold table data, both bounded and both disposable:</p>
+<ul>
+<li><strong>Memory</strong> (<code>--cache-bytes</code>): decoded blocks, shared by all databases.</li>
+<li><strong>Disk</strong> (<code>--cache-dir</code>, optional): whole table files. A damaged file fails its checksum, is deleted and is fetched again.</li>
+</ul>
+<h2 id="collection">Collection<a class="anchor" href="#collection" aria-label="Link to this section">#</a></h2>
+<p>Objects are deleted by the owner, and only what the newest manifest no longer needs:</p>
+<ul>
+<li>frames covered by the manifest,</li>
+<li>older manifests of the same epoch,</li>
+<li>tables replaced by a merge,</li>
+<li>everything left by lower epochs that the current manifest does not reference.</li>
+</ul>
+<p>The rule that makes this safe is the same as for acknowledgements: delete only after a claim check that began after the manifest was stored. If the check passes, any later owner will read that manifest or a newer one, and never needs what was deleted. If the owner has been replaced, the check fails and it deletes nothing.</p>
+<p>On a versioned bucket such as B2, deletion removes every version of a key, data first and delete markers last, so no lifecycle rule is needed and nothing is billed after it is collected.</p>
+<h2 id="many-servers">Many servers<a class="anchor" href="#many-servers" aria-label="Link to this section">#</a></h2>
+<p>Servers are identical. Each knows the others through one DNS name that resolves to every ready server (a Kubernetes headless Service), refreshed every second.</p>
+<ul>
+<li>A request for a database that this server has open is served here.</li>
+<li>Otherwise the server computes which member should hold the database (rendezvous hashing over the member list) and relays the request to it. If that member cannot be reached, the server takes ownership itself.</li>
+<li>When membership changes, a server hands the databases that now belong to another member over to it: flush, sealed manifest, claim deleted. At most 16 per second, so a new member is not flooded.</li>
+<li>On a termination signal, a server reports not-ready, hands over every database, relays requests to its peers for a few seconds while the load balancer stops sending them, and exits.</li>
+</ul>
+<p>Membership is only a routing preference. Two servers with different views of the membership may both try to serve a database; the claim protocol lets exactly one of them acknowledge anything, and the other relays or retries. No Kubernetes lease, pod-local lock, clock or cache is ever relied on for correctness.</p>
+<h2 id="what-happens-when-things-fail">What happens when things fail<a class="anchor" href="#what-happens-when-things-fail" aria-label="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A server is killed mid-commit.</td>
+<td>Its unacknowledged clients see a connection error and retry. Another server revokes the dead server's claim and replays its frames. A transaction whose frame was stored is applied exactly once: the retry finds its idempotency key.</td>
+</tr>
+<tr>
+<td>An upload's response is lost.</td>
+<td>The identical bytes are uploaded again.</td>
+</tr>
+<tr>
+<td>A paused server resumes after being replaced.</td>
+<td>Its claim is gone. Its next check fails; it acknowledges nothing and deletes nothing.</td>
+</tr>
+<tr>
+<td>Two servers claim at the same moment.</td>
+<td>Both write claims. The lower one sees the higher and withdraws.</td>
+</tr>
+<tr>
+<td>A failed takeover leaves a manifest upload in flight.</td>
+<td>The claim is left in place, as after a crash, so no lower epoch can serve until a higher one revokes it. Deleting it would let the late manifest hide newer acknowledged writes.</td>
+</tr>
+<tr>
+<td>Storage is unreachable.</td>
+<td>Commits and strong reads fail with <code>503</code> until it returns. Nothing is acknowledged that is not in the bucket.</td>
+</tr>
+<tr>
+<td>Every server is gone.</td>
+<td>Start one. It opens each database from the bucket on first use.</td>
+</tr>
+<tr>
+<td>A cache file is damaged.</td>
+<td>Its checksum fails; it is deleted and fetched again.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="limits-of-this-design">Limits of this design<a class="anchor" href="#limits-of-this-design" aria-label="Link to this section">#</a></h2>
+<ul>
+<li><strong>One writer per database at a time.</strong> A database's write throughput comes from grouping transactions into frames, not from spreading it over servers. Spread load by using more databases.</li>
+<li><strong>A commit costs one upload and one HEAD.</strong> That is the floor: about 80 ms on B2 from a distance, a few milliseconds on a local disk.</li>
+<li><strong>A strong read costs one HEAD</strong>, shared among concurrent reads. Session reads cost none.</li>
+<li><strong>Transactions do not span databases.</strong></li>
+<li><strong>A deleted database's name cannot be reused.</strong> The tombstone is permanent, so that a late upload from a server that owned the old database can never be mistaken for the new one.</li>
+<li><strong>Merges build a table in memory</strong>, so a database should fit comfortably in a server's memory when merged. The default quota is 1 GiB.</li>
+<li><strong>No historical reads.</strong> Only the current state is kept.</li>
+</ul>
+</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="clients.html"><span>Previous</span>TypeScript SDK</a><a class="next" href="performance.html"><span>Next</span>Performance</a></nav></main>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-storage-must-provide">What storage must provide</a></li><li class="h2"><a href="#what-is-in-the-bucket">What is in the bucket</a></li><li class="h2"><a href="#taking-ownership">Taking ownership</a></li><li class="h2"><a href="#committing">Committing</a></li><li class="h2"><a href="#reading">Reading</a></li><li class="h2"><a href="#tables-flush-and-merge">Tables, flush and merge</a></li><li class="h2"><a href="#collection">Collection</a></li><li class="h2"><a href="#many-servers">Many servers</a></li><li class="h2"><a href="#what-happens-when-things-fail">What happens when things fail</a></li><li class="h2"><a href="#limits-of-this-design">Limits of this design</a></li></ul></nav>
+</div>
+<footer class="site-footer">
+<div class="wrap">
+<div>
+<a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+</div>
+<nav aria-label="Footer">
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
+<a href="architecture.html" aria-current="page">Architecture</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="install.sh">install.sh</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+</nav>
+</div>
+</footer>
+</body>
+</html>
