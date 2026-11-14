@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.1: install">v2.1.1</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -39,7 +39,7 @@
 <main id="main"><article><h1>Architecture</h1>
 <p>durable-db stores each database as a set of immutable objects in a bucket. Servers hold nothing that matters: any server can be killed at any moment, and any other server can rebuild every database from the bucket alone. This page describes exactly how.</p>
 <h2 id="what-storage-must-provide">What storage must provide<a class="anchor" href="#what-storage-must-provide" aria-label="Link to this section">#</a></h2>
-<p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup. Two guarantees:</p>
+<p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup: it lists the versions under a prefix and removes them by name, up to a thousand with one request where the store takes such a request and one at a time where it does not. Two guarantees:</p>
 <ol>
 <li><strong>Read-after-write.</strong> Once a PUT or DELETE has returned, every GET, HEAD and LIST that starts afterwards observes it.</li>
 <li><strong>Whole objects.</strong> A reader sees a complete object or none.</li>
@@ -224,7 +224,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.1, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

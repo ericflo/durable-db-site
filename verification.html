@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.1: install">v2.1.1</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -219,8 +219,8 @@
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
-<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. The directory store against the in-memory one. One order of directory names on all three.</td>
-<td>12 pass.</td>
+<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again, and a version the bucket could not remove is; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone. The stand-in refuses a request with an unsigned <code>x-amz</code> header or a wrong checksum. The directory store against the in-memory one. One order of directory names on all three.</td>
+<td>16 pass. Fourteen faults put into the purge one at a time each fail a test.</td>
 </tr>
 <tr>
 <td><code>tests/http.rs</code></td>
@@ -239,8 +239,8 @@
 </tr>
 <tr>
 <td><code>tests/bucket.rs</code></td>
-<td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 12 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; the engine with a takeover, a release and a deletion.</td>
-<td>4 pass on Backblaze B2, with native uploads and with PutObject only. A request that fails on its way is sent again, as the engine sends it (finding 29).</td>
+<td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 12 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; sixty versions of keys with <code>&amp;</code>, <code>&lt;</code> and a space removed with one request, which Backblaze must take; the engine with a takeover, a release and a deletion.</td>
+<td>5 pass on Backblaze B2, with native uploads and with PutObject only. A request that fails on its way is sent again, as the engine sends it (finding 29).</td>
 </tr>
 <tr>
 <td><code>durable-db bench --workload ledger</code></td>
@@ -255,12 +255,12 @@
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Nine runs, four with 2.1.0 and five with 2.1.1, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 18,250 to 23,567 transfers in 240 s. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 47 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
+<td>Twelve runs, four with 2.1.0, six with 2.1.1 and two with 2.1.2, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 12,026 to 23,567 transfers in 240 s, the fewest in three runs made in an evening hour when the bucket was slower. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 62 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
 </tr>
 <tr>
 <td><code>scripts/test-upgrade.sh</code></td>
 <td>Three servers of one release on one directory, replaced by the next one at a time while the ledger runs through all three; then one goes back to the old release and forward again, so that each version takes over databases the other wrote.</td>
-<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215.</td>
+<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215. From 2.1.1 to 2.1.2: 152,861.</td>
 </tr>
 </tbody>
 </table>
@@ -331,6 +331,14 @@
 <li>
 <p><strong>Five runs of the Kubernetes test were read as a difference between two releases.</strong> Its read load measured 115,943, 119,493 and 115,589 session reads a second with 2.1.1 and 163,283 and 139,882 with 2.1.0, and the notes of release 2.1.1 said that the figure had gone the wrong way for a reason not established. Four more runs measured 118,284 and 159,921 with 2.1.0 and 144,577 and 130,334 with 2.1.1: the figure moves by a third from run to run with either release. The notes were corrected the same day. Looking for the reason found what the figure mostly measures: a read that reaches a pod not holding its database is relayed to the one that does, at two and a half times the cost, and more than half of the test's reads are relayed. The test now prints how many. <a href="performance.html#on-kubernetes">Performance</a> has the nine runs and what was ruled out.</p>
 </li>
+<li>
+<p><strong>About one purge in four failed when many databases collected at once, and the log did not say why.</strong> Counting storage failures in runs already made showed it: with 64 databases on Backblaze B2, 5% to 13% of purges failed in runs of ten seconds, with 2.1.0 and 2.1.1 alike. The debug log said only &quot;error sending request&quot;. A build that logged the cause showed connections reset by the other side, nearly all of them in the two seconds in which every database collected: five seconds after the load stopped, when all of them flush, and again when the server was stopped. A purge removed each version with a request of its own, 32 at a time for each database, so 64 databases opened about a thousand connections at once.</p>
+<p>Two smaller changes were measured first and not kept. Sending a failed removal again ended the failures and left the connections: in a run of 100 seconds, where every database also collects once under load, 2 of 633 purges failed against 154 of 647, and the commits beside them were slower in that pair of runs (p99 545 ms against 298 ms). Allowing 64 such requests at a time over the whole server ended the failures, held fewer connections and made the purges slow: 127 of 633 took over ten seconds, and a database cannot be released while it collects.</p>
+<p>Since 2.1.2 one request removes up to a thousand versions, which is a second wire form of the one operation, defined by the S3 API and taken by Backblaze; a store that refuses it gets a request for each version as before. A request of a purge that is not answered is sent again twice, a storage request that fails logs its cause at debug level, and an answer of <code>501</code> from a store is a refusal, not a reason to wait and repeat. Measured with the two releases in turn: with 64 databases written for 100 seconds, 156 of 629 purges failed with 2.1.1 and none of 645 and of 643 with 2.1.2; with 64 databases left alone after ten seconds of writes and the server then stopped, 26 of 158 and 75 of 159 failed with 2.1.1, which held 1,136 and 1,486 open files, and none of 159 and of 156 with 2.1.2, which held 248 and 258, fewer than under the load. <a href="performance.html#when-many-databases-collect-at-once">Performance</a> has the tables.</p>
+</li>
+<li>
+<p><strong>A test of the disk cache waited for a count that can be reached with a table missing.</strong> <code>an_empty_disk_cache_is_filled_two_tables_at_a_time</code> read twelve tables until the cache counted the bytes of twelve, then expected a pass of reads to miss none. It failed once in four runs of the suite made before this release, and then 7 times in 360 runs alone, on a slowed processor and on a fast one. A table that is read while its first fetch is finishing can be fetched a second time, and the cache counts its bytes again although it holds one copy. The count is put right when the cache is next trimmed; until then it can be trimmed sooner than it has to be. The test now waits for the pass without a miss: 600 runs of 600 pass. The count itself is not corrected in release 2.1.2 and is listed below.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -389,6 +397,8 @@
 </table>
 <h2 id="remaining-obligations">Remaining obligations<a class="anchor" href="#remaining-obligations" aria-label="Link to this section">#</a></h2>
 <ul>
+<li>Count a table once in the disk cache when it is fetched twice (finding 33).</li>
+<li>Send the request that removes many versions to Amazon S3 and to a store that refuses it. It has been sent to Backblaze B2 and to a stand-in.</li>
 <li>Run the bucket tests and benchmarks on Amazon S3 and at least one other S3-compatible store. The code path is shared with B2 except for the upload call, and is exercised against a stand-in written from the S3 documentation, but not against those services.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
 <li>The memory soak for hours rather than minutes, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it.</li>
@@ -407,7 +417,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.1, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

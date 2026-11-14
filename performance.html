@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.1: install">v2.1.1</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -324,6 +324,125 @@
 <li><strong>Known pods first, and a duplicate where one can be spared.</strong> B2 stores each upload on one of many storage pods, and pods differ: the same 4 KiB upload measured medians from 67 ms to over 900 ms on eight pods at one moment, and of ten new pods tried one at a time four were fast. durable-db keeps the pods it has used in order of speed. The upload a commit waits for takes the fastest one that is free. An identical upload starts beside it on another pod, a slower known one or a new one, and one more every 150 ms while none has finished, up to four; the first to finish wins. At most eight new pods are on trial at a time, and when many databases commit at once and no pod can be spared, the duplicate is not sent. Uploads are free on B2. In five logged runs with one database, one upload in five finished on the duplicate and not on the upload it started beside.</li>
 <li><strong>B2's native upload call.</strong> PutObject through B2's S3-compatible gateway measured 150 to 260 ms at the median for the same object; B2's own upload call measured 71 ms. Uploads use the native call; everything else uses the S3 API.</li>
 </ul>
+<h3 id="when-many-databases-collect-at-once">When many databases collect at once<a class="anchor" href="#when-many-databases-collect-at-once" aria-label="Link to this section">#</a></h3>
+<p>Collection lists the versions it may remove and removes them. Up to release 2.1.1 every version was removed with a request of its own, 32 at a time for each database. Three things make many databases collect in the same second: databases that stop being written together flush together five seconds later, a server that is stopped seals and collects every database it holds, and databases that began together reach their 512th group of commits together. With 64 databases the server then opened about a thousand connections to B2 at once and B2 reset some of them. A purge whose request was reset failed, and what it had not removed waited for the next collection. Nothing was lost by that, and nothing was reported: the failure was a line in the debug log that did not say what had failed.</p>
+<p>Since 2.1.2 one request removes up to a thousand versions, which B2 answered in 0.25 s, and a request of a purge that is not answered is sent again twice before the purge fails (<a href="verification.html#what-these-checks-found">verification</a>, finding 32).</p>
+<p><strong>64 databases written for ten seconds, left alone, and the server stopped 25 seconds later.</strong> Two runs of each release in turn:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Release 2.1.1</th>
+<th>Release 2.1.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Purges that failed</td>
+<td>26 of 158, 75 of 159</td>
+<td>0 of 159, 0 of 156</td>
+</tr>
+<tr>
+<td>Most open files after the load (and under it)</td>
+<td>1,136 (382), 1,486 (353)</td>
+<td>248 (343), 258 (358)</td>
+</tr>
+<tr>
+<td>Most memory after the load (and under it)</td>
+<td>154 (78), 145 (75) MiB</td>
+<td>97 (82), 91 (80) MiB</td>
+</tr>
+<tr>
+<td>Stopping the server, all 64 databases released</td>
+<td>7.2, 8.6 s</td>
+<td>3.6, 6.1 s</td>
+</tr>
+</tbody>
+</table>
+<p>Four more runs of 2.1.1 made earlier the same day measured 35 to 67 failed purges of about 190, 1,171 to 1,297 open files and 136 to 169 MiB.</p>
+<p><strong>64 clients over 64 databases for 100 seconds</strong>, so that every database flushes and collects once while it is written:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Release 2.1.1</th>
+<th>Release 2.1.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commits/s</td>
+<td>631</td>
+<td>669, 670</td>
+</tr>
+<tr>
+<td>p99 of a commit</td>
+<td>414 ms</td>
+<td>290, 284 ms</td>
+</tr>
+<tr>
+<td>p99.9 of a commit</td>
+<td>1,954 ms</td>
+<td>692, 735 ms</td>
+</tr>
+<tr>
+<td>Purges that failed</td>
+<td>156 of 629</td>
+<td>0 of 645, 0 of 643</td>
+</tr>
+<tr>
+<td>Time spent in purges, all databases together</td>
+<td>931 s</td>
+<td>335, 286 s</td>
+</tr>
+</tbody>
+</table>
+<p>The three runs are in the order 2.1.2, 2.1.1, 2.1.2. Three runs of 2.1.1 made about an hour earlier measured 644, 651 and 643 commits/s with a p99 of 282, 268 and 298 ms, and 124 of 668, 162 of 621 and 154 of 647 failed purges: its failures are in every run, and its slower commits in the run above are not.</p>
+<p><strong>256 databases, one client each, the same way</strong>: ten seconds of writes on a new server, 25 seconds alone, then stopped. Two runs of each release in turn, each server held to 4,096 open files:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Release 2.1.1</th>
+<th>Release 2.1.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Purges that failed</td>
+<td>127 of 586, 197 of 587</td>
+<td>0 of 596, 0 of 589</td>
+</tr>
+<tr>
+<td>Most open files after the load (and under it)</td>
+<td>1,715 (1,352), 1,542 (1,291)</td>
+<td>870 (1,370), 926 (1,427)</td>
+</tr>
+<tr>
+<td>Most memory after the load (and under it)</td>
+<td>267 (140), 216 (133) MiB</td>
+<td>196 (144), 210 (149) MiB</td>
+</tr>
+<tr>
+<td>Stopping the server, all 256 databases released</td>
+<td>22.7, 19.1 s</td>
+<td>6.5, 14.5 s</td>
+</tr>
+<tr>
+<td>Commits/s in those ten seconds</td>
+<td>971, 336</td>
+<td>1,127, 996</td>
+</tr>
+<tr>
+<td>p99 of a commit</td>
+<td>2.3, 4.4 s</td>
+<td>2.3, 2.6 s</td>
+</tr>
+</tbody>
+</table>
+<p>The last two rows are a new server's first ten seconds with more databases than it knows storage pods for, which this page had not measured before. Committing is the same code in both releases, and the row moves by a factor of three: two earlier runs measured 293 commits/s with 2.1.1 and 1,130 with a build between the two releases. The memory a server holds after the load is the flush of every database at once, which the flags bound (<a href="deployment.html#on-kubernetes">deployment</a>).</p>
+<p>To repeat the first table, start a server, run <code>durable-db bench --workload write --clients 64 --databases 64 --keep</code> against it, and for the next half minute and while the server stops, sample <code>ls /proc/&lt;pid&gt;/fd | wc -l</code>, the resident memory of the server, and <code>durable_db_storage_failures_total{op=&quot;purge&quot;}</code> and <code>durable_db_storage_seconds_count{op=&quot;purge&quot;}</code> from <code>/metrics</code>. The third is the first with 256 clients and databases. The second table is the same load with <code>--seconds 100</code> and without <code>--keep</code>, and its figures are read from <code>/metrics</code> when <code>bench</code> exits, after it has deleted its databases.</p>
+<p>A store that refuses the request for many versions gets a request for each version, as before, and the server says so once in its log. Among cloud stores only B2 has been exercised.</p>
 <h3 id="opening-a-database">Opening a database<a class="anchor" href="#opening-a-database" aria-label="Link to this section">#</a></h3>
 <p>A database is opened by the first request that needs it and stays open while it is used (five minutes idle by default). These times were measured with release 2.1.0.</p>
 <table>
@@ -405,6 +524,62 @@
 </tbody>
 </table>
 <p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in every run that recorded it; the test used to report the first count it saw above two, which is all that is known of the first run of each release.</p>
+<p>Three more runs were made in the evening of the same day, when the bucket answered more slowly for both releases: one client's commit took 99 ms at the median with 2.1.1 and 107 ms with 2.1.2, against 64 to 76 ms when the one-database table of this page was measured.</p>
+<table>
+<thead>
+<tr>
+<th>In this order</th>
+<th>Release 2.1.2</th>
+<th>Release 2.1.1</th>
+<th>Release 2.1.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session reads/s</td>
+<td>147,631</td>
+<td>120,014</td>
+<td>120,892</td>
+</tr>
+<tr>
+<td>Reads that failed</td>
+<td>110</td>
+<td>0</td>
+<td>99</td>
+</tr>
+<tr>
+<td>Reads told to wait</td>
+<td>13</td>
+<td>0</td>
+<td>62</td>
+</tr>
+<tr>
+<td>Ledger transfers/s</td>
+<td>50</td>
+<td>56</td>
+<td>63</td>
+</tr>
+<tr>
+<td>Transfer, p50</td>
+<td>200 ms</td>
+<td>181 ms</td>
+<td>166 ms</td>
+</tr>
+<tr>
+<td>Transfer, p99</td>
+<td>1,240 ms</td>
+<td>1,097 ms</td>
+<td>923 ms</td>
+</tr>
+<tr>
+<td>Slowest transfer</td>
+<td>10.2 s</td>
+<td>10.0 s</td>
+<td>12.8 s</td>
+</tr>
+</tbody>
+</table>
+<p>Every ledger verified: 12,026, 13,349 and 15,098 transfers. A transfer waits for the bucket, so the ledger's rate follows what the bucket takes at that hour; these three runs show no difference between the releases.</p>
 <p><strong>The read figure moves by a third from run to run, with either release.</strong> Nine runs do not show a difference between the releases and do not rule one out. After the first five, every run of 2.1.1 lay below every run of 2.1.0, and the notes of release 2.1.1 said that the figure had gone the wrong way for a reason not established; the next four runs, two of each release, came out the other way round once and did not bear that out. What is established:</p>
 <ul>
 <li>A single server reads the same with both. One server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn: 166,199 and 166,497 reads a second with 2.1.0 while the ledger made 100 and 101 transfers a second, 168,024 and 167,313 with 2.1.1 while the ledger made 121 and 118.</li>
@@ -517,7 +692,7 @@
 </tr>
 <tr>
 <td>Flush (every 8 MiB, 512 groups, or 5 s of quiet)</td>
-<td>Two uploads, one HEAD, two version listings, deletes</td>
+<td>Two uploads, one HEAD, two version listings, and a removal for each listing page that found something to remove</td>
 </tr>
 <tr>
 <td>Opening a database</td>
@@ -533,7 +708,7 @@
 <h2 id="what-is-not-measured-yet">What is not measured yet<a class="anchor" href="#what-is-not-measured-yet" aria-label="Link to this section">#</a></h2>
 <ul>
 <li>B2 from a server in a data centre, on a wired link. Every B2 figure here was measured over Wi-Fi from one desktop, for minutes at a time, and that includes the measurements behind the choice of storage pods.</li>
-<li>More databases committing at once on B2 than a server knows fast pods for.</li>
+<li>More databases committing at once on B2 than a server knows fast pods for, beyond a new server's first ten seconds with 256 of them, which measured between 293 and 1,130 commits/s.</li>
 <li>What sets the read figure of the Kubernetes test, which moves by a third from run to run, beyond the share of reads that are relayed.</li>
 <li>Amazon S3 or any provider other than B2.</li>
 <li>A server in the same region as its bucket.</li>
@@ -541,13 +716,13 @@
 <li>Databases larger than a few hundred megabytes.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="architecture.html"><span>Previous</span>Architecture</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></main>
-<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#when-many-databases-collect-at-once">When many databases collect at once</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
 </div>
 <footer class="site-footer">
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.1, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
