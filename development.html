@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -52,6 +52,7 @@ scripts/check-model.sh                # the TLA+ model and its negative controls
 scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter and example
 scripts/soak-memory.sh                # a server under the manifest's memory limit, loaded for three minutes
 scripts/test-slow.sh                  # every test alone on 28% of a processor, as on a slow build machine
+scripts/test-stores.sh                # the bucket tests and a ledger on MinIO, RustFS and Garage in containers
 </code></pre>
 <table>
 <thead>
@@ -104,6 +105,7 @@ scripts/test-slow.sh                  # every test alone on 28% of a processor, 
 export DDB_S3_ACCESS_KEY_ID=... DDB_S3_SECRET_ACCESS_KEY=...
 cargo test --test bucket
 </code></pre>
+<p><code>scripts/test-stores.sh</code> does that for three S3 servers it starts in containers on this machine, each held to 1 GiB and two CPUs: a community build of MinIO and RustFS, each with a bucket that keeps versions and one that does not, and Garage, which keeps no versions and has no request that lists them. On each store it then runs a ledger through three servers while one is killed, one is stopped and one is killed again. It needs Docker and a release build, and takes about seven minutes.</p>
 <p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. All configurations take about three minutes. <code>scripts/check-model.sh DeepDeletion</code> runs the one configuration that is left out because it takes far longer.</p>
 <p><code>scripts/soak-memory.sh</code> runs one server with the flags of the Kubernetes manifest in a systemd scope limited to 1 GiB without swap and four CPUs, loads it in three ways with values that do not compress, and fails if the server is killed. It needs about 4 GiB of disk and <code>DURABLE_DB</code> set to the binary to test; test the static binary, because the allocator's behaviour depends on the C library it is linked with.</p>
 <h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to this section">#</a></h2>
@@ -137,7 +139,7 @@ site/           the website generator
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

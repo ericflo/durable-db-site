@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -69,7 +69,8 @@ durable-db serve \
 <pre><code class="language-sh">export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=...
 durable-db serve --bucket my-bucket --endpoint https://s3.us-east-1.amazonaws.com --key-file admin.key
 </code></pre>
-<p>For other providers pass <code>--region</code> as well. The server signs requests with static credentials from the environment and addresses the bucket path-style. Only Backblaze B2 has been exercised by the test suite and benchmarks so far; see <a href="verification.html#what-has-been-run-where">verification</a>.</p>
+<p>For other providers pass <code>--region</code> as well. The server signs requests with static credentials from the environment and addresses the bucket path-style. The bucket may keep versions or not. A store that has no request that lists versions, such as Garage, is taken to keep none: what is collected there is removed by key, and the server says so once in its log.</p>
+<p>Among cloud providers only Backblaze B2 has been exercised by the test suite and benchmarks so far. Three S3 servers that you can run yourself have been, each on one machine: a community build of MinIO, RustFS and Garage. See <a href="verification.html#what-has-been-run-where">verification</a>.</p>
 <p>At startup the server writes, reads, lists and deletes one probe object and refuses to start if storage does not behave as required.</p>
 <h2 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h2>
 <p>The manifests in <a href="https://github.com/ericflo/durable-db/tree/main/deploy/kubernetes"><code>deploy/kubernetes</code></a> run durable-db as a Deployment with no persistent volume, a Service for applications, a headless Service through which servers find each other, a CPU autoscaler and a disruption budget.</p>
@@ -87,7 +88,7 @@ kubectl -n durable-db apply -k .
 </code></pre>
 <p>Applications connect to <code>http://durable-db.durable-db.svc:7654</code>. Put TLS and any public exposure in front of it at your ingress. Servers talk to each other in plain HTTP inside the cluster: a relayed request carries its caller's token, which the receiving server verifies again, so the network between them must be private.</p>
 <p><strong>Scaling.</strong> Any number of replicas from one up is correct. When a pod becomes ready, the others hand it the databases that hash to it. When a pod is told to stop, it reports not-ready, hands every database over, relays stray requests to its peers for <code>--drain-seconds</code>, and exits. A pod that is killed outright loses nothing: the next request for one of its databases makes another pod take it over. Scaling to zero stops service and loses nothing; starting one pod restores it.</p>
-<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so. Every release from 2.0.0 to 2.1.2 shares one, and <code>scripts/test-upgrade.sh</code> checks the upgrade between two binaries under a ledger (<a href="verification.html#tests-of-the-implementation">verification</a>). While 2.0.0 serves beside a later version, the later server does not take the 2.0.0 server's word that a request was relayed and may relay it once more, and the 2.0.0 server does not know the mark that a later server puts on a database it is deleting, so it could take that database over and serve it until the deletion completes. Delete databases before or after an upgrade from 2.0.0, not during it. Between 2.1.0 and 2.1.1 neither applies.</p>
+<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so. Every release from 2.0.0 to 2.1.3 shares one, and <code>scripts/test-upgrade.sh</code> checks the upgrade between two binaries under a ledger (<a href="verification.html#tests-of-the-implementation">verification</a>). While 2.0.0 serves beside a later version, the later server does not take the 2.0.0 server's word that a request was relayed and may relay it once more, and the 2.0.0 server does not know the mark that a later server puts on a database it is deleting, so it could take that database over and serve it until the deletion completes. Delete databases before or after an upgrade from 2.0.0, not during it. Between 2.1.0 and 2.1.1 neither applies.</p>
 <p><strong>Resources.</strong> What a server holds in memory is limited by its flags, not by the size or the number of its databases:</p>
 <table>
 <thead>
@@ -386,7 +387,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

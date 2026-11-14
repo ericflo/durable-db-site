@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -39,12 +39,12 @@
 <main id="main"><article><h1>Architecture</h1>
 <p>durable-db stores each database as a set of immutable objects in a bucket. Servers hold nothing that matters: any server can be killed at any moment, and any other server can rebuild every database from the bucket alone. This page describes exactly how.</p>
 <h2 id="what-storage-must-provide">What storage must provide<a class="anchor" href="#what-storage-must-provide" aria-label="Link to this section">#</a></h2>
-<p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup: it lists the versions under a prefix and removes them by name, up to a thousand with one request where the store takes such a request and one at a time where it does not. Two guarantees:</p>
+<p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup: it lists the versions under a prefix and removes them by name, up to a thousand with one request where the store takes such a request and one at a time where it does not. A store that has no request that lists versions keeps none, and there the keys are listed and removed. Two guarantees:</p>
 <ol>
 <li><strong>Read-after-write.</strong> Once a PUT or DELETE has returned, every GET, HEAD and LIST that starts afterwards observes it.</li>
 <li><strong>Whole objects.</strong> A reader sees a complete object or none.</li>
 </ol>
-<p>Nothing else. No conditional writes (<code>If-Match</code>, <code>If-None-Match</code>), no transactions, no locks, no leases, no synchronized clocks. Backblaze B2 rejects conditional writes outright, which is why the protocol is built without them; Amazon S3, Cloudflare R2, MinIO and a local directory satisfy the same contract, so all of them run the same code.</p>
+<p>Nothing else. No conditional writes (<code>If-Match</code>, <code>If-None-Match</code>), no transactions, no locks, no leases, no synchronized clocks. Backblaze B2 rejects conditional writes outright, which is why the protocol is built without them; Amazon S3, Cloudflare R2, MinIO and a local directory satisfy the same contract, so all of them run the same code. <a href="verification.html#what-has-been-run-where">Verification</a> says which of them it has been run on.</p>
 <h2 id="what-is-in-the-bucket">What is in the bucket<a class="anchor" href="#what-is-in-the-bucket" aria-label="Link to this section">#</a></h2>
 <p>For a database named <code>app</code>, under <code>&lt;prefix&gt;/db/app/</code>:</p>
 <table>
@@ -137,7 +137,7 @@
 <li>everything left by lower epochs that the current manifest does not reference.</li>
 </ul>
 <p>The rule that makes this safe is the same as for acknowledgements: delete only after a claim check that began after the manifest was stored. If the check passes, any later owner will read that manifest or a newer one, and never needs what was deleted. If the owner has been replaced, the check fails and it deletes nothing.</p>
-<p>On a versioned bucket such as B2, collection removes every version of a key, so no lifecycle rule is needed and nothing is billed after it is collected. A key's delete markers are removed only when none of its data versions remain, across listing pages too, so a deleted key never becomes readable again wherever the cleanup stops. This matters for one kind of object: a revoked claim that reappeared would let a stale owner resume.</p>
+<p>On a versioned bucket such as B2, collection removes every version of a key, so no lifecycle rule is needed and nothing is billed after it is collected. A key's delete markers are removed only when none of its data versions remain, across listing pages too, so a deleted key never becomes readable again wherever the cleanup stops. This matters for one kind of object: a revoked claim that reappeared would let a stale owner resume. On a bucket that keeps no versions a removed key is gone, and there is nothing more to collect.</p>
 <h2 id="deleting-a-database">Deleting a database<a class="anchor" href="#deleting-a-database" aria-label="Link to this section">#</a></h2>
 <p>Deleting is a change of state like any other, and is settled the same way.</p>
 <ol>
@@ -224,7 +224,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.2: install">v2.1.2</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -219,8 +219,8 @@
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
-<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again, and a version the bucket could not remove is; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone. The stand-in refuses a request with an unsigned <code>x-amz</code> header or a wrong checksum. The directory store against the in-memory one. One order of directory names on all three.</td>
-<td>16 pass. Fourteen faults put into the purge one at a time each fail a test.</td>
+<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again; a version the bucket says it did not remove is asked for again, and is a failure if it is still there after that; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone; a stand-in that keeps no versions and has no request that lists them is purged by key, and asked for its versions once. The stand-in refuses a request with an unsigned <code>x-amz</code> header or a wrong checksum. The directory store against the in-memory one. One order of directory names on all three.</td>
+<td>17 pass. 26 faults put into the purge one at a time each fail a test.</td>
 </tr>
 <tr>
 <td><code>tests/http.rs</code></td>
@@ -240,7 +240,7 @@
 <tr>
 <td><code>tests/bucket.rs</code></td>
 <td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 12 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; sixty versions of keys with <code>&amp;</code>, <code>&lt;</code> and a space removed with one request, which Backblaze must take; the engine with a takeover, a release and a deletion.</td>
-<td>5 pass on Backblaze B2, with native uploads and with PutObject only. A request that fails on its way is sent again, as the engine sends it (finding 29).</td>
+<td>5 pass on Backblaze B2, with native uploads and with PutObject only, and on the five buckets of <code>scripts/test-stores.sh</code>. A request that fails on its way is sent again, as the engine sends it (findings 29 and 34).</td>
 </tr>
 <tr>
 <td><code>durable-db bench --workload ledger</code></td>
@@ -255,12 +255,17 @@
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Twelve runs, four with 2.1.0, six with 2.1.1 and two with 2.1.2, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 12,026 to 23,567 transfers in 240 s, the fewest in three runs made in an evening hour when the bucket was slower. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 62 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
+<td>Thirteen runs, four with 2.1.0, six with 2.1.1, two with 2.1.2 and one with 2.1.3, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 12,026 to 23,567 transfers in 240 s, the fewest in three runs made in an evening hour when the bucket was slower. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 62 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
 </tr>
 <tr>
 <td><code>scripts/test-upgrade.sh</code></td>
 <td>Three servers of one release on one directory, replaced by the next one at a time while the ledger runs through all three; then one goes back to the old release and forward again, so that each version takes over databases the other wrote.</td>
-<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215. From 2.1.1 to 2.1.2: 152,861.</td>
+<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215. From 2.1.1 to 2.1.2: 152,861. From 2.1.2 to 2.1.3: 142,809.</td>
+</tr>
+<tr>
+<td><code>scripts/test-stores.sh</code></td>
+<td>Three S3 servers in containers on the desktop, each held to 1 GiB and two CPUs: a community build of MinIO (<code>pgsty/minio</code>, RELEASE.2026-08-04) and RustFS 1.0.5, each with a bucket that keeps versions and one that does not, and Garage 2.5.0, which keeps no versions and has no request that lists them. The bucket tests on each bucket; then a ledger through three servers on the store for 75 s while one is killed, one is stopped and one is killed again, each replaced at once.</td>
+<td>With 2.1.3: the bucket tests pass on all five buckets, and every ledger verified: 34,475 transfers on MinIO, 12,261 on RustFS and 75,156 on Garage, with no failed purge. Each store was one process on the desktop's disk: this says that its answers are understood and that the protocol holds on them, not how fast it is or what it does across several machines.</td>
 </tr>
 </tbody>
 </table>
@@ -339,6 +344,11 @@
 <li>
 <p><strong>A test of the disk cache waited for a count that can be reached with a table missing.</strong> <code>an_empty_disk_cache_is_filled_two_tables_at_a_time</code> read twelve tables until the cache counted the bytes of twelve, then expected a pass of reads to miss none. It failed once in four runs of the suite made before this release, and then 7 times in 360 runs alone, on a slowed processor and on a fast one. A table that is read while its first fetch is finishing can be fetched a second time, and the cache counts its bytes again although it holds one copy. The count is put right when the cache is next trimmed; until then it can be trimmed sooner than it has to be. The test now waits for the pass without a miss: 600 runs of 600 pass. Release 2.1.2 has the count as it was. After it, a table that the cache already holds is not written or counted again, and the test puts one there twice and expects the bytes of twelve: it fails without the change, and 600 runs of 600 pass with it.</p>
 </li>
+<li>
+<p><strong>A store that keeps no versions was refused.</strong> Until it was looked for, durable-db had been run on Backblaze B2 and on nothing else that speaks the S3 API. Run on three S3 servers in containers, the bucket tests passed on a community build of MinIO and on RustFS, and on Garage every purge failed: Garage keeps no versions and answers <code>501</code> to the request that lists them, and a purge began with that request. A server did not start there at all. Its storage check ends by purging what it wrote, and it stopped with &quot;the storage check failed&quot;: the right answer to a store that cannot be cleaned up, and the wrong one to a store where a key that is removed is gone.</p>
+<p>Since 2.1.3 a store that answers <code>501</code> to a listing of versions is taken to keep none. A purge there lists the keys and removes them, with one request for up to a thousand or with one each, and the store is not asked for its versions again; the server says so once in its log. A store that kept versions and could not list them would keep what such a purge hides; none is known. With that, a server starts on Garage, the bucket tests pass there, and a ledger of 75,156 transfers verified through three servers of which two were killed and one stopped, with 347 purges and none failed.</p>
+<p>Three smaller things were found the same way. On RustFS 14 of 157 and 11 of 158 purges failed in two runs of that ledger: RustFS answered that single versions named in a request had not been removed (<code>ServiceUnavailable</code>), and a purge failed at once on such an answer. The request is now sent again, like one that is not answered, and no purge has failed in four runs since. One bucket test expected 521 keys to be purged where a bucket that keeps no versions has one left, and failed on such a bucket. And the test of the storage contract unwrapped every request: it failed once on Backblaze when a request could not be sent over the desktop's link, and now sends one again as the engine does. <code>scripts/test-stores.sh</code> starts the three servers and repeats all of this. 26 faults put into the purge one at a time, ten of them into the purge by key, each fail a storage test.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -386,7 +396,15 @@
 <td>yes (kind)</td>
 </tr>
 <tr>
-<td>Amazon S3, R2, MinIO</td>
+<td>MinIO (a community build), RustFS, Garage: one process each, in a container</td>
+<td></td>
+<td></td>
+<td>yes</td>
+<td>the ledger only</td>
+<td></td>
+</tr>
+<tr>
+<td>Amazon S3, Cloudflare R2, Google Cloud Storage</td>
 <td></td>
 <td></td>
 <td>not yet</td>
@@ -397,8 +415,8 @@
 </table>
 <h2 id="remaining-obligations">Remaining obligations<a class="anchor" href="#remaining-obligations" aria-label="Link to this section">#</a></h2>
 <ul>
-<li>Send the request that removes many versions to Amazon S3 and to a store that refuses it. It has been sent to Backblaze B2 and to a stand-in.</li>
-<li>Run the bucket tests and benchmarks on Amazon S3 and at least one other S3-compatible store. The code path is shared with B2 except for the upload call, and is exercised against a stand-in written from the S3 documentation, but not against those services.</li>
+<li>Send the request that removes many versions to Amazon S3 and to a store that refuses it. It has been sent to Backblaze B2, a community build of MinIO, RustFS and Garage, which all take it, and to a stand-in that refuses it.</li>
+<li>Run the bucket tests and benchmarks on Amazon S3, Cloudflare R2 and Google Cloud Storage. The code path is shared with B2 except for the upload call, and has been run on three S3 servers that were each one process on one machine, which says nothing of a provider's consistency across its own machines. R2's documentation lists bucket versioning as not implemented; what R2 answers to a listing of versions decides whether anything is collected there, and has not been tried.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
 <li>The memory soak for hours rather than minutes, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it.</li>
 <li>Model conditional transactions with idempotent retries, and a delete request that arrives late.</li>
@@ -416,7 +434,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.2, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
