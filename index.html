@@ -230,7 +230,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <div class="wrap">
 <div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on one machine, then on a bucket</h2><p>The first three steps need no bucket, container or other service.</p></div>
 <ol class="steps">
-<li><div><h3>Install</h3><p>The script downloads the release for Linux x86_64, verifies its checksum and puts <code>durable-db</code> in <code>~/.local/bin</code>. While the repository is private it uses the <code>gh</code> CLI, which must be signed in to an account with access.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh</code></pre></li>
+<li><div><h3>Install</h3><p>The script downloads the release for Linux x86_64, verifies its checksum and puts <code>durable-db</code> in <code>~/.local/bin</code>.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh</code></pre></li>
 <li><div><h3>Start a server</h3><p>It listens on <code>127.0.0.1:7654</code> and stores everything in <code>./data</code>. The first start creates <code>./data/admin.key</code>, the signing key for tokens.</p></div><pre data-copy><code>durable-db serve --data ./data</code></pre></li>
 <li><div><h3>Create a database, write and read</h3><p>In a second terminal, from the same directory. <code>durable-db create</code> creates the database and prints a write token for it.</p></div><pre data-copy><code>export URL=http://127.0.0.1:7654/v1/databases/demo
 export AUTH="Authorization: Bearer $(durable-db create demo)"
@@ -272,7 +272,7 @@ durable-db serve \
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
 <a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
 </nav>
 </div>
 </footer>

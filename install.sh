@@ -13,16 +13,10 @@ case "$(uname -s)-$(uname -m)" in
 esac
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT HUP INT TERM
-# While the repository is private, releases are fetched with an
-# authenticated GitHub CLI.
-if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
-  gh release download "$version" --repo ericflo/durable-db --pattern "$asset" --pattern SHA256SUMS --dir "$tmp"
-else
-  base="https://github.com/ericflo/durable-db/releases/download/$version"
-  curl --proto '=https' --tlsv1.2 -fLsS "$base/$asset" -o "$tmp/$asset" \
-    && curl --proto '=https' --tlsv1.2 -fLsS "$base/SHA256SUMS" -o "$tmp/SHA256SUMS" \
-    || { echo 'Download failed. The repository is private for now: install the GitHub CLI and run `gh auth login`.' >&2; exit 1; }
-fi
+base="https://github.com/ericflo/durable-db/releases/download/$version"
+curl --proto '=https' --tlsv1.2 -fLsS "$base/$asset" -o "$tmp/$asset" \
+  && curl --proto '=https' --tlsv1.2 -fLsS "$base/SHA256SUMS" -o "$tmp/SHA256SUMS" \
+  || { echo "Could not download $version from $base" >&2; exit 1; }
 (cd "$tmp" && sha256sum --check --ignore-missing SHA256SUMS >/dev/null)
 tar xzf "$tmp/$asset" -C "$tmp" durable-db
 install_dir=${DURABLE_DB_INSTALL_DIR:-$HOME/.local/bin}

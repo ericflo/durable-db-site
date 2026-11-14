@@ -429,7 +429,8 @@
 </tbody>
 </table>
 <p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in each of the last three runs; the test used to report the first count it saw above two, which is all that is known of the first two.</p>
-<p><strong>Release 2.1.1 read a sixth to a quarter less than 2.1.0 in this test, in every run, and the cause is not established.</strong> Two things it is not. It is not the server's read path, which the release does not change: one server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn. With 2.1.0 it read 166,199 and 166,497 times a second while the ledger made 100 and 101 transfers a second; with 2.1.1 it read 168,024 and 167,313 times a second while the ledger made 121 and 118. It is not how soon a new pod is ready: fifteen starts of each release on the bucket took 1.07 s and 1.02 s at the median from start to ready. What remains is how the pods share the work: a read that reaches a pod not holding its database is relayed to the one that does, and one server held to two CPUs read more here than five pods did through the Service. What a relayed read costs has not been measured (<a href="#what-is-not-measured-yet">below</a>).</p>
+<p><strong>Release 2.1.1 read a sixth to a quarter less than 2.1.0 in this test, in every run, and the cause is not established.</strong> Two things it is not. It is not the server's read path, which the release does not change: one server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn. With 2.1.0 it read 166,199 and 166,497 times a second while the ledger made 100 and 101 transfers a second; with 2.1.1 it read 168,024 and 167,313 times a second while the ledger made 121 and 118. It is not how soon a new pod is ready: fifteen starts of each release on the bucket took 1.07 s and 1.02 s at the median from start to ready. What remains is how the pods share the work, and there a read costs more than it does on one server.</p>
+<p><strong>A read that reaches a pod not holding its database is relayed to the one that does, and a relayed read costs two and a half times a direct one.</strong> Two servers of 2.1.1, each held to two CPUs, were given the session reads of one database from 192 clients, all sent to the first server. In the three runs where the first server held the database it read 173,685, 178,573 and 178,865 times a second. In the five where the second held it and the first relayed, it read 64,966 to 71,776 times a second. Behind a Service a connection reaches the holder one time in as many as there are pods, so five pods read less in this test than one server does alone, and the figure moves with the share of reads that were relayed, which depends on when in the 80 seconds the new pods took databases over. Whether that share is what differs between the two releases has not been checked (<a href="#what-is-not-measured-yet">below</a>). Each server counts the requests it relays in <code>durable_db_forwarded_requests_total</code>.</p>
 <p>With release 2.0.0 the same test measured 30,114 session reads/s and the autoscaler stopped at three pods: its binary read at the speed of one core (<a href="#the-allocator">the allocator</a>).</p>
 <h2 id="the-allocator">The allocator<a class="anchor" href="#the-allocator" aria-label="Link to this section">#</a></h2>
 <p>The binary carries its own allocator, jemalloc, held to eight arenas and set to give freed memory back to the system within a second. Which allocator a server uses decided two things: how fast it reads, and whether it stays inside a memory limit. The source of release 2.1.0 was built with each candidate and put through <code>scripts/benchmark.sh</code> on a local directory and through the soak described <a href="#memory-under-load">below</a>, on the desktop described above:</p>
@@ -552,7 +553,7 @@
 <ul>
 <li>B2 from a server in a data centre, on a wired link. Every B2 figure here was measured over Wi-Fi from one desktop, for minutes at a time, and that includes the measurements behind the choice of storage pods.</li>
 <li>More databases committing at once on B2 than a server knows fast pods for.</li>
-<li>What a read relayed from one pod to another costs, and why the Kubernetes test read less with release 2.1.1 than with 2.1.0.</li>
+<li>Why the Kubernetes test read less with release 2.1.1 than with 2.1.0: whether more of its reads were relayed.</li>
 <li>Amazon S3 or any provider other than B2.</li>
 <li>A server in the same region as its bucket.</li>
 <li>Many hours of sustained load.</li>
@@ -577,7 +578,7 @@
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
 <a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub (private for now)</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
 </nav>
 </div>
 </footer>
