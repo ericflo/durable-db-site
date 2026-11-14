@@ -1,7 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>durable-db · Transactional key-value storage that lives in your bucket</title><meta name="description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta property="og:title" content="durable-db · Transactional key-value storage that lives in your bucket"><meta property="og:description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.10 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>durable-db · Transactional key-value storage that lives in your bucket</title><meta name="description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta property="og:title" content="durable-db · Transactional key-value storage that lives in your bucket"><meta property="og:description" content="A transactional, ordered key-value database in one Rust binary. B2-backed Kubernetes and local deployments within one trust domain."><meta name="color-scheme" content="light dark"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap"><link rel="stylesheet" href="style.css"><script>document.documentElement.classList.add('js')</script><script src="site.js" defer></script></head><body><a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="wrap"><a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a><a class="release" href="production-readiness.html">v1.0.11 · one trust domain</a><nav aria-label="Main"><a href="index.html#docs">Docs</a><a href="api.html">API</a><a href="architecture.html">Architecture</a><a href="verification.html">Verification</a><a href="production-readiness.html">Status</a></nav><a class="button button-small" href="index.html#quickstart">Get started</a></div></header><main id="main">
 <section class="hero wrap">
 <div class="hero-copy">
-<a class="pill" href="production-readiness.html"><span class="dot dot-ready"></span>v1.0.10 · B2, one trust domain. Read the release scope. <span aria-hidden="true">→</span></a>
+<a class="pill" href="production-readiness.html"><span class="dot dot-ready"></span>v1.0.11 · B2, one trust domain. Read the release scope. <span aria-hidden="true">→</span></a>
 <h1>Transactional <span class="nowrap">key-value</span> storage that lives in your bucket.</h1>
 <p class="lead">durable-db is one Rust binary that serves atomic transactions and ordered scans over HTTP. S3 or Backblaze B2 holds the authoritative data. API servers keep only disposable state, so you can add, replace or stop all of them without moving the database. On a laptop, a local directory replaces the bucket.</p>
 <div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="api.html">HTTP API reference</a></div>
@@ -51,22 +51,20 @@
 <div class="wrap">
 <div class="section-head"><p class="eyebrow">Status</p><h2 id="status-title">Where it stands today</h2><p>Local and cloud serving use the native engine. The cloud CLI discovers peers through DNS, places fixed partitions by stable member identity, and uses clock-independent permits with bounded forwarding and resident state.</p><p>Use one dedicated bucket per deployment, private peer networking and TLS at
 application ingress. Fund upload allowances, set process/replica limits and
-keep independently protected backups. Superseded in-memory values are reclaimed
-before they force checkpoints; affected old snapshots expire while receipts and
-conflict checks keep their existing bounds. The focused fixture completes 100
-64 KiB overwrites without a checkpoint, versus the previous trigger at write 41.
-The B2 matrix completes all <strong>2,120 operations</strong> and verifies all <strong>32 final
-states</strong>. At 32 workers it measures <strong>18.24 writes/s</strong> and <strong>1.92s write p95</strong>,
-versus <strong>13.32 writes/s</strong> and <strong>2.15s</strong> previously, with two completed checkpoints
-instead of thirteen during that phase. Reads are slower in this sample:
-<strong>90.77 reads/s</strong>, versus <strong>186.54</strong>. A <strong>16.90s</strong> write outlier remains;
-funding/publication waits need follow-up. A separate B2 cold-start check recovers
-a <strong>102-frame uncheckpointed journal</strong> after replacing every database process,
-verifies revision 101 and its exact retry receipt, then commits revision 102.
-The first correct read takes <strong>37.67s after client retries resume</strong> on the new
-pods; this does not establish a recovery-time guarantee.
-The earlier scale-down campaign recovered <strong>385/385</strong> acknowledged writes with
-a <strong>41.31s</strong> largest readback gap. These are short fixtures, not SLOs.
+keep independently protected backups. The latest fix confirms an uncertain
+tenant funding publication when its exact fresh directory root is readable.
+The post-checkpoint TCP fault test now returns HTTP 200 with one grant; disabling
+that confirmation reproduces HTTP 503. Restart never reconstructs credit.</p>
+<p>The latest B2 matrix completes <strong>2,120 operations</strong> and verifies <strong>32 final
+states</strong>, but its 32-worker phase measures <strong>8.66 writes/s and 7.02s write p95</strong>,
+worse than v1.0.10’s <strong>18.24/s and 1.92s</strong>. Five ambiguous journal uploads trigger
+owner recovery; the worst write takes <strong>29.51s</strong>. The new funding-confirmation
+path is not used in this sample, so it demonstrates no throughput improvement.
+Diagnosing those upload failures and reducing recovery costs come next.</p>
+<p>A separate B2 cold-start check recovers a <strong>102-frame uncheckpointed journal</strong>
+after replacing every database process, including the exact retry receipt and
+a subsequent write. Its first correct read takes <strong>37.67s after client retries
+resume</strong>. These short fixtures do not establish latency or availability SLOs.
 See the <a href="verification-results.html">measured results</a>,
 <a href="production-readiness.html">operating scope and deferrals</a>, and <a href="recovery.html">recovery procedure</a>.</p>
 </div>
@@ -75,7 +73,7 @@ See the <a href="verification-results.html">measured results</a>,
 <article class="status-card"><h3><span class="dot dot-experimental"></span>Operating boundary</h3><ul><li>Dedicated bucket, private peer network, TLS ingress and operator-funded upload allowances</li><li>Backups require an operator-controlled export window and independent storage</li><li>Failover and scaling can interrupt requests; no latency or availability SLO</li><li>AWS and broader cloud Pi Harness qualification remain open</li></ul></article>
 <article class="status-card"><h3><span class="dot dot-pending"></span>Deferred</h3><ul><li>Hosting mutually untrusted tenants and complete shared-cost isolation</li><li>Scheduled backups and point-in-time recovery</li><li>The 72-hour soak, independent review and broad upgrade coverage</li><li>Additional prebuilt binary platforms</li></ul></article>
 </div>
-<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#long-journal-cold-recovery-on-b2-2026-11-14"><span>Long-journal cold recovery on B2</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#reclaim-overwritten-values-before-checkpointing-2026-11-14"><span>Reclaim overwritten values before checkpointing</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#larger-attempt-grants-reduce-funding-contention-2026-11-14"><span>Larger attempt grants reduce funding contention</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#http-commits-share-bounded-journal-frames-2026-11-14"><span>HTTP commits share bounded journal frames</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#repeated-overwrites-reuse-funded-checkpoint-copies-2026-11-14"><span>Repeated overwrites reuse funded checkpoint copies</span><time>2026-11-14</time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
+<div class="milestones"><h3>Recent milestones</h3><ol><li><a href="verification-results.html#confirm-uncertain-tenant-funding-2026-11-14"><span>Confirm uncertain tenant funding</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#long-journal-cold-recovery-on-b2-2026-11-14"><span>Long-journal cold recovery on B2</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#reclaim-overwritten-values-before-checkpointing-2026-11-14"><span>Reclaim overwritten values before checkpointing</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#larger-attempt-grants-reduce-funding-contention-2026-11-14"><span>Larger attempt grants reduce funding contention</span><time>2026-11-14</time></a></li><li><a href="verification-results.html#http-commits-share-bounded-journal-frames-2026-11-14"><span>HTTP commits share bounded journal frames</span><time>2026-11-14</time></a></li></ol><a class="more" href="verification-results.html">All verification results →</a></div>
 </div>
 </section>
 
@@ -102,7 +100,7 @@ See the <a href="verification-results.html">measured results</a>,
 
 <section class="band" aria-labelledby="quickstart-title" id="quickstart">
 <div class="wrap">
-<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on your laptop in a minute</h2><p>No bucket, container or extra service needed. v1.0.10 ships a static binary for Linux x86_64; other platforms can <a href="development.html">build from source</a>.</p></div>
+<div class="section-head"><p class="eyebrow">Quick start</p><h2 id="quickstart-title">Run it on your laptop in a minute</h2><p>No bucket, container or extra service needed. v1.0.11 ships a static binary for Linux x86_64; other platforms can <a href="development.html">build from source</a>.</p></div>
 <ol class="steps">
 <li><div><h3>Install</h3><p>The installer verifies the release checksum and installs one file in <code>~/.local/bin</code>. While the repository is private, authenticate the <code>gh</code> CLI with an account that has access.</p></div><pre data-copy><code>curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"</code></pre></li>
