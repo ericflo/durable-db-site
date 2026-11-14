@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.1: install">v2.1.1</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -209,8 +209,8 @@
 </tr>
 <tr>
 <td><code>tests/interleavings.rs</code></td>
-<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created, deletions while a flush is stuck, a flush that falls due during a merge, a database waiting for its turn to merge, a release during a merge, a merge that fails, an empty disk cache read all at once.</td>
-<td>17 pass.</td>
+<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created, deletions while a flush is stuck, a flush that falls due during a merge, a database waiting for its turn to merge, a release during a merge, a merge that fails, an empty disk cache read all at once, a spare upload that the store declines.</td>
+<td>18 pass.</td>
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
@@ -239,8 +239,8 @@
 </tr>
 <tr>
 <td><code>tests/bucket.rs</code></td>
-<td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 40 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; the engine with a takeover, a release and a deletion.</td>
-<td>4 pass on Backblaze B2.</td>
+<td>On a real bucket: the storage contract including versions, delete markers and the order of directory names; read-after-write (8 workers × 12 rounds, each PUT and each DELETE followed at once by HEAD, GET and LIST); a purge of 1,041 versions across two listing pages while the deleted key that straddles them is polled; the engine with a takeover, a release and a deletion.</td>
+<td>4 pass on Backblaze B2, with native uploads and with PutObject only. A request that fails on its way is sent again, as the engine sends it (finding 29).</td>
 </tr>
 <tr>
 <td><code>durable-db bench --workload ledger</code></td>
@@ -250,17 +250,17 @@
 <tr>
 <td><code>scripts/soak-memory.sh</code></td>
 <td>One server with the flags of the Kubernetes manifest on a local directory, in a scope limited to 1 GiB without swap and four CPUs. Three loads of a minute each with values that do not compress: half commits of 16 KiB over 4 databases, commits over 256 databases, strong reads from 512 clients. The server is killed if it passes the limit.</td>
-<td>618 MiB at most, 659 MiB in an earlier run. No request failed; 1.7% of the first load's requests were told to wait.</td>
+<td>621 MiB at most with 2.1.1; 618 and 659 MiB with 2.1.0. No request failed; 0.4% of the first load's requests were told to wait, and 1.7% with 2.1.0.</td>
 </tr>
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Scaled 2 → 5 → 2; 20,933 transfers in 240 s verified. Of 13 million session reads sent meanwhile without retries, 102 failed and 46 were told to wait, with a pod force-deleted under them.</td>
+<td>Three runs with 2.1.1 and one more with 2.1.0, each scaled 2 → 5 → 2 with a pod force-deleted: 22,756, 23,567 and 20,678 transfers in 240 s verified with 2.1.1, 18,250 with 2.1.0. Of 9 to 11 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 47 were told to wait. The reads were a sixth to a quarter fewer with 2.1.1 than with 2.1.0, for a reason not established (<a href="performance.html#on-kubernetes">performance</a>).</td>
 </tr>
 <tr>
 <td><code>scripts/test-upgrade.sh</code></td>
-<td>Three servers of release 2.0.0 on one directory, replaced by 2.1.0 one at a time while the ledger runs through all three; then one goes back to 2.0.0 and forward again, so that each version takes over databases the other wrote.</td>
-<td>171,474 transfers verified.</td>
+<td>Three servers of one release on one directory, replaced by the next one at a time while the ledger runs through all three; then one goes back to the old release and forward again, so that each version takes over databases the other wrote.</td>
+<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215.</td>
 </tr>
 </tbody>
 </table>
@@ -313,6 +313,20 @@
 </li>
 <li>
 <p><strong>Two tests of the HTTP boundary passed where they were written and failed on the build machines</strong>, whose processors run this suite about 3.5 times slower. Each held an answer of 24 MiB that nobody read and expected the server to keep it while the test did more work, against a server set to give up on such a caller after 0.4 or 1 second; on a slower processor the work took longer than that. So the commit of release 2.1.0 was never built by CI, and the website showed the documentation of 2.0.0 until this was fixed; the release's binary was built from that commit by the same <code>Dockerfile</code> on the development machine, where the tests passed. The failure was reproduced by giving one test 28% of a processor. The tests that look at what is held now use a server that never gives up, giving up has a test of its own in which nothing else is going on, and a wait in that file allows a minute. <code>scripts/test-slow.sh</code> runs every test alone on a fraction of a processor.</p>
+</li>
+<li>
+<p><strong>On Backblaze B2 every commit sent one of its two uploads to a storage pod the server had never used</strong>, and each further upload of a slow object went to another. A new pod costs a call for its upload URL, a name lookup and a TLS connection. One database commits about ten times a second, and ten new pods a second went unnoticed. 64 databases committing at once asked for 160 a second: measured from the desktop these figures come from, which is on Wi-Fi, one such upload in fourteen then failed after waiting five seconds for its connection and the others took 0.8 s at the median, while uploads to pods already in use took 76 ms. The pods the server kept were only those within 2.5 times the fastest, so there were never as many as there were uploads under way, and the uploads started because another was slow went to new pods as well. That is the slow row of release 2.1.0 and of 2.0.0, which the notes of 2.1.0 left unexplained. Of ten new pods tried one at a time, four stored 4 KiB in under 100 ms and six took 160 ms to a second, on a connection already open as much as on a new one.</p>
+<p>Since 2.1.1 the upload that must be sent takes the fastest pod known. A duplicate is the store's to decline (<code>put_spare</code> in <code>src/store/mod.rs</code>): on B2 it is sent on a known pod that first uploads are not expected to need, or on a new pod while fewer than eight are on trial, and otherwise not at all; one that is not sent has stored nothing and is asked for again. Pods are kept in order of speed unless they are slower than a new pod usually is. A test holds the first upload while the store declines every spare and checks that nothing is acknowledged, that the spares are sent once the store has room, and that a first upload that fails is sent again; unit tests check the pool's rules. Eight faults put into this one at a time each fail a test. <a href="performance.html#backblaze-b2">Performance</a> has the measurements before and after.</p>
+</li>
+<li>
+<p><strong>Two tests could be given the same port for their servers.</strong> The HTTP and cluster tests asked the system for a free port, closed it, and started a server process on it; the system may give the same port to the next caller. It did once, while the binary of 2.1.1 was being built: one server could not listen, and its test sent its requests to another test's server, which answered 401. Test servers now take ports below the range the system picks from, each given out once in a process, and a server that stops while it starts fails its test by saying so. The two suites then ran twelve times each without a failure.</p>
+</li>
+<li>
+<p><strong>The slowest commits in the Backblaze tables were stalls of the measuring desktop's own link.</strong> The desktop is on Wi-Fi, and a ping to its router had replies delayed by up to 2.4 s about once a minute. A build that logged every request showed all connections stalling together in those moments: four uploads to four pods and a name lookup in one, a claim check and an unrelated upload in another. Of twelve runs made with the ping alongside, the one with a stall in the ping is the one with a 99th percentile of 1.6 s. A figure published with 2.0.0 and 2.1.0 for what racing uploads gain (a 99th percentile of 2.2 s without, 0.45 s with) was measured before this was known and is withdrawn; <a href="performance.html#backblaze-b2">performance</a> gives what was measured since, with the releases run in turn.</p>
+<p>The same link failed two tests of <code>tests/bucket.rs</code>, once each: a purge of a thousand requests, and three reads of the read-after-write test in one moment, each with a request that could not be sent. Those tests unwrapped every request. A request that fails says nothing about what the bucket stores, so they now send it again as the engine does, and a read sent again still starts after the write it follows returned. The purge that was interrupted is purged again, and the deleted key must stay absent through both.</p>
+</li>
+<li>
+<p><strong>A test of flushing and merging expected what a fast machine does.</strong> <code>flushes_merges_and_collects</code> unwrapped 1,300 commits to a small database, waited 200 ms, and expected four tables at most. A database refuses a write while more than four flushes' worth is waiting, and a merge takes as long as the machine makes it: of 40 runs on a processor held to 40% of one core, three failed on a refused write and one on a fifth table. The fifth table is not only a matter of time. With the test waiting for the flush instead, five tables were still at rest in two runs of 160, which the merge rule allows: runs are merged from the newest while they are together at least half the size of the next, and up to twelve may remain. The pipeline of the commit that carried release 2.1.1 failed in its test step. Its log was not read, so which test failed there is not known; this is the one that failed when the suite was run ten times on a slowed processor, and <code>scripts/test-slow.sh</code>, which runs each test once, had passed it. The test now sends a refused write again, waits for the flush instead of for a time, and expects the rule's own bound. It then passed 150 runs at 40%.</p>
 </li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
@@ -379,6 +393,7 @@
 <li>Run the deletion model with two transactions (<code>spec/DeepDeletion.cfg</code>) to completion.</li>
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
+<li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
 <li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
 <li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
 </ul>
@@ -389,7 +404,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.1, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

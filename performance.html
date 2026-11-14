@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.1: install">v2.1.1</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -37,7 +37,7 @@
 <div class="docs wrap">
 <details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html" aria-current="page">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
 <main id="main"><article><h1>Performance</h1>
-<p>Every number here was measured with <code>durable-db bench</code>, which is part of the binary, on 2026-11-14 with the static binary of release 2.1.0 as the server and as the load generator. The load is closed-loop: each client sends one request and waits for the answer, so latency is what a caller observes and throughput is completed requests over wall time. Values are 256 bytes of JSON. Reproduce any table with:</p>
+<p>Every number here was measured with <code>durable-db bench</code>, which is part of the binary, on 2026-11-14 with the static binary of release 2.1.1 as the server and as the load generator, except where a table names another release. The load is closed-loop: each client sends one request and waits for the answer, so latency is what a caller observes and throughput is completed requests over wall time. Values are 256 bytes of JSON. Reproduce any table with:</p>
 <pre><code class="language-sh">scripts/benchmark.sh          # against DURABLE_DB_URL, using DURABLE_DB_KEY_FILE
 </code></pre>
 <p><strong>A correction to release 2.0.0.</strong> The read figures published with it were measured with a build linked with glibc, not with the static binary the release shipped. That binary reads about a tenth as fast wherever a read does not wait for storage. Measured again with the release binary itself on a local directory: 21,376 strong reads/s from 32 clients where 194,523 were published, 18,305 from 256 clients where 335,187 were published, and 25,889 session reads/s where 276,569 were published. Its commits were within what one run differs from the next, and a request that waits for a bucket is limited by the bucket. <a href="#the-allocator">The allocator</a> has the cause and what was done.</p>
@@ -88,69 +88,70 @@
 <tbody>
 <tr>
 <td>Commit, 1 client</td>
-<td style="text-align:right">186</td>
-<td style="text-align:right">5.2 ms</td>
-<td style="text-align:right">10.6 ms</td>
+<td style="text-align:right">161</td>
+<td style="text-align:right">6.0 ms</td>
+<td style="text-align:right">11.0 ms</td>
 </tr>
 <tr>
 <td>Commit, 32 clients, one database</td>
-<td style="text-align:right">2,164</td>
-<td style="text-align:right">14.7 ms</td>
-<td style="text-align:right">20.5 ms</td>
+<td style="text-align:right">2,105</td>
+<td style="text-align:right">15.0 ms</td>
+<td style="text-align:right">20.9 ms</td>
 </tr>
 <tr>
 <td>Commit, 256 clients, one database</td>
-<td style="text-align:right">17,067</td>
-<td style="text-align:right">14.9 ms</td>
-<td style="text-align:right">21.3 ms</td>
+<td style="text-align:right">16,541</td>
+<td style="text-align:right">15.3 ms</td>
+<td style="text-align:right">22.0 ms</td>
 </tr>
 <tr>
 <td>Commit, 64 clients over 64 databases</td>
-<td style="text-align:right">5,488</td>
+<td style="text-align:right">4,936</td>
 <td style="text-align:right">12.0 ms</td>
-<td style="text-align:right">14.2 ms</td>
+<td style="text-align:right">31.3 ms</td>
 </tr>
 <tr>
 <td>Commit with an idempotency key, 32 clients</td>
-<td style="text-align:right">2,136</td>
-<td style="text-align:right">15.0 ms</td>
-<td style="text-align:right">20.1 ms</td>
+<td style="text-align:right">2,098</td>
+<td style="text-align:right">15.1 ms</td>
+<td style="text-align:right">20.9 ms</td>
 </tr>
 <tr>
 <td>Strong read, 32 clients</td>
-<td style="text-align:right">253,402</td>
+<td style="text-align:right">245,847</td>
 <td style="text-align:right">0.11 ms</td>
 <td style="text-align:right">0.38 ms</td>
 </tr>
 <tr>
 <td>Strong read, 256 clients</td>
-<td style="text-align:right">379,480</td>
-<td style="text-align:right">0.63 ms</td>
-<td style="text-align:right">1.49 ms</td>
+<td style="text-align:right">378,213</td>
+<td style="text-align:right">0.64 ms</td>
+<td style="text-align:right">1.51 ms</td>
 </tr>
 <tr>
 <td>Session read, 32 clients</td>
-<td style="text-align:right">301,523</td>
+<td style="text-align:right">297,289</td>
 <td style="text-align:right">0.09 ms</td>
-<td style="text-align:right">0.33 ms</td>
+<td style="text-align:right">0.34 ms</td>
 </tr>
 <tr>
 <td>Strong scan of 20 keys, 32 clients</td>
-<td style="text-align:right">244,313</td>
+<td style="text-align:right">246,678</td>
 <td style="text-align:right">0.11 ms</td>
-<td style="text-align:right">0.40 ms</td>
+<td style="text-align:right">0.38 ms</td>
 </tr>
 <tr>
 <td>Half reads, half commits, 64 clients over 8 databases</td>
-<td style="text-align:right">7,812</td>
-<td style="text-align:right">7.9 ms</td>
-<td style="text-align:right">21.5 ms</td>
+<td style="text-align:right">7,988</td>
+<td style="text-align:right">0.43 ms</td>
+<td style="text-align:right">21.7 ms</td>
 </tr>
 </tbody>
 </table>
-<p>Commit latency is the disk's flush time and does not grow with load; throughput grows with clients because each flush carries more transactions. The median of the last row lies between its reads, which take a tenth of a millisecond, and its commits, which take fifteen, and so moves from run to run: 0.5, 1.6 and 7.9 ms were measured. Commits from 256 clients also vary between runs, from 12,600 to 18,200 a second across the builds measured for this page.</p>
+<p>Commit latency is the disk's flush time and does not grow with load; throughput grows with clients because each flush carries more transactions. The median of the last row lies between its reads, which take a tenth of a millisecond, and its commits, which take fifteen, and so moves from run to run: 0.4, 0.5, 1.6 and 7.9 ms were measured. Commits from 256 clients also vary between runs, from 12,600 to 18,200 a second across the builds measured for this page.</p>
+<p>Nothing in release 2.1.1 changes what a local directory does, and two rows of this table differed from the run published with 2.1.0, which measured 186 commits/s from one client and a p99 of 14.2 ms on the fourth row. The two releases were therefore run on those rows in turn, on a new server and directory each time. One client, three rounds: 171, 177 and 166 commits/s with 2.1.0, and 180, 172 and 182 with 2.1.1. 64 databases, eight rounds: 5,177 to 5,340 commits/s with 2.1.0 and 5,282 to 5,536 with 2.1.1, apart from one run of 7,499 whose median was 7 ms instead of 12. The p99 was 15 to 16 ms in seven rounds with 2.1.0 and 25 ms in the eighth; with 2.1.1 it was 14 to 19 ms in five rounds and 23, 25 and 37 ms in the others. These rows are the drive's flush time, and it moves by that much from run to run.</p>
 <h2 id="backblaze-b2">Backblaze B2<a class="anchor" href="#backblaze-b2" aria-label="Link to this section">#</a></h2>
-<p>One server on the same desktop, on a residential connection 22 ms from B2's <code>us-west-002</code> region, with default settings.</p>
+<p>One server on the same desktop, which reaches the internet over Wi-Fi and a residential connection, 22 ms from B2's <code>us-west-002</code> region, with default settings.</p>
 <table>
 <thead>
 <tr>
@@ -163,75 +164,168 @@
 <tbody>
 <tr>
 <td>Commit, 1 client</td>
-<td style="text-align:right">11</td>
-<td style="text-align:right">76 ms</td>
-<td style="text-align:right">211 ms</td>
+<td style="text-align:right">12</td>
+<td style="text-align:right">77 ms</td>
+<td style="text-align:right">192 ms</td>
 </tr>
 <tr>
 <td>Commit, 32 clients, one database</td>
-<td style="text-align:right">174</td>
-<td style="text-align:right">174 ms</td>
-<td style="text-align:right">565 ms</td>
+<td style="text-align:right">183</td>
+<td style="text-align:right">128 ms</td>
+<td style="text-align:right">2,730 ms</td>
 </tr>
 <tr>
 <td>Commit, 256 clients, one database</td>
-<td style="text-align:right">1,117</td>
-<td style="text-align:right">199 ms</td>
-<td style="text-align:right">495 ms</td>
+<td style="text-align:right">1,881</td>
+<td style="text-align:right">128 ms</td>
+<td style="text-align:right">223 ms</td>
 </tr>
 <tr>
 <td>Commit, 64 clients over 64 databases</td>
-<td style="text-align:right">177</td>
-<td style="text-align:right">169 ms</td>
-<td style="text-align:right">2,370 ms</td>
+<td style="text-align:right">534</td>
+<td style="text-align:right">88 ms</td>
+<td style="text-align:right">563 ms</td>
 </tr>
 <tr>
 <td>Commit with an idempotency key, 32 clients</td>
-<td style="text-align:right">181</td>
-<td style="text-align:right">165 ms</td>
-<td style="text-align:right">382 ms</td>
+<td style="text-align:right">217</td>
+<td style="text-align:right">117 ms</td>
+<td style="text-align:right">918 ms</td>
 </tr>
 <tr>
 <td>Strong read, 32 clients</td>
-<td style="text-align:right">859</td>
-<td style="text-align:right">36 ms</td>
-<td style="text-align:right">121 ms</td>
-</tr>
-<tr>
-<td>Strong read, 256 clients</td>
-<td style="text-align:right">6,610</td>
+<td style="text-align:right">804</td>
 <td style="text-align:right">38 ms</td>
 <td style="text-align:right">116 ms</td>
 </tr>
 <tr>
+<td>Strong read, 256 clients</td>
+<td style="text-align:right">6,480</td>
+<td style="text-align:right">37 ms</td>
+<td style="text-align:right">166 ms</td>
+</tr>
+<tr>
 <td>Session read, 32 clients</td>
-<td style="text-align:right">263,257</td>
+<td style="text-align:right">276,223</td>
 <td style="text-align:right">0.10 ms</td>
-<td style="text-align:right">0.38 ms</td>
+<td style="text-align:right">0.36 ms</td>
 </tr>
 <tr>
 <td>Strong scan of 20 keys, 32 clients</td>
-<td style="text-align:right">869</td>
-<td style="text-align:right">35 ms</td>
-<td style="text-align:right">153 ms</td>
+<td style="text-align:right">845</td>
+<td style="text-align:right">37 ms</td>
+<td style="text-align:right">91 ms</td>
 </tr>
 <tr>
 <td>Half reads, half commits, 64 clients over 8 databases</td>
-<td style="text-align:right">614</td>
-<td style="text-align:right">90 ms</td>
-<td style="text-align:right">397 ms</td>
+<td style="text-align:right">781</td>
+<td style="text-align:right">74 ms</td>
+<td style="text-align:right">257 ms</td>
 </tr>
 </tbody>
 </table>
-<p><strong>B2's own latency sets these numbers, and it varies.</strong> The table is one run. The run published with release 2.0.0, some hours earlier on the same day, measured 118 ms for a single-client commit where this one measured 76 ms, and 866 commits/s from 256 clients where this one measured 1,117. Expect a factor of two between good and bad hours, and less latency from a server closer to the bucket.</p>
-<p><strong>Many databases committing at once is where B2 was slowest.</strong> Clients of one database share an upload; 64 databases need 64 uploads at a time, each to a storage pod of its own. In this run half of the server's upload attempts took under 250 ms and a quarter took over a second, and one commit in a hundred waited 2.4 s. The earlier run measured 314 commits/s and a 99th percentile of 791 ms on this row. To tell the hour from the release, the two binaries were then run on this row in turn, four times each: 2.0.0 measured 228, 207, 131 and 221 commits/s, and 2.1.0 measured 247, 147, 221 and 111. They do not differ. Why B2 served many simultaneous uploads so much more slowly in this hour than in the earlier one was not established.</p>
+<p><strong>B2's own latency sets these numbers, and it varies.</strong> The table is one run. Earlier the same day the run published with release 2.0.0 measured 118 ms for a single-client commit where this one measured 77 ms. Expect a factor of two between good and bad hours, and less latency from a server closer to the bucket. Where this page compares two releases, they were run in turn within the same half hour.</p>
+<p><strong>Many databases committing at once was where B2 was slowest, and the cause was in durable-db.</strong> Clients of one database share an upload; 64 databases need 64 uploads at a time. A B2 upload URL names one storage pod and serves one upload at a time, so each of them needs a pod of its own. Up to release 2.1.0 every commit also sent one of its two racing uploads to a pod the server had never used. A new pod costs a call for its URL, a name lookup and a TLS connection, and 64 busy databases asked for about 160 new pods a second. From this desktop, one such upload in fourteen failed after waiting five seconds for a connection and the others took 0.8 s at the median, while uploads to pods already in use took 76 ms. Since 2.1.1 the upload a commit waits for goes to the fastest pod the server knows, and a duplicate is sent only where a pod can be spared (<a href="verification.html#what-these-checks-found">verification</a>, finding 27).</p>
+<p>The two releases were run on this row in turn, three times each. Every time a new server was started and the row was run twice on it, ten seconds each:</p>
+<table>
+<thead>
+<tr>
+<th>64 clients over 64 databases</th>
+<th>Release 2.1.0</th>
+<th>Release 2.1.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commits/s in a new server's first ten seconds</td>
+<td>187, 174, 229</td>
+<td>427, 406, 374</td>
+</tr>
+<tr>
+<td>Commits/s in its next ten seconds</td>
+<td>192, 180, 207</td>
+<td>500, 507, 504</td>
+</tr>
+<tr>
+<td>p99 of a commit, first ten seconds</td>
+<td>2.1, 2.3, 1.8 s</td>
+<td>1.1, 1.0, 0.8 s</td>
+</tr>
+<tr>
+<td>p99 of a commit, next ten seconds</td>
+<td>2.0, 2.0, 1.8 s</td>
+<td>0.58, 0.58, 0.56 s</td>
+</tr>
+<tr>
+<td>p99.9 of a commit, all six runs</td>
+<td>2.9 to 4.3 s</td>
+<td>1.6 to 3.6 s</td>
+</tr>
+<tr>
+<td>Upload attempts that took over a second</td>
+<td>26%, 28%, 24%</td>
+<td>1%, 1%, 1%</td>
+</tr>
+<tr>
+<td>Upload attempts that failed</td>
+<td>732 of 38,285</td>
+<td>205 of 36,023</td>
+</tr>
+</tbody>
+</table>
+<p>No commit failed in any run. A new server knows no pods, so its first seconds are its slowest: the first uploads of all 64 databases go to new pods at once. The attempts that still fail with 2.1.1 are of two kinds, and each is sent again or has another upload beside it: a pod answers at once that it cannot take the upload, which B2 does routinely and after which durable-db drops that pod, and an upload to a new pod gives up after five seconds without a connection. In a run that recorded them, four in five were of the first kind. To repeat a column, start a server of that release and run <code>durable-db bench --workload write --clients 64 --databases 64</code> against it twice.</p>
+<p>This desktop keeps no cache of name lookups, so every new connection asks its provider's resolvers, and it does so over Wi-Fi. That made new pods dearer here than they may be for a server in a data centre, and it has not been measured from one.</p>
+<p><strong>The slowest commits in these tables are stalls of the desktop's link, not of B2 and not of durable-db.</strong> The desktop is on Wi-Fi. A ping to its own router, five a second for 80 seconds, had 12 of 394 replies delayed by more than half a second, the longest by 2.4 s. A build that logged every request showed what such a moment is to the server: in one, four uploads to four different pods and a name lookup all took over a second at once; in another, a claim check and an unrelated upload did. One request to the bucket carries every commit of its group, so a row of ten seconds with a stall in it reports the stall as its 99th percentile. In the table above that is the 2.7 s of the second row and the 0.9 s of the row with idempotency keys.</p>
+<p>With one database the two releases were run in turn for 30 seconds each, three times, on a new server each time, with the same ping running alongside:</p>
+<table>
+<thead>
+<tr>
+<th>One database, 30 seconds</th>
+<th>Release 2.1.0</th>
+<th>Release 2.1.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 client, commits/s</td>
+<td>11, 9, 11</td>
+<td>13, 12, 12</td>
+</tr>
+<tr>
+<td>1 client, median</td>
+<td>81, 93, 80 ms</td>
+<td>64, 76, 72 ms</td>
+</tr>
+<tr>
+<td>1 client, p99</td>
+<td>194, 390, 217 ms</td>
+<td>198, 195, 201 ms</td>
+</tr>
+<tr>
+<td>32 clients, commits/s</td>
+<td>205, 199, 189</td>
+<td>240, 247, 223</td>
+</tr>
+<tr>
+<td>32 clients, median</td>
+<td>137, 143, 132 ms</td>
+<td>118, 117, 125 ms</td>
+</tr>
+<tr>
+<td>32 clients, p99</td>
+<td>388, 521, 1,602 ms</td>
+<td>294, 275, 369 ms</td>
+</tr>
+</tbody>
+</table>
+<p>Eleven of the twelve runs had no ping reply later than half a second. The twelfth had eight, the longest 1.7 s, and it is the run whose p99 is 1.6 s. 2.1.1 is the faster with one database too: every other duplicate goes to the next fastest pod the server knows, where 2.1.0 sent the duplicate that starts with the upload to a new pod every time. To repeat a column, run <code>durable-db bench --workload write --clients 32 --seconds 30</code> against a new server of that release, and <code>ping -i 0.2</code> to the router beside it.</p>
 <p>Two things keep B2's slow moments from becoming yours:</p>
 <ul>
-<li><strong>Racing uploads.</strong> B2 stores each upload on one of many storage pods, and pods differ: the same 4 KiB upload measured medians from 67 ms to over 900 ms on eight pods at one moment. durable-db remembers which pods were fast, starts two identical uploads at once (a known-fast pod and a new one), and adds another every 150 ms while none has finished. Uploads are free on B2. With a single upload per commit, the 32-client p99 in a bad period was 2.2 s; with racing it was 0.45 s.</li>
+<li><strong>Known pods first, and a duplicate where one can be spared.</strong> B2 stores each upload on one of many storage pods, and pods differ: the same 4 KiB upload measured medians from 67 ms to over 900 ms on eight pods at one moment, and of ten new pods tried one at a time four were fast. durable-db keeps the pods it has used in order of speed. The upload a commit waits for takes the fastest one that is free. An identical upload starts beside it on another pod, a slower known one or a new one, and one more every 150 ms while none has finished, up to four; the first to finish wins. At most eight new pods are on trial at a time, and when many databases commit at once and no pod can be spared, the duplicate is not sent. Uploads are free on B2. In five logged runs with one database, one upload in five finished on the duplicate and not on the upload it started beside.</li>
 <li><strong>B2's native upload call.</strong> PutObject through B2's S3-compatible gateway measured 150 to 260 ms at the median for the same object; B2's own upload call measured 71 ms. Uploads use the native call; everything else uses the S3 API.</li>
 </ul>
 <h3 id="opening-a-database">Opening a database<a class="anchor" href="#opening-a-database" aria-label="Link to this section">#</a></h3>
-<p>A database is opened by the first request that needs it and stays open while it is used (five minutes idle by default).</p>
+<p>A database is opened by the first request that needs it and stays open while it is used (five minutes idle by default). These times were measured with release 2.1.0.</p>
 <table>
 <thead>
 <tr>
@@ -263,10 +357,82 @@
 </tbody>
 </table>
 <h3 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h3>
-<p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service: 163,283 session reads/s from 192 clients for 80 seconds, during which the autoscaler went from two pods to five and one pod was force-deleted. Of those 13 million reads, 102 failed and 46 were told to wait; the load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. A ledger of read-then-commit transfers from 16 clients over 8 databases ran at 87 transfers/s (p50 120 ms, p99 647 ms) for four minutes through the scale-out, the force-deleted pod and the scale-in, and verified. Its slowest transfer took 14.6 s.</p>
+<p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service. 192 clients send session reads to four databases for 80 seconds, during which the autoscaler goes from two pods to five and one pod is force-deleted. Beside them a ledger of read-then-commit transfers from 16 clients over 8 databases runs for four minutes, through the scale-out, the force-deleted pod and the scale-in, and is then verified. Five runs, in the order they were made: the first was published with release 2.1.0, the others were made within forty minutes of each other.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:right">2.1.0</th>
+<th style="text-align:right">2.1.1</th>
+<th style="text-align:right">2.1.1</th>
+<th style="text-align:right">2.1.0</th>
+<th style="text-align:right">2.1.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session reads/s</td>
+<td style="text-align:right">163,283</td>
+<td style="text-align:right">115,943</td>
+<td style="text-align:right">119,493</td>
+<td style="text-align:right">139,882</td>
+<td style="text-align:right">115,589</td>
+</tr>
+<tr>
+<td>Reads that failed</td>
+<td style="text-align:right">102</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">86</td>
+<td style="text-align:right">102</td>
+<td style="text-align:right">110</td>
+</tr>
+<tr>
+<td>Reads told to wait</td>
+<td style="text-align:right">46</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">47</td>
+<td style="text-align:right">26</td>
+<td style="text-align:right">22</td>
+</tr>
+<tr>
+<td>Ledger transfers/s</td>
+<td style="text-align:right">87</td>
+<td style="text-align:right">95</td>
+<td style="text-align:right">98</td>
+<td style="text-align:right">76</td>
+<td style="text-align:right">84</td>
+</tr>
+<tr>
+<td>Transfer, p50</td>
+<td style="text-align:right">120 ms</td>
+<td style="text-align:right">117 ms</td>
+<td style="text-align:right">113 ms</td>
+<td style="text-align:right">136 ms</td>
+<td style="text-align:right">125 ms</td>
+</tr>
+<tr>
+<td>Transfer, p99</td>
+<td style="text-align:right">647 ms</td>
+<td style="text-align:right">606 ms</td>
+<td style="text-align:right">611 ms</td>
+<td style="text-align:right">706 ms</td>
+<td style="text-align:right">687 ms</td>
+</tr>
+<tr>
+<td>Slowest transfer</td>
+<td style="text-align:right">14.6 s</td>
+<td style="text-align:right">12.2 s</td>
+<td style="text-align:right">25.4 s</td>
+<td style="text-align:right">16.3 s</td>
+<td style="text-align:right">16.6 s</td>
+</tr>
+</tbody>
+</table>
+<p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in each of the last three runs; the test used to report the first count it saw above two, which is all that is known of the first two.</p>
+<p><strong>Release 2.1.1 read a sixth to a quarter less than 2.1.0 in this test, in every run, and the cause is not established.</strong> Two things it is not. It is not the server's read path, which the release does not change: one server held to two CPUs and 1 GiB with the manifest's flags, on the same bucket, was given the same reads with the same ledger beside them, the two releases in turn. With 2.1.0 it read 166,199 and 166,497 times a second while the ledger made 100 and 101 transfers a second; with 2.1.1 it read 168,024 and 167,313 times a second while the ledger made 121 and 118. It is not how soon a new pod is ready: fifteen starts of each release on the bucket took 1.07 s and 1.02 s at the median from start to ready. What remains is how the pods share the work: a read that reaches a pod not holding its database is relayed to the one that does, and one server held to two CPUs read more here than five pods did through the Service. What a relayed read costs has not been measured (<a href="#what-is-not-measured-yet">below</a>).</p>
 <p>With release 2.0.0 the same test measured 30,114 session reads/s and the autoscaler stopped at three pods: its binary read at the speed of one core (<a href="#the-allocator">the allocator</a>).</p>
 <h2 id="the-allocator">The allocator<a class="anchor" href="#the-allocator" aria-label="Link to this section">#</a></h2>
-<p>The binary carries its own allocator, jemalloc, held to eight arenas and set to give freed memory back to the system within a second. Which allocator a server uses decided two things: how fast it reads, and whether it stays inside a memory limit. This source was built with each candidate and put through <code>scripts/benchmark.sh</code> on a local directory and through the soak described <a href="#memory-under-load">below</a>, on the desktop described above:</p>
+<p>The binary carries its own allocator, jemalloc, held to eight arenas and set to give freed memory back to the system within a second. Which allocator a server uses decided two things: how fast it reads, and whether it stays inside a memory limit. The source of release 2.1.0 was built with each candidate and put through <code>scripts/benchmark.sh</code> on a local directory and through the soak described <a href="#memory-under-load">below</a>, on the desktop described above:</p>
 <table>
 <thead>
 <tr>
@@ -318,32 +484,32 @@
 <tbody>
 <tr>
 <td>Half reads, half commits of 16 KiB values, 64 clients over 4 databases</td>
-<td style="text-align:right">5,439</td>
-<td style="text-align:right">1.6 ms</td>
-<td style="text-align:right">72 ms</td>
-<td style="text-align:right">5,640</td>
-<td style="text-align:right">544 MiB</td>
+<td style="text-align:right">5,903</td>
+<td style="text-align:right">3.3 ms</td>
+<td style="text-align:right">55 ms</td>
+<td style="text-align:right">1,264</td>
+<td style="text-align:right">568 MiB</td>
 </tr>
 <tr>
 <td>Commits of 1 KiB values, 256 clients over 256 databases</td>
-<td style="text-align:right">6,719</td>
+<td style="text-align:right">6,778</td>
 <td style="text-align:right">21 ms</td>
-<td style="text-align:right">145 ms</td>
+<td style="text-align:right">148 ms</td>
 <td style="text-align:right">0</td>
-<td style="text-align:right">618 MiB</td>
+<td style="text-align:right">621 MiB</td>
 </tr>
 <tr>
 <td>Strong reads of 4 KiB values, 512 clients over 8 databases of 20,000 keys</td>
-<td style="text-align:right">70,859</td>
-<td style="text-align:right">5.9 ms</td>
-<td style="text-align:right">31 ms</td>
+<td style="text-align:right">74,686</td>
+<td style="text-align:right">5.7 ms</td>
+<td style="text-align:right">28 ms</td>
 <td style="text-align:right">0</td>
-<td style="text-align:right">618 MiB</td>
+<td style="text-align:right">621 MiB</td>
 </tr>
 </tbody>
 </table>
-<p>The server used 618 MiB at most, and 659 MiB in an earlier run of the same script. No request failed.</p>
-<p>&quot;Told to wait&quot; counts answers of <code>503</code>. In the first load each of the four databases holds 160 MiB and is overwritten about four times in the minute, so tables are merged all the while; with four CPUs the flushes fall behind now and then, and the server refuses a write to that database instead of holding it in memory. That was 1.7% of the requests of that load. A client waits and sends the request again, as the SDK does.</p>
+<p>The server used 621 MiB at most. Release 2.1.0 used 618 MiB in one run of the same script and 659 MiB in another. No request failed.</p>
+<p>&quot;Told to wait&quot; counts answers of <code>503</code>. In the first load each of the four databases holds 160 MiB and is overwritten about four times in the minute, so tables are merged all the while; with four CPUs the flushes fall behind now and then, and the server refuses a write to that database instead of holding it in memory. That was 0.4% of the requests of that load in this run, and 1.7% in the run published with 2.1.0. A client waits and sends the request again, as the SDK does.</p>
 <p>This is three minutes on a local directory. It says that the limits in <a href="deployment.html#on-kubernetes">deployment</a> hold under these loads with this allocator, not what many hours or a bucket would show; on a bucket an upload is in memory for as long as the bucket takes to store it.</p>
 <h2 id="what-it-costs-in-requests">What it costs in requests<a class="anchor" href="#what-it-costs-in-requests" aria-label="Link to this section">#</a></h2>
 <p>Uploads are free on B2; HEAD and GET are billed per call, LIST at a higher rate. Per request:</p>
@@ -357,7 +523,7 @@
 <tbody>
 <tr>
 <td>Commit</td>
-<td>One HEAD per group of transactions; uploads (two to four racing on B2)</td>
+<td>One HEAD per group of transactions; uploads (one to four on B2)</td>
 </tr>
 <tr>
 <td>Strong read</td>
@@ -384,7 +550,9 @@
 <p>A database committing as fast as B2 allows from one location runs about ten groups a second, which is under a million HEADs a day. Check your provider's current price list for what that means on your bill.</p>
 <h2 id="what-is-not-measured-yet">What is not measured yet<a class="anchor" href="#what-is-not-measured-yet" aria-label="Link to this section">#</a></h2>
 <ul>
-<li>Why many simultaneous uploads to B2 are slow in some hours, and whether fewer racing uploads would serve many busy databases better.</li>
+<li>B2 from a server in a data centre, on a wired link. Every B2 figure here was measured over Wi-Fi from one desktop, for minutes at a time, and that includes the measurements behind the choice of storage pods.</li>
+<li>More databases committing at once on B2 than a server knows fast pods for.</li>
+<li>What a read relayed from one pod to another costs, and why the Kubernetes test read less with release 2.1.1 than with 2.1.0.</li>
 <li>Amazon S3 or any provider other than B2.</li>
 <li>A server in the same region as its bucket.</li>
 <li>Many hours of sustained load.</li>
@@ -397,7 +565,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.1, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
