@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -121,11 +121,12 @@
 <h2 id="tables-flush-and-merge">Tables, flush and merge<a class="anchor" href="#tables-flush-and-merge" aria-label="Link to this section">#</a></h2>
 <p>Writes accumulate in memory and in frames. A <strong>flush</strong> writes the acknowledged in-memory entries as a new table, stores a manifest that lists it, checks the claim, switches readers to the new table list, and deletes the frames the manifest covers. It runs when unflushed data reaches 8 MiB or 512 frames, after 5 seconds without a commit, and at release.</p>
 <p>Tables are merged so that the newest tables stay small and the count stays logarithmic: the newest tables are merged whenever together they are at least half the size of the next one. Deleted keys are dropped when a merge includes the oldest table.</p>
-<p>A table is blocks of about 32 KiB, compressed with LZ4, each with a CRC, followed by an index of the last key of each block. A lookup reads the index once, then one block. Small tables arrive whole in a single request.</p>
+<p>A merge writes its result as a <strong>run</strong>: tables of at most 32 MiB whose key ranges follow one another, each uploaded before the next is begun. A run is read, weighed and merged as the single table it would otherwise be, so a merge holds about one table in memory however large the database is. Two merges run at once on a server. A database that waits for its turn goes on flushing. A merge under way flushes between two of its tables when writes fall due, and stops there when the database is being released. The tables of a merge that did not finish are in no manifest, and are collected. A merge that failed is tried again when the database is next written to.</p>
+<p>A table is blocks of about 32 KiB, compressed with LZ4, each with a CRC, followed by an index of the last key of each block. A lookup reads the index, then one block. Small tables arrive whole in a single request.</p>
 <p>Two caches hold table data, both bounded and both disposable:</p>
 <ul>
-<li><strong>Memory</strong> (<code>--cache-bytes</code>): decoded blocks, shared by all databases.</li>
-<li><strong>Disk</strong> (<code>--cache-dir</code>, optional): whole table files. A damaged file fails its checksum, is deleted and is fetched again.</li>
+<li><strong>Memory</strong> (<code>--cache-bytes</code>): decoded blocks and table indexes, shared by all databases. When it is full it keeps what has been read more than once, so a scan of everything does not displace what is in use.</li>
+<li><strong>Disk</strong> (<code>--cache-dir</code>, optional): whole table files, written when a table is made and otherwise fetched in the background, two at a time. A damaged file fails its checksum, is deleted and is fetched again.</li>
 </ul>
 <h2 id="collection">Collection<a class="anchor" href="#collection" aria-label="Link to this section">#</a></h2>
 <p>Objects are deleted by the owner, and only what the newest manifest no longer needs:</p>
@@ -213,7 +214,7 @@
 <li><strong>A strong read costs one HEAD</strong>, shared among concurrent reads. Session reads cost none.</li>
 <li><strong>Transactions do not span databases.</strong></li>
 <li><strong>A deleted database's name cannot be reused.</strong> The tombstone is permanent, so that a late upload from a server that owned the old database can never be mistaken for the new one.</li>
-<li><strong>Merges build a table in memory</strong>, so a database should fit comfortably in a server's memory when merged. The default quota is 1 GiB.</li>
+<li><strong>Merging the oldest table rewrites the database</strong>, each time it grows by half. Memory does not grow with the database, but the uploads do. The default quota is 1 GiB; larger databases have not been measured.</li>
 <li><strong>No historical reads.</strong> Only the current state is kept.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="clients.html"><span>Previous</span>TypeScript SDK</a><a class="next" href="performance.html"><span>Next</span>Performance</a></nav></main>
@@ -223,7 +224,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

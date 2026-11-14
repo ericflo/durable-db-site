@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html" aria-current="page">API</a>
@@ -171,6 +171,7 @@ durable-db token --database demo --access read --ttl 3600
 </tbody>
 </table>
 <p><code>next</code> is the last key returned when more keys remain, otherwise <code>null</code>. A page also ends early at 8 MiB. Fields that together select nothing, such as a <code>start</code> that follows the <code>end</code>, give an empty page.</p>
+<p>One read returns at most 64 MiB of keys and values. A read that would return more is refused with <code>400</code> as soon as it passes that, without the rest being fetched: ask for fewer keys, or page through a scan with <code>next</code>.</p>
 <p>For <code>&quot;consistency&quot;: &quot;session&quot;</code>, add <code>&quot;min_revision&quot;: N</code> with the highest revision you have seen from this database. If that revision is still being stored, the read waits for it. A <code>min_revision</code> the database has never reached is a <code>400</code>.</p>
 <h2 id="commit">Commit<a class="anchor" href="#commit" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-http">POST /v1/databases/{name}/commit
@@ -210,7 +211,8 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 </tbody>
 </table>
-<p>Read, compute, and commit with a check for each key and range you read: the transaction then behaves as if it ran alone. On <code>409</code>, read again and recompute. The conflict carries <code>&quot;revision&quot;</code>: pass it as <code>min_revision</code> and the read is guaranteed to include whatever caused the conflict. Range checks are verified against recent writes only; a range read too long ago fails with <code>409</code> and is simply read again.</p>
+<p>A check has the fields of one of the first two rows and no others.</p>
+<p>Read, compute, and commit with a check for each key and range you read: the transaction then behaves as if it ran alone. On <code>409</code>, read again and recompute. The conflict carries <code>&quot;revision&quot;</code>: pass it as <code>min_revision</code> and the read is guaranteed to include whatever caused the conflict. Range checks are verified against recent writes only: the last 100,000 keys a database wrote, or 8 MiB of them, and fewer when many databases on a server write at once. A range read longer ago than that fails with <code>409</code> and is simply read again.</p>
 <p>There is no read at an exact past revision. Two separate reads may see different revisions; the checks catch it at commit.</p>
 <p><strong>Idempotency.</strong> With an <code>idempotency_key</code> (1 to 255 bytes), repeating the same transaction returns the original result instead of applying it again, for the next 100,000 revisions. Reusing a key with different writes is a <code>400</code>. Always send one when a retry is possible.</p>
 <p><strong>Several transactions</strong> in one request are applied in order, each atomically, each with its own revision:</p>
@@ -218,7 +220,7 @@ durable-db token --database demo --access read --ttl 3600
 </code></pre>
 <pre><code class="language-json">{&quot;results&quot;: [{&quot;revision&quot;: 1209}, {&quot;error&quot;: {&quot;code&quot;: &quot;conflict&quot;, &quot;message&quot;: &quot;...&quot;, &quot;retryable&quot;: false}}]}
 </code></pre>
-<p>Each transaction takes the same fields as a single one, including its own <code>idempotency_key</code>; nothing but <code>transactions</code> may appear at the top level. The first failure stops the request; later transactions report <code>conflict</code> with the message &quot;not attempted&quot;. The status is <code>200</code> whenever the request itself was understood. If any transaction is malformed the whole request is a <code>400</code> and none is applied.</p>
+<p>Each transaction takes the same fields as a single one, including its own <code>idempotency_key</code>; nothing but <code>transactions</code> may appear at the top level. One request holds at most 10,000 writes and checks, however they are divided among its transactions. The first failure stops the request; later transactions report <code>conflict</code> with the message &quot;not attempted&quot;. The status is <code>200</code> whenever the request itself was understood. If any transaction is malformed the whole request is a <code>400</code> and none is applied.</p>
 <h2 id="single-keys">Single keys<a class="anchor" href="#single-keys" aria-label="Link to this section">#</a></h2>
 <table>
 <thead>
@@ -243,6 +245,7 @@ durable-db token --database demo --access read --ttl 3600
 </tbody>
 </table>
 <p>Percent-encode the key in the path; <code>/</code> may be left as is.</p>
+<p>A path with a segment that is <code>.</code> or <code>..</code>, percent-encoded or not, or with a backslash, is refused with <code>400</code>: HTTP clients and proxies rewrite such paths before they are sent. A key like <code>a/../b</code> is an ordinary key, reached through <code>read</code> and <code>commit</code>, where keys travel in the body.</p>
 <h2 id="errors">Errors<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-json">{&quot;error&quot;: {&quot;code&quot;: &quot;conflict&quot;, &quot;message&quot;: &quot;key \&quot;accounts/a\&quot; is at version 1201, not 1190&quot;, &quot;retryable&quot;: false}}
 </code></pre>
@@ -281,6 +284,12 @@ durable-db token --database demo --access read --ttl 3600
 <td></td>
 </tr>
 <tr>
+<td>408</td>
+<td><code>timeout</code></td>
+<td>The request body did not arrive in time. Nothing was applied.</td>
+<td>Send the request again.</td>
+</tr>
+<tr>
 <td>409</td>
 <td><code>conflict</code></td>
 <td>A check failed. The error carries <code>revision</code>.</td>
@@ -313,7 +322,7 @@ durable-db token --database demo --access read --ttl 3600
 <tr>
 <td>503</td>
 <td><code>busy</code>, <code>ownership_moved</code>, <code>storage_unavailable</code></td>
-<td>The request could not be completed now: ownership is moving, storage did not answer, or the server is shedding load.</td>
+<td>The request could not be completed now: ownership is moving, storage did not answer, or the server has no room for another request, request body or read result.</td>
 <td>Repeat the identical request.</td>
 </tr>
 <tr>
@@ -343,11 +352,15 @@ durable-db token --database demo --access read --ttl 3600
 <td>4 MiB (<code>--max-value-bytes</code>)</td>
 </tr>
 <tr>
+<td>Request head (request line and headers)</td>
+<td>32 KiB</td>
+</tr>
+<tr>
 <td>Request body</td>
 <td>32 MiB</td>
 </tr>
 <tr>
-<td>Writes plus checks per transaction</td>
+<td>Writes plus checks per commit request</td>
 <td>10,000</td>
 </tr>
 <tr>
@@ -360,7 +373,7 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 <tr>
 <td>One read's result</td>
-<td>64 MiB</td>
+<td>64 MiB of keys and values, counting 64 bytes for each item besides (<code>--result-bytes</code> lowers it)</td>
 </tr>
 <tr>
 <td>Database size</td>
@@ -368,8 +381,33 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 </tbody>
 </table>
+<p>A server also limits what all requests together may hold in memory, and how much of that one database may use; see <a href="deployment.html#tokens-and-tenants">tenants</a>. A request that does not fit is answered <code>503</code> with code <code>busy</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Time limit</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sending a request's head, or staying connected between requests</td>
+<td>75 seconds</td>
+</tr>
+<tr>
+<td>Sending a request body</td>
+<td>30 seconds, plus one second for every 256 KiB</td>
+</tr>
+<tr>
+<td>Not taking any of a response</td>
+<td>30 seconds</td>
+</tr>
+</tbody>
+</table>
+<p>A connection that passes a limit is closed. A body that arrives too slowly is answered <code>408</code> first.</p>
 <h2 id="health-and-metrics">Health and metrics<a class="anchor" href="#health-and-metrics" aria-label="Link to this section">#</a></h2>
-<p><code>GET /healthz</code> answers <code>200</code> while the process runs. <code>GET /readyz</code> answers <code>200</code> when storage is reachable; use it as the readiness probe. <code>GET /metrics</code> returns Prometheus text: request and storage latency histograms, cache statistics and open databases. No key, value, token or database name appears in metrics or logs.</p>
+<p><code>GET /healthz</code> answers <code>200</code> while the process runs. <code>GET /readyz</code> answers <code>200</code> when storage is reachable; use it as the readiness probe. It asks storage at most every two seconds, however often it is called. <code>GET /metrics</code> returns Prometheus text: request and storage latency histograms, cache statistics, open databases and the memory that requests hold.</p>
+<p>No key, value, token or database name appears in metrics or logs. A log line identifies a database by the first 12 hexadecimal digits of the SHA-256 of its name, which you can compute for a name you know: <code>printf %s demo | sha256sum | cut -c1-12</code>.</p>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="deployment.html"><span>Previous</span>Deployment</a><a class="next" href="clients.html"><span>Next</span>TypeScript SDK</a></nav></main>
 <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#concepts">Concepts</a></li><li class="h2"><a href="#authentication">Authentication</a></li><li class="h2"><a href="#databases">Databases</a></li><li class="h2"><a href="#read">Read</a></li><li class="h2"><a href="#commit">Commit</a></li><li class="h2"><a href="#single-keys">Single keys</a></li><li class="h2"><a href="#errors">Errors</a></li><li class="h2"><a href="#limits">Limits</a></li><li class="h2"><a href="#health-and-metrics">Health and metrics</a></li></ul></nav>
 </div>
@@ -377,7 +415,7 @@ durable-db token --database demo --access read --ttl 3600
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

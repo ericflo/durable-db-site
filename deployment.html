@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -85,10 +85,53 @@ cd deploy/kubernetes
 kustomize edit set image durable-db=&lt;registry&gt;/durable-db@sha256:&lt;digest&gt;
 kubectl -n durable-db apply -k .
 </code></pre>
-<p>Applications connect to <code>http://durable-db.durable-db.svc:7654</code>. Put TLS and any public exposure in front of it at your ingress; servers talk to each other in plain HTTP inside the cluster and trust the network they are on.</p>
+<p>Applications connect to <code>http://durable-db.durable-db.svc:7654</code>. Put TLS and any public exposure in front of it at your ingress. Servers talk to each other in plain HTTP inside the cluster: a relayed request carries its caller's token, which the receiving server verifies again, so the network between them must be private.</p>
 <p><strong>Scaling.</strong> Any number of replicas from one up is correct. When a pod becomes ready, the others hand it the databases that hash to it. When a pod is told to stop, it reports not-ready, hands every database over, relays stray requests to its peers for <code>--drain-seconds</code>, and exits. A pod that is killed outright loses nothing: the next request for one of its databases makes another pod take it over. Scaling to zero stops service and loses nothing; starting one pod restores it.</p>
-<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so.</p>
-<p><strong>Resources.</strong> Memory use is bounded by <code>--cache-bytes</code> (table blocks) plus <code>--memtable-bytes</code> (unflushed writes) plus working memory for requests and merges. The manifest's 1 GiB limit fits its 256 MiB + 128 MiB settings. The cache volume is an <code>emptyDir</code>; losing it costs bucket requests, not data.</p>
+<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so. 2.0.0 and 2.1.0 share one, and <code>scripts/test-upgrade.sh</code> checks the upgrade between two binaries under a ledger (<a href="verification.html#tests-of-the-implementation">verification</a>). While both of these versions serve, a 2.1.0 server does not take a 2.0.0 server's word that a request was relayed and may relay it once more, and a 2.0.0 server does not know the mark that a 2.1.0 server puts on a database it is deleting, so it could take that database over and serve it until the deletion completes. Delete databases before or after the upgrade, not during it.</p>
+<p><strong>Resources.</strong> What a server holds in memory is limited by its flags, not by the size or the number of its databases:</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>At most</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Table blocks and indexes</td>
+<td><code>--cache-bytes</code></td>
+</tr>
+<tr>
+<td>Unflushed writes</td>
+<td><code>--memtable-bytes</code>, and as much again while they are written to tables</td>
+</tr>
+<tr>
+<td>Recently written keys, remembered for range checks</td>
+<td>a quarter of <code>--memtable-bytes</code></td>
+</tr>
+<tr>
+<td>Request bodies</td>
+<td><code>--body-bytes</code></td>
+</tr>
+<tr>
+<td>Read results</td>
+<td><code>--result-bytes</code></td>
+</tr>
+<tr>
+<td>Merges</td>
+<td>two at a time, one table of 32 MiB each</td>
+</tr>
+<tr>
+<td>Tables being fetched for the disk cache</td>
+<td>two at a time, 64 MiB each</td>
+</tr>
+<tr>
+<td>Connections</td>
+<td>about 40 KiB each until a request is admitted, <code>--max-connections</code> of them</td>
+</tr>
+</tbody>
+</table>
+<p>The manifest sets 192 MiB of cache, 96 MiB of unflushed writes, 128 MiB each for bodies and results, and 1,024 connections. With every line at its limit at once that is about 900 MiB, under a memory limit of 1 GiB. Change the limit and the flags together. These are the limits the code enforces; a budget can be passed by one request's worth before it is enforced, and a few kilobytes for each open database are not counted. Measured: a server with these flags, held to 1 GiB and four CPUs and loaded for three minutes on a local directory, used 618 MiB at most, and 659 MiB in another run (<a href="performance.html#memory-under-load">performance</a>). When flushes fall behind, a database answers <code>503</code> to writes until they have caught up, instead of holding more. Longer loads, and the same loads on a bucket, have not been measured. The cache volume is an <code>emptyDir</code>; losing it costs bucket requests, not data.</p>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration" aria-label="Link to this section">#</a></h2>
 <p>Every option is a flag and an environment variable.</p>
 <table>
@@ -159,7 +202,7 @@ kubectl -n durable-db apply -k .
 <td><code>--cache-bytes</code></td>
 <td><code>DURABLE_DB_CACHE_BYTES</code></td>
 <td>256 MiB</td>
-<td>Memory for cached table blocks.</td>
+<td>Memory for cached table blocks and indexes.</td>
 </tr>
 <tr>
 <td><code>--cache-dir</code></td>
@@ -177,7 +220,7 @@ kubectl -n durable-db apply -k .
 <td><code>--memtable-bytes</code></td>
 <td><code>DURABLE_DB_MEMTABLE_BYTES</code></td>
 <td>256 MiB</td>
-<td>Unflushed writes across all databases before the largest are flushed.</td>
+<td>Unflushed writes across all databases before the largest are flushed. A quarter of it is also what all databases together may remember of recently written keys.</td>
 </tr>
 <tr>
 <td><code>--max-open</code></td>
@@ -204,6 +247,24 @@ kubectl -n durable-db apply -k .
 <td>Largest value accepted.</td>
 </tr>
 <tr>
+<td><code>--body-bytes</code></td>
+<td><code>DURABLE_DB_BODY_BYTES</code></td>
+<td>512 MiB</td>
+<td>Memory for request bodies, across all requests. One database may use a quarter.</td>
+</tr>
+<tr>
+<td><code>--result-bytes</code></td>
+<td><code>DURABLE_DB_RESULT_BYTES</code></td>
+<td>512 MiB</td>
+<td>Memory for read results being put together or waiting to be sent. One database may use a quarter; one read returns at most an eighth, up to 64 MiB.</td>
+</tr>
+<tr>
+<td><code>--max-connections</code></td>
+<td><code>DURABLE_DB_MAX_CONNECTIONS</code></td>
+<td>8192</td>
+<td>Connections open at once. Further ones wait to be accepted.</td>
+</tr>
+<tr>
 <td><code>--drain-seconds</code></td>
 <td><code>DURABLE_DB_DRAIN_SECONDS</code></td>
 <td>5</td>
@@ -212,14 +273,14 @@ kubectl -n durable-db apply -k .
 <tr>
 <td><code>--upload-attempts</code></td>
 <td><code>DURABLE_DB_UPLOAD_ATTEMPTS</code></td>
-<td>2</td>
-<td>Identical uploads that may race for one small object.</td>
+<td>4 on B2, else 2</td>
+<td>Identical uploads that may race for one small object. On B2 two start at once; elsewhere one.</td>
 </tr>
 <tr>
 <td><code>--hedge-ms</code></td>
 <td><code>DURABLE_DB_HEDGE_MS</code></td>
-<td>0 on B2, else 150</td>
-<td>Delay before each further racing upload.</td>
+<td>150</td>
+<td>How long the uploads of an object may take before one more is started beside them.</td>
 </tr>
 <tr>
 <td><code>--s3-uploads-only</code></td>
@@ -245,11 +306,12 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 </code></pre>
 <p>What keeps one tenant from harming another:</p>
 <ul>
-<li><strong>Access.</strong> A database token works on its database only. Tokens are verified before anything touches storage, so requests without a valid token cost nothing but CPU.</li>
+<li><strong>Access.</strong> A database token works on its database only. The token is verified, and matched against the database in the path, before a request's body is read and before storage or another server is asked anything. A request without a valid token for that database is refused from its head alone.</li>
 <li><strong>Storage.</strong> <code>max_bytes</code> per database; writes that add data beyond it are refused.</li>
 <li><strong>Request rate.</strong> <code>max_requests_per_second</code> per database, or <code>--requests-per-second</code> for all.</li>
-<li><strong>Request size.</strong> Key, value, transaction and page limits are enforced before any work is done (<a href="api.html#limits">limits</a>).</li>
-<li><strong>Memory.</strong> The block cache is bounded for the whole server. A database whose unflushed writes exceed four times the flush size gets <code>503</code> until a flush catches up. Request bodies in memory are budgeted across all requests (512 MiB), and one read returns at most 64 MiB. At most two table merges run at once.</li>
+<li><strong>Request size.</strong> Key, value, request and page limits are enforced before any work is done (<a href="api.html#limits">limits</a>). The items of a request are counted while it is parsed, and a read is stopped when its result passes the limit, not after it has been put together.</li>
+<li><strong>Memory.</strong> The cache of table blocks and indexes is bounded for the whole server. A database whose unflushed writes exceed four times the flush size gets <code>503</code> until a flush catches up, whether it is writing or deleting. Request bodies are reserved for in <code>--body-bytes</code> before they are read, and read results in <code>--result-bytes</code> as they grow and until the client has taken them; a result is counted twice while it is encoded, and results under 16 KiB are not counted. One database may hold a quarter of either budget. When its quarter or the whole is spent, its next request is answered <code>503</code> and the others carry on. At most two table merges run at once, each holding one table of 32 MiB; a database waiting for its turn is held up in nothing else. The keys a database remembers for range checks are limited to 8 MiB, and to a share of the server's budget when many databases write at once. A database that has to forget some has its older range checks refused with <code>409</code>, and their transactions read again.</li>
+<li><strong>Connections.</strong> <code>--max-connections</code> at once; a connection has 75 seconds to send a request's head, a body 30 seconds plus one per 256 KiB, and a client that takes nothing of its response for 30 seconds is disconnected and the response dropped. These limits bound memory. They do not stop someone from occupying every connection: limit connections per client at your ingress.</li>
 <li><strong>Revocation.</strong> <code>{&quot;revoke_tokens&quot;: true}</code> voids every token of a database at once.</li>
 </ul>
 <p>Tokens belong on your servers, not in browsers. To rotate the signing key, put the new key on the first line of the key file and keep the old one below it until tokens signed with it have expired; all servers must have the file before the new key is used.</p>
@@ -290,7 +352,11 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 </tr>
 <tr>
 <td><code>durable_db_rejected_requests_total</code></td>
-<td>Requests refused because the server was at its request limit.</td>
+<td>Requests refused with <code>503</code> because the server, or the database's part of it, had no room: requests in flight, request bodies, or read results.</td>
+</tr>
+<tr>
+<td><code>durable_db_request_body_bytes</code>, <code>durable_db_read_result_bytes</code></td>
+<td>Memory reserved right now for request bodies and for read results, against <code>--body-bytes</code> and <code>--result-bytes</code>.</td>
 </tr>
 <tr>
 <td><code>durable_db_open_databases</code></td>
@@ -299,6 +365,14 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <tr>
 <td><code>durable_db_block_cache_bytes</code>, <code>..._hits_total</code>, <code>..._misses_total</code></td>
 <td>Memory cache use.</td>
+</tr>
+<tr>
+<td><code>durable_db_table_index_bytes</code></td>
+<td>Table indexes in memory, in the cache or in use by a read.</td>
+</tr>
+<tr>
+<td><code>durable_db_recent_key_bytes</code></td>
+<td>Recently written keys remembered for range checks, by all open databases.</td>
 </tr>
 </tbody>
 </table>
@@ -312,7 +386,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -205,17 +205,17 @@
 <tr>
 <td><code>tests/chaos.rs</code></td>
 <td>Three nodes share a store that delays every request, drops 4%, applies another 4% while reporting failure, and applies 3% up to 1.5 s after reporting failure. Its purges remove one key at a time and can stop partway. Nodes crash without releasing, are released at random, and stale owners keep running. Checked: every acknowledged append is present at its revision; a compare-and-set counter equals the acknowledged increments; no linearizable read returns a revision older than a prior acknowledgement; a released database leaves no claim and no log. Then six databases are deleted under the same faults, by a node that was cut off and replaced, by nodes that stop after a few writes, and by repeated requests; no write is acknowledged once any client was told the database is gone, and only the tombstone remains.</td>
-<td>200 seeds pass (<code>CHAOS_SEEDS=200</code>, release build, 124 s). Three run on every <code>cargo test</code>.</td>
+<td>200 seeds pass (<code>CHAOS_SEEDS=200</code>, release build, 105 s), and pass again in sixteen simultaneous runs each held to 40% of one CPU (<code>systemd-run --user --scope -p CPUQuota=40%</code>). Three run on every <code>cargo test</code>. A seed that has not finished after five minutes is reported by number and the run is stopped.</td>
 </tr>
 <tr>
 <td><code>tests/interleavings.rs</code></td>
-<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created.</td>
-<td>11 pass.</td>
+<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created, deletions while a flush is stuck, a flush that falls due during a merge, a database waiting for its turn to merge, a release during a merge, a merge that fails, an empty disk cache read all at once.</td>
+<td>17 pass.</td>
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
-<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption.</td>
-<td>12 pass.</td>
+<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember.</td>
+<td>17 pass.</td>
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
@@ -226,6 +226,11 @@
 <td><code>tests/http.rs</code></td>
 <td>The documented API against a real server process, including a killed server.</td>
 <td>8 pass.</td>
+</tr>
+<tr>
+<td><code>tests/tenants.rs</code></td>
+<td>What one caller can do to the others, against servers whose memory budgets can be read: stalled bodies with and without a token, a database that fills its part of a budget, results that wait to be read, a caller that stops reading, results relayed by another server, requests of very many items, paths a client would rewrite, a forged relay header, silent connections at the connection limit, readiness probes in bulk, shutdown with a request in flight.</td>
+<td>14 pass, and each alone on 15% of a processor.</td>
 </tr>
 <tr>
 <td><code>tests/cluster.rs</code></td>
@@ -243,9 +248,19 @@
 <td>11,774 transfers verified on three servers sharing a directory, and 4,902 on three servers sharing a B2 bucket, each while one server was killed and one terminated.</td>
 </tr>
 <tr>
+<td><code>scripts/soak-memory.sh</code></td>
+<td>One server with the flags of the Kubernetes manifest on a local directory, in a scope limited to 1 GiB without swap and four CPUs. Three loads of a minute each with values that do not compress: half commits of 16 KiB over 4 databases, commits over 256 databases, strong reads from 512 clients. The server is killed if it passes the limit.</td>
+<td>618 MiB at most, 659 MiB in an earlier run. No request failed; 1.7% of the first load's requests were told to wait.</td>
+</tr>
+<tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Scaled 2 → 3 → 2; 18,838 transfers in 240 s verified; no request failed.</td>
+<td>Scaled 2 → 5 → 2; 20,933 transfers in 240 s verified. Of 13 million session reads sent meanwhile without retries, 102 failed and 46 were told to wait, with a pod force-deleted under them.</td>
+</tr>
+<tr>
+<td><code>scripts/test-upgrade.sh</code></td>
+<td>Three servers of release 2.0.0 on one directory, replaced by 2.1.0 one at a time while the ledger runs through all three; then one goes back to 2.0.0 and forward again, so that each version takes over databases the other wrote.</td>
+<td>171,474 transfers verified.</td>
 </tr>
 </tbody>
 </table>
@@ -264,6 +279,41 @@
 <li><strong>A listing page that held nothing but said there was more</strong> ended the listing, so a claim could be missed at takeover. Whether a provider sends such a page was not established; the client no longer depends on it.</li>
 <li><strong>Two directory stores on one directory could exchange temporary files</strong> when they shared a process id, as two containers on one volume do, and acknowledge an object holding another's bytes.</li>
 <li>A lookup that overlapped the owner's own merge reported the database lost and closed it. An inverted range stopped the writer. A refusal could report a conflict with a write that was never committed. A crafted table footer panicked instead of reporting damage. Keys that are not UTF-8, accepted only by the library interface, became unreadable once flushed; they are now refused.</li>
+</ol>
+<p>The same review of the HTTP and tenant boundary confirmed the following, also fixed, each with a test in <code>tests/tenants.rs</code>, <code>tests/engine.rs</code> or <code>tests/interleavings.rs</code>. Undoing any one of the fixes makes its test fail; that was checked for each.</p>
+<ol start="10">
+<li><strong>Memory was committed to callers who had not shown a token.</strong> A request's body was budgeted and read before its token was checked, a request with no body was charged for the largest one, and nothing limited how long a body, a request head or an unread response could take. A few hundred connections that sent nothing could hold the whole budget and refuse every other caller. The token is now checked against the database in the path first; bodies and results are reserved for exactly, with a quarter of each budget per database; and every phase of a connection has a time limit.</li>
+<li><strong>A read was limited after it had been put together.</strong> One request could name thousands of scans over deleted keys still in memory, or thousands of large values, and have all of it gathered before being told it was too much. A request's arrays were likewise parsed in full before being counted. Both are now counted as they grow.</li>
+<li><strong>A response nobody read stayed in memory</strong> for as long as the connection did. It is now part of the result budget until it is written, and the connection is closed when the client takes nothing for 30 seconds.</li>
+<li><strong>A stored value kept its whole request alive.</strong> A small value sent in a large body pinned that body in memory until the next flush, uncounted. Values are now copied out of the request.</li>
+<li><strong>Deletions were exempt from back-pressure</strong>, so a database could fill memory with them while a flush was behind.</li>
+<li><strong>Two configuration changes made at once could lose one</strong>, for instance a token revocation. Changes are now applied in the writer, to the configuration as it stands.</li>
+<li><strong>A relayed path could be read differently by the next server</strong>, because the HTTP client normalizes <code>.</code> and <code>..</code> segments and backslashes. Access was still checked there, so no data crossed tenants; such paths are now refused by every server. <strong>Any caller could mark a request as relayed</strong>, which made a server take over a database the caller had a token for. The mark is now a proof made with the signing key.</li>
+<li>Logs named databases. They now carry a tag derived from the name. A token lifetime near the largest number wrapped around. <code>/readyz</code>, which anyone may call, asked storage on every call.</li>
+</ol>
+<p>The engine was then read for whatever it holds in memory that no flag limited, so that the memory a server needs could be stated. Found and fixed, each with a test that fails when the fix is undone:</p>
+<ol start="18">
+<li><strong>A merge built its whole result in memory</strong>, and so needed as much memory as the database it merged. A merge now writes tables of 32 MiB, one at a time.</li>
+<li><strong>Every table kept its index for as long as its database was open.</strong> An index can be as large as its table. Indexes are now held by the cache, within <code>--cache-bytes</code>.</li>
+<li><strong>The keys remembered for range checks were limited in number only</strong>: 100,000 keys of the largest size are 112 MiB, for each open database that wrote that many. They are now limited in bytes, for a database and for the server.</li>
+<li><strong>An empty disk cache fetched every table that was read, whole, all at once</strong>: after a restart, as many tables in memory as were being read. Two are fetched at a time.</li>
+<li><strong>A database waiting for its turn to merge stopped flushing</strong>, so two long merges of other databases could make it refuse writes. <strong>A merge held up its own database's flushes and its release</strong> until it was done. A waiting database now goes on flushing, and a merge gives way between two of the tables it writes.</li>
+</ol>
+<p>A server from before these changes ignores what a manifest says about runs and reads each table on its own, which gives the same answers.</p>
+<ol start="23">
+<li>The first version of the fix for 22 asked for a new turn as soon as a merge failed, and was given it at once: <strong>a merge that could not reach storage was repeated without pause.</strong> The 200 chaos seeds passed all the same. One run made while the machine was busy with other work did not end, and that was the only sign. It was reproduced by holding the test to a fraction of a CPU, found in a core dump, and fixed: a failed merge now waits for the database's next write. Two things follow. A chaos seed does not fix the whole schedule, because the engine reads the wall clock for its storage deadline and its idle flush while the test's storage runs on a simulated clock; a schedule can therefore depend on how fast the machine is. And a schedule that did not end used to look like a slow run; it is now stopped and named.</li>
+</ol>
+<p>The limits were then tested instead of added up: one server with the flags of the Kubernetes manifest, held to 1 GiB, under three loads (<code>scripts/soak-memory.sh</code>).</p>
+<ol start="24">
+<li>
+<p><strong>The server was killed at its memory limit although it kept every budget.</strong> The build under test was linked with glibc, whose allocator keeps freed memory in an arena for each thread: 1,481 MiB under a load that needed 446 MiB. The static binary stayed inside the limit and showed the opposite fault: <strong>the read figures published with release 2.0.0 could not be reproduced with the binary that release shipped.</strong> They had been measured with a glibc build. The static binary is linked with musl, whose allocator takes one lock for all threads, and read a tenth as fast: 21,376 strong reads a second on a local directory where 194,523 were published. The binary now carries its own allocator, so that neither speed nor memory depends on how it is linked. mimalloc was tried first and was killed at the limit; jemalloc with eight arenas, returning freed memory within a second, stays at 618 to 659 MiB and reads as fast as the glibc build did. Every figure in <a href="performance.html">performance</a> was measured again with the static binary, and that page says so.</p>
+</li>
+<li>
+<p><strong>The load generator misreported back-pressure.</strong> It gave up at the first <code>503</code> while loading its keys and counted a <code>503</code> during a run as an error. It now waits and tries again while loading, and reports refusals apart from failures. Its values were one repeated letter, which compresses to almost nothing, so a load of large values wrote small tables; <code>--random-values</code> writes text that does not compress.</p>
+</li>
+<li>
+<p><strong>Two tests of the HTTP boundary passed where they were written and failed on the build machines</strong>, whose processors run this suite about 3.5 times slower. Each held an answer of 24 MiB that nobody read and expected the server to keep it while the test did more work, against a server set to give up on such a caller after 0.4 or 1 second; on a slower processor the work took longer than that. So the commit of release 2.1.0 was never built by CI, and the website showed the documentation of 2.0.0 until this was fixed; the release's binary was built from that commit by the same <code>Dockerfile</code> on the development machine, where the tests passed. The failure was reproduced by giving one test 28% of a processor. The tests that look at what is held now use a server that never gives up, giving up has a test of its own in which nothing else is going on, and a wait in that file allows a minute. <code>scripts/test-slow.sh</code> runs every test alone on a fraction of a processor.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -324,9 +374,11 @@
 <ul>
 <li>Run the bucket tests and benchmarks on Amazon S3 and at least one other S3-compatible store. The code path is shared with B2 except for the upload call, and is exercised against a stand-in written from the S3 documentation, but not against those services.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
+<li>The memory soak for hours rather than minutes, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it.</li>
 <li>Model conditional transactions with idempotent retries, and a delete request that arrives late.</li>
 <li>Run the deletion model with two transactions (<code>spec/DeepDeletion.cfg</code>) to completion.</li>
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
+<li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
 <li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
 </ul>
@@ -337,7 +389,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -43,12 +43,15 @@
 export PATH=&quot;$PWD/.tools/bin:$PATH&quot; KACHE_CONFIG=&quot;$PWD/.kache.toml&quot;
 cargo build --release                 # target/release/durable-db
 </code></pre>
+<p>The binary carries its own allocator, jemalloc, on every platform but Windows, so building it needs <code>make</code> and a C compiler. <code>src/main.rs</code> says why, and <a href="performance.html#the-allocator">performance</a> has the measurements.</p>
 <h2 id="check">Check<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-sh">cargo fmt --check
 cargo clippy --all-targets -- -D warnings
-cargo test                            # about 25 seconds
+cargo test                            # about 30 seconds
 scripts/check-model.sh                # the TLA+ model and its negative controls
 scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter and example
+scripts/soak-memory.sh                # a server under the manifest's memory limit, loaded for three minutes
+scripts/test-slow.sh                  # every test alone on 28% of a processor, as on a slow build machine
 </code></pre>
 <table>
 <thead>
@@ -64,7 +67,7 @@ scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter a
 </tr>
 <tr>
 <td><code>cargo test --test engine</code></td>
-<td>The engine on in-memory and directory storage: transactions, checks, retries, recovery, takeover, flush, merge, collection, quota, deletion, the disk cache.</td>
+<td>The engine on in-memory and directory storage: transactions, checks, retries, recovery, takeover, flush, merge, collection, quota, deletion, the disk cache, and what a database may hold in memory.</td>
 </tr>
 <tr>
 <td><code>cargo test --test chaos</code></td>
@@ -83,6 +86,10 @@ scripts/test-clients.sh               # the TypeScript SDK, pi-durable adapter a
 <td>The documented HTTP API against a real server process.</td>
 </tr>
 <tr>
+<td><code>cargo test --test tenants</code></td>
+<td>What one caller can do to the others: memory held by bodies, results and connections, request shapes, relayed requests, shutdown.</td>
+</tr>
+<tr>
 <td><code>cargo test --test cluster</code></td>
 <td>Up to three server processes on one store: routing, a killed owner, a graceful handover, a joining node, a contended counter.</td>
 </tr>
@@ -98,6 +105,7 @@ export DDB_S3_ACCESS_KEY_ID=... DDB_S3_SECRET_ACCESS_KEY=...
 cargo test --test bucket
 </code></pre>
 <p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. All configurations take about three minutes. <code>scripts/check-model.sh DeepDeletion</code> runs the one configuration that is left out because it takes far longer.</p>
+<p><code>scripts/soak-memory.sh</code> runs one server with the flags of the Kubernetes manifest in a systemd scope limited to 1 GiB without swap and four CPUs, loads it in three ways with values that do not compress, and fails if the server is killed. It needs about 4 GiB of disk and <code>DURABLE_DB</code> set to the binary to test; test the static binary, because the allocator's behaviour depends on the C library it is linked with.</p>
 <h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to this section">#</a></h2>
 <pre><code>src/store/      the storage contract and its three bindings: memory, directory, S3-compatible
 src/layout.rs   object names, manifests, frames
@@ -109,6 +117,7 @@ src/node.rs     the databases one server holds, and its limits
 src/cluster.rs  membership, routing, relaying
 src/auth.rs     tokens
 src/http.rs     the HTTP API
+src/server.rs   accepting connections, and what one may cost before it has shown a token
 src/bench.rs    the load generator and the ledger check
 src/main.rs     the command line
 spec/           the TLA+ model of src/db.rs
@@ -119,7 +128,7 @@ site/           the website generator
 </code></pre>
 <p><code>src/db.rs</code> implements <code>spec/DurableDb.tla</code>; a change to the protocol starts in the model. <a href="verification.html">Verification</a> records what is checked and what is not.</p>
 <h2 id="releases-and-ci">Releases and CI<a class="anchor" href="#releases-and-ci" aria-label="Link to this section">#</a></h2>
-<p>Woodpecker builds every push with the repository's <code>Dockerfile</code>: the model check, the Rust and client tests, a static <code>x86_64-unknown-linux-musl</code> binary, the website, and a <code>scratch</code> runtime image. A tag publishes the binary and its checksum as a release. There are no GitHub Actions workflows.</p>
+<p>Woodpecker builds every push with the repository's <code>Dockerfile</code>: the model check, the Rust and client tests, a static <code>x86_64-unknown-linux-musl</code> binary, the website, and a <code>scratch</code> runtime image. A release is that binary and its checksum, built from the tagged commit and attached to the tag. There are no GitHub Actions workflows.</p>
 <p>Benchmarks quoted anywhere in this repository are reproduced by the commands in <a href="performance.html">performance</a>.</p>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="verification.html"><span>Previous</span>Verification</a></nav></main>
 <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#build">Build</a></li><li class="h2"><a href="#check">Check</a></li><li class="h2"><a href="#layout">Layout</a></li><li class="h2"><a href="#releases-and-ci">Releases and CI</a></li></ul></nav>
@@ -128,7 +137,7 @@ site/           the website generator
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

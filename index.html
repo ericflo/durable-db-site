@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.0.0: install">v2.0.0</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.0: install">v2.1.0</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -37,7 +37,7 @@
 
 <section class="hero wrap" aria-labelledby="hero-title">
 <div class="hero-copy">
-<a class="pill" href="#limits">v2.0.0 · Read the limits and what is not done yet <span aria-hidden="true">→</span></a>
+<a class="pill" href="#limits">v2.1.0 · Read the limits and what is not done yet <span aria-hidden="true">→</span></a>
 <h1 id="hero-title">A transactional <span class="nowrap">key-value</span> database stored in a bucket.</h1>
 <p class="lead">durable-db is one static Rust binary that serves atomic transactions and ordered scans of JSON values over HTTP. The data is immutable objects in Backblaze B2 or another S3-compatible bucket, so servers keep no state: add them, remove them or kill every one, and nothing is lost.</p>
 <div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="#how">How it works</a></div>
@@ -131,17 +131,17 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <div class="measured">
 <div class="card">
 <h3>Backblaze B2</h3>
-<p class="conditions">Bucket in <code>us-west-002</code>. One server on a desktop 22 ms away. 256-byte values. Measured 2026-11-14, in an hour when B2 uploads were slow; an hour earlier a commit took 77 ms.</p>
+<p class="conditions">Bucket in <code>us-west-002</code>. One server on a desktop 22 ms away. 256-byte values. Measured 2026-11-14 with release 2.1.0, in one run. B2's upload time changes from hour to hour: earlier that day the same commit took 118 ms.</p>
 <table class="figures">
 <tbody>
-<tr><th scope="row">One commit, median</th><td>118 ms</td></tr>
-<tr><th scope="row">Commits, 32 clients on one database</th><td>156 /s</td></tr>
-<tr><th scope="row">Commits, 256 clients on one database</th><td>866 /s</td></tr>
-<tr><th scope="row">Commits, 64 clients across 64 databases</th><td>314 /s</td></tr>
-<tr><th scope="row">One linearizable read, median</th><td>39 ms</td></tr>
-<tr><th scope="row">Linearizable reads, 256 clients</th><td>6,342 /s</td></tr>
-<tr><th scope="row">Session reads, 32 clients</th><td>244,743 /s</td></tr>
-<tr><th scope="row">One session read, median</th><td>0.11 ms</td></tr>
+<tr><th scope="row">One commit, median</th><td>76 ms</td></tr>
+<tr><th scope="row">Commits, 32 clients on one database</th><td>174 /s</td></tr>
+<tr><th scope="row">Commits, 256 clients on one database</th><td>1,117 /s</td></tr>
+<tr><th scope="row">Commits, 64 clients across 64 databases</th><td>177 /s</td></tr>
+<tr><th scope="row">One linearizable read, median</th><td>38 ms</td></tr>
+<tr><th scope="row">Linearizable reads, 256 clients</th><td>6,610 /s</td></tr>
+<tr><th scope="row">Session reads, 32 clients</th><td>263,257 /s</td></tr>
+<tr><th scope="row">One session read, median</th><td>0.10 ms</td></tr>
 </tbody>
 </table>
 </div>
@@ -150,11 +150,11 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <p class="conditions">The same desktop. NVMe disk. fsync on, so every write is flushed to disk before it is acknowledged.</p>
 <table class="figures">
 <tbody>
-<tr><th scope="row">One commit, median</th><td>5.9 ms</td></tr>
-<tr><th scope="row">Commits, 256 clients on one database</th><td>17,166 /s</td></tr>
-<tr><th scope="row">Linearizable reads, 256 clients</th><td>335,187 /s</td></tr>
-<tr><th scope="row">Session reads, 32 clients</th><td>276,569 /s</td></tr>
-<tr><th scope="row">Linearizable scans of 20 keys, 32 clients</th><td>239,280 /s</td></tr>
+<tr><th scope="row">One commit, median</th><td>5.2 ms</td></tr>
+<tr><th scope="row">Commits, 256 clients on one database</th><td>17,067 /s</td></tr>
+<tr><th scope="row">Linearizable reads, 256 clients</th><td>379,480 /s</td></tr>
+<tr><th scope="row">Session reads, 32 clients</th><td>301,523 /s</td></tr>
+<tr><th scope="row">Linearizable scans of 20 keys, 32 clients</th><td>244,313 /s</td></tr>
 </tbody>
 </table>
 </div>
@@ -188,7 +188,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <a href="verification.html#the-model"><strong>3.59 million</strong><span>distinct states at 2 writers, 2 epochs and 2 transactions, and 4.11 million more with deletion and 1 transaction. TLC explores both exhaustively and finds no violation.</span></a>
 <a href="verification.html#negative-controls"><strong>11 of 11</strong><span>negative controls refuted. Each turns off one protocol rule in the model and must produce a counterexample.</span></a>
 <a href="verification.html#tests-of-the-implementation"><strong>200 seeds</strong><span>of a randomized fault-injection test pass: three nodes, dropped, half-applied and late storage requests, crashes, stale owners and deletions.</span></a>
-<a href="verification.html#tests-of-the-implementation"><strong>18,838 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled <span class="nowrap">2 → 3 → 2</span> and a pod was force-killed. No request failed.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>20,933 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled <span class="nowrap">2 → 5 → 2</span> and a pod was force-killed. Of 13 million reads sent alongside without retries, 102 failed.</span></a>
 </div>
 <p class="caveat">Bounded model checking is evidence about a model. It is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification page</a> lists the assumptions, what the model leaves out, the defects that these tests and a review found, and the obligations that remain.</p>
 </div>
@@ -205,7 +205,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <li><strong>Transactions do not span databases.</strong></li>
 <li><strong>No historical reads.</strong> Only the current state is kept.</li>
 <li><strong>A deleted database's name cannot be reused.</strong></li>
-<li><strong>Merges build a table in memory</strong>, so a database should fit in a server's memory when merged. The default quota is 1 GiB per database.</li>
+<li><strong>Merging the oldest table rewrites the database</strong>, each time it grows by half. Memory does not grow with the database, but the uploads do. The default quota is 1 GiB per database; larger ones have not been measured.</li>
 <li><strong>Servers of a deployment trust each other.</strong> They talk plain HTTP inside the cluster, and all are trusted with the bucket. Per-tenant CPU accounting and billing are not provided.</li>
 </ul>
 <a class="more" href="architecture.html#limits-of-this-design">Limits of this design →</a>
@@ -214,7 +214,8 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <h3>Not done yet</h3>
 <ul>
 <li><strong>Only Backblaze B2 has been exercised</strong> among cloud providers. Amazon S3 and other S3-compatible stores share the code path except for the upload call, but have not been run.</li>
-<li><strong>No soak of many hours</strong> on a real multi-node cluster. The Kubernetes test ran on kind.</li>
+<li><strong>No soak of many hours</strong> on a real multi-node cluster. The Kubernetes test ran on kind. Memory was measured under load for minutes on a local directory, not for hours and not on a bucket.</li>
+<li><strong>Many databases committing at once were slow on B2</strong> in the last measurement: with 64 of them, one commit in a hundred took over two seconds. The cause is not understood.</li>
 <li><strong>No point-in-time restore.</strong> Deletions are permanent. Protect the bucket with your provider's replication.</li>
 <li><strong>The prebuilt binary is Linux x86_64 only.</strong> Other platforms <a href="development.html">build from source</a>.</li>
 <li><strong>The repository is private for now.</strong> The installer uses the <code>gh</code> CLI, signed in to an account with access.</li>
@@ -259,7 +260,7 @@ durable-db serve \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.0.0, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.0, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
