@@ -111,9 +111,19 @@
 <td>4,110,075</td>
 <td>67</td>
 </tr>
+<tr>
+<td><code>DeepDeletion</code></td>
+<td>2 writers, epoch numbers up to 2, 2 transactions, deletion at any time</td>
+<td>479,947,461</td>
+<td>67,082,438</td>
+<td>74</td>
+</tr>
 </tbody>
 </table>
-<p>The two configurations exist because deletion with two transactions is a much larger state space. <code>spec/DeepDeletion.cfg</code> is that combination; it is not part of the default run and has not been run to completion: one run was stopped after 24 minutes and 92 million distinct states with no violation found, which is not an exhaustive result.</p>
+<p>The first two configurations exist because deletion with two transactions is a much larger state space. <code>spec/DeepDeletion.cfg</code> is that combination. It is not part of the default run, because it takes nineteen minutes where the others take three together:</p>
+<pre><code class="language-sh">TLC_TIMEOUT=3600 scripts/check-model.sh DeepDeletion
+</code></pre>
+<p>For a search of this size TLC reports how likely it is that two distinct states had the same fingerprint and one was therefore not looked at: 0.0015 by its calculation, 0.00019 by the fingerprints it saw. An earlier version of this page said that a run of this configuration had been stopped after 24 minutes and 92 million distinct states. With the model and the configuration as they are in the repository it ends with fewer states than that, so that run was not of this model; which it was of is not recorded.</p>
 <p>The epoch number a writer chooses is unconstrained in the model (any unused number), so safety does not depend on the hint the implementation uses.</p>
 <h3 id="negative-controls">Negative controls<a class="anchor" href="#negative-controls" aria-label="Link to this section">#</a></h3>
 <p>Each protocol rule is a switch in the model. Turning one off must produce a counterexample; if it did not, the model would not be testing that rule. All eleven are refuted:</p>
@@ -249,8 +259,8 @@
 </tr>
 <tr>
 <td><code>scripts/soak-memory.sh</code></td>
-<td>One server with the flags of the Kubernetes manifest on a local directory, in a scope limited to 1 GiB without swap and four CPUs. Three loads of a minute each with values that do not compress: half commits of 16 KiB over 4 databases, commits over 256 databases, strong reads from 512 clients. The server is killed if it passes the limit.</td>
-<td>584 to 591 MiB at most in three runs of 2.1.5, and 582 and 590 MiB in two of 2.1.4. With 2.1.1 it was 621 MiB, and 618 and 659 MiB with 2.1.0, on servers that may have stopped their housekeeping during the second load (finding 36). No request failed; of the first load's requests up to 0.5% were told to wait with 2.1.5, none with 2.1.4, 0.4% with 2.1.1 and 1.7% with 2.1.0.</td>
+<td>One server with the flags of the Kubernetes manifest on a local directory, in a scope limited to 1 GiB without swap and four CPUs. Three loads of a minute each with values that do not compress: half commits of 16 KiB over 4 databases, commits over 256 databases, strong reads from 512 clients. The server is killed if it passes the limit. Then the script kills it in the middle of the second load run again and starts it again, so that 256 databases are opened at once while they are written to.</td>
+<td>575 to 591 MiB at most in four runs of 2.1.5, and 541 MiB for the server that was started in the first one's place; 599 MiB with ten minutes of each load, in which memory was level (<a href="performance.html#memory-under-load">performance</a>). 582 and 590 MiB in two runs of 2.1.4. With 2.1.1 it was 621 MiB, and 618 and 659 MiB with 2.1.0, on servers that may have stopped their housekeeping during the second load (finding 36). No request failed; of the first load's requests up to 0.7% were told to wait with 2.1.5, none with 2.1.4, 0.4% with 2.1.1 and 1.7% with 2.1.0.</td>
 </tr>
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
@@ -266,6 +276,11 @@
 <td><code>scripts/test-stores.sh</code></td>
 <td>Three S3 servers in containers on the desktop, each held to 1 GiB and two CPUs: a community build of MinIO (<code>pgsty/minio</code>, RELEASE.2026-08-04) and RustFS 1.0.5, each with a bucket that keeps versions and one that does not, and Garage 2.5.0, which keeps no versions and has no request that lists them. The bucket tests on each bucket; then a ledger through three servers on the store for 75 s while one is killed, one is stopped and one is killed again, each replaced at once.</td>
 <td>With 2.1.5: the bucket tests pass on all five buckets, no store refuses the request that removes many versions, and every ledger verified: 32,959 transfers on MinIO, 13,483 on RustFS and 78,342 on Garage, with no failed purge. Each store was one process on the desktop's disk: this says that its answers are understood and that the protocol holds on them, not how fast it is or what it does across several machines.</td>
+</tr>
+<tr>
+<td><code>scripts/soak-kills.sh</code></td>
+<td>Three servers on one directory, each held to 1 GiB and two CPUs, under a ledger of 16 clients over 8 databases. Every ten seconds one of them, each in its turn, is stopped and started again: killed outright three times in four, told to stop the fourth.</td>
+<td>With 2.1.5, thirty minutes: a server was stopped 157 times, 118 of them killed, and a ledger of 1,939,925 transfers verified. No server used more than 187 MiB or had more than 44 files open, and none panicked. This is one desktop and one directory: it says that half an hour of stops loses nothing, applies nothing twice and leaves nothing to pile up in a server, and nothing about a network between machines.</td>
 </tr>
 <tr>
 <td><code>scripts/test-refusals.sh</code></td>
@@ -454,10 +469,9 @@
 <ul>
 <li>Send the request that removes many versions to Amazon S3, to Google Cloud Storage and to a store that refuses it. It has been sent to Backblaze B2, a community build of MinIO, RustFS and Garage, which all take it, and to a stand-in that refuses it.</li>
 <li>Run the bucket tests and benchmarks on Amazon S3, Cloudflare R2 and Google Cloud Storage. The code path is shared with B2 except for the upload call, and has been run on three S3 servers that were each one process on one machine, which says nothing of a provider's consistency across its own machines. What Amazon and Google answer without an account is in finding 35. R2 answers nothing without one: its documentation lists the request that lists versions as not implemented, and what it answers to that request, which decides whether a server starts there, has been read about and not seen. On Google Cloud Storage a bucket's soft delete, which Google's documentation gives as on for a new bucket, keeps what is removed for seven days more; whether a purge is then complete has not been tried.</li>
-<li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
-<li>The memory soak for hours rather than minutes, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it.</li>
+<li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind. What has been run is half an hour on one desktop with a server stopped every ten seconds (<code>scripts/soak-kills.sh</code>).</li>
+<li>The memory soak for hours, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it. On a local directory it has run for ten minutes a load, and memory was level; on Backblaze B2 with the default flags it was still rising after eleven minutes (finding 37).</li>
 <li>Model conditional transactions with idempotent retries, and a delete request that arrives late.</li>
-<li>Run the deletion model with two transactions (<code>spec/DeepDeletion.cfg</code>) to completion.</li>
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
