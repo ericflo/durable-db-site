@@ -141,7 +141,7 @@ kubectl -n durable-db apply -k .
 </tr>
 <tr>
 <td>What the disk cache remembers of its tables</td>
-<td>some 150 bytes each, of at most one table for each 32 KiB of <code>--cache-dir-bytes</code> and 262,144 in all</td>
+<td>some 150 bytes each, of at most one table for each 32 KiB of <code>--cache-dir-bytes</code> and 262,144 in all, and 2 MiB for the names of 65,536 that have left their manifests</td>
 </tr>
 <tr>
 <td>Connections</td>
