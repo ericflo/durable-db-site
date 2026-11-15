@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.4: install">v2.1.4</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.5: install">v2.1.5</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -219,8 +219,8 @@
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
-<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again; a version the bucket says it did not remove is asked for again, and is a failure if it is still there after that; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone; a stand-in that keeps no versions and has no request that lists them is purged by key, and asked for its versions once. The stand-in answers a listing of versions as Google Cloud Storage does unless it is asked for Amazon's shape, and refuses a request with an unsigned <code>x-amz</code> or <code>x-goog</code> header, with headers signed out of the order of their names, or with a wrong <code>Content-MD5</code>. The directory store against the in-memory one. One order of directory names on all three.</td>
-<td>17 pass. 28 faults put into the purge one at a time each fail a test.</td>
+<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again; a version the bucket says it did not remove is asked for again, and is a failure if it is still there after that; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone; a stand-in that keeps no versions and has no request that lists them is purged by key, and asked for its versions once. The stand-in answers a listing of versions as Google Cloud Storage does unless it is asked for Amazon's shape, and refuses a request with an unsigned <code>x-amz</code> or <code>x-goog</code> header, with headers signed out of the order of their names, or with a wrong <code>Content-MD5</code>. It refuses reads as a store that is asked too much does and goes on taking changes: eight reads are sent, then none of sixty, then one of twenty once the two seconds it asked for are over, and all of them when one has been taken, while every change is sent throughout. The directory store against the in-memory one. One order of directory names on all three.</td>
+<td>18 pass. 28 faults put into the purge one at a time each fail a test, and so do 27 put into what holds requests back from a store that refuses them, here or among the unit tests of <code>src/store/s3.rs</code> (finding 38).</td>
 </tr>
 <tr>
 <td><code>tests/http.rs</code></td>
@@ -266,6 +266,11 @@
 <td><code>scripts/test-stores.sh</code></td>
 <td>Three S3 servers in containers on the desktop, each held to 1 GiB and two CPUs: a community build of MinIO (<code>pgsty/minio</code>, RELEASE.2026-08-04) and RustFS 1.0.5, each with a bucket that keeps versions and one that does not, and Garage 2.5.0, which keeps no versions and has no request that lists them. The bucket tests on each bucket; then a ledger through three servers on the store for 75 s while one is killed, one is stopped and one is killed again, each replaced at once.</td>
 <td>With 2.1.4: the bucket tests pass on all five buckets, no store refuses the request that removes many versions, and every ledger verified: 52,253 transfers on MinIO, 13,686 on RustFS and 72,786 on Garage, with no failed purge. Each store was one process on the desktop's disk: this says that its answers are understood and that the protocol holds on them, not how fast it is or what it does across several machines.</td>
+</tr>
+<tr>
+<td><code>scripts/test-refusals.sh</code></td>
+<td>One server on the same build of MinIO in a container, behind an nginx that passes every request on, and for the middle twenty seconds of a sixty-second ledger answers every PUT, POST and DELETE as a store that is asked too much does: <code>503 SlowDown</code> with <code>Retry-After: 2</code>. Reads are passed on throughout.</td>
+<td>With 2.1.4, in three runs, the store refused 1,012 to 1,168 changes in the twenty seconds: 182 to 224 in the first second and about 140 in every second after it. With the change of finding 38, in three runs, 32 to 37: 27 to 32 in the first second and at most one in any second after it. A change was taken 0.3 s after the refusal ended, and 2.3 s after one of ten seconds; four seconds is the most the rule allows. Every ledger verified. Commits waited the twenty seconds out and were then acknowledged: a database gives its storage thirty.</td>
 </tr>
 </tbody>
 </table>
@@ -372,6 +377,13 @@
 <p>Two things in it are not good. In the first half minute some 28,000 uploads failed, about 800 a second: an upload that fails is sent again at once to another storage pod, which is what Backblaze asks for when one pod is busy and the wrong thing to do to a service that is refusing an account. And the server used 932 MiB at the moment all 256 databases were opened again together, against 683 MiB before, under a limit of 4 GiB.</p>
 <p>Nothing was changed for this in 2.1.4. Reading the code and <code>Retry-After</code> of such an answer, holding back when an account is refused, and keeping a server's own requests under a rate it is given are the next work. Until then the figures in <a href="performance.html">performance</a> for many databases on Backblaze are of a rate that an account with the default limit cannot expect to keep.</p>
 </li>
+<li>
+<p><strong>A server went on sending a store what it refused.</strong> The 28,000 uploads of finding 37 were sent by design. An upload that fails is sent again at once, up to four times on Backblaze, and all of that again after 10 ms, after 20 ms and so on up to a second, for the thirty seconds a database gives its storage. A read or a deletion that fails is sent seven times. Nothing in this looked at whether the store was taking anything at all.</p>
+<p>Since 2.1.5 a server counts refusals, for each kind of request apart: reads, changes, and on Backblaze B2 the uploads to its storage pods and the calls that name a pod. A refusal is an answer for which a request is sent again: <code>429</code>, <code>408</code>, a <code>5xx</code> other than <code>501</code>, a connection that failed, a request that stalled. After eight in a row, with no request of that kind taken between them, requests of that kind fail in the server without being sent. After one second, or after as long as the store asked for in <code>Retry-After</code> up to a minute, one request is sent, and the others go on failing until it is answered. If it is taken, all are sent again. If it is refused, the wait doubles, to four seconds at most. The kinds are counted apart because a store limits them apart, and a read that is taken would otherwise hide uploads that are all refused. The waits are short because what spares the store is one request in place of hundreds, and a longer wait is that much longer without the store once it takes requests again.</p>
+<p>A request that fails without being sent has stored nothing, and every caller already had to allow for a request that failed and stored nothing: the protocol and the model are unchanged. The server logs the eighth refusal, and each request it tries after that and has refused, with the store's status, its error code and the wait it asked for; and it logs when the store takes requests again.</p>
+<p>It is tested in three ways. The counting runs against a clock the tests set: seven refusals and then a request that is taken, a hundred times over, hold nothing back; one request at a time is tried; a request on trial that is given up lets another be tried; requests that were under way when the store began to refuse change nothing by being refused late; a store is left alone for as long as it asks. Two stand-ins are refused to: the S3 stand-in as in the table above, and a stand-in for Backblaze's API that refuses every upload, of which eight are sent, and then of sixty more none is sent, none takes an upload URL from those the server holds, and none calls for a new one. 27 faults put into it one at a time each fail a test. And <code>scripts/test-refusals.sh</code> puts a proxy that refuses in front of a real S3 server, with the figures in the table above.</p>
+<p>Two things it is not. It is not a rate: a store that takes some of what it is sent is sent all of it, so an account a little over its limit is sent as much as before. And it has not been seen on Backblaze. The refusal of finding 37 was not made again, for the reason given there, so what Backblaze says when it refuses has still not been read. The next time it happens it is in the server's log.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -448,7 +460,7 @@
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
-<li>On Backblaze B2 a server sends requests as fast as its databases commit, and does not hold back when the account is refused (finding 37). What Backblaze answers then, with which code and <code>Retry-After</code>, has not been read.</li>
+<li>A server sends requests as fast as its databases commit and keeps itself under no rate. It holds back from a store that refuses everything of one kind (finding 38), which has been seen on stand-ins and behind a proxy and not on Backblaze B2, whose refusal (finding 37) was not made again. What Backblaze answers then, with which code and <code>Retry-After</code>, has not been read.</li>
 <li>A round of a server's housekeeping that panics is reported and the next one runs; nothing reports a round that does not end. None is known.</li>
 <li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
 <li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
@@ -460,7 +472,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.4, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.5, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

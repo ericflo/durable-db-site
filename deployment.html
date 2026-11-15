@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.4: install">v2.1.4</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.5: install">v2.1.5</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -64,7 +64,7 @@ durable-db serve \
   --key-file admin.key
 </code></pre>
 <p>The endpoint is shown on the bucket's page. <code>B2_APPLICATION_KEY_ID</code> and <code>B2_APPLICATION_KEY</code> are accepted in place of the AWS variable names.</p>
-<p>Backblaze limits the requests of an account, over all of its buckets: its documentation gives a new account 500 a second for uploads and downloads, and raises that on request. A commit is two to three requests. durable-db does not yet keep itself under a rate, and a benchmark here that ran at six times that figure had every upload refused for five and a half minutes (<a href="performance.html#backblaze-b2">performance</a>). Keep load tests in an account of their own.</p>
+<p>Backblaze limits the requests of an account, over all of its buckets: its documentation gives a new account 500 a second for uploads and downloads, and raises that on request. A commit is two to three requests. durable-db keeps itself under no rate, and a benchmark here that ran at six times that figure had every upload refused for five and a half minutes (<a href="performance.html#backblaze-b2">performance</a>). Keep load tests in an account of their own. Since 2.1.5 a server that is refused holds back: after eight refusals in a row of one kind of request it sends one such request at a time, up to four seconds apart or as far apart as Backblaze asks, until one is taken (<a href="architecture.html#what-happens-when-things-fail">architecture</a>). That spares the account, and what the server does meanwhile is fail commits.</p>
 <p>Reads, lists and deletes use B2's S3-compatible API. Uploads use B2's own upload call with the same key, because it measured two to three times faster than PutObject through B2's S3 gateway; <code>--s3-uploads-only</code> turns that off. Each small object is uploaded to the fastest storage pod the server knows, and a second, identical upload races it on another pod when one can be spared, since B2 uploads are free and their latency varies widely between pods. <a href="performance.html#backblaze-b2">Performance</a> says how pods are chosen.</p>
 <h3 id="amazon-s3-and-other-s3-compatible-storage">Amazon S3 and other S3-compatible storage<a class="anchor" href="#amazon-s3-and-other-s3-compatible-storage" aria-label="Link to this section">#</a></h3>
 <pre><code class="language-sh">export AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=...
@@ -306,7 +306,7 @@ kubectl -n durable-db apply -k .
 </tr>
 </tbody>
 </table>
-<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it.</p>
+<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it. A warning that begins <code>the store refuses</code> says that the server has stopped sending one kind of request because the store refused eight in a row, and carries the store's status, its error code and the wait it asked for; <code>the store takes</code> that kind <code>again</code> ends it.</p>
 <h2 id="tokens-and-tenants">Tokens and tenants<a class="anchor" href="#tokens-and-tenants" aria-label="Link to this section">#</a></h2>
 <p>One deployment serves many databases. Give each tenant, site or application its own database and its own token:</p>
 <pre><code class="language-sh">durable-db create tenant-42 --max-bytes 268435456        # prints a write token
@@ -396,7 +396,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.4, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.5, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
