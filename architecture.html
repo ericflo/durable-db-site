@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.7: install">v2.1.7</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.8: install">v2.1.8</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -127,8 +127,9 @@
 <p>Two caches hold table data, both bounded and both disposable:</p>
 <ul>
 <li><strong>Memory</strong> (<code>--cache-bytes</code>): decoded blocks and table indexes, shared by all databases. When it is full it keeps what has been read more than once, so a scan of everything does not displace what is in use.</li>
-<li><strong>Disk</strong> (<code>--cache-dir</code>, optional): whole table files, written when a table is made and otherwise fetched in the background, two at a time. A damaged file fails its checksum, is deleted and is fetched again.</li>
+<li><strong>Disk</strong> (<code>--cache-dir</code>, optional): whole table files, the least recently used put out first. A table is kept when this server makes it. A table that reads find missing is read from the bucket a block at a time until they have had a sixteenth of it, and is then fetched whole in the background, two at a time, into room that is free or that tables no read has asked for in five minutes leave. A table in use is never put out for one that reads missed: a server that reads more than its cache holds keeps what is there and reads the rest from the bucket. What a merge replaced leaves the cache when it leaves the manifest. A damaged file fails its checksum, is deleted and is read from the bucket.</li>
 </ul>
+<p>A scan reads ahead of itself: one block, then two, then four, up to 64 blocks or 1 MiB in a request, and nothing past its own end. A table of 32 MiB that is not on the disk is so asked for in under forty requests, where a block at a time was a thousand. What was read ahead is in memory until the scan comes to it, so sixteen runs of tables in merges and sixteen scans of requests read ahead at a time, and the others read a block at a time. A request's scan reads ahead only in a table that is not in the disk cache, where a read is a request to the bucket.</p>
 <h2 id="collection">Collection<a class="anchor" href="#collection" aria-label="Link to this section">#</a></h2>
 <p>Objects are deleted by the owner, and only what the newest manifest no longer needs:</p>
 <ul>
@@ -232,7 +233,7 @@
 <li><strong>Transactions do not span databases.</strong></li>
 <li><strong>A deleted database's name cannot be reused.</strong> The tombstone is permanent, so that a late upload from a server that owned the old database can never be mistaken for the new one.</li>
 <li><strong>Merging the oldest table rewrites the database</strong>, each time it grows by half, and once more when it reaches its quota holding what was written over. Memory does not grow with the database, but the uploads do: a database of 4 GiB was sent to its store seven times over while it was filled (<a href="performance.html#a-large-database">performance</a>). The default quota is 1 GiB.</li>
-<li><strong>The disk cache keeps whole tables and puts out the oldest.</strong> A table that a read misses is fetched whole, in the place of another. A server that reads databases larger than its disk cache therefore fetches tables over and over: with a cache of 1 GiB and a database of 4 GiB, one fetched some sixteen tables of 32 MiB a second from a local store, half a gigabyte, beside the blocks that its fourteen thousand reads a second asked for (<a href="verification.html#what-these-checks-found">verification</a>, finding 43). On a bucket that is download, at the speed of the link. Not fixed in this release: size the disk cache to the databases a server reads.</li>
+<li><strong>A read beyond both caches is a request to the bucket for each run of tables it looks in</strong>, one after another, each for a block of 32 KiB. A server that reads databases larger than its disk cache keeps the tables it has there and reads the others so, for as long as those it has are in use (<a href="performance.html#a-large-database">performance</a>). In use means read in the last five minutes, not read the most: a table that is read once a minute keeps its place against one that is read a thousand times a second. Until 2.1.8 it also fetched whole tables in each other's place, without end (<a href="verification.html#what-these-checks-found">verification</a>, finding 43). Where reads must be fast or are paid for as download, size the disk cache to the databases a server reads.</li>
 <li><strong>No historical reads.</strong> Only the current state is kept.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="clients.html"><span>Previous</span>TypeScript SDK</a><a class="next" href="performance.html"><span>Next</span>Performance</a></nav></main>
@@ -242,7 +243,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.7, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.8, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
