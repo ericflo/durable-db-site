@@ -224,8 +224,8 @@
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
-<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember, 96 databases in use while they are tended 2,000 times, a round of housekeeping that panics.</td>
-<td>19 pass.</td>
+<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember, 96 databases in use while they are tended 2,000 times, a round of housekeeping that panics, a round that does not end.</td>
+<td>20 pass.</td>
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
@@ -476,7 +476,7 @@
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
 <li>A server sends requests as fast as its databases commit and keeps itself under no rate. It holds back from a store that refuses everything of one kind (finding 38), which has been seen on stand-ins and behind a proxy and not on Backblaze B2, whose refusal (finding 37) was not made again. What Backblaze answers then, with which code and <code>Retry-After</code>, has not been read.</li>
-<li>A round of a server's housekeeping that panics is reported and the next one runs; nothing reports a round that does not end. None is known.</li>
+<li>A round of a server's housekeeping that does not end is reported every thirty seconds, in the source after 2.1.5, and nothing takes its place: it is not ended, since what it holds is not known. None is known to.</li>
 <li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
 <li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
 </ul>

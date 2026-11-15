@@ -306,7 +306,7 @@ kubectl -n durable-db apply -k .
 </tr>
 </tbody>
 </table>
-<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it. A warning that begins <code>the store refuses</code> says that the server has stopped sending one kind of request because the store refused eight in a row, and carries the store's status, its error code and the wait it asked for; <code>the store takes</code> that kind <code>again</code> ends it.</p>
+<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it. So is one that says a round of housekeeping <code>has not ended</code>. A warning that begins <code>the store refuses</code> says that the server has stopped sending one kind of request because the store refused eight in a row, and carries the store's status, its error code and the wait it asked for; <code>the store takes</code> that kind <code>again</code> ends it.</p>
 <h2 id="tokens-and-tenants">Tokens and tenants<a class="anchor" href="#tokens-and-tenants" aria-label="Link to this section">#</a></h2>
 <p>One deployment serves many databases. Give each tenant, site or application its own database and its own token:</p>
 <pre><code class="language-sh">durable-db create tenant-42 --max-bytes 268435456        # prints a write token
