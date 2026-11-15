@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.4: install">v2.1.4</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -37,7 +37,7 @@
 
 <section class="hero wrap" aria-labelledby="hero-title">
 <div class="hero-copy">
-<a class="pill" href="#limits">v2.1.3 · Read the limits and what is not done yet <span aria-hidden="true">→</span></a>
+<a class="pill" href="#limits">v2.1.4 · Read the limits and what is not done yet <span aria-hidden="true">→</span></a>
 <h1 id="hero-title">A transactional <span class="nowrap">key-value</span> database stored in a bucket.</h1>
 <p class="lead">durable-db is one static Rust binary that serves atomic transactions and ordered scans of JSON values over HTTP. The data is immutable objects in Backblaze B2 or another S3-compatible bucket, so servers keep no state: add them, remove them or kill every one, and nothing is lost.</p>
 <div class="cta"><a class="button" href="#quickstart">Quick start</a><a class="button button-quiet" href="#how">How it works</a></div>
@@ -188,7 +188,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <a href="verification.html#the-model"><strong>3.59 million</strong><span>distinct states at 2 writers, 2 epochs and 2 transactions, and 4.11 million more with deletion and 1 transaction. TLC explores both exhaustively and finds no violation.</span></a>
 <a href="verification.html#negative-controls"><strong>11 of 11</strong><span>negative controls refuted. Each turns off one protocol rule in the model and must produce a counterexample.</span></a>
 <a href="verification.html#tests-of-the-implementation"><strong>200 seeds</strong><span>of a randomized fault-injection test pass: three nodes, dropped, half-applied and late storage requests, crashes, stale owners and deletions.</span></a>
-<a href="verification.html#tests-of-the-implementation"><strong>23,339 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled <span class="nowrap">2 → 5 → 2</span> and a pod was force-killed. In thirteen such runs, of 9 to 13 million reads sent alongside without retries, at most 110 failed.</span></a>
+<a href="verification.html#tests-of-the-implementation"><strong>23,339 transfers</strong><span>in a ledger verified exactly on a three-node kind cluster backed by B2, while the autoscaler scaled <span class="nowrap">2 → 5 → 2</span> and a pod was force-killed. In fifteen such runs, of 9 to 13 million reads sent alongside without retries, at most 110 failed.</span></a>
 </div>
 <p class="caveat">Bounded model checking is evidence about a model. It is not a proof of the Rust implementation or of every deployment. The <a href="verification.html">verification page</a> lists the assumptions, what the model leaves out, the defects that these tests and a review found, and the obligations that remain.</p>
 </div>
@@ -213,7 +213,7 @@ curl $URL/read -H <span class="s">"$AUTH"</span> \
 <div class="card">
 <h3>Not done yet</h3>
 <ul>
-<li><strong>Only Backblaze B2 has been exercised</strong> among cloud providers. Amazon S3 and other providers share the code path except for the upload call, but have not been run. Three S3 servers have been run in containers on one machine: a community build of MinIO, RustFS and Garage.</li>
+<li><strong>Only Backblaze B2 has been exercised</strong> among cloud providers. Amazon S3, Google Cloud Storage and other providers share the code path except for the upload call, but have not been run. Three S3 servers have been run in containers on one machine: a community build of MinIO, RustFS and Garage.</li>
 <li><strong>No soak of many hours</strong> on a real multi-node cluster. The Kubernetes test ran on kind. Memory was measured under load for minutes on a local directory, not for hours and not on a bucket.</li>
 <li><strong>B2 was measured from one desktop over Wi-Fi</strong>, a link that itself stalled for a second or two about once a minute. The slowest commits in the tables are such moments, and every commit that shares a stalled request waits with it. A server in a data centre, on a wired link, has not been measured.</li>
 <li><strong>No point-in-time restore.</strong> Deletions are permanent. Protect the bucket with your provider's replication.</li>
@@ -260,7 +260,7 @@ durable-db serve \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html" aria-current="page"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.4, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

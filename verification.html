@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.3: install">v2.1.3</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.4: install">v2.1.4</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -214,13 +214,13 @@
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
-<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember.</td>
-<td>17 pass.</td>
+<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember, 96 databases in use while they are tended 2,000 times, a round of housekeeping that panics.</td>
+<td>19 pass.</td>
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
-<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again; a version the bucket says it did not remove is asked for again, and is a failure if it is still there after that; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone; a stand-in that keeps no versions and has no request that lists them is purged by key, and asked for its versions once. The stand-in refuses a request with an unsigned <code>x-amz</code> header or a wrong checksum. The directory store against the in-memory one. One order of directory names on all three.</td>
-<td>17 pass. 26 faults put into the purge one at a time each fail a test.</td>
+<td>The S3 binding against a stand-in that keeps versions, pages its listings and verifies every signature: awkward keys, status handling, listings cut short, purges across page boundaries and interrupted. A purge removes a page of versions with one request; a request of a purge that is not answered is sent again twice; a removal that was carried out and not answered is not a failure when it is sent again; a version the bucket says it did not remove is asked for again, and is a failure if it is still there after that; a bucket that refuses the request, in five ways, gets one for each version and is not asked again; a key that XML cannot name is removed alone; a stand-in that keeps no versions and has no request that lists them is purged by key, and asked for its versions once. The stand-in answers a listing of versions as Google Cloud Storage does unless it is asked for Amazon's shape, and refuses a request with an unsigned <code>x-amz</code> or <code>x-goog</code> header, with headers signed out of the order of their names, or with a wrong <code>Content-MD5</code>. The directory store against the in-memory one. One order of directory names on all three.</td>
+<td>17 pass. 28 faults put into the purge one at a time each fail a test.</td>
 </tr>
 <tr>
 <td><code>tests/http.rs</code></td>
@@ -250,22 +250,22 @@
 <tr>
 <td><code>scripts/soak-memory.sh</code></td>
 <td>One server with the flags of the Kubernetes manifest on a local directory, in a scope limited to 1 GiB without swap and four CPUs. Three loads of a minute each with values that do not compress: half commits of 16 KiB over 4 databases, commits over 256 databases, strong reads from 512 clients. The server is killed if it passes the limit.</td>
-<td>621 MiB at most with 2.1.1; 618 and 659 MiB with 2.1.0. No request failed; 0.4% of the first load's requests were told to wait, and 1.7% with 2.1.0.</td>
+<td>590 MiB at most with 2.1.4. With 2.1.1 it was 621 MiB, and 618 and 659 MiB with 2.1.0, on servers that may have stopped their housekeeping during the second load (finding 36). No request failed; of the first load's requests none were told to wait with 2.1.4, 0.4% with 2.1.1 and 1.7% with 2.1.0.</td>
 </tr>
 <tr>
 <td><code>scripts/test-kubernetes.sh</code></td>
 <td>The shipped manifests on a three-node kind cluster backed by Backblaze B2. The ledger runs through the Service while the autoscaler adds pods under CPU load, a pod is force-deleted, and the autoscaler removes pods.</td>
-<td>Thirteen runs, four with 2.1.0, six with 2.1.1, two with 2.1.2 and one with 2.1.3, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 12,026 to 23,567 transfers in 240 s, the fewest in three runs made in an evening hour when the bucket was slower. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 62 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
+<td>Fifteen runs, four with 2.1.0, seven with 2.1.1, two with 2.1.2, one with 2.1.3 and one with 2.1.4, each scaled 2 → 5 → 2 with a pod force-deleted. Every ledger verified: 12,026 to 23,679 transfers in 240 s, the fewest in three runs made in an afternoon hour when the bucket was slower. Of 9 to 13 million session reads sent meanwhile without retries, 0 to 110 failed and 0 to 124 were told to wait. The read rate moves by a third from run to run with either release, and more than half the reads are relayed between pods (<a href="performance.html#on-kubernetes">performance</a>).</td>
 </tr>
 <tr>
 <td><code>scripts/test-upgrade.sh</code></td>
 <td>Three servers of one release on one directory, replaced by the next one at a time while the ledger runs through all three; then one goes back to the old release and forward again, so that each version takes over databases the other wrote.</td>
-<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215. From 2.1.1 to 2.1.2: 152,861. From 2.1.2 to 2.1.3: 142,809.</td>
+<td>From 2.0.0 to 2.1.0: 171,474 transfers verified. From 2.1.0 to 2.1.1: 152,215. From 2.1.1 to 2.1.2: 152,861. From 2.1.2 to 2.1.3: 142,809. From 2.1.3 to 2.1.4: 155,916.</td>
 </tr>
 <tr>
 <td><code>scripts/test-stores.sh</code></td>
 <td>Three S3 servers in containers on the desktop, each held to 1 GiB and two CPUs: a community build of MinIO (<code>pgsty/minio</code>, RELEASE.2026-08-04) and RustFS 1.0.5, each with a bucket that keeps versions and one that does not, and Garage 2.5.0, which keeps no versions and has no request that lists them. The bucket tests on each bucket; then a ledger through three servers on the store for 75 s while one is killed, one is stopped and one is killed again, each replaced at once.</td>
-<td>With 2.1.3: the bucket tests pass on all five buckets, and every ledger verified: 34,475 transfers on MinIO, 12,261 on RustFS and 75,156 on Garage, with no failed purge. Each store was one process on the desktop's disk: this says that its answers are understood and that the protocol holds on them, not how fast it is or what it does across several machines.</td>
+<td>With 2.1.4: the bucket tests pass on all five buckets, no store refuses the request that removes many versions, and every ledger verified: 52,253 transfers on MinIO, 13,686 on RustFS and 72,786 on Garage, with no failed purge. Each store was one process on the desktop's disk: this says that its answers are understood and that the protocol holds on them, not how fast it is or what it does across several machines.</td>
 </tr>
 </tbody>
 </table>
@@ -349,6 +349,22 @@
 <p>Since 2.1.3 a store that answers <code>501</code> to a listing of versions is taken to keep none. A purge there lists the keys and removes them, with one request for up to a thousand or with one each, and the store is not asked for its versions again; the server says so once in its log. A store that kept versions and could not list them would keep what such a purge hides; none is known. With that, a server starts on Garage, the bucket tests pass there, and a ledger of 75,156 transfers verified through three servers of which two were killed and one stopped, with 347 purges and none failed.</p>
 <p>Three smaller things were found the same way. On RustFS 14 of 157 and 11 of 158 purges failed in two runs of that ledger: RustFS answered that single versions named in a request had not been removed (<code>ServiceUnavailable</code>), and a purge failed at once on such an answer. The request is now sent again, like one that is not answered, and no purge has failed in four runs since. One bucket test expected 521 keys to be purged where a bucket that keeps no versions has one left, and failed on such a bucket. And the test of the storage contract unwrapped every request: it failed once on Backblaze when a request could not be sent over the desktop's link, and now sends one again as the engine does. <code>scripts/test-stores.sh</code> starts the three servers and repeats all of this. 26 faults put into the purge one at a time, ten of them into the purge by key, each fail a storage test.</p>
 </li>
+<li>
+<p><strong>Two requests were sent in a form that not every store takes.</strong> After finding 34, the providers that have not been run were asked what they can be asked without an account. Amazon S3 and Google Cloud Storage both list public buckets for anyone, and both say in their documentation what they require. Cloudflare R2 answers nothing without an account.</p>
+<ul>
+<li>Google answers a listing of versions in a shape of its own: a <code>ListBucketResult</code> whose versions carry a <code>Generation</code> and no <code>VersionId</code>. A purge takes that for an answer from something other than the bucket. A server's storage check ends with a purge, so a server would not have started there. Asked with the header <code>x-goog-interop-list-objects-format: enabled</code>, Google answers in Amazon's shape, and a second page asked for with the markers of the first was answered. A listing of versions now carries that header, signed, as Google requires of every <code>x-goog</code> header.</li>
+<li>The request that removes many versions carried a SHA-256 checksum of its body and no other. Google refuses that and says what it wants: &quot;Missing required header for this request: Content-MD5 OR x-amz-checksum-crc32.&quot; Amazon's documentation calls <code>Content-MD5</code> required for this request. A refusal would have cost speed and nothing else, since a bucket that refuses the request gets one request for each version. The request now carries <code>Content-MD5</code>, which Backblaze B2, MinIO, RustFS and Garage take as they took the other.</li>
+<li>Amazon answers a listing of versions of a bucket that keeps none as was assumed: each object once, its version named <code>null</code>. Google pages a listing of keys as Amazon does, by token and by the key to start after.</li>
+</ul>
+<p>None of this is a run. durable-db has stored nothing on Amazon S3 or on Google Cloud Storage, and the requests above were sent without a signature, so it is not known that either takes a signed one. What R2 answers to a listing of versions has been read and not seen: its documentation lists the request as not implemented, and others report a <code>501</code>, which is the answer of finding 34.</p>
+<p>With the change, the bucket tests pass on Backblaze B2 with native uploads and with PutObject only, and on the five buckets of <code>scripts/test-stores.sh</code>, none of which refused the request that removes many versions; the script now names a store that does.</p>
+</li>
+<li>
+<p><strong>A server with more than twenty databases open stopped its housekeeping.</strong> Once a second a server follows its peers, hands databases to the members that now own them, releases the ones nobody uses, and keeps unflushed writes and remembered keys within their budgets. That is one task. It began by sorting the open databases by how long each had been idle, and read that from a clock at every comparison, so the order changed while the sort ran. The standard library may refuse such an order with a panic, and does so only above twenty elements. The panic ended the task and nothing started it again. The server went on answering: with the peers it knew at that moment, handing nothing over, releasing nothing, and holding to neither budget, until it was restarted. Every release from 2.0.0 to 2.1.3 has this.</p>
+<p>It was found in the log of a server to which 256 databases had written for five minutes on Backblaze B2, a run made to measure something else, in which no request failed. With the released 2.1.3 binary on a local directory, 64 databases in use and <code>--idle-seconds 5</code>, there was a panic within 90 seconds, and twenty seconds after the load all 64 databases were still open. In a test, 20 databases or fewer did not panic in five runs of 2,000 sorts, in use or idle; 21 or more in use did in every run, and idle in two runs of twenty.</p>
+<p>No check had looked. No test held more than twenty databases open on one server for longer than a moment (the Kubernetes test spreads twelve over its pods), the benchmarks with 64 and 256 databases ran for ten seconds, the memory soak with 256 for a minute, and no script read a server's log for a panic. Those runs were made on servers that may have stopped their housekeeping partway. What the benchmarks measured within their first minute (commits, purges, open files) does not depend on it; the memory soak does, and was run again.</p>
+<p>Since 2.1.4 the idle time of each database is read once before they are sorted, and a round of housekeeping that panics is one round lost: it is reported as an error and the next round runs. <code>tests/engine.rs</code> tends 96 databases in use 2,000 times, which fails within 10 ms with the old sort, and runs a round that panics, which fails without the guard. With the old sort put back under the guard, 16 rounds of the same 90 seconds panicked and every database was released when it fell idle. A database's own tasks were already kept in this way: a panic there closes that database, and it is opened again from the bucket. The server's own task was not. The four scripts that run servers now fail when a server's log holds a panic.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -413,10 +429,11 @@
 </tr>
 </tbody>
 </table>
+<p>What Amazon S3 and Google Cloud Storage answer to listings without an account has been read from public buckets (finding 35). That is not a run: durable-db has stored nothing on either.</p>
 <h2 id="remaining-obligations">Remaining obligations<a class="anchor" href="#remaining-obligations" aria-label="Link to this section">#</a></h2>
 <ul>
-<li>Send the request that removes many versions to Amazon S3 and to a store that refuses it. It has been sent to Backblaze B2, a community build of MinIO, RustFS and Garage, which all take it, and to a stand-in that refuses it.</li>
-<li>Run the bucket tests and benchmarks on Amazon S3, Cloudflare R2 and Google Cloud Storage. The code path is shared with B2 except for the upload call, and has been run on three S3 servers that were each one process on one machine, which says nothing of a provider's consistency across its own machines. R2's documentation lists bucket versioning as not implemented; what R2 answers to a listing of versions decides whether anything is collected there, and has not been tried.</li>
+<li>Send the request that removes many versions to Amazon S3, to Google Cloud Storage and to a store that refuses it. It has been sent to Backblaze B2, a community build of MinIO, RustFS and Garage, which all take it, and to a stand-in that refuses it.</li>
+<li>Run the bucket tests and benchmarks on Amazon S3, Cloudflare R2 and Google Cloud Storage. The code path is shared with B2 except for the upload call, and has been run on three S3 servers that were each one process on one machine, which says nothing of a provider's consistency across its own machines. What Amazon and Google answer without an account is in finding 35. R2 answers nothing without one: its documentation lists the request that lists versions as not implemented, and what it answers to that request, which decides whether a server starts there, has been read about and not seen. On Google Cloud Storage a bucket's soft delete, which Google's documentation gives as on for a new bucket, keeps what is removed for seven days more; whether a purge is then complete has not been tried.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind.</li>
 <li>The memory soak for hours rather than minutes, and on a bucket, where an upload stays in memory for as long as the bucket takes to store it.</li>
 <li>Model conditional transactions with idempotent retries, and a delete request that arrives late.</li>
@@ -424,6 +441,7 @@
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
+<li>A round of a server's housekeeping that panics is reported and the next one runs; nothing reports a round that does not end. None is known.</li>
 <li>A review by people outside the project. The reviews recorded above were automated and commissioned by the project itself.</li>
 <li>Behaviour when the bucket itself misbehaves beyond the assumptions (lost objects, stale listings) is undefined; block checksums detect corrupted table data only, and a manifest carries no checksum of its own.</li>
 </ul>
@@ -434,7 +452,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.3, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.4, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
