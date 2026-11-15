@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.5: install">v2.1.5</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.6: install">v2.1.6</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -199,7 +199,11 @@
 </tr>
 <tr>
 <td>Storage refuses requests: it is asked too much, or it is failing.</td>
-<td>A request that is refused is sent again, as one that was lost is. After eight refusals in a row of one kind of request, with none taken between them, a server sends no more of that kind: they fail in the server, and commits and strong reads fail with <code>503</code>. After a second, or after as long as the store asked for, one request is sent, and when one is taken all are sent again. Reads, changes, and on Backblaze B2 uploads and the calls that name a storage pod are each counted apart. A server does not keep itself under a rate: a store that takes some of what it is sent is sent all of it.</td>
+<td>A request that is refused is sent again, as one that was lost is. After eight refusals in a row of one kind of request, with none taken between them, a server sends no more of that kind: they fail in the server, and commits and strong reads fail with <code>503</code>. After a second, or after as long as the store asked for, one request is sent, and when one is taken all are sent again. Reads, listings, changes, and on Backblaze B2 uploads and the calls that name a storage pod are each counted apart. A server does not keep itself under a rate: a store that takes some of what it is sent is sent all of it.</td>
+</tr>
+<tr>
+<td>Storage is slow: a request is not answered within twenty seconds.</td>
+<td>The request is given up and sent again, as one that was lost is, and is not counted as a refusal: every request goes on being sent. What waited for it fails if the store stays slow. A purge that fails leaves what it would have removed in the bucket, and the next collection removes it.</td>
 </tr>
 <tr>
 <td>Every server is gone.</td>
@@ -236,7 +240,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.5, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.6, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.5: install">v2.1.5</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.6: install">v2.1.6</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -110,6 +110,7 @@ cargo test --test bucket
 <p><code>scripts/test-stores.sh</code> does that for three S3 servers it starts in containers on this machine, each held to 1 GiB and two CPUs: a community build of MinIO and RustFS, each with a bucket that keeps versions and one that does not, and Garage, which keeps no versions and has no request that lists them. On each store it then runs a ledger through three servers while one is killed, one is stopped and one is killed again. It needs Docker and a release build, and takes about seven minutes.</p>
 <p><code>scripts/soak-kills.sh</code> runs a ledger through three servers on one directory for ten minutes (<code>SOAK_SECONDS</code>), stops one of them every ten seconds (<code>PAUSE</code>), three times in four with a kill, and starts it again. It fails if the ledger does not verify or a server panics, and prints the most memory and open files any server had. <code>DURABLE_DB</code> names the binary.</p>
 <p><code>scripts/test-refusals.sh</code> runs one server on MinIO behind an nginx that it tells to refuse every change for the middle third of a ledger, and prints how many requests the store refused, how soon a change was taken afterwards, and whether the ledger verified. <code>DURABLE_DB_BIN</code> names the binary, so that two releases can be compared. It needs Docker and takes about a minute and a half. The commit rate it prints is not a measurement: MinIO on a desktop's disk gave 420 to 1,030 commits a second to the same binary from one run to the next.</p>
+<p><code>scripts/soak-bucket.sh</code> runs one server with the flags of the Kubernetes manifest, held to 1 GiB, on MinIO in a container: 256 databases (<code>SOAK_DATABASES</code>) are written for twenty minutes (<code>SOAK_SECONDS</code>) and then deleted one after another. It prints what memory did, how many purges failed, how the deletions went, and how often the server held requests back from the store, and fails if the server is killed or panics. It is the run that found that a store slow to list was taken to refuse reads. <code>DURABLE_DB</code> names the binary. It needs Docker and about half an hour.</p>
 <p><code>scripts/check-model.sh</code> runs TLC with a 2 GiB heap, four workers and a time limit, in Docker when no local Java is installed. TLC sizes itself from the whole machine if left alone; do not remove the caps. All configurations take about three minutes. <code>TLC_TIMEOUT=3600 scripts/check-model.sh DeepDeletion</code> runs the one configuration that is left out, because it takes nineteen minutes.</p>
 <p><code>scripts/soak-memory.sh</code> runs one server with the flags of the Kubernetes manifest in a systemd scope limited to 1 GiB without swap and four CPUs, loads it in three ways with values that do not compress, and fails if the server is killed. Last it kills the server itself in the middle of a load over 256 databases and starts it again, and reports the memory of the second server apart. It needs about 4 GiB of disk and <code>DURABLE_DB</code> set to the binary to test; test the static binary, because the allocator's behaviour depends on the C library it is linked with.</p>
 <h2 id="layout">Layout<a class="anchor" href="#layout" aria-label="Link to this section">#</a></h2>
@@ -143,7 +144,7 @@ site/           the website generator
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.5, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.6, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
