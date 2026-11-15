@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.6: install">v2.1.6</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.7: install">v2.1.7</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -219,13 +219,13 @@
 </tr>
 <tr>
 <td><code>tests/interleavings.rs</code></td>
-<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created, deletions while a flush is stuck, a flush that falls due during a merge, a database waiting for its turn to merge, a release during a merge, a merge that fails, an empty disk cache read all at once, a spare upload that the store declines, a deletion and a release while a collection waits for a purge, a collection whose purge the store does not answer, a round of housekeeping while a release waits for the store.</td>
-<td>22 pass.</td>
+<td>Chosen schedules, built by holding or failing single storage requests: a takeover that fails after revoking, a takeover during a deletion, an unconfirmed deletion, an interrupted cleanup, a lookup that overlaps a merge, a refusal that overlaps an uncommitted write, a database that was never created, deletions while a flush is stuck, a flush that falls due during a merge, a database waiting for its turn to merge, a release during a merge, a merge that fails, an empty disk cache read all at once, a spare upload that the store declines, a deletion and a release while a collection waits for a purge, a collection whose purge the store does not answer, a round of housekeeping while a release waits for the store, writes that wait for a merge the quota asked for, a merge for the quota that made no room, a database that falls idle while it merges.</td>
+<td>25 pass.</td>
 </tr>
 <tr>
 <td><code>tests/engine.rs</code></td>
-<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember, 96 databases in use while they are tended 2,000 times, a round of housekeeping that panics, a round that does not end.</td>
-<td>20 pass.</td>
+<td>Transactions, checks, retries, crash recovery, takeover, stale owners, flush, merge, collection, quota, deletion, disk-cache corruption, configuration changes made at once, a read that runs out of room, merges into tables of limited size, more table index than the cache holds, the keys many databases remember, 96 databases in use while they are tended 2,000 times, a round of housekeeping that panics, a round that does not end, a database at its quota whose keys were deleted, written over, or can all still be read.</td>
+<td>24 pass.</td>
 </tr>
 <tr>
 <td><code>tests/storage.rs</code></td>
@@ -431,6 +431,19 @@
 <p>None of this changes what is deleted or when it may be: a purge that is not made deletes nothing. Four tests hold or fail single requests for it: a deletion and a release each end while a purge of a collection is held, a collection whose first purge fails makes no other and leaves the table a merge replaced to a later one, and a round of housekeeping ends while a release waits for the store, which a server that stops then waits for. Nine faults put into it one at a time each fail one of them.</p>
 <p>The run again, by <code>scripts/soak-bucket.sh</code>: 1,994 commits a second and none failed, 558 MiB at most, nothing held back. The 256 deletions took five minutes and none failed. The slowest took two: a deletion lists everything its database has, and that is the store's time. What that one waited for was not looked at.</p>
 </li>
+<li>
+<p><strong>A database that reached its quota stayed there.</strong> A database's size counts every table it has stored, and a value that was written over or deleted is stored until a merge reaches the table that holds it. Tables are merged by size, the newest with the next when they are half as large, and nothing merged them for the quota's sake. Two runs of 2.1.6 on a local directory, each with a quota of 64 MiB:</p>
+<ul>
+<li>2,800 keys of 16 KiB, which is 45 MiB, were written and then written over at random (<code>durable-db bench --workload fill --database q --max-bytes 67108864 --keys 2800 --value-bytes 16384 --random-values --clients 8</code>, then <code>--workload write --seconds 40</code> in place of the fill). After 2,966 more writes the database held 64 MiB, and every write from then on was answered <code>507</code>: 1.3 million of them in what was left of the forty seconds. Nothing would have ended that. A database that takes no writes makes no tables, and so no merge.</li>
+<li>A database was filled to its quota and every key in it deleted. It then held 65 MiB, the deletions being counted as well, and a write of 2 MiB was refused. <code>Delete data or raise the quota</code>, the documentation of that error said.</li>
+</ul>
+<p>Now a write that the quota has no room for asks for everything to be merged, when the database has more than one run of tables or has writes that are in no table yet, and is answered <code>503</code> while that is done, as a write is that waits for a flush. It is taken when the merge has made room, and answered <code>507</code> when it has not, or when there was nothing to merge. With the change the first run made 484 writes a second for the forty seconds and none failed; the clients were told to wait 81,944 times, by a benchmark that asks again at once. In the second the write of 2 MiB was taken at the third try, after 147 ms, and the database then held 2 MiB.</p>
+<p>A merge of everything rewrites the database, and a database that is full of what can still be read would ask for one with every write. So after such a merge that removed less than an eighth of what it merged, the next waits four times as long as that one took, and a second at least; a write with no room is answered <code>507</code> meanwhile. A deletion ends the wait, since it is how room is made. A merge for the quota also flushes first: one that began with a write still in no table left the value it had written over in place, and was then waited after.</p>
+<p>The protocol is unchanged: this is the merge a database already made when it had more than twelve runs. Four tests in <code>tests/engine.rs</code> and two in <code>tests/interleavings.rs</code>; 12 faults put into it one at a time each fail one. Found by filling a database and writing over it, when the question was what a larger quota would cost.</p>
+</li>
+<li>
+<p><strong>A merge that took longer than a database may be idle would never have been finished.</strong> A server releases a database that has not been used for five minutes (<code>--idle-seconds</code>), and a merge under way stops at a release. Use meant requests. So a database whose clients went quiet while it was merging was released in the middle, what the merge had uploaded was discarded, and the next owner began the merge again from its start when the database was next written to. A merge of everything a database holds takes as long as reading it and writing it again: at 50 MiB a second, five minutes is 15 GiB. Below that it was a merge made twice now and then. Above it, a database written in bursts would never finish one, and its tables would grow in number, with what is counted against its quota. This was read in the code while larger databases were measured; no run has shown it, since none has had a merge that long. A merge is now use, when it begins and with each table it stores. One test in <code>tests/interleavings.rs</code> holds back each table of a merge, runs the server's housekeeping meanwhile, and expects the database to stay; 2 faults fail it.</p>
+</li>
 </ol>
 <h3 id="what-has-been-run-where">What has been run where<a class="anchor" href="#what-has-been-run-where" aria-label="Link to this section">#</a></h3>
 <table>
@@ -519,7 +532,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.6, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.7, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

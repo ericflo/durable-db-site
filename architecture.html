@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.6: install">v2.1.6</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.7: install">v2.1.7</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -121,6 +121,7 @@
 <h2 id="tables-flush-and-merge">Tables, flush and merge<a class="anchor" href="#tables-flush-and-merge" aria-label="Link to this section">#</a></h2>
 <p>Writes accumulate in memory and in frames. A <strong>flush</strong> writes the acknowledged in-memory entries as a new table, stores a manifest that lists it, checks the claim, switches readers to the new table list, and deletes the frames the manifest covers. It runs when unflushed data reaches 8 MiB or 512 frames, after 5 seconds without a commit, and at release.</p>
 <p>Tables are merged so that the newest tables stay small and the count stays logarithmic: the newest tables are merged whenever together they are at least half the size of the next one. Deleted keys are dropped when a merge includes the oldest table.</p>
+<p>A value that was written over or deleted stays in its table until a merge reaches that table, and the database's size counts it until then. Merging by size bounds that only loosely, and for deletions, which are a few bytes each, not at all. So a write that the database's quota has no room for asks for a merge of everything, provided there is more than one run or there are writes that are in no table yet. It is answered <code>503</code> while the merge is made, taken when the merge has made room, and answered <code>507</code> when it has not. A merge of everything that removed less than an eighth of what it merged is not made again for four times as long as it took, and a second at least, so that a database that is full of what can still be read is not rewritten for every write; a deletion ends that wait.</p>
 <p>A merge writes its result as a <strong>run</strong>: tables of at most 32 MiB whose key ranges follow one another, each uploaded before the next is begun. A run is read, weighed and merged as the single table it would otherwise be, so a merge holds about one table in memory however large the database is. Two merges run at once on a server. A database that waits for its turn goes on flushing. A merge under way flushes between two of its tables when writes fall due, and stops there when the database is being released. The tables of a merge that did not finish are in no manifest, and are collected. A merge that failed is tried again when the database is next written to.</p>
 <p>A table is blocks of about 32 KiB, compressed with LZ4, each with a CRC, followed by an index of the last key of each block. A lookup reads the index, then one block. Small tables arrive whole in a single request.</p>
 <p>Two caches hold table data, both bounded and both disposable:</p>
@@ -240,7 +241,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.6, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.7, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>

@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.6: install">v2.1.6</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.7: install">v2.1.7</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html" aria-current="page">API</a>
@@ -116,7 +116,7 @@ durable-db token --database demo --access read --ttl 3600
 </tbody>
 </table>
 <p>A name is 1 to 128 characters from <code>A-Z a-z 0-9 . _ -</code> and does not begin with <code>.</code>.</p>
-<p><code>bytes</code> counts stored table bytes plus unflushed writes. When it would exceed <code>max_bytes</code>, transactions that add data fail with <code>507</code>; deletes still succeed.</p>
+<p><code>bytes</code> counts stored table bytes plus unflushed writes. A value that was written over or deleted is stored, and counted, until a merge has removed it. So when a transaction that adds data would take <code>bytes</code> over <code>max_bytes</code>, the database first merges everything it holds and answers <code>503</code> meanwhile; the transaction is taken once that has made room, and fails with <code>507</code> if it has not. Deletes always succeed, and the room they make is there for the next write. A database that is nearly full of what can still be read is not rewritten for every write: after a merge that removed less than an eighth, the next waits four times as long as that one took, and writes with no room get <code>507</code> until then or until something is deleted. The <code>503</code> lasts as long as the merge does, which is as long as reading the database and writing it again takes. A transaction that both deletes and adds is weighed by what it adds, so at the quota delete first, in a transaction of its own.</p>
 <h2 id="read">Read<a class="anchor" href="#read" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-http">POST /v1/databases/{name}/read
 {
@@ -328,7 +328,7 @@ durable-db token --database demo --access read --ttl 3600
 <tr>
 <td>507</td>
 <td><code>quota_exceeded</code></td>
-<td>The database is at <code>max_bytes</code>.</td>
+<td>The database is at <code>max_bytes</code> with nothing left to merge away.</td>
 <td>Delete data or raise the quota.</td>
 </tr>
 </tbody>
@@ -415,7 +415,7 @@ durable-db token --database demo --access read --ttl 3600
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.6, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.7, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
