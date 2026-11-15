@@ -203,7 +203,7 @@
 </tr>
 <tr>
 <td>Storage is slow: a request is not answered within twenty seconds.</td>
-<td>The request is given up and sent again, as one that was lost is, and is not counted as a refusal: every request goes on being sent. What waited for it fails if the store stays slow. A purge that fails leaves what it would have removed in the bucket, and the next collection removes it.</td>
+<td>The request is given up and sent again, as one that was lost is, and is not counted as a refusal: every request goes on being sent. What waited for it fails if the store stays slow. A purge that fails leaves what it would have removed in the bucket and ends the collection it was part of; the next collection removes it. A collection that is waiting for the store gives way to a release or a deletion of its database, and a server's housekeeping waits for no release.</td>
 </tr>
 <tr>
 <td>Every server is gone.</td>
@@ -219,7 +219,7 @@
 </tr>
 <tr>
 <td>A round of a server's housekeeping does not end.</td>
-<td>None is known to. It is not ended, since what it holds is not known, and the log says every thirty seconds how long it has run. Until it ends the server follows no change of its peers, hands no database over and tends none.</td>
+<td>None is known to since 2.1.6, in which a round no longer waits for storage. It is not ended, since what it holds is not known, and the log says every thirty seconds how long it has run. Until it ends the server follows no change of its peers, hands no database over and tends none.</td>
 </tr>
 </tbody>
 </table>
