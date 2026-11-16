@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.9: install">v2.1.9</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.10: install">v2.1.10</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -129,7 +129,7 @@ kubectl -n durable-db apply -k .
 </tr>
 <tr>
 <td>Merges</td>
-<td>two at a time, one table of 32 MiB each</td>
+<td>two at a time, one table of 32 MiB each; and the table of each merge whose database was released or deleted while it was being uploaded, until that upload ends. A merge that waits for its turn holds no table, only where it is in each run</td>
 </tr>
 <tr>
 <td>Tables being fetched for the disk cache</td>
@@ -412,7 +412,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.9, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.10, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
