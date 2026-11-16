@@ -3,10 +3,10 @@
 # No root privileges are needed.
 #
 #   curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
-#   curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh -s -- v2.1.8
+#   curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh -s -- v2.1.9
 set -eu
-version=${1:-v2.1.8}
-case "$version" in v[0-9]*) ;; *) echo 'Expected a release tag such as v2.1.8' >&2; exit 1 ;; esac
+version=${1:-v2.1.9}
+case "$version" in v[0-9]*) ;; *) echo 'Expected a release tag such as v2.1.9' >&2; exit 1 ;; esac
 case "$(uname -s)-$(uname -m)" in
   Linux-x86_64) asset=durable-db-linux-amd64.tar.gz ;;
   *) echo 'Prebuilt binaries are for Linux x86_64. On other platforms, build from source: see docs/development.md.' >&2; exit 1 ;;
