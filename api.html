@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.8: install">v2.1.8</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.9: install">v2.1.9</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html" aria-current="page">API</a>
@@ -322,7 +322,7 @@ durable-db token --database demo --access read --ttl 3600
 <tr>
 <td>503</td>
 <td><code>busy</code>, <code>ownership_moved</code>, <code>storage_unavailable</code></td>
-<td>The request could not be completed now: ownership is moving, storage did not answer, or the server has no room for another request, request body or read result.</td>
+<td>The request could not be completed now: ownership is moving, storage did not answer, the server has no room for another request, request body or read result, or the database is flushing or merging earlier writes.</td>
 <td>Repeat the identical request.</td>
 </tr>
 <tr>
@@ -415,7 +415,7 @@ durable-db token --database demo --access read --ttl 3600
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.8, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.9, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
