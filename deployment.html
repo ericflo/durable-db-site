@@ -109,7 +109,7 @@ kubectl -n durable-db apply -k .
 <tbody>
 <tr>
 <td>Table blocks and indexes</td>
-<td><code>--cache-bytes</code></td>
+<td><code>--cache-bytes</code>. Indexes are about 2 MiB for each GiB of tables being read, and are kept ahead of blocks up to half of it</td>
 </tr>
 <tr>
 <td>Unflushed writes</td>
@@ -386,7 +386,11 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 </tr>
 <tr>
 <td><code>durable_db_table_index_bytes</code></td>
-<td>Table indexes in memory, in the cache or in use by a read.</td>
+<td>Table indexes in memory, in the cache or in use by a read. Those that reads ask for stay there while they are within half of <code>--cache-bytes</code>.</td>
+</tr>
+<tr>
+<td><code>durable_db_disk_cache_bytes</code>, <code>..._hits_total</code>, <code>..._misses_total</code>, <code>..._fetches_total</code></td>
+<td>With <code>--cache-dir</code>: what the disk cache holds, the reads of tables that it answered and those that went to the bucket, and the tables fetched whole for it. Misses that go on while it is full say that the server reads more than it holds.</td>
 </tr>
 <tr>
 <td><code>durable_db_recent_key_bytes</code></td>

@@ -99,7 +99,7 @@ durable-db token --database demo --access read --ttl 3600
 </tr>
 <tr>
 <td><code>GET /v1/databases/{name}</code></td>
-<td><code>{&quot;name&quot;, &quot;revision&quot;, &quot;bytes&quot;, &quot;max_bytes&quot;, &quot;max_requests_per_second&quot;, &quot;tables&quot;}</code></td>
+<td><code>{&quot;name&quot;, &quot;revision&quot;, &quot;bytes&quot;, &quot;max_bytes&quot;, &quot;max_requests_per_second&quot;, &quot;tables&quot;, &quot;runs&quot;}</code>. A read of one key looks in one table of each run.</td>
 </tr>
 <tr>
 <td><code>PATCH /v1/databases/{name}</code></td>
