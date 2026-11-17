@@ -55,7 +55,7 @@
 <li><strong>Membership</strong> may be wrong or disagree between servers.</li>
 </ul>
 <h2 id="the-model">The model<a class="anchor" href="#the-model" aria-label="Link to this section">#</a></h2>
-<p><a href="https://github.com/ericflo/durable-db/blob/main/spec/DurableDb.tla"><code>spec/DurableDb.tla</code></a> specifies creating a database, taking ownership, committing, linearizable reads, requests that store nothing (a transaction refused by a check, and the retry of one already applied), checkpointing, collection and deletion for one database, as atomic steps on a store of claims, manifests, frames and the tombstone. The store starts empty. Writers crash at any step. Any upload ever sent may arrive at any later time, any number of times, including after its object was collected.</p>
+<p><a href="https://github.com/ericflo/durable-db/blob/main/spec/DurableDb.tla"><code>spec/DurableDb.tla</code></a> specifies creating a database, taking ownership, committing, linearizable reads, requests that store nothing (a transaction refused by a check, and the retry of one already applied), checkpointing, collection and deletion for one database, as atomic steps on a store of claims, manifests, frames and the tombstone. The store starts empty. Writers crash at any step. Any upload ever sent may arrive at any later time, any number of times, including after its object was collected. In the configuration <code>LateDeletes</code>, so may the DELETE a collection sends, after its sender crashed, released the database or was revoked.</p>
 <p>Five invariants are checked in every reachable state:</p>
 <table>
 <thead>
@@ -87,9 +87,9 @@
 </tr>
 </tbody>
 </table>
-<pre><code class="language-sh">scripts/check-model.sh        # about three minutes; capped at 2 GiB heap, four workers and ten minutes a configuration
+<pre><code class="language-sh">scripts/check-model.sh        # about five minutes; capped at 2 GiB heap, four workers and ten minutes a configuration
 </code></pre>
-<p><strong>Results</strong> (TLC 2.19; the first three 2026-11-14, and again with the same counts on 2026-11-17, when the model gained requests that store nothing; <code>Retries</code> 2026-11-17), each an exhaustive search with no violation:</p>
+<p><strong>Results</strong> (TLC 2.19; the first three 2026-11-14, and again with the same counts on 2026-11-17, when the model gained requests that store nothing; <code>Retries</code> and <code>LateDeletes</code> 2026-11-17), each an exhaustive search with no violation:</p>
 <table>
 <thead>
 <tr>
@@ -129,9 +129,16 @@
 <td>658,613</td>
 <td>60</td>
 </tr>
+<tr>
+<td><code>LateDeletes</code></td>
+<td>2 writers, epoch numbers up to 2, 1 transaction, a collection's DELETE arriving at any later time, any number of times, no deletion</td>
+<td>7,257,541</td>
+<td>967,385</td>
+<td>59</td>
+</tr>
 </tbody>
 </table>
-<p>The configurations of one transaction exist because deletion, or requests sent again, with two transactions is a much larger state space. <code>spec/DeepDeletion.cfg</code> is the first combination; <code>spec/DeepRetries.cfg</code>, two transactions sent again and refused, is the second, and is not part of the default run either: on 2026-11-17 it did not end in ninety minutes on four cores, after 1,285,272,535 states generated, 111,378,787 of them distinct, to depth 57, with 11.7 million still to explore and no invariant violated. That is a partial search, not a result like those in the table. Both negative controls of requests fail at the bounds of <code>Retries</code>. It is not part of the default run, because it takes nineteen minutes where the others take three together:</p>
+<p>The configurations of one transaction exist because deletion, requests sent again, or deletes that arrive late, with two transactions, is a much larger state space. <code>spec/DeepDeletion.cfg</code> is the first combination; <code>spec/DeepRetries.cfg</code>, two transactions sent again and refused, is the second, and is not part of the default run either: on 2026-11-17 it did not end in ninety minutes on four cores, after 1,285,272,535 states generated, 111,378,787 of them distinct, to depth 57, with 11.7 million still to explore and no invariant violated. That is a partial search, not a result like those in the table. Both negative controls of requests fail at the bounds of <code>Retries</code>. <code>LateDeletes</code> adds no rule, and so no control: what a collection deletes, no later epoch needs, whenever the DELETE arrives. <code>DeepDeletion</code> is not part of the default run, because it takes nineteen minutes where the others take five together:</p>
 <pre><code class="language-sh">TLC_TIMEOUT=3600 scripts/check-model.sh DeepDeletion
 </code></pre>
 <p>For a search of this size TLC reports how likely it is that two distinct states had the same fingerprint and one was therefore not looked at: 0.0015 by its calculation, 0.00019 by the fingerprints it saw. An earlier version of this page said that a run of this configuration had been stopped after 24 minutes and 92 million distinct states. With the model and the configuration as they are in the repository it ends with fewer states than that, so that run was not of this model; which it was of is not recorded.</p>
@@ -218,7 +225,7 @@
 <ul>
 <li><strong>Tables</strong> are folded into the manifest's state. Their collection follows the same rule as superseded manifests, which is modelled, with one exception that is not: the table a merge was uploading when its database was released, deleted or closed is deleted by that upload once it ends, whatever claim its server holds then (since 2.1.10). No manifest lists such a table or can come to: only one of its own epoch could, and its merge has ended. So no state the model holds refers to it, and deleting it removes nothing a reader could be sent to.</li>
 <li><strong>Checks and retries are abstract.</strong> A transaction refused by a check, and the retry of one already applied, are modelled as a request that stores nothing and is judged against the writer's whole state, writes on their way included, as the implementation judges them; what the check compares, a version, a range or the revision, is not. A retry is recognized against all the writer holds, as the implementation's receipts are part of the database; that it forgets a receipt after <code>receipt_window</code> revisions, after which a retry is applied again, is not modelled. A writer has one such answer pending at a time, and only one judged against writes still on its way is modelled: an answer about a state acknowledged already says nothing new.</li>
-<li><strong>Deletes are atomic steps.</strong> A delete request that takes effect long after its sender gave up is not modelled. The argument that it is harmless is informal: a delete is sent only for an object the sender was entitled to remove for good, and the only object whose reappearance would matter, a claim, is uploaded once. The chaos test does inject such deletes.</li>
+<li><strong>Only a collection's deletes arrive late.</strong> In <code>LateDeletes</code>, the DELETE a collection sends, including the sweep of what earlier epochs left, takes effect at any later time, any number of times, also after its sender crashed or released the database and another owner took it; since 2.1.6 a collection gives way to a release in the middle of a purge, and since 2.1.11 the sweep does, leaving such requests on the wire. A revocation's DELETE of a claim, a release's of its own claim, and the purge of a deleted database are still atomic steps. The argument that a late one is harmless is informal: each is sent only for an object its sender was entitled to remove for good, and the only object whose reappearance would matter, a claim, is uploaded once. The chaos test does inject such deletes.</li>
 <li><strong>Only safety</strong> is checked. That some server eventually makes progress is not.</li>
 <li><strong>The bounds are small.</strong> Two writers, two epochs and one or two transactions cover every interleaving of one takeover with commits, a flush, collection, a deletion and late uploads, not longer chains.</li>
 <li><strong>Nothing connects the model to the Rust code</strong> except that the code is written to follow it step for step and the tests below.</li>
@@ -615,7 +622,7 @@
 <li>A store that is slow holds up more than the request that waits for it. A collection holds its database's next flush for as long as one purge takes to fail, which is a minute when a listing is not answered (finding 40). And a store whose listings take longer than twenty seconds gets no collection done at all: with 2.1.11 on MinIO, every purge failed from the eighth minute of 256 databases written until the writes ended, while what the store kept grew threefold (<a href="performance.html">performance</a>). What is left is collected once the store answers again; nothing bounds it meanwhile. Asking that store for fewer keys did not help, in one run: a build whose purges asked for a quarter as many after each request that went unanswered, down to sixteen, ran the same soak after a run of 2.1.11 without it. Its purges began to fail at the eleventh minute rather than the seventh, and then every one failed until the writes ended; it made 1,286 commits a second against 1,580. It was not released. On the same MinIO idle, a listing of a thousand versions takes 40 ms whether a thousand or ten thousand objects are under the prefix. How long one takes under that load, and whether a longer wait or fewer purges at once would let collection through, has not been measured.</li>
 <li>Which tables a disk cache smaller than what its server reads should hold. It keeps those that were read in the last five minutes, whichever came first, and does not count how often each is read; a server that writes much through such a cache fetches again what its writes put out. Neither has been measured under a load that changes.</li>
 <li>One database larger than 1 GiB on a provider's bucket, larger than 16 GiB anywhere, or larger than its server's disk cache on a bucket. What a write at the quota waits for, a merge of everything, has been timed over one desktop's uplink only.</li>
-<li>Model a delete request that arrives late, and the receipt window after which a retry is applied again.</li>
+<li>Model the receipt window after which a retry is applied again, and a revocation's DELETE, a release's or a deleted database's purge that arrives late.</li>
 <li>Check a liveness property: with one correct server and working storage, a request is eventually answered.</li>
 <li>Make the chaos test repeatable from its seed alone, by giving the engine the simulated clock for its deadlines, and run it routinely under CPU pressure as well as without.</li>
 <li>The rule for choosing storage pods on Backblaze B2 was measured from one desktop on Wi-Fi, for minutes at a time. A server in a data centre, and hours of load, have not been measured.</li>
