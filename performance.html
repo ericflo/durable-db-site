@@ -1144,6 +1144,67 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 <p>With a cache that holds the database, the server read 13,450 MiB from its store in the first minute of reads: the blocks its reads asked for while the tables were fetched whole, two at a time, each once reads had had a sixteenth of it. After that it asked its store for nothing: not for the second minute of reads, not for the scans, and not for the merge at the quota. With the cache of 1 GiB it went on asking for 32 KiB 37,000 to 43,000 times a second, which on a bucket is a request to the bucket each time, and download. On a local directory the run with the larger cache was not the faster one, and that says nothing of a bucket. The script holds the store's directory in memory, from outside the server's limit, so a read of the store costs less there than a read of the server's own disk, where the cache is; and the database of that run was read with 10 runs, where the other had merged down to 2. What carries over is the rows of what was read from the store.</p>
 <p><strong>A write at the quota waits for as long as reading the database and writing it again takes.</strong> That was 33 s at 4 GiB and 83 s at 16 GiB on a local directory, 148 and 207 MiB a second, and 47 s at 4 GiB on MinIO; 2.1.7 took 48 s for the same at 4 GiB the same night. With the disk cache of 8 GiB it took 54 s: every table a merge stores and the cache keeps is synced to the disk the cache is on, so that what is written there and not yet on the disk does not pass the server's memory limit (finding 44), and on a local directory that disk is the store's as well. On Backblaze the write waited 1,227 s for 1 GiB over that night's link, 0.8 MiB a second; 2.1.7 had waited 525 s over a link nearly four times as fast. A client that writes at a quota has to be prepared to ask again for that long. A database that holds nothing that was written over or deleted is not merged for its quota at all, and is refused at once (<a href="api.html#databases">API</a>).</p>
 <p>The local directory answers in a fraction of a millisecond and MinIO here is one process on the desktop that loads it, so the rates in those columns are not those of a provider's bucket. What ran beside what, on a desktop of 32 cores: the local runs one after another, beside the run on Backblaze, which waited on its link; during the first three local runs, those of 4 GiB of 2.1.8 and of 2.1.7, the test suite forty-two times and its engine tests forty, each held to between 0.4 and 2.3 processors; and during the second half of the run with <code>SOAK_RUNS</code>, <code>scripts/soak-bucket.sh</code> on MinIO, 256 databases written through another server.</p>
+<h3 id="sizing-the-disk-cache">Sizing the disk cache<a class="anchor" href="#sizing-the-disk-cache" aria-label="Link to this section">#</a></h3>
+<pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_GIB=2 SOAK_CACHE_MIB=512 SOAK_SECONDS=30 scripts/soak-size.sh
+</code></pre>
+<p>One database of 2 GiB, 2,015 MiB once filled, read and merged through disk caches of a quarter of it, a half, its size and twice its size (<code>SOAK_CACHE_MIB</code> 512, 1024, 2048 and 4096). Release 2.1.10 on a local directory, one run of each, one after another on the desktop, the night after 2.1.10 was released. Other measurements ran on the machine meanwhile, so reads a second are not given here; what the cache changes is what the server asks its store for, which they do not change.</p>
+<table>
+<thead>
+<tr>
+<th>Disk cache</th>
+<th style="text-align:right">512 MiB</th>
+<th style="text-align:right">1,024 MiB</th>
+<th style="text-align:right">2,048 MiB</th>
+<th style="text-align:right">4,096 MiB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read back from storage while it was filled</td>
+<td style="text-align:right">2,661 MiB</td>
+<td style="text-align:right">949 MiB</td>
+<td style="text-align:right">32 MiB</td>
+<td style="text-align:right">0 MiB</td>
+</tr>
+<tr>
+<td>Requests to the store for each strong read, first half minute</td>
+<td style="text-align:right">0.74</td>
+<td style="text-align:right">0.51</td>
+<td style="text-align:right">0.18</td>
+<td style="text-align:right">0.11</td>
+</tr>
+<tr>
+<td>The same, second half minute</td>
+<td style="text-align:right">0.73</td>
+<td style="text-align:right">0.49</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Read from storage for each strong read, first and second</td>
+<td style="text-align:right">23.5 and 23.1 KiB</td>
+<td style="text-align:right">17.2 and 15.4 KiB</td>
+<td style="text-align:right">7.8 and 0 KiB</td>
+<td style="text-align:right">6.5 and 0 KiB</td>
+</tr>
+<tr>
+<td>Requests to the store for each scan of 20 keys</td>
+<td style="text-align:right">2.01</td>
+<td style="text-align:right">1.29</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Read from storage for the merge of everything at a quota</td>
+<td style="text-align:right">2,053 MiB</td>
+<td style="text-align:right">1,536 MiB</td>
+<td style="text-align:right">287 MiB</td>
+<td style="text-align:right">0 MiB</td>
+</tr>
+</tbody>
+</table>
+<p>The reads here are spread evenly over the keys, which is the worst case for a cache: reads that keep to some keys more than others miss it less. Read so, a read that the cache misses is one request to the store, for the block of 32 KiB that holds its key, and they were as many as the share of the database the cache does not hold: three quarters with a quarter, a half with a half. With a cache as large as the database, the tables were fetched into it whole as reads came to them, and after half a minute no read asked the store for anything. Merges read what they merge whole, whatever the reads keep to: with a cache smaller than the database, the fill read back more than the database with a quarter and half of it with a half, and the merge of everything at the quota read three quarters of it again. With a cache of its size the tables that merge stored put out some of those it had yet to read, 287 MiB; with twice its size it read nothing.</p>
+<p>So, on a bucket, where each of those requests is a round trip and each byte download: give a server a disk cache of twice the databases it serves for merges to read nothing back, and of their size for reads to ask for nothing once the cache is warm. Below that, each read the cache misses costs a request and 32 KiB, and each merge reads back what the cache does not hold.</p>
 <h3 id="when-merges-fall-behind">When merges fall behind<a class="anchor" href="#when-merges-fall-behind" aria-label="Link to this section">#</a></h3>
 <p>Release 2.1.9 tells a write to wait while a merge would leave more than twenty-four runs, and keeps a merge going through a store that fails for a while (finding 45). The script above, with 2.1.8 and then 2.1.9 the morning 2.1.9 was released, one run of each, on a local directory at 4 GiB and on Backblaze at 1 GiB; the runs on Backblaze beside the local ones and the release's other checks:</p>
 <table>
@@ -1653,10 +1714,11 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 <li>A server in the same region as its bucket.</li>
 <li>Many hours of sustained load.</li>
 <li>Several databases merging at once on a bucket, where a merge takes minutes and what a merge that gave its turn up reads again is download (<a href="#several-databases-merging-at-once">above</a>).</li>
-<li>A database larger than 1 GiB on a provider's bucket, or larger than 16 GiB anywhere. A database larger than its server's disk cache on a bucket, where what <a href="#a-large-database">a large database</a> shows of the disk cache would be paid for.</li>
+<li>A database larger than 1 GiB on a provider's bucket, or larger than 16 GiB anywhere. A database larger than its server's disk cache on a bucket, where what <a href="#sizing-the-disk-cache">sizing the disk cache</a> shows would be paid for.</li>
+<li>Reads that keep to some keys more than others, which miss a cache smaller than the database less than the even reads measured here.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="architecture.html"><span>Previous</span>Architecture</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></main>
-<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#when-many-databases-collect-at-once">When many databases collect at once</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#a-large-database">A large database</a></li><li class="h3"><a href="#when-merges-fall-behind">When merges fall behind</a></li><li class="h3"><a href="#several-databases-merging-at-once">Several databases merging at once</a></li><li class="h3"><a href="#over-a-slow-link">Over a slow link</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#when-many-databases-collect-at-once">When many databases collect at once</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#a-large-database">A large database</a></li><li class="h3"><a href="#sizing-the-disk-cache">Sizing the disk cache</a></li><li class="h3"><a href="#when-merges-fall-behind">When merges fall behind</a></li><li class="h3"><a href="#several-databases-merging-at-once">Several databases merging at once</a></li><li class="h3"><a href="#over-a-slow-link">Over a slow link</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
 </div>
 <footer class="site-footer">
 <div class="wrap">
