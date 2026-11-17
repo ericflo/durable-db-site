@@ -1301,7 +1301,7 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>They did not. A database takes no more writes than it can flush, 32 MiB of them at most, and the writes of 256 clients were held to that, told to wait some 450,000 times, before the runs came to 24; the link carried 4.7 MB a second up that morning. The night before, over a link that carried 1.1 MiB a second, 2.1.8 had 32 runs with 64 clients (<a href="#a-large-database">above</a>). The bound of 2.1.9 is shown by the tests of finding 45 and not by a run here. The reads after the first minute and the scans differ more than the fills. The server that opens the database begins a merge of the runs that are too many: 2.1.8's ended during its second minute of reads, and its scans found 12 runs; 2.1.9's had not ended when its scans did, and they found 19. Over a link that merge takes minutes, and when it ends is not the same from one run to the next.</p>
+<p>They did not. A database takes no more writes than it can flush, 32 MiB of them at most, and the writes of 256 clients were held to that, told to wait some 450,000 times, before the runs came to 24; the link carried 4.7 MB a second up that morning. The night before, over a link that carried 1.1 MiB a second, 2.1.8 had 32 runs with 64 clients (<a href="#a-large-database">above</a>). The bound of 2.1.9 is shown by the tests of finding 45 and not by a run here; <a href="#over-a-slow-link">over a slow link</a> it is set against other values. The reads after the first minute and the scans differ more than the fills. The server that opens the database begins a merge of the runs that are too many: 2.1.8's ended during its second minute of reads, and its scans found 12 runs; 2.1.9's had not ended when its scans did, and they found 19. Over a link that merge takes minutes, and when it ends is not the same from one run to the next.</p>
 <h3 id="several-databases-merging-at-once">Several databases merging at once<a class="anchor" href="#several-databases-merging-at-once" aria-label="Link to this section">#</a></h3>
 <p>A server merges two databases at a time. Release 2.1.9 let a merge hold its turn from its first table to its last, and a database that waited for a turn meanwhile went on taking writes and gained a run with every flush. Since 2.1.10 a merge gives its turn to a database that waits for one between two of its tables, and waits for a turn again (finding 46).</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db scripts/soak-tenants.sh
@@ -1414,6 +1414,163 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </table>
 <p>With 2.1.9 two of them merged first, and their writes were taken after 24.5 and 25.3 seconds; the third waited for a turn, and was taken after 42.7. The small database had 16 runs by the time a turn came free. With 2.1.10 the three merged a table at a time, and their writes were taken after 37.7 to 38.6 seconds: the last four seconds sooner, the first two thirteen seconds later, and the three seven seconds later on average. The small database had 5 runs at most.</p>
 <p>On a bucket a merge of a large database takes as long as its link takes to carry the database twice over, so a database that waited for a turn with 2.1.9 waited minutes, and what a merge reads again when it goes on is a request to the bucket each time, and download. Neither has been measured on a bucket.</p>
+<h3 id="over-a-slow-link">Over a slow link<a class="anchor" href="#over-a-slow-link" aria-label="Link to this section">#</a></h3>
+<pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=2048 SOAK_READ_CLIENTS=8 SOAK_SECONDS=30 scripts/soak-size.sh
+</code></pre>
+<p><code>SOAK_LINK</code> puts <code>scripts/slow-link.py</code> between the server and MinIO: what the server sends is carried at 8 MB a second and what it is sent at 16, each shared by all its connections as one link's is, and each byte arrives 20 ms after it left. The Backblaze figures above were measured over a link that carried 0.5 to 4.7 MB a second up and was not the same from one run to the next; this one is.</p>
+<p><strong>The bound on runs.</strong> Since 2.1.9 a write waits while a merge would leave a database with more than twenty-four runs, the runs that merge takes counting as one (finding 45). The figure was chosen. The runs below set it against 12 and 48, with builds of 2.1.10 that differ from one another only in it: the factor of <code>max_runs</code> in <code>Db::crowded</code> in <code>src/db.rs</code>, 1, 2 as released, and 4, each built with <code>cargo build --release</code>. Two runs of 12 and of 24 and one of 48, one after another on the desktop, the evening after 2.1.10 was released, with nothing else running; a database of 2 GiB filled by 64 clients and read by 8.</p>
+<table>
+<thead>
+<tr>
+<th>Writes wait while a merge would leave more than</th>
+<th style="text-align:right">12, first</th>
+<th style="text-align:right">12, second</th>
+<th style="text-align:right">24, first</th>
+<th style="text-align:right">24, second</th>
+<th style="text-align:right">48</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The fill took</td>
+<td style="text-align:right">2167 s</td>
+<td style="text-align:right">1984 s</td>
+<td style="text-align:right">1921 s</td>
+<td style="text-align:right">1925 s</td>
+<td style="text-align:right">1944 s</td>
+</tr>
+<tr>
+<td>Commits a second while it was filled</td>
+<td style="text-align:right">242 (p50 252 ms, p99 312 ms)</td>
+<td style="text-align:right">264 (p50 254 ms, p99 307 ms)</td>
+<td style="text-align:right">273 (p50 253 ms, p99 315 ms)</td>
+<td style="text-align:right">272 (p50 254 ms, p99 309 ms)</td>
+<td style="text-align:right">270 (p50 254 ms, p99 317 ms)</td>
+</tr>
+<tr>
+<td>Commits that were told to wait</td>
+<td style="text-align:right">212,248</td>
+<td style="text-align:right">44,023</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Most runs while it was filled</td>
+<td style="text-align:right">23</td>
+<td style="text-align:right">24</td>
+<td style="text-align:right">20</td>
+<td style="text-align:right">22</td>
+<td style="text-align:right">25</td>
+</tr>
+<tr>
+<td>It then had</td>
+<td style="text-align:right">70 tables in 14 runs</td>
+<td style="text-align:right">76 tables in 23 runs</td>
+<td style="text-align:right">72 tables in 18 runs</td>
+<td style="text-align:right">75 tables in 22 runs</td>
+<td style="text-align:right">76 tables in 25 runs</td>
+</tr>
+<tr>
+<td>Sent to storage while it was filled</td>
+<td style="text-align:right">11,531 MiB, 5.6 times what was written</td>
+<td style="text-align:right">10,593 MiB, 5.2 times what was written</td>
+<td style="text-align:right">11,005 MiB, 5.4 times what was written</td>
+<td style="text-align:right">10,444 MiB, 5.1 times what was written</td>
+<td style="text-align:right">10,404 MiB, 5.1 times what was written</td>
+</tr>
+<tr>
+<td>The reads and scans looked in</td>
+<td style="text-align:right">15, 12, 12 runs</td>
+<td style="text-align:right">24, 24, 24 runs</td>
+<td style="text-align:right">19, 19, 19 runs</td>
+<td style="text-align:right">23, 23, 23 runs</td>
+<td style="text-align:right">26, 26, 26 runs</td>
+</tr>
+<tr>
+<td>Strong reads a second, at first</td>
+<td style="text-align:right">22 (p50 324 ms, p99 1.7 s)</td>
+<td style="text-align:right">10 (p50 820 ms, p99 3.6 s)</td>
+<td style="text-align:right">15 (p50 523 ms, p99 2.7 s)</td>
+<td style="text-align:right">12 (p50 671 ms, p99 3.4 s)</td>
+<td style="text-align:right">10 (p50 800 ms, p99 3.6 s)</td>
+</tr>
+<tr>
+<td>Strong reads a second, after that</td>
+<td style="text-align:right">86 (p50 68 ms, p99 282 ms)</td>
+<td style="text-align:right">19 (p50 447 ms, p99 841 ms)</td>
+<td style="text-align:right">32 (p50 258 ms, p99 542 ms)</td>
+<td style="text-align:right">23 (p50 368 ms, p99 769 ms)</td>
+<td style="text-align:right">22 (p50 379 ms, p99 818 ms)</td>
+</tr>
+<tr>
+<td>Scans a second</td>
+<td style="text-align:right">69 (p50 116 ms, p99 204 ms)</td>
+<td style="text-align:right">20 (p50 381 ms, p99 743 ms)</td>
+<td style="text-align:right">27 (p50 289 ms, p99 512 ms)</td>
+<td style="text-align:right">19 (p50 440 ms, p99 676 ms)</td>
+<td style="text-align:right">20 (p50 393 ms, p99 591 ms)</td>
+</tr>
+<tr>
+<td>Writes over it a second</td>
+<td style="text-align:right">262 (p50 255 ms, p99 268 ms)</td>
+<td style="text-align:right">110 (p50 254 ms, p99 268 ms)</td>
+<td style="text-align:right">265 (p50 252 ms, p99 261 ms)</td>
+<td style="text-align:right">255 (p50 257 ms, p99 298 ms)</td>
+<td style="text-align:right">295 (p50 206 ms, p99 280 ms)</td>
+</tr>
+<tr>
+<td>Writes over it that were told to wait</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">29,607</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+</tr>
+<tr>
+<td>Runs after them</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">16</td>
+<td style="text-align:right">23</td>
+<td style="text-align:right">15</td>
+<td style="text-align:right">15</td>
+</tr>
+<tr>
+<td>A write at a quota under that waited</td>
+<td style="text-align:right">511 s</td>
+<td style="text-align:right">582 s</td>
+<td style="text-align:right">520 s</td>
+<td style="text-align:right">553 s</td>
+<td style="text-align:right">565 s</td>
+</tr>
+<tr>
+<td>Most memory while it was filled</td>
+<td style="text-align:right">260 MiB</td>
+<td style="text-align:right">268 MiB</td>
+<td style="text-align:right">260 MiB</td>
+<td style="text-align:right">276 MiB</td>
+<td style="text-align:right">278 MiB</td>
+</tr>
+<tr>
+<td>The link carried, up and down</td>
+<td style="text-align:right">14,344 and 4,450 MiB</td>
+<td style="text-align:right">13,770 and 4,053 MiB</td>
+<td style="text-align:right">13,778 and 3,293 MiB</td>
+<td style="text-align:right">13,495 and 3,785 MiB</td>
+<td style="text-align:right">13,509 and 3,888 MiB</td>
+</tr>
+<tr>
+<td>Requests to storage that failed</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Neither 24 nor 48 was reached: no write of those three runs was told to wait, and their fills took the same time, 1,921 to 1,944 s. Every commit waited for its log's upload over the link, a quarter of a second, which held the 64 clients to some 270 commits a second, and the merges kept up with that to within 20 to 25 runs. A bound of 12 was reached: 212,248 and 44,023 commits were told to wait, the fills took 12 and 3 per cent longer than those of 24 and 48, and it did not keep the runs down, 23 and 24 at most, since the runs a merge under way takes count as one. Each server that opened the database after the kill began a merge of the runs that were more than twelve; in the second run of 12 the writes over the database were told to wait while that merge ran, 29,607 times, and were taken at 110 a second where the others took 255 to 295. The reads and scans followed how many runs the database had when its server was killed, which the moment of the kill decides, and not the bound. A read of a key that neither cache holds asks the store for a block in each run, one after another, each a round trip over this link: with 15 runs and then 12, 22 and 86 reads a second; with 19 to 26 runs, 10 to 32. So twenty-four stays. Over this link it was not reached, and twelve held writes back without holding the runs down.</p>
+<p>A write at the quota waited 511 to 582 s. That is more than one merge of the database takes over the link, about 350 s for reading 1.2 GiB at 16 MB a second and writing 2 GiB at 8, since it waits as well for the end of a merge that the writes over the database had begun.</p>
 <h2 id="what-it-costs-in-requests">What it costs in requests<a class="anchor" href="#what-it-costs-in-requests" aria-label="Link to this section">#</a></h2>
 <p>Uploads are free on B2; HEAD and GET are billed per call, LIST at a higher rate. Per request:</p>
 <table>
@@ -1464,7 +1621,7 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 <li>A database larger than 1 GiB on a provider's bucket, or larger than 16 GiB anywhere. A database larger than its server's disk cache on a bucket, where what <a href="#a-large-database">a large database</a> shows of the disk cache would be paid for.</li>
 </ul>
 </article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="architecture.html"><span>Previous</span>Architecture</a><a class="next" href="verification.html"><span>Next</span>Verification</a></nav></main>
-<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#when-many-databases-collect-at-once">When many databases collect at once</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#a-large-database">A large database</a></li><li class="h3"><a href="#when-merges-fall-behind">When merges fall behind</a></li><li class="h3"><a href="#several-databases-merging-at-once">Several databases merging at once</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
+<nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#what-a-request-costs">What a request costs</a></li><li class="h2"><a href="#local-directory">Local directory</a></li><li class="h2"><a href="#backblaze-b2">Backblaze B2</a></li><li class="h3"><a href="#when-many-databases-collect-at-once">When many databases collect at once</a></li><li class="h3"><a href="#opening-a-database">Opening a database</a></li><li class="h3"><a href="#on-kubernetes">On Kubernetes</a></li><li class="h2"><a href="#the-allocator">The allocator</a></li><li class="h2"><a href="#memory-under-load">Memory under load</a></li><li class="h2"><a href="#a-large-database">A large database</a></li><li class="h3"><a href="#when-merges-fall-behind">When merges fall behind</a></li><li class="h3"><a href="#several-databases-merging-at-once">Several databases merging at once</a></li><li class="h3"><a href="#over-a-slow-link">Over a slow link</a></li><li class="h2"><a href="#what-it-costs-in-requests">What it costs in requests</a></li><li class="h2"><a href="#what-is-not-measured-yet">What is not measured yet</a></li></ul></nav>
 </div>
 <footer class="site-footer">
 <div class="wrap">
