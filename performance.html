@@ -1509,7 +1509,46 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>With 2.1.10 the small database had 18 runs at most where it had had 48, and the two merges took half as long again and more. It was written by 64 clients and flushed about every eight seconds, and had a merge due after almost every flush; so each large merge gave its turn up at almost every table, waited while the small one merged over the link, and read again what it had read ahead. Its strong reads were held to some 110 a second in both by the claim check each one waits for, a round trip over the link, and not by its runs, whose tables were in the server's disk cache.</p>
+<p>With 2.1.10 the small database had 18 runs at most where it had had 48, and the two merges took half as long again and more. It was written by 64 clients and flushed about every eight seconds, and had a merge due after almost every flush; so each large merge gave its turn up at almost every table, waited while the small one merged over the link, and read again what it had read ahead. That is one run of each. At a quarter of the size, with a disk cache of 256 MiB, two runs of the code on <code>main</code> after 2.1.10 differed from each other as much as these releases do:</p>
+<pre><code class="language-sh">RUST_LOG=durable_db=debug SOAK_LOG=server.log DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=256 SOAK_CACHE_MIB=256 scripts/soak-tenants.sh
+</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:right">2.1.9</th>
+<th style="text-align:right"><code>main</code> after 2.1.10, first run</th>
+<th style="text-align:right">second run</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each write at a quota waited</td>
+<td style="text-align:right">128 s, 127 s</td>
+<td style="text-align:right">154 s, 210 s</td>
+<td style="text-align:right">131 s, 109 s</td>
+</tr>
+<tr>
+<td>The small database's most runs</td>
+<td style="text-align:right">12</td>
+<td style="text-align:right">9</td>
+<td style="text-align:right">4</td>
+</tr>
+<tr>
+<td>Read from storage and sent to it, until the last was taken</td>
+<td style="text-align:right">463 MiB and 723 MiB</td>
+<td style="text-align:right">826 MiB and 1,337 MiB</td>
+<td style="text-align:right">408 MiB and 821 MiB</td>
+</tr>
+<tr>
+<td>What the small database's merges stored meanwhile, by the server's log</td>
+<td style="text-align:right"></td>
+<td style="text-align:right">244 MiB</td>
+<td style="text-align:right">89 MiB</td>
+</tr>
+</tbody>
+</table>
+<p>The runs were made the night after 2.1.10 was released, on the desktop, each while other measurements ran beside it; over this link the link is the limit, not the processors. Both costs of turns show in them, what the small database's merges send and what the large merges read again, and neither in the same proportion twice. Its strong reads were held to some 110 a second in both by the claim check each one waits for, a round trip over the link, and not by its runs, whose tables were in the server's disk cache.</p>
 <h3 id="over-a-slow-link">Over a slow link<a class="anchor" href="#over-a-slow-link" aria-label="Link to this section">#</a></h3>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=2048 SOAK_READ_CLIENTS=8 SOAK_SECONDS=30 scripts/soak-size.sh
 </code></pre>
