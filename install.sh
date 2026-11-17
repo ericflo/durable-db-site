@@ -12,7 +12,10 @@ case "$(uname -s)-$(uname -m)" in
   *) echo 'Prebuilt binaries are for Linux x86_64. On other platforms, build from source: see docs/development.md.' >&2; exit 1 ;;
 esac
 tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT HUP INT TERM
+trap 'rm -rf "$tmp"' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 base="https://github.com/ericflo/durable-db/releases/download/$version"
 curl --proto '=https' --tlsv1.2 -fLsS "$base/$asset" -o "$tmp/$asset" \
   && curl --proto '=https' --tlsv1.2 -fLsS "$base/SHA256SUMS" -o "$tmp/SHA256SUMS" \

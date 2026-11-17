@@ -21,7 +21,7 @@
 <header class="site-header">
 <div class="wrap">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
-<a class="release" href="deployment.html#install" aria-label="Release v2.1.10: install">v2.1.10</a>
+<a class="release" href="deployment.html#install" aria-label="Release v2.1.11: install">v2.1.11</a>
 <nav aria-label="Main">
 <a href="index.html#docs">Docs</a>
 <a href="api.html">API</a>
@@ -454,7 +454,8 @@
 <li>A collection ends at the first purge the store does not answer, and does not ask it for the rest. What is left is collected after the next flush, or by the next owner, which removes whatever an earlier one left.</li>
 <li>A round of housekeeping does not wait for a release. Each is made in a task of its own; no more are begun for a change of membership while sixteen are under way; and a server that stops waits for those that are.</li>
 </ul>
-<p>None of this changes what is deleted or when it may be: a purge that is not made deletes nothing. Four tests hold or fail single requests for it: a deletion and a release each end while a purge of a collection is held, a collection whose first purge fails makes no other and leaves the table a merge replaced to a later one, and a round of housekeeping ends while a release waits for the store, which a server that stops then waits for. Nine faults put into it one at a time each fail one of them.</p>
+<p>Since 2.1.11 the sweep of what an earlier owner left gives way as well. It is one listing of the whole database, and a release or a deletion that began while a new owner swept waited for it to end.</p>
+<p>None of this changes what is deleted or when it may be: a purge that is not made deletes nothing, and one the sweep sent that arrives late deletes only what every later owner's sweep would. Six tests hold or fail single requests for it: a deletion and a release each end while a purge of a collection is held, and each while a new owner's sweep is; a collection whose first purge fails makes no other and leaves the table a merge replaced to a later one; and a round of housekeeping ends while a release waits for the store, which a server that stops then waits for. Nine faults put into it one at a time each fail one of them, and the sweep that does not give way fails both of its tests.</p>
 <p>The run again, by <code>scripts/soak-bucket.sh</code>: 1,994 commits a second and none failed, 558 MiB at most, nothing held back. The 256 deletions took five minutes and none failed. The slowest took two: a deletion lists everything its database has, and that is the store's time. What that one waited for was not looked at.</p>
 </li>
 <li>
@@ -611,7 +612,7 @@
 <li>Run the bucket tests and benchmarks on Amazon S3, Cloudflare R2 and Google Cloud Storage. The code path is shared with B2 except for the upload call, and has been run on three S3 servers that were each one process on one machine, which says nothing of a provider's consistency across its own machines. What Amazon and Google answer without an account is in finding 35. R2 answers nothing without one: its documentation lists the request that lists versions as not implemented, and what it answers to that request, which decides whether a server starts there, has been read about and not seen. On Google Cloud Storage a bucket's soft delete, which Google's documentation gives as on for a new bucket, keeps what is removed for seven days more; whether a purge is then complete has not been tried.</li>
 <li>A soak of many hours under load with periodic failures, on a real multi-node cluster rather than kind. What has been run is half an hour on one desktop with a server stopped every ten seconds (<code>scripts/soak-kills.sh</code>).</li>
 <li>The memory soak for hours, and on a provider's bucket, where an upload stays in memory for as long as the bucket takes to store it. On a local directory it has run for ten minutes a load, and on MinIO on the same desktop for twenty minutes of 256 databases (<code>scripts/soak-bucket.sh</code>, finding 39): memory was level in both. On Backblaze B2 with the default flags it was still rising after eleven minutes (finding 37).</li>
-<li>A store that is slow holds up more than the request that waits for it. A collection holds its database's next flush for as long as one purge takes to fail, which is a minute when a listing is not answered; and the sweep of what an earlier owner left, one listing of the whole database, does not give way to a release as a collection does (finding 40).</li>
+<li>A store that is slow holds up more than the request that waits for it. A collection holds its database's next flush for as long as one purge takes to fail, which is a minute when a listing is not answered (finding 40).</li>
 <li>Which tables a disk cache smaller than what its server reads should hold. It keeps those that were read in the last five minutes, whichever came first, and does not count how often each is read; a server that writes much through such a cache fetches again what its writes put out. Neither has been measured under a load that changes.</li>
 <li>One database larger than 1 GiB on a provider's bucket, larger than 16 GiB anywhere, or larger than its server's disk cache on a bucket. What a write at the quota waits for, a merge of everything, has been timed over one desktop's uplink only.</li>
 <li>Model a delete request that arrives late, and the receipt window after which a retry is applied again.</li>
@@ -632,7 +633,7 @@
 <div class="wrap">
 <div>
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.10, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database in one static Rust binary. v2.1.11, <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
 <nav aria-label="Footer">
 <a href="index.html#quickstart">Quick start</a>
