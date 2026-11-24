@@ -4,39 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Architecture · durable-db</title>
-<meta name="description" content="The objects in the bucket, taking ownership, committing, reading, collection and failures.">
+<meta name="description" content="Bucket object layout, taking ownership, commits, reads, compaction, collection, and failure modes.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Architecture · durable-db">
-<meta property="og:description" content="The objects in the bucket, taking ownership, committing, reading, collection and failures.">
+<meta property="og:description" content="Bucket object layout, taking ownership, commits, reads, compaction, collection, and failure modes.">
+<meta property="og:image" content="https://durable-db.neuralcolumn.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Architecture · durable-db">
+<meta name="twitter:description" content="Bucket object layout, taking ownership, commits, reads, compaction, collection, and failure modes.">
+<meta name="twitter:image" content="https://durable-db.neuralcolumn.com/og.jpg">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&amp;display=swap">
 <link rel="stylesheet" href="style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+document.documentElement.classList.add('js');
+try {
+  const saved = localStorage.getItem('ddb-theme');
+  if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+} catch {}
+</script>
 <script src="site.js" defer></script>
 </head>
-<body>
+<body class="page-docs">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
 <div class="wrap">
+<div class="brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
 <a class="release" href="deployment.html#install" aria-label="Release v2.1.12: install">v2.1.12</a>
-<nav aria-label="Main">
-<a href="index.html#docs">Docs</a>
+</div>
+<nav class="main-nav" aria-label="Main">
+<a href="index.html#watch">Explainer</a>
+<a href="architecture.html" aria-current="page">Architecture</a>
 <a href="api.html">API</a>
 <a href="clients.html">SDK</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="index.html#docs">Docs</a>
+</nav>
+<div class="header-actions">
+<a class="icon-btn" href="https://github.com/ericflo/durable-db" aria-label="Source on GitHub" title="Source on GitHub">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+</a>
+<button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Switch color theme" title="Switch color theme" hidden>
+<svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+</button>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+<details class="mobile-menu">
+<summary class="icon-btn" aria-label="Open navigation menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+<nav aria-label="Mobile">
+<a href="index.html#watch">Explainer film</a>
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html" aria-current="page">Architecture</a>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub ↗</a>
 </nav>
-<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</details>
+</div>
 </div>
 </header>
 
 <div class="docs wrap">
 <details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html" aria-current="page">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
-<main id="main"><article><h1>Architecture</h1>
+<main id="main"><article><p class="doc-kicker">Protocol · v2.1.12</p><h1>Architecture</h1>
 <p>durable-db stores each database as a set of immutable objects in a bucket. Servers hold nothing that matters: any server can be killed at any moment, and any other server can rebuild every database from the bucket alone. This page describes exactly how.</p>
 <h2 id="what-storage-must-provide">What storage must provide<a class="anchor" href="#what-storage-must-provide" aria-label="Link to this section">#</a></h2>
 <p>Six operations: <strong>PUT</strong>, <strong>GET</strong> (whole or a byte range), <strong>HEAD</strong>, <strong>LIST</strong> by prefix, <strong>DELETE</strong>, and a version-aware delete used only for cleanup: it lists the versions under a prefix and removes them by name, up to a thousand with one request where the store takes such a request and one at a time where it does not. A store that has no request that lists versions keeps none, and there the keys are listed and removed. Two guarantees:</p>
@@ -47,7 +88,7 @@
 <p>Nothing else. No conditional writes (<code>If-Match</code>, <code>If-None-Match</code>), no transactions, no locks, no leases, no synchronized clocks. Backblaze B2 rejects conditional writes outright, which is why the protocol is built without them; Amazon S3, Cloudflare R2, MinIO and a local directory satisfy the same contract, so all of them run the same code. <a href="verification.html#what-has-been-run-where">Verification</a> says which of them it has been run on.</p>
 <h2 id="what-is-in-the-bucket">What is in the bucket<a class="anchor" href="#what-is-in-the-bucket" aria-label="Link to this section">#</a></h2>
 <p>For a database named <code>app</code>, under <code>&lt;prefix&gt;/db/app/</code>:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Key</th>
@@ -83,7 +124,7 @@
 </tr>
 </tbody>
 </table>
-<p>An <strong>epoch</strong> is <code>&lt;number&gt;-&lt;random&gt;</code>, written in fixed width so that sorting keys sorts epochs. A server picks a new epoch every time it takes ownership of a database. Because the random part is fresh, every key below an epoch is written by exactly one process. That is the reason no write ever needs to be conditional: two servers can never write the same key.</p>
+</div><p>An <strong>epoch</strong> is <code>&lt;number&gt;-&lt;random&gt;</code>, written in fixed width so that sorting keys sorts epochs. A server picks a new epoch every time it takes ownership of a database. Because the random part is fresh, every key below an epoch is written by exactly one process. That is the reason no write ever needs to be conditional: two servers can never write the same key.</p>
 <p>Every object is immutable. An upload may be repeated, but always with identical bytes.</p>
 <h2 id="taking-ownership">Taking ownership<a class="anchor" href="#taking-ownership" aria-label="Link to this section">#</a></h2>
 <p>A server that wants to serve a database does this, in order:</p>
@@ -162,7 +203,7 @@
 </ul>
 <p>Membership is only a routing preference. Two servers with different views of the membership may both try to serve a database; the claim protocol lets exactly one of them acknowledge anything, and the other relays or retries. No Kubernetes lease, pod-local lock, clock or cache is ever relied on for correctness.</p>
 <h2 id="what-happens-when-things-fail">What happens when things fail<a class="anchor" href="#what-happens-when-things-fail" aria-label="Link to this section">#</a></h2>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Event</th>
@@ -207,8 +248,8 @@
 <td>A request that is refused is sent again, as one that was lost is. After eight refusals in a row of one kind of request, with none taken between them, a server sends no more of that kind: they fail in the server, and commits and strong reads fail with <code>503</code>. After a second, or after as long as the store asked for, one request is sent, and when one is taken all are sent again. Reads, listings, changes, and on Backblaze B2 uploads and the calls that name a storage pod are each counted apart. A server does not keep itself under a rate: a store that takes some of what it is sent is sent all of it.</td>
 </tr>
 <tr>
-<td>Storage is slow: a request is not answered within twenty seconds.</td>
-<td>The request is given up and sent again, as one that was lost is, and is not counted as a refusal: every request goes on being sent. What waited for it fails if the store stays slow. A purge that fails leaves what it would have removed in the bucket and ends the collection it was part of; the next collection removes it. A collection that is waiting for the store gives way to a release or a deletion of its database, and a server's housekeeping waits for no release.</td>
+<td>Storage is slow: a request is not answered within twenty seconds (two minutes for a purge request).</td>
+<td>The request is given up and sent again, as one that was lost is, and is not counted as a refusal: every request goes on being sent. What waited for it fails if the store stays slow. Collection runs in its own task outside database maintenance so a slow store does not hold flushes; a purge that fails leaves what it would have removed in the bucket and ends the collection it was part of, and the next collection removes it. A collection that is waiting for the store gives way to a release or a deletion of its database, and a server's housekeeping waits for no release.</td>
 </tr>
 <tr>
 <td>Every server is gone.</td>
@@ -228,7 +269,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="limits-of-this-design">Limits of this design<a class="anchor" href="#limits-of-this-design" aria-label="Link to this section">#</a></h2>
+</div><h2 id="limits-of-this-design">Limits of this design<a class="anchor" href="#limits-of-this-design" aria-label="Link to this section">#</a></h2>
 <ul>
 <li><strong>One writer per database at a time.</strong> A database's write throughput comes from grouping transactions into frames, not from spreading it over servers. Spread load by using more databases.</li>
 <li><strong>A commit costs one upload and one HEAD.</strong> That is the floor: about 80 ms on B2 from a distance, a few milliseconds on a local disk.</li>
@@ -244,22 +285,33 @@
 </div>
 <footer class="site-footer">
 <div class="wrap">
-<div>
+<div class="footer-brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.12, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database whose only state is an object-storage bucket. One static Rust binary · v2.1.12 · <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
-<nav aria-label="Footer">
+<div class="footer-cols">
+<nav aria-label="Product">
+<p>Start</p>
+<a href="index.html#watch">Explainer film</a>
 <a href="index.html#quickstart">Quick start</a>
+<a href="index.html#limits">Limits</a>
+<a href="install.sh">install.sh</a>
+</nav>
+<nav aria-label="Documentation">
+<p>Docs</p>
 <a href="deployment.html">Deployment</a>
 <a href="api.html">HTTP API</a>
 <a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html" aria-current="page">Architecture</a>
+</nav>
+<nav aria-label="Engineering">
+<p>Engineering</p>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
-<a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
+<a href="https://github.com/ericflo/durable-db">GitHub ↗</a>
 </nav>
+</div>
 </div>
 </footer>
 </body>

@@ -4,39 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JavaScript and TypeScript client · durable-db</title>
-<meta name="description" content="The typed client: reads, transactions, checks, errors and retries. The pi-durable storage adapter.">
+<meta name="description" content="Zero-dependency typed client with retries and revision tracking, plus the pi-durable agent storage adapter.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="JavaScript and TypeScript client · durable-db">
-<meta property="og:description" content="The typed client: reads, transactions, checks, errors and retries. The pi-durable storage adapter.">
+<meta property="og:description" content="Zero-dependency typed client with retries and revision tracking, plus the pi-durable agent storage adapter.">
+<meta property="og:image" content="https://durable-db.neuralcolumn.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JavaScript and TypeScript client · durable-db">
+<meta name="twitter:description" content="Zero-dependency typed client with retries and revision tracking, plus the pi-durable agent storage adapter.">
+<meta name="twitter:image" content="https://durable-db.neuralcolumn.com/og.jpg">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&amp;display=swap">
 <link rel="stylesheet" href="style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+document.documentElement.classList.add('js');
+try {
+  const saved = localStorage.getItem('ddb-theme');
+  if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+} catch {}
+</script>
 <script src="site.js" defer></script>
 </head>
-<body>
+<body class="page-docs">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
 <div class="wrap">
+<div class="brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
 <a class="release" href="deployment.html#install" aria-label="Release v2.1.12: install">v2.1.12</a>
-<nav aria-label="Main">
-<a href="index.html#docs">Docs</a>
+</div>
+<nav class="main-nav" aria-label="Main">
+<a href="index.html#watch">Explainer</a>
+<a href="architecture.html">Architecture</a>
 <a href="api.html">API</a>
 <a href="clients.html" aria-current="page">SDK</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="index.html#docs">Docs</a>
+</nav>
+<div class="header-actions">
+<a class="icon-btn" href="https://github.com/ericflo/durable-db" aria-label="Source on GitHub" title="Source on GitHub">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+</a>
+<button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Switch color theme" title="Switch color theme" hidden>
+<svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+</button>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+<details class="mobile-menu">
+<summary class="icon-btn" aria-label="Open navigation menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+<nav aria-label="Mobile">
+<a href="index.html#watch">Explainer film</a>
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html" aria-current="page">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub ↗</a>
 </nav>
-<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</details>
+</div>
 </div>
 </header>
 
 <div class="docs wrap">
 <details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html" aria-current="page">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
-<main id="main"><article><h1>JavaScript and TypeScript client</h1>
+<main id="main"><article><p class="doc-kicker">Client · v2.1.12</p><h1>JavaScript and TypeScript client</h1>
 <p><code>@durable-db/client</code> is the TypeScript client for durable-db's <a href="api.html">HTTP API</a>. It has no runtime dependencies and uses the global <code>fetch</code>, so it runs on Node.js 22 or later and other runtimes with <code>fetch</code> and Web Crypto. It also contains a storage adapter for <a href="#pi-durable-storage">pi-durable</a>.</p>
 <p>The package is not on npm. Build it in this repository and add it to an application by path:</p>
 <pre><code class="language-sh">npm ci --prefix clients/javascript     # installs and builds dist/
@@ -60,7 +101,7 @@ const ada = await db.get&lt;{ name: string; logins: number }&gt;('users/ada');
 await db.delete('users/ada');
 </code></pre>
 <p>A key is a string of 1 to 1,024 bytes. A value is any JSON except <code>null</code>, up to 4 MiB. <code>get</code> returns <code>undefined</code> for a key that does not exist. The type argument describes what your application stored; the client does not validate it. Keep tokens on the server, never in a browser bundle.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Method</th>
@@ -106,7 +147,7 @@ await db.delete('users/ada');
 </tr>
 </tbody>
 </table>
-<h2 id="listing">Listing<a class="anchor" href="#listing" aria-label="Link to this section">#</a></h2>
+</div><h2 id="listing">Listing<a class="anchor" href="#listing" aria-label="Link to this section">#</a></h2>
 <p>Keys are ordered by their UTF-8 bytes. A range is selected by <code>prefix</code>, <code>start</code> (inclusive) and <code>end</code> (exclusive), in any combination.</p>
 <pre><code class="language-ts">const page = await db.list&lt;{ title: string }&gt;({ prefix: 'tasks/', limit: 20 });
 for (const { key, value, version } of page.items) console.log(key, value.title, version);
@@ -150,7 +191,7 @@ await db.commit({
 });
 </code></pre>
 <p>When a check fails, <code>commit</code> throws <code>ConflictError</code> and nothing is written. The checks are:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Check</th>
@@ -172,7 +213,7 @@ await db.commit({
 </tr>
 </tbody>
 </table>
-<p>A transaction holds at most 10,000 writes and checks. <code>commitAll([...])</code> sends several transactions in one round trip. They apply in order, each atomic and with its own revision, and it returns one <code>{ revision }</code> or <code>{ error }</code> per transaction. The first failure stops the rest.</p>
+</div><p>A transaction holds at most 10,000 writes and checks. <code>commitAll([...])</code> sends several transactions in one round trip. They apply in order, each atomic and with its own revision, and it returns one <code>{ revision }</code> or <code>{ error }</code> per transaction. The first failure stops the rest.</p>
 <p>Every commit carries an idempotency key, by default a random one. Pass <code>idempotencyKey</code> to make your own retries safe: a commit repeated with the same key and the same contents returns the first result instead of applying again.</p>
 <h2 id="consistency">Consistency<a class="anchor" href="#consistency" aria-label="Link to this section">#</a></h2>
 <p>Reads are <code>strong</code> by default: they reflect every transaction acknowledged before the read was sent, at the cost of one storage round trip on the server. A <code>session</code> read is served from the server's memory.</p>
@@ -183,7 +224,7 @@ await fast.get('settings', { consistency: 'strong' }); // one strong read
 <p>The client remembers the highest revision it has seen, in <code>db.revision</code>, and sends it with every session read. A session read therefore always includes this client's own writes and never goes back in time. It can miss a write another client made a moment ago. Reads inside <code>transaction</code> are session reads; the checks at commit make that safe.</p>
 <h2 id="errors-and-retries">Errors and retries<a class="anchor" href="#errors-and-retries" aria-label="Link to this section">#</a></h2>
 <p>Every failed request throws a <code>DatabaseError</code> with <code>status</code>, <code>code</code> (the server's error code), <code>retryable</code> and <code>message</code>.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Class</th>
@@ -239,7 +280,7 @@ await fast.get('settings', { consistency: 'strong' }); // one strong read
 </tr>
 </tbody>
 </table>
-<pre><code class="language-ts">import { ConflictError, QuotaError } from '@durable-db/client';
+</div><pre><code class="language-ts">import { ConflictError, QuotaError } from '@durable-db/client';
 
 try {
   await db.commit({ checks: [{ key: 'slug/hello', version: 0 }], writes: [{ key: 'slug/hello', value: 1 }] });
@@ -299,7 +340,7 @@ npm run format:check    # prettier; npm run format rewrites
 npm run bench           # pi-durable's storage benchmarks against the adapter
 </code></pre>
 <p><code>npm test</code> and <code>npm run bench</code> start a server on a free port with a temporary data directory and stop it afterwards. They run the executable named by <code>DURABLE_DB_BINARY</code>, else <code>target/release/durable-db</code> in this repository (<code>cargo build --release</code>), else <code>durable-db</code> on the <code>PATH</code>.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Path</th>
@@ -337,27 +378,38 @@ npm run bench           # pi-durable's storage benchmarks against the adapter
 </tr>
 </tbody>
 </table>
-</article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="api.html"><span>Previous</span>HTTP API</a><a class="next" href="architecture.html"><span>Next</span>Architecture</a></nav></main>
+</div></article><nav class="pager" aria-label="Previous and next page"><a class="previous" href="api.html"><span>Previous</span>HTTP API</a><a class="next" href="architecture.html"><span>Next</span>Architecture</a></nav></main>
 <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li class="h2"><a href="#quick-start">Quick start</a></li><li class="h2"><a href="#listing">Listing</a></li><li class="h2"><a href="#transactions">Transactions</a></li><li class="h2"><a href="#commit-with-your-own-checks">Commit with your own checks</a></li><li class="h2"><a href="#consistency">Consistency</a></li><li class="h2"><a href="#errors-and-retries">Errors and retries</a></li><li class="h2"><a href="#administration">Administration</a></li><li class="h2"><a href="#testing-your-application">Testing your application</a></li><li class="h2"><a href="#pi-durable-storage">pi-durable storage</a></li><li class="h2"><a href="#development">Development</a></li></ul></nav>
 </div>
 <footer class="site-footer">
 <div class="wrap">
-<div>
+<div class="footer-brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.12, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database whose only state is an object-storage bucket. One static Rust binary · v2.1.12 · <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
-<nav aria-label="Footer">
+<div class="footer-cols">
+<nav aria-label="Product">
+<p>Start</p>
+<a href="index.html#watch">Explainer film</a>
 <a href="index.html#quickstart">Quick start</a>
+<a href="index.html#limits">Limits</a>
+<a href="install.sh">install.sh</a>
+</nav>
+<nav aria-label="Documentation">
+<p>Docs</p>
 <a href="deployment.html">Deployment</a>
 <a href="api.html">HTTP API</a>
 <a href="clients.html" aria-current="page">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
+</nav>
+<nav aria-label="Engineering">
+<p>Engineering</p>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
-<a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
+<a href="https://github.com/ericflo/durable-db">GitHub ↗</a>
 </nav>
+</div>
 </div>
 </footer>
 </body>

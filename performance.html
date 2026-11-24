@@ -4,45 +4,86 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Performance · durable-db</title>
-<meta name="description" content="Benchmark tables and the commands that reproduce them.">
+<meta name="description" content="Local NVMe, Backblaze B2, large-database, disk-cache, and Kubernetes measurements with commands to reproduce them.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Performance · durable-db">
-<meta property="og:description" content="Benchmark tables and the commands that reproduce them.">
+<meta property="og:description" content="Local NVMe, Backblaze B2, large-database, disk-cache, and Kubernetes measurements with commands to reproduce them.">
+<meta property="og:image" content="https://durable-db.neuralcolumn.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Performance · durable-db">
+<meta name="twitter:description" content="Local NVMe, Backblaze B2, large-database, disk-cache, and Kubernetes measurements with commands to reproduce them.">
+<meta name="twitter:image" content="https://durable-db.neuralcolumn.com/og.jpg">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&amp;display=swap">
 <link rel="stylesheet" href="style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+document.documentElement.classList.add('js');
+try {
+  const saved = localStorage.getItem('ddb-theme');
+  if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+} catch {}
+</script>
 <script src="site.js" defer></script>
 </head>
-<body>
+<body class="page-docs">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
 <div class="wrap">
+<div class="brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
 <a class="release" href="deployment.html#install" aria-label="Release v2.1.12: install">v2.1.12</a>
-<nav aria-label="Main">
-<a href="index.html#docs">Docs</a>
+</div>
+<nav class="main-nav" aria-label="Main">
+<a href="index.html#watch">Explainer</a>
+<a href="architecture.html">Architecture</a>
 <a href="api.html">API</a>
 <a href="clients.html">SDK</a>
+<a href="performance.html" aria-current="page">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="index.html#docs">Docs</a>
+</nav>
+<div class="header-actions">
+<a class="icon-btn" href="https://github.com/ericflo/durable-db" aria-label="Source on GitHub" title="Source on GitHub">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+</a>
+<button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Switch color theme" title="Switch color theme" hidden>
+<svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+</button>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+<details class="mobile-menu">
+<summary class="icon-btn" aria-label="Open navigation menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+<nav aria-label="Mobile">
+<a href="index.html#watch">Explainer film</a>
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
 <a href="performance.html" aria-current="page">Performance</a>
 <a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub ↗</a>
 </nav>
-<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</details>
+</div>
 </div>
 </header>
 
 <div class="docs wrap">
 <details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html" aria-current="page">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
-<main id="main"><article><h1>Performance</h1>
+<main id="main"><article><p class="doc-kicker">Benchmarks · v2.1.12</p><h1>Performance</h1>
 <p>Every number here was measured with <code>durable-db bench</code>, which is part of the binary, on 2026-11-14 with the static binary of release 2.1.1 as the server and as the load generator, except where a table names another release. The load is closed-loop: each client sends one request and waits for the answer, so latency is what a caller observes and throughput is completed requests over wall time. Values are 256 bytes of JSON. Reproduce any table with:</p>
 <pre><code class="language-sh">scripts/benchmark.sh          # against DURABLE_DB_URL, using DURABLE_DB_KEY_FILE
 </code></pre>
 <p><strong>A correction to release 2.0.0.</strong> The read figures published with it were measured with a build linked with glibc, not with the static binary the release shipped. That binary reads about a tenth as fast wherever a read does not wait for storage. Measured again with the release binary itself on a local directory: 21,376 strong reads/s from 32 clients where 194,523 were published, 18,305 from 256 clients where 335,187 were published, and 25,889 session reads/s where 276,569 were published. Its commits were within what one run differs from the next, and a request that waits for a bucket is limited by the bucket. <a href="#the-allocator">The allocator</a> has the cause and what was done.</p>
 <h2 id="what-a-request-costs">What a request costs<a class="anchor" href="#what-a-request-costs" aria-label="Link to this section">#</a></h2>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Request</th>
@@ -73,10 +114,10 @@
 </tr>
 </tbody>
 </table>
-<p>Throughput on one database comes from grouping: all transactions that arrive during an upload ride the next one. More clients mean larger groups, not more uploads.</p>
+</div><p>Throughput on one database comes from grouping: all transactions that arrive during an upload ride the next one. More clients mean larger groups, not more uploads.</p>
 <h2 id="local-directory">Local directory<a class="anchor" href="#local-directory" aria-label="Link to this section">#</a></h2>
 <p>One server, <code>durable-db serve --data</code>, writes flushed to disk before they are acknowledged. A 32-core desktop with a consumer NVMe drive on which one flush takes about 3 ms; a commit needs two (the file and its directory entry).</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Workload</th>
@@ -148,11 +189,11 @@
 </tr>
 </tbody>
 </table>
-<p>Commit latency is the disk's flush time and does not grow with load; throughput grows with clients because each flush carries more transactions. The median of the last row lies between its reads, which take a tenth of a millisecond, and its commits, which take fifteen, and so moves from run to run: 0.4, 0.5, 1.6 and 7.9 ms were measured. Commits from 256 clients also vary between runs, from 12,600 to 18,200 a second across the builds measured for this page.</p>
+</div><p>Commit latency is the disk's flush time and does not grow with load; throughput grows with clients because each flush carries more transactions. The median of the last row lies between its reads, which take a tenth of a millisecond, and its commits, which take fifteen, and so moves from run to run: 0.4, 0.5, 1.6 and 7.9 ms were measured. Commits from 256 clients also vary between runs, from 12,600 to 18,200 a second across the builds measured for this page.</p>
 <p>Nothing in release 2.1.1 changes what a local directory does, and two rows of this table differed from the run published with 2.1.0, which measured 186 commits/s from one client and a p99 of 14.2 ms on the fourth row. The two releases were therefore run on those rows in turn, on a new server and directory each time. One client, three rounds: 171, 177 and 166 commits/s with 2.1.0, and 180, 172 and 182 with 2.1.1. 64 databases, eight rounds: 5,177 to 5,340 commits/s with 2.1.0 and 5,282 to 5,536 with 2.1.1, apart from one run of 7,499 whose median was 7 ms instead of 12. The p99 was 15 to 16 ms in seven rounds with 2.1.0 and 25 ms in the eighth; with 2.1.1 it was 14 to 19 ms in five rounds and 23, 25 and 37 ms in the others. These rows are the drive's flush time, and it moves by that much from run to run.</p>
 <h2 id="backblaze-b2">Backblaze B2<a class="anchor" href="#backblaze-b2" aria-label="Link to this section">#</a></h2>
 <p>One server on the same desktop, which reaches the internet over Wi-Fi and a residential connection, 22 ms from B2's <code>us-west-002</code> region, with default settings.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Workload</th>
@@ -224,10 +265,10 @@
 </tr>
 </tbody>
 </table>
-<p><strong>B2's own latency sets these numbers, and it varies.</strong> The table is one run. Earlier the same day the run published with release 2.0.0 measured 118 ms for a single-client commit where this one measured 77 ms. Expect a factor of two between good and bad hours, and less latency from a server closer to the bucket. One client's commit, at the median, on 14 November: 64 to 76 ms in the morning, Pacific time, 99 and 107 ms at about two in the afternoon, and 86 to 91 ms at four, when releases 2.1.1 and 2.1.3 were run twice each in turn for 30 seconds and measured alike, while one ping in ten to the desktop's router took longer than half a second. Where this page compares two releases, they were run in turn within the same half hour.</p>
+</div><p><strong>B2's own latency sets these numbers, and it varies.</strong> The table is one run. Earlier the same day the run published with release 2.0.0 measured 118 ms for a single-client commit where this one measured 77 ms. Expect a factor of two between good and bad hours, and less latency from a server closer to the bucket. One client's commit, at the median, on 14 November: 64 to 76 ms in the morning, Pacific time, 99 and 107 ms at about two in the afternoon, and 86 to 91 ms at four, when releases 2.1.1 and 2.1.3 were run twice each in turn for 30 seconds and measured alike, while one ping in ten to the desktop's router took longer than half a second. Where this page compares two releases, they were run in turn within the same half hour.</p>
 <p><strong>Many databases committing at once was where B2 was slowest, and the cause was in durable-db.</strong> Clients of one database share an upload; 64 databases need 64 uploads at a time. A B2 upload URL names one storage pod and serves one upload at a time, so each of them needs a pod of its own. Up to release 2.1.0 every commit also sent one of its two racing uploads to a pod the server had never used. A new pod costs a call for its URL, a name lookup and a TLS connection, and 64 busy databases asked for about 160 new pods a second. From this desktop, one such upload in fourteen failed after waiting five seconds for a connection and the others took 0.8 s at the median, while uploads to pods already in use took 76 ms. Since 2.1.1 the upload a commit waits for goes to the fastest pod the server knows, and a duplicate is sent only where a pod can be spared (<a href="verification.html#what-these-checks-found">verification</a>, finding 27).</p>
 <p>The two releases were run on this row in turn, three times each. Every time a new server was started and the row was run twice on it, ten seconds each:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>64 clients over 64 databases</th>
@@ -273,11 +314,11 @@
 </tr>
 </tbody>
 </table>
-<p>No commit failed in any run. A new server knows no pods, so its first seconds are its slowest: the first uploads of all 64 databases go to new pods at once. The attempts that still fail with 2.1.1 are of two kinds, and each is sent again or has another upload beside it: a pod answers at once that it cannot take the upload, which B2 does routinely and after which durable-db drops that pod, and an upload to a new pod gives up after five seconds without a connection. In a run that recorded them, four in five were of the first kind. To repeat a column, start a server of that release and run <code>durable-db bench --workload write --clients 64 --databases 64</code> against it twice.</p>
+</div><p>No commit failed in any run. A new server knows no pods, so its first seconds are its slowest: the first uploads of all 64 databases go to new pods at once. The attempts that still fail with 2.1.1 are of two kinds, and each is sent again or has another upload beside it: a pod answers at once that it cannot take the upload, which B2 does routinely and after which durable-db drops that pod, and an upload to a new pod gives up after five seconds without a connection. In a run that recorded them, four in five were of the first kind. To repeat a column, start a server of that release and run <code>durable-db bench --workload write --clients 64 --databases 64</code> against it twice.</p>
 <p>This desktop keeps no cache of name lookups, so every new connection asks its provider's resolvers, and it does so over Wi-Fi. That made new pods dearer here than they may be for a server in a data centre, and it has not been measured from one.</p>
 <p><strong>The slowest commits in these tables are stalls of the desktop's link, not of B2 and not of durable-db.</strong> The desktop is on Wi-Fi. A ping to its own router, five a second for 80 seconds, had 12 of 394 replies delayed by more than half a second, the longest by 2.4 s. A build that logged every request showed what such a moment is to the server: in one, four uploads to four different pods and a name lookup all took over a second at once; in another, a claim check and an unrelated upload did. One request to the bucket carries every commit of its group, so a row of ten seconds with a stall in it reports the stall as its 99th percentile. In the table above that is the 2.7 s of the second row and the 0.9 s of the row with idempotency keys.</p>
 <p>With one database the two releases were run in turn for 30 seconds each, three times, on a new server each time, with the same ping running alongside:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>One database, 30 seconds</th>
@@ -318,7 +359,7 @@
 </tr>
 </tbody>
 </table>
-<p>Eleven of the twelve runs had no ping reply later than half a second. The twelfth had eight, the longest 1.7 s, and it is the run whose p99 is 1.6 s. 2.1.1 is the faster with one database too: every other duplicate goes to the next fastest pod the server knows, where 2.1.0 sent the duplicate that starts with the upload to a new pod every time. To repeat a column, run <code>durable-db bench --workload write --clients 32 --seconds 30</code> against a new server of that release, and <code>ping -i 0.2</code> to the router beside it.</p>
+</div><p>Eleven of the twelve runs had no ping reply later than half a second. The twelfth had eight, the longest 1.7 s, and it is the run whose p99 is 1.6 s. 2.1.1 is the faster with one database too: every other duplicate goes to the next fastest pod the server knows, where 2.1.0 sent the duplicate that starts with the upload to a new pod every time. To repeat a column, run <code>durable-db bench --workload write --clients 32 --seconds 30</code> against a new server of that release, and <code>ping -i 0.2</code> to the router beside it.</p>
 <p>Two things keep B2's slow moments from becoming yours:</p>
 <ul>
 <li><strong>Known pods first, and a duplicate where one can be spared.</strong> B2 stores each upload on one of many storage pods, and pods differ: the same 4 KiB upload measured medians from 67 ms to over 900 ms on eight pods at one moment, and of ten new pods tried one at a time four were fast. durable-db keeps the pods it has used in order of speed. The upload a commit waits for takes the fastest one that is free. An identical upload starts beside it on another pod, a slower known one or a new one, and one more every 150 ms while none has finished, up to four; the first to finish wins. At most eight new pods are on trial at a time, and when many databases commit at once and no pod can be spared, the duplicate is not sent. Uploads are free on B2. In five logged runs with one database, one upload in five finished on the duplicate and not on the upload it started beside.</li>
@@ -328,7 +369,7 @@
 <p>Collection lists the versions it may remove and removes them. Up to release 2.1.1 every version was removed with a request of its own, 32 at a time for each database. Three things make many databases collect in the same second: databases that stop being written together flush together five seconds later, a server that is stopped seals and collects every database it holds, and databases that began together reach their 512th group of commits together. With 64 databases the server then opened about a thousand connections to B2 at once and B2 reset some of them. A purge whose request was reset failed, and what it had not removed waited for the next collection. Nothing was lost by that, and nothing was reported: the failure was a line in the debug log that did not say what had failed.</p>
 <p>Since 2.1.2 one request removes up to a thousand versions, which B2 answered in 0.25 s, and a request of a purge that is not answered is sent again twice before the purge fails (<a href="verification.html#what-these-checks-found">verification</a>, finding 32).</p>
 <p><strong>64 databases written for ten seconds, left alone, and the server stopped 25 seconds later.</strong> Two runs of each release in turn:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -359,9 +400,9 @@
 </tr>
 </tbody>
 </table>
-<p>Four more runs of 2.1.1 made earlier the same day measured 35 to 67 failed purges of about 190, 1,171 to 1,297 open files and 136 to 169 MiB.</p>
+</div><p>Four more runs of 2.1.1 made earlier the same day measured 35 to 67 failed purges of about 190, 1,171 to 1,297 open files and 136 to 169 MiB.</p>
 <p><strong>64 clients over 64 databases for 100 seconds</strong>, so that every database flushes and collects once while it is written:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -397,9 +438,9 @@
 </tr>
 </tbody>
 </table>
-<p>The three runs are in the order 2.1.2, 2.1.1, 2.1.2. Three runs of 2.1.1 made about an hour earlier measured 644, 651 and 643 commits/s with a p99 of 282, 268 and 298 ms, and 124 of 668, 162 of 621 and 154 of 647 failed purges: its failures are in every run, and its slower commits in the run above are not.</p>
+</div><p>The three runs are in the order 2.1.2, 2.1.1, 2.1.2. Three runs of 2.1.1 made about an hour earlier measured 644, 651 and 643 commits/s with a p99 of 282, 268 and 298 ms, and 124 of 668, 162 of 621 and 154 of 647 failed purges: its failures are in every run, and its slower commits in the run above are not.</p>
 <p><strong>256 databases, one client each, the same way</strong>: ten seconds of writes on a new server, 25 seconds alone, then stopped. Two runs of each release in turn, each server held to 4,096 open files:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -440,9 +481,9 @@
 </tr>
 </tbody>
 </table>
-<p>The last two rows are a new server's first ten seconds with more databases than it knows storage pods for, which this page had not measured before. Committing is the same code in both releases, and the row moves by a factor of three: two earlier runs measured 293 commits/s with 2.1.1 and 1,130 with a build between the two releases. The memory a server holds after the load is the flush of every database at once, which the flags bound (<a href="deployment.html#on-kubernetes">deployment</a>).</p>
+</div><p>The last two rows are a new server's first ten seconds with more databases than it knows storage pods for, which this page had not measured before. Committing is the same code in both releases, and the row moves by a factor of three: two earlier runs measured 293 commits/s with 2.1.1 and 1,130 with a build between the two releases. The memory a server holds after the load is the flush of every database at once, which the flags bound (<a href="deployment.html#on-kubernetes">deployment</a>).</p>
 <p><strong>256 databases for five minutes</strong> is what a server does once it knows its storage pods. One server of release 2.1.4, held to 4 GiB and 4,096 open files, with one client writing to each of 256 databases for 300 seconds, at five in the afternoon, Pacific time; of 1,988 pings to the router meanwhile, none took longer than 0.25 s.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -480,7 +521,7 @@
 </tr>
 </tbody>
 </table>
-<p>That is six or seven commits a second for each database, where one client alone had seven to nine an hour earlier. A run of release 2.1.3 half an hour earlier measured 1,592 commits/s, between 1,319 and 1,738 in each minute, with a p99 of 666 ms and 515 MiB; that server stopped its housekeeping during the run (<a href="verification.html#what-these-checks-found">verification</a>, finding 36), which a commit does not wait for.</p>
+</div><p>That is six or seven commits a second for each database, where one client alone had seven to nine an hour earlier. A run of release 2.1.3 half an hour earlier measured 1,592 commits/s, between 1,319 and 1,738 in each minute, with a p99 of 666 ms and 515 MiB; that server stopped its housekeeping during the run (<a href="verification.html#what-these-checks-found">verification</a>, finding 36), which a commit does not wait for.</p>
 <p>Two things in it are not good. Memory rose all through the load, from 139 MiB in its first seconds to 404 MiB as it ended, and the most, 566 MiB, was while the databases were being deleted. When it was over the cache of table blocks held 143 MiB of the 256 MiB it may hold (<code>--cache-bytes</code>), and unflushed writes may take as much again (<code>--memtable-bytes</code>), so the rise is within what the flags allow; five minutes do not show it stop. And when the benchmark ended it deleted its 256 databases at once, each of about 2,000 commits: 68 purges of those deletions failed and were made again, and every deletion was answered as done. During the load itself one purge in 2,953 failed.</p>
 <p><strong>This rate is more than Backblaze gives a new account.</strong> Each of these commits is an upload, often a second upload that races it, and a HEAD: about 4,000 requests a second. Backblaze's documentation gives a new account 500 a second for uploads and downloads. The same load run for twenty minutes, an hour later, averaged 1,333 commits/s for eleven and a half minutes (between 869 and 1,864 in each minute), and then Backblaze answered <code>503</code> to every upload for five and a half minutes, whether for that limit or for a fault of its own is not established. No commit was acknowledged in that time, each of the 256 clients had one commit answered with an error, and every database was closed and, when uploads were accepted again, opened again and written to for the rest of the run, at 915 to 982 commits/s. Memory was 683 MiB and still rising when the refusals began, and 932 MiB at most, when all 256 databases were opened again together. <a href="verification.html#what-these-checks-found">Verification</a>, finding 37, has the account. Ask Backblaze for a higher limit before you plan on a rate like this one. At two to three requests for each commit, 500 a second is about 200 commits a second across an account. Since 2.1.5 a server that is refused sends one request at a time until one is taken, where this one sent 800 uploads a second (<a href="verification.html#what-these-checks-found">verification</a>, finding 38); it still keeps itself under no rate.</p>
 <p>To repeat it, start a server under <code>prlimit --nofile=4096:4096</code>, run <code>durable-db bench --workload write --clients 256 --databases 256 --seconds 300</code> against it, and read <code>durable_db_request_seconds_count{kind=&quot;commit&quot;}</code>, the counts and failures of <code>durable_db_storage_seconds</code> for <code>put</code> and <code>purge</code>, the server's resident memory and <code>ls /proc/&lt;pid&gt;/fd | wc -l</code> every five seconds.</p>
@@ -488,7 +529,7 @@
 <p>A store that refuses the request for many versions gets a request for each version, as before, and the server says so once in its log. Among cloud stores only B2 has been exercised.</p>
 <h3 id="opening-a-database">Opening a database<a class="anchor" href="#opening-a-database" aria-label="Link to this section">#</a></h3>
 <p>A database is opened by the first request that needs it and stays open while it is used (five minutes idle by default). These times were measured with release 2.1.0.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Situation</th>
@@ -518,9 +559,9 @@
 </tr>
 </tbody>
 </table>
-<h3 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h3>
+</div><h3 id="on-kubernetes">On Kubernetes<a class="anchor" href="#on-kubernetes" aria-label="Link to this section">#</a></h3>
 <p>From <code>scripts/test-kubernetes.sh</code> on a three-node kind cluster on the same desktop, backed by the same B2 bucket, through the Service. 192 clients send session reads to four databases for 80 seconds, during which the autoscaler goes from two pods to five and one pod is force-deleted. Beside them a ledger of read-then-commit transfers from 16 clients over 8 databases runs for four minutes, through the scale-out, the force-deleted pod and the scale-in, and is then verified. Nine runs, each column in the order they were made; the first of 2.1.0 was published with that release, and the rest were made in turn on one afternoon.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -566,9 +607,9 @@
 </tr>
 </tbody>
 </table>
-<p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in every run that recorded it; the test used to report the first count it saw above two, which is all that is known of the first run of each release.</p>
+</div><p>Every ledger verified. The load generator does not repeat a read, and a force-deleted pod breaks the connections it holds. Five pods were ready at most in every run that recorded it; the test used to report the first count it saw above two, which is all that is known of the first run of each release.</p>
 <p>Three more runs were made at about two in the afternoon of the same day, Pacific time, when the bucket answered more slowly for both releases: one client's commit took 99 ms at the median with 2.1.1 and 107 ms with 2.1.2, against 64 to 76 ms when the one-database table of this page was measured.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>In this order</th>
@@ -622,7 +663,7 @@
 </tr>
 </tbody>
 </table>
-<p>Every ledger verified: 12,026, 13,349 and 15,098 transfers. A transfer waits for the bucket, so the ledger's rate follows what the bucket takes at that hour; these three runs show no difference between the releases.</p>
+</div><p>Every ledger verified: 12,026, 13,349 and 15,098 transfers. A transfer waits for the bucket, so the ledger's rate follows what the bucket takes at that hour; these three runs show no difference between the releases.</p>
 <p>One run of 2.1.3, later that afternoon: 117,949 session reads a second, none failed and 48 told to wait; a ledger of 20,017 transfers verified at 83 a second, with a transfer taking 133 ms at the median, 650 ms at the 99th percentile and 9.8 s at most.</p>
 <p>Two runs at half past five that afternoon, 2.1.4 and then 2.1.1: 121,813 and 161,925 session reads a second, of which none and 109 failed and 48 and 124 were told to wait; ledgers of 23,679 and 22,496 transfers verified, at 99 and 93 a second, with a transfer taking 115 ms at the median in both, 585 and 611 ms at the 99th percentile, and 12.0 and 13.0 s at most. The bucket was as fast again as in the morning, for both releases. The slower hour was about two in the afternoon, Pacific time. Earlier versions of this page called it the evening, which it was by UTC.</p>
 <p>One run of 2.1.5 at half past seven that evening, Pacific time: 157,202 session reads a second, of which 105 failed and none were told to wait; a ledger of 22,528 transfers verified at 94 a second, with a transfer taking 118 ms at the median, 612 ms at the 99th percentile and 7.1 s at most.</p>
@@ -638,7 +679,7 @@
 <p>With release 2.0.0 the same test measured 30,114 session reads/s and the autoscaler stopped at three pods: its binary read at the speed of one core (<a href="#the-allocator">the allocator</a>).</p>
 <h2 id="the-allocator">The allocator<a class="anchor" href="#the-allocator" aria-label="Link to this section">#</a></h2>
 <p>The binary carries its own allocator, jemalloc, held to eight arenas and set to give freed memory back to the system within a second. Which allocator a server uses decided two things: how fast it reads, and whether it stays inside a memory limit. The source of release 2.1.0 was built with each candidate and put through <code>scripts/benchmark.sh</code> on a local directory and through the soak described <a href="#memory-under-load">below</a>, on the desktop described above:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Allocator</th>
@@ -669,13 +710,13 @@
 </tr>
 </tbody>
 </table>
-<p>musl's allocator takes one lock for all threads, so a server with it reads at the speed of one core. glibc's keeps freed memory in an arena for each thread: without a limit it held 1,481 MiB under the soak's first load, and 446 MiB when it was told to use one arena, which made its reads slow as well. The three fast ones are within what one run differs from the next. Commits did not differ by allocator beyond that, since a commit waits for storage.</p>
+</div><p>musl's allocator takes one lock for all threads, so a server with it reads at the speed of one core. glibc's keeps freed memory in an arena for each thread: without a limit it held 1,481 MiB under the soak's first load, and 446 MiB when it was told to use one arena, which made its reads slow as well. The three fast ones are within what one run differs from the next. Commits did not differ by allocator beyond that, since a commit waits for storage.</p>
 <p>To repeat the comparison, take the <code>ALLOCATOR</code> and <code>MALLOC_CONF</code> items out of <code>src/main.rs</code> or name another allocator there, build the static binary as the <code>Dockerfile</code> does, and run the two scripts with it.</p>
 <h2 id="memory-under-load">Memory under load<a class="anchor" href="#memory-under-load" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-sh">DURABLE_DB=./durable-db scripts/soak-memory.sh
 </code></pre>
 <p>One server with the flags of the Kubernetes manifest (192 MiB of cache, 96 MiB of unflushed writes, 128 MiB each for request bodies and results), on a local directory, in a systemd scope limited to 1 GiB of memory without swap and to four CPUs. It is killed if it passes the limit. Three loads of a minute each run one after the other against the same server, with values of random text, which does not compress. Then the second load runs once more, and halfway through it the script kills the server and starts it again, so that the server that takes its place opens all 256 databases at once, from what the first one stored, while they are written to:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Load</th>
@@ -721,7 +762,7 @@
 </tr>
 </tbody>
 </table>
-<p>The server, of release 2.1.6, used 584 MiB at most in this run, and the one that took its place 563 MiB. In two more runs of 2.1.6 they used 582 and 544 MiB, and 596 and 540 MiB; in two runs of 2.1.5 made between them, 583 and 530 MiB, and 578 and 575 MiB. In one run of 2.1.7, 580 and 541 MiB. No request failed in any of the first three loads. In the last, 6,459 requests failed in the moment between the kill and the next server's start, and 5,214 and 28,072 in the two other runs: the benchmark does not send a request again, as a client would.</p>
+</div><p>The server, of release 2.1.6, used 584 MiB at most in this run, and the one that took its place 563 MiB. In two more runs of 2.1.6 they used 582 and 544 MiB, and 596 and 540 MiB; in two runs of 2.1.5 made between them, 583 and 530 MiB, and 578 and 575 MiB. In one run of 2.1.7, 580 and 541 MiB. No request failed in any of the first three loads. In the last, 6,459 requests failed in the moment between the kill and the next server's start, and 5,214 and 28,072 in the two other runs: the benchmark does not send a request again, as a client would.</p>
 <p>Ten minutes of each of the first three loads (<code>SECONDS_EACH=600</code>) with release 2.1.5, the server's memory read every ten seconds: 3,169, 6,491 and 78,586 requests a second, no request failed, 825 of the first load's 1.9 million were told to wait, and 599 MiB at most. Memory was level within each load: 365 to 436 MiB through the first, 468 to 515 MiB through the second with no rise from its second minute to its tenth, and 373 MiB through the third. Release 2.1.4 used 582 and 590 MiB, 2.1.1 used 621 MiB and 2.1.0 used 618 and 659 MiB in runs of the same script; in those of 2.1.1 and 2.1.0 the server may have stopped keeping unflushed writes within their budget during the second load (<a href="verification.html#what-these-checks-found">verification</a>, finding 36).</p>
 <p>The first load is not the same from one run to the next: 3,480 to 5,846 requests a second in four runs of 2.1.5, and 4,116 and 6,417 in two of 2.1.4, within two hours on the same desktop. On the night 2.1.6 was measured, six runs of 2.1.5 gave 2,763 to 4,306 and seven of 2.1.6, made between them, 2,633 to 3,954. The one whole run of 2.1.7 gave 1,826, the fewest of any run, straight after ten minutes of <code>scripts/soak-kills.sh</code>; three runs of this load alone an hour later, in turn with three of 2.1.6, gave 2,682 to 3,343 for 2.1.7 and 2,689 to 4,184 for 2.1.6. The second load moved by a few percent, and the third between 56,983 and 77,398.</p>
 <p>&quot;Told to wait&quot; counts answers of <code>503</code>. In the first load each of the four databases holds 160 MiB and is overwritten about four times in the minute, so tables are merged all the while; with four CPUs the flushes fall behind now and then, and the server refuses a write to that database instead of holding it in memory. That was 5,518 of the requests of that load in this run, which is 2%. It is not the same from one run to the next either: between none and 16,021, which is 8%, in ten runs of 2.1.5, and between none and 10,270, which is 6%, in ten of 2.1.6, five of which had none. In four runs of 2.1.7 it was four requests in one and none in the others. In every run with more than 3,000 the median request took under 2 ms, and in every run with fewer than 1,300 it took over 3 ms. Neither run of 2.1.4 had any, the run published with 2.1.1 had 0.4%, and the one published with 2.1.0 had 1.7%. A client waits and sends the request again, as the SDK does.</p>
@@ -741,7 +782,7 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </code></pre>
 <p>The last runs on the bucket that <code>DDB_S3_ENDPOINT</code>, <code>DDB_S3_BUCKET</code>, <code>DDB_S3_ACCESS_KEY_ID</code> and <code>DDB_S3_SECRET_ACCESS_KEY</code> name, here Backblaze B2 from the desktop and over the link described <a href="#backblaze-b2">above</a>.</p>
 <p>These runs were made with release 2.1.8, one of each, one after another on the desktop, the night the release was made. One database is filled by 64 clients, each commit one key with a value of 4 KiB that does not compress, through one server with the flags of the Kubernetes manifest in a scope limited to 1 GiB of memory and four CPUs. Its cache in memory is 192 MiB and its disk cache 1 GiB, so the databases here are as large as the disk cache or larger. That server is killed. A second, with an empty cache, opens the database. It is read at keys taken at random for a minute and then for another, by as many clients as wrote it; scanned, twenty keys from a key taken at random, for a minute; and written over at keys taken at random for two. Then its quota is set a hundredth above what it held when it was filled, which is under what it holds by then, and one write is made, which waits for a merge of everything. The second server is stopped, a third opens the database, and it is deleted. On the bucket eight clients read and scan, for thirty seconds each, and the writes take a minute. With each load the script prints what the server read from its store for it, in how many requests, and how many runs of tables the database had then.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -943,13 +984,13 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>The link to Backblaze carried less that night than for any figure above it on this page: a test upload of 32 MiB went at 0.5 MB a second and a download at 1.5 MB a second, and the server sent 6,230 MiB in the 92 minutes of the fill, 1.1 MiB a second, where 2.1.7's run had sent 4 MiB a second. That column says what a bucket costs when the link is the limit, and is not to be set beside the others or beside 2.1.7's.</p>
+</div><p>The link to Backblaze carried less that night than for any figure above it on this page: a test upload of 32 MiB went at 0.5 MB a second and a download at 1.5 MB a second, and the server sent 6,230 MiB in the 92 minutes of the fill, 1.1 MiB a second, where 2.1.7's run had sent 4 MiB a second. That column says what a bucket costs when the link is the limit, and is not to be set beside the others or beside 2.1.7's.</p>
 <p><strong>Memory does not grow with the database</strong>, and neither does the time to open it. A server holds the tables' indexes and blocks in a cache of a fixed size, and to open a database it reads one manifest and what had not been flushed. The servers used between 232 and 534 MiB, under the limit of 1 GiB, at 1 GiB as at 16. After a kill the next server opened the database in 91 ms at 4 GiB and in 50 ms at 16 GiB on a local directory, and in 108 ms on MinIO. On Backblaze it took 18.8 s, which is what the killed server had not flushed, fetched and stored again over that link; after a stop, with nothing to store again, 0.4 s.</p>
 <p><strong>A database is sent to its store several times over while it grows.</strong> Tables are merged with those next in size, so each value is written again as its table grows: 6.9 times what was written at 4 GiB and 8.5 times at 16 GiB on a local directory, 6.7 times on MinIO, and 6.1 times at 1 GiB on Backblaze. Writing over what is there costs more for each byte, since the value that was written over is carried along until a merge reaches the oldest table. The slowest ten seconds of each fill are those in which the largest merges ran.</p>
 <p><strong>A read of a key looks in one table of each run</strong>, newest first, so how fast a database is read depends on how many runs it has. A run is the tables of one merge, or the table of one flush. A database with more than twelve merges the newest that are too many; one with fewer keeps what the rule of sizes leaves, which was between 5 and 11 runs at the end of the fills on a local directory and on MinIO. A server that opens a database after a kill merges what is due at once. Here the database of 4 GiB was read with 2 runs, at 36,109 and 41,044 reads a second; the one of 16 GiB with 6, at 30,513 and 31,280; the one on MinIO with 12. A database that is written while its server merges gains a run for every flush until that merge ends, and a merge of 16 GiB takes more than a minute on a local directory. With <code>SOAK_RUNS</code> the script writes over the database with every client, at keys taken at random, until it has that many runs, for ten minutes at most, and kills the server then:</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_GIB=16 SOAK_RUNS=16 scripts/soak-size.sh
 </code></pre>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1015,10 +1056,10 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>Written over by 64 clients, the database of 16 GiB took 571 of the ten minutes to reach 16 runs: a merge gives way to merges of what is flushed behind it once a database has more than twelve. The server that opened it merged the newest that were too many at once and read 12,004 keys a second in the first minute, with 12 runs, while the rule of sizes merged the rest; in the second minute the database was one run, and it read 18,255 a second. The writes it was killed in were the same 64 clients' as the fill's, at keys taken at random, and the fill ends with every key written once: a database that is written over faster, or by more clients, or for longer, can be left with more.</p>
+</div><p>Written over by 64 clients, the database of 16 GiB took 571 of the ten minutes to reach 16 runs: a merge gives way to merges of what is flushed behind it once a database has more than twelve. The server that opened it merged the newest that were too many at once and read 12,004 keys a second in the first minute, with 12 runs, while the rule of sizes merged the rest; in the second minute the database was one run, and it read 18,255 a second. The writes it was killed in were the same 64 clients' as the fill's, at keys taken at random, and the fill ends with every key written once: a database that is written over faster, or by more clients, or for longer, can be left with more.</p>
 <p>A database whose merges cannot keep up with what is written to it gains runs for as long as that lasts. On Backblaze that night the link carried less than the fill's merges had to send, merges that met a connection reset failed and were begun again, and the database had 32 runs when its server was killed. Each read of a key the disk cache did not hold then asked the bucket for a block of up to 33 runs, one request after another: two and three reads a second, half of them taking 2.3 s or more. No write was told to wait for runs in 2.1.8; since 2.1.9 one is, while a merge would leave more than twenty-four (<a href="#when-merges-fall-behind">below</a>).</p>
 <p><strong>A read of what the disk cache does not hold costs a request to the store for a block, and since 2.1.8 no more than that.</strong> A read whose table is not in the disk cache asks the store for the block that would hold its key, 32 KiB for a value of 4 KiB here, in each run it looks in. In the first minute of reads of the 4 GiB database on a local directory, the server answered 36,109 reads a second and asked its store 1.2 times for each, for 32 KiB each time: the cache held a quarter of the database. That is 1.3 GiB a second from the store, in proportion to the reads. Every release before this one read more, and not in proportion to anything: a read that missed also had its whole table fetched for the disk cache, in the place of other tables, which were then fetched in their turn (<a href="verification.html#what-these-checks-found">verification</a>, finding 43). Release 2.1.7 under the same script, on the same desktop, the same night, between the runs above:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1074,11 +1115,11 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>By the server's count of its requests, of the 83,282 MiB that 2.1.7 read from its store in the first minute of reads, some 41 GiB were the blocks its reads asked for and 40 GiB were whole tables, 21 of them a second. A local directory gave that at once; a bucket gives what the link carries and bills it as download. Release 2.1.8 fetches a table only when reads have had a sixteenth of it from the store, and only into room that is free or that no read has asked for in five minutes. A merge has none of its tables fetched, and what it stores does not put out what it has yet to read. So the fill read back a third of what it had, the reads and scans were more than twice as fast, and their slowest hundredth took about half the time or less.</p>
+</div><p>By the server's count of its requests, of the 83,282 MiB that 2.1.7 read from its store in the first minute of reads, some 41 GiB were the blocks its reads asked for and 40 GiB were whole tables, 21 of them a second. A local directory gave that at once; a bucket gives what the link carries and bills it as download. Release 2.1.8 fetches a table only when reads have had a sixteenth of it from the store, and only into room that is free or that no read has asked for in five minutes. A merge has none of its tables fetched, and what it stores does not put out what it has yet to read. So the fill read back a third of what it had, the reads and scans were more than twice as fast, and their slowest hundredth took about half the time or less.</p>
 <p><strong>On a bucket, give a server a disk cache as large as the databases it reads.</strong> The same database of 4 GiB with a disk cache of 8 GiB:</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_CACHE_MIB=8192 scripts/soak-size.sh
 </code></pre>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1144,14 +1185,14 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>With a cache that holds the database, the server read 13,450 MiB from its store in the first minute of reads: the blocks its reads asked for while the tables were fetched whole, two at a time, each once reads had had a sixteenth of it. After that it asked its store for nothing: not for the second minute of reads, not for the scans, and not for the merge at the quota. With the cache of 1 GiB it went on asking for 32 KiB 37,000 to 43,000 times a second, which on a bucket is a request to the bucket each time, and download. On a local directory the run with the larger cache was not the faster one, and that says nothing of a bucket. The script holds the store's directory in memory, from outside the server's limit, so a read of the store costs less there than a read of the server's own disk, where the cache is; and the database of that run was read with 10 runs, where the other had merged down to 2. What carries over is the rows of what was read from the store.</p>
+</div><p>With a cache that holds the database, the server read 13,450 MiB from its store in the first minute of reads: the blocks its reads asked for while the tables were fetched whole, two at a time, each once reads had had a sixteenth of it. After that it asked its store for nothing: not for the second minute of reads, not for the scans, and not for the merge at the quota. With the cache of 1 GiB it went on asking for 32 KiB 37,000 to 43,000 times a second, which on a bucket is a request to the bucket each time, and download. On a local directory the run with the larger cache was not the faster one, and that says nothing of a bucket. The script holds the store's directory in memory, from outside the server's limit, so a read of the store costs less there than a read of the server's own disk, where the cache is; and the database of that run was read with 10 runs, where the other had merged down to 2. What carries over is the rows of what was read from the store.</p>
 <p><strong>A write at the quota waits for as long as reading the database and writing it again takes.</strong> That was 33 s at 4 GiB and 83 s at 16 GiB on a local directory, 148 and 207 MiB a second, and 47 s at 4 GiB on MinIO; 2.1.7 took 48 s for the same at 4 GiB the same night. With the disk cache of 8 GiB it took 54 s: every table a merge stores and the cache keeps is synced to the disk the cache is on, so that what is written there and not yet on the disk does not pass the server's memory limit (finding 44), and on a local directory that disk is the store's as well. On Backblaze the write waited 1,227 s for 1 GiB over that night's link, 0.8 MiB a second; 2.1.7 had waited 525 s over a link nearly four times as fast. A client that writes at a quota has to be prepared to ask again for that long. A database that holds nothing that was written over or deleted is not merged for its quota at all, and is refused at once (<a href="api.html#databases">API</a>).</p>
 <p>The local directory answers in a fraction of a millisecond and MinIO here is one process on the desktop that loads it, so the rates in those columns are not those of a provider's bucket. What ran beside what, on a desktop of 32 cores: the local runs one after another, beside the run on Backblaze, which waited on its link; during the first three local runs, those of 4 GiB of 2.1.8 and of 2.1.7, the test suite forty-two times and its engine tests forty, each held to between 0.4 and 2.3 processors; and during the second half of the run with <code>SOAK_RUNS</code>, <code>scripts/soak-bucket.sh</code> on MinIO, 256 databases written through another server.</p>
 <h3 id="sizing-the-disk-cache">Sizing the disk cache<a class="anchor" href="#sizing-the-disk-cache" aria-label="Link to this section">#</a></h3>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_GIB=2 SOAK_CACHE_MIB=512 SOAK_SECONDS=30 scripts/soak-size.sh
 </code></pre>
 <p>One database of 2 GiB, 2,015 MiB once filled, read and merged through disk caches of a quarter of it, a half, its size and twice its size (<code>SOAK_CACHE_MIB</code> 512, 1024, 2048 and 4096). Release 2.1.10 on a local directory, one run of each, one after another on the desktop, the night after 2.1.10 was released. Other measurements ran on the machine meanwhile, so reads a second are not given here; what the cache changes is what the server asks its store for, which they do not change.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Disk cache</th>
@@ -1206,11 +1247,11 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>The reads here are spread evenly over the keys, which is the worst case for a cache: reads that keep to some keys more than others miss it less. Read so, a read that the cache misses is one request to the store, for the block of 32 KiB that holds its key, and they were as many as the share of the database the cache does not hold: three quarters with a quarter, a half with a half. With a cache as large as the database, the tables were fetched into it whole as reads came to them, and after half a minute no read asked the store for anything. Merges read what they merge whole, whatever the reads keep to: with a cache smaller than the database, the fill read back more than the database with a quarter and half of it with a half, and the merge of everything at the quota read three quarters of it again. With a cache of its size the tables that merge stored put out some of those it had yet to read, 287 MiB; with twice its size it read nothing.</p>
+</div><p>The reads here are spread evenly over the keys, which is the worst case for a cache: reads that keep to some keys more than others miss it less. Read so, a read that the cache misses is one request to the store, for the block of 32 KiB that holds its key, and they were as many as the share of the database the cache does not hold: three quarters with a quarter, a half with a half. With a cache as large as the database, the tables were fetched into it whole as reads came to them, and after half a minute no read asked the store for anything. Merges read what they merge whole, whatever the reads keep to: with a cache smaller than the database, the fill read back more than the database with a quarter and half of it with a half, and the merge of everything at the quota read three quarters of it again. With a cache of its size the tables that merge stored put out some of those it had yet to read, 287 MiB; with twice its size it read nothing.</p>
 <p>So, on a bucket, where each of those requests is a round trip and each byte download: give a server a disk cache of twice the databases it serves for merges to read nothing back, and of their size for reads to ask for nothing once the cache is warm. Below that, each read the cache misses costs a request and 32 KiB, and each merge reads back what the cache does not hold.</p>
 <h3 id="when-merges-fall-behind">When merges fall behind<a class="anchor" href="#when-merges-fall-behind" aria-label="Link to this section">#</a></h3>
 <p>Release 2.1.9 tells a write to wait while a merge would leave more than twenty-four runs, and keeps a merge going through a store that fails for a while (finding 45). The script above, with 2.1.8 and then 2.1.9 the morning 2.1.9 was released, one run of each, on a local directory at 4 GiB and on Backblaze at 1 GiB; the runs on Backblaze beside the local ones and the release's other checks:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1300,11 +1341,11 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>The two releases are within what one run differs from the next. The reads of a database depend on how many runs it was read with, which depends on the moment the soak kills the server that filled it. The link to Backblaze carried 2.9 MB a second up before the runs and 4.5 MB a second after them, and the fill of 2.1.9 had the better part of it. Neither fill had more than 18 runs, below where 2.1.9 holds writes back, so these runs say that nothing else changed.</p>
+</div><p>The two releases are within what one run differs from the next. The reads of a database depend on how many runs it was read with, which depends on the moment the soak kills the server that filled it. The link to Backblaze carried 2.9 MB a second up before the runs and 4.5 MB a second after them, and the fill of 2.1.9 had the better part of it. Neither fill had more than 18 runs, below where 2.1.9 holds writes back, so these runs say that nothing else changed.</p>
 <p>Four times the writers, to see whether they would pass the bound:</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SECONDS=30 SOAK_CLIENTS=256 scripts/soak-size.sh
 </code></pre>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1365,14 +1406,14 @@ DURABLE_DB=./durable-db SOAK_STORE=bucket SOAK_GIB=1 SOAK_READ_CLIENTS=8 SOAK_SE
 </tr>
 </tbody>
 </table>
-<p>They did not. A database takes no more writes than it can flush, 32 MiB of them at most, and the writes of 256 clients were held to that, told to wait some 450,000 times, before the runs came to 24; the link carried 4.7 MB a second up that morning. The night before, over a link that carried 1.1 MiB a second, 2.1.8 had 32 runs with 64 clients (<a href="#a-large-database">above</a>). The bound of 2.1.9 is shown by the tests of finding 45 and not by a run here; <a href="#over-a-slow-link">over a slow link</a> it is set against other values. The reads after the first minute and the scans differ more than the fills. The server that opens the database begins a merge of the runs that are too many: 2.1.8's ended during its second minute of reads, and its scans found 12 runs; 2.1.9's had not ended when its scans did, and they found 19. Over a link that merge takes minutes, and when it ends is not the same from one run to the next.</p>
+</div><p>They did not. A database takes no more writes than it can flush, 32 MiB of them at most, and the writes of 256 clients were held to that, told to wait some 450,000 times, before the runs came to 24; the link carried 4.7 MB a second up that morning. The night before, over a link that carried 1.1 MiB a second, 2.1.8 had 32 runs with 64 clients (<a href="#a-large-database">above</a>). The bound of 2.1.9 is shown by the tests of finding 45 and not by a run here; <a href="#over-a-slow-link">over a slow link</a> it is set against other values. The reads after the first minute and the scans differ more than the fills. The server that opens the database begins a merge of the runs that are too many: 2.1.8's ended during its second minute of reads, and its scans found 12 runs; 2.1.9's had not ended when its scans did, and they found 19. Over a link that merge takes minutes, and when it ends is not the same from one run to the next.</p>
 <h3 id="several-databases-merging-at-once">Several databases merging at once<a class="anchor" href="#several-databases-merging-at-once" aria-label="Link to this section">#</a></h3>
 <p>A server merges two databases at a time. Release 2.1.9 let a merge hold its turn from its first table to its last, and a database that waited for a turn meanwhile went on taking writes and gained a run with every flush. Since 2.1.10 a merge gives its turn to a database that waits for one between two of its tables, and waits for a turn again (finding 46).</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db scripts/soak-tenants.sh
 DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </code></pre>
 <p>The script runs one server with the flags of the Kubernetes manifest, in a scope of 1 GiB and four CPUs, on a local directory. Two databases are filled with 4 GiB each, values of 4 KiB that do not compress, and written over for half a minute. Then each is given a quota under what it holds, so that the next write to each waits while all of it is merged, and the two merges begin together and take both of the server's turns. Meanwhile a small database is written by 64 clients, which make a flush of it about once a second, and read at keys taken at random by 8, in rounds of five seconds. The runs below were made with 2.1.9 and then with the release binary of 2.1.10, one of each, one after another on the desktop, the afternoon of the release, with nothing else running.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1423,9 +1464,9 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>With 2.1.9 the small database's merge waited for a turn until the first of the two others ended, after 47.5 seconds, and it went from 2 runs to 27; in the last three rounds before then it was read at 45,580 to 66,503 keys a second, less than half of what it had been read at first. With 2.1.10 it had 5 runs at most, and was read at 114,316 keys a second at the least. What that cost the two large merges: each took 52.5 seconds where they had taken 47.5 and 48.3, a tenth longer. Each gave its turn up at every table at which the small database waited for one, and when it went on read again what it had read ahead and the index of each table it was in. What was read from storage and sent to it is the server's count for all its databases together, the small one's merges among them. One run of each was made, and how much one run of this script differs from the next has not been measured.</p>
+</div><p>With 2.1.9 the small database's merge waited for a turn until the first of the two others ended, after 47.5 seconds, and it went from 2 runs to 27; in the last three rounds before then it was read at 45,580 to 66,503 keys a second, less than half of what it had been read at first. With 2.1.10 it had 5 runs at most, and was read at 114,316 keys a second at the least. What that cost the two large merges: each took 52.5 seconds where they had taken 47.5 and 48.3, a tenth longer. Each gave its turn up at every table at which the small database waited for one, and when it went on read again what it had read ahead and the index of each table it was in. What was read from storage and sent to it is the server's count for all its databases together, the small one's merges among them. One run of each was made, and how much one run of this script differs from the next has not been measured.</p>
 <p>Three large databases of 2 GiB, so that one of them waits for a turn as well:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1476,12 +1517,12 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>With 2.1.9 two of them merged first, and their writes were taken after 24.5 and 25.3 seconds; the third waited for a turn, and was taken after 42.7. The small database had 16 runs by the time a turn came free. With 2.1.10 the three merged a table at a time, and their writes were taken after 37.7 to 38.6 seconds: the last four seconds sooner, the first two thirteen seconds later, and the three seven seconds later on average. The small database had 5 runs at most.</p>
+</div><p>With 2.1.9 two of them merged first, and their writes were taken after 24.5 and 25.3 seconds; the third waited for a turn, and was taken after 42.7. The small database had 16 runs by the time a turn came free. With 2.1.10 the three merged a table at a time, and their writes were taken after 37.7 to 38.6 seconds: the last four seconds sooner, the first two thirteen seconds later, and the three seven seconds later on average. The small database had 5 runs at most.</p>
 <p>On a bucket a merge of a large database takes as long as its link takes to carry the database twice over, so a database that waited for a turn with 2.1.9 waited minutes, and what a merge reads again when it goes on is a request to the bucket each time, and download. Neither has been measured on a bucket. Over a <a href="#over-a-slow-link">slow link</a> to MinIO, the turns cost the large merges more than on a local directory:</p>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=1024 scripts/soak-tenants.sh
 </code></pre>
 <p>Two databases of 1 GiB, 8 MB a second up and 16 down, 40 ms a round trip; one run of each release, one after another on the desktop, the evening after 2.1.10 was released, with nothing else running.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1512,10 +1553,10 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>With 2.1.10 the small database had 18 runs at most where it had had 48, and the two merges took half as long again and more. It was written by 64 clients and flushed about every eight seconds, and had a merge due after almost every flush; so each large merge gave its turn up at almost every table, waited while the small one merged over the link, and read again what it had read ahead. That is one run of each. At a quarter of the size, with a disk cache of 256 MiB, two runs of the code on <code>main</code> after 2.1.10 differed from each other as much as these releases do:</p>
+</div><p>With 2.1.10 the small database had 18 runs at most where it had had 48, and the two merges took half as long again and more. It was written by 64 clients and flushed about every eight seconds, and had a merge due after almost every flush; so each large merge gave its turn up at almost every table, waited while the small one merged over the link, and read again what it had read ahead. That is one run of each. At a quarter of the size, with a disk cache of 256 MiB, two runs of the code on <code>main</code> after 2.1.10 differed from each other as much as these releases do:</p>
 <pre><code class="language-sh">RUST_LOG=durable_db=debug SOAK_LOG=server.log DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=256 SOAK_CACHE_MIB=256 scripts/soak-tenants.sh
 </code></pre>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
@@ -1551,13 +1592,13 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>The runs were made the night after 2.1.10 was released, on the desktop, each while other measurements ran beside it; over this link the link is the limit, not the processors. Both costs of turns show in them, what the small database's merges send and what the large merges read again, and neither in the same proportion twice. Its strong reads were held to some 110 a second in both by the claim check each one waits for, a round trip over the link, and not by its runs, whose tables were in the server's disk cache.</p>
+</div><p>The runs were made the night after 2.1.10 was released, on the desktop, each while other measurements ran beside it; over this link the link is the limit, not the processors. Both costs of turns show in them, what the small database's merges send and what the large merges read again, and neither in the same proportion twice. Its strong reads were held to some 110 a second in both by the claim check each one waits for, a round trip over the link, and not by its runs, whose tables were in the server's disk cache.</p>
 <h3 id="over-a-slow-link">Over a slow link<a class="anchor" href="#over-a-slow-link" aria-label="Link to this section">#</a></h3>
 <pre><code class="language-sh">DURABLE_DB=./durable-db SOAK_STORE=minio SOAK_LINK=8000000,16000000,40 SOAK_MIB=2048 SOAK_READ_CLIENTS=8 SOAK_SECONDS=30 scripts/soak-size.sh
 </code></pre>
 <p><code>SOAK_LINK</code> puts <code>scripts/slow-link.py</code> between the server and MinIO: what the server sends is carried at 8 MB a second and what it is sent at 16, each shared by all its connections as one link's is, and each byte arrives 20 ms after it left. The Backblaze figures above were measured over a link that carried 0.5 to 4.7 MB a second up and was not the same from one run to the next; this one is.</p>
 <p><strong>The bound on runs.</strong> Since 2.1.9 a write waits while a merge would leave a database with more than twenty-four runs, the runs that merge takes counting as one (finding 45). The figure was chosen. The runs below set it against 12 and 48, with builds of 2.1.10 that differ from one another only in it: the factor of <code>max_runs</code> in <code>Db::crowded</code> in <code>src/db.rs</code>, 1, 2 as released, and 4, each built with <code>cargo build --release</code>. Two runs of 12 and of 24 and one of 48, one after another on the desktop, the evening after 2.1.10 was released, with nothing else running; a database of 2 GiB filled by 64 clients and read by 8.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Writes wait while a merge would leave more than</th>
@@ -1707,11 +1748,11 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>Neither 24 nor 48 was reached: no write of those three runs was told to wait, and their fills took the same time, 1,921 to 1,944 s. Every commit waited for its log's upload over the link, a quarter of a second, which held the 64 clients to some 270 commits a second, and the merges kept up with that to within 20 to 25 runs. A bound of 12 was reached: 212,248 and 44,023 commits were told to wait, the fills took 12 and 3 per cent longer than those of 24 and 48, and it did not keep the runs down, 23 and 24 at most, since the runs a merge under way takes count as one. Each server that opened the database after the kill began a merge of the runs that were more than twelve; in the second run of 12 the writes over the database were told to wait while that merge ran, 29,607 times, and were taken at 110 a second where the others took 255 to 295. The reads and scans followed how many runs the database had when its server was killed, which the moment of the kill decides, and not the bound. A read of a key that neither cache holds asks the store for a block in each run, one after another, each a round trip over this link: with 15 runs and then 12, 22 and 86 reads a second; with 19 to 26 runs, 10 to 32. So twenty-four stays. Over this link it was not reached, and twelve held writes back without holding the runs down.</p>
+</div><p>Neither 24 nor 48 was reached: no write of those three runs was told to wait, and their fills took the same time, 1,921 to 1,944 s. Every commit waited for its log's upload over the link, a quarter of a second, which held the 64 clients to some 270 commits a second, and the merges kept up with that to within 20 to 25 runs. A bound of 12 was reached: 212,248 and 44,023 commits were told to wait, the fills took 12 and 3 per cent longer than those of 24 and 48, and it did not keep the runs down, 23 and 24 at most, since the runs a merge under way takes count as one. Each server that opened the database after the kill began a merge of the runs that were more than twelve; in the second run of 12 the writes over the database were told to wait while that merge ran, 29,607 times, and were taken at 110 a second where the others took 255 to 295. The reads and scans followed how many runs the database had when its server was killed, which the moment of the kill decides, and not the bound. A read of a key that neither cache holds asks the store for a block in each run, one after another, each a round trip over this link: with 15 runs and then 12, 22 and 86 reads a second; with 19 to 26 runs, 10 to 32. So twenty-four stays. Over this link it was not reached, and twelve held writes back without holding the runs down.</p>
 <p>A write at the quota waited 511 to 582 s. That is more than one merge of the database takes over the link, about 350 s for reading 1.2 GiB at 16 MB a second and writing 2 GiB at 8, since it waits as well for the end of a merge that the writes over the database had begun.</p>
 <h2 id="what-it-costs-in-requests">What it costs in requests<a class="anchor" href="#what-it-costs-in-requests" aria-label="Link to this section">#</a></h2>
 <p>Uploads are free on B2; HEAD and GET are billed per call, LIST at a higher rate. Per request:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Request</th>
@@ -1745,7 +1786,7 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </tr>
 </tbody>
 </table>
-<p>A database committing as fast as B2 allows from one location runs about ten groups a second, which is under a million HEADs a day. Check your provider's current price list for what that means on your bill.</p>
+</div><p>A database committing as fast as B2 allows from one location runs about ten groups a second, which is under a million HEADs a day. Check your provider's current price list for what that means on your bill.</p>
 <h2 id="what-is-not-measured-yet">What is not measured yet<a class="anchor" href="#what-is-not-measured-yet" aria-label="Link to this section">#</a></h2>
 <ul>
 <li>B2 from a server in a data centre, on a wired link. Every B2 figure here was measured over Wi-Fi from one desktop, for minutes at a time, and that includes the measurements behind the choice of storage pods.</li>
@@ -1764,22 +1805,33 @@ DURABLE_DB=./durable-db SOAK_LARGE=3 SOAK_GIB=2 scripts/soak-tenants.sh
 </div>
 <footer class="site-footer">
 <div class="wrap">
-<div>
+<div class="footer-brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.12, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database whose only state is an object-storage bucket. One static Rust binary · v2.1.12 · <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
-<nav aria-label="Footer">
+<div class="footer-cols">
+<nav aria-label="Product">
+<p>Start</p>
+<a href="index.html#watch">Explainer film</a>
 <a href="index.html#quickstart">Quick start</a>
+<a href="index.html#limits">Limits</a>
+<a href="install.sh">install.sh</a>
+</nav>
+<nav aria-label="Documentation">
+<p>Docs</p>
 <a href="deployment.html">Deployment</a>
 <a href="api.html">HTTP API</a>
 <a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
+</nav>
+<nav aria-label="Engineering">
+<p>Engineering</p>
 <a href="performance.html" aria-current="page">Performance</a>
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
-<a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
+<a href="https://github.com/ericflo/durable-db">GitHub ↗</a>
 </nav>
+</div>
 </div>
 </footer>
 </body>

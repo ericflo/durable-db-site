@@ -4,39 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deployment · durable-db</title>
-<meta name="description" content="Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.">
+<meta name="description" content="Install the static binary and run it on a laptop, a bucket, or Kubernetes. Configuration, tenant limits, and metrics.">
+<meta property="og:type" content="website">
 <meta property="og:title" content="Deployment · durable-db">
-<meta property="og:description" content="Install, run on one machine, on a bucket and on Kubernetes. Configuration, tokens and operations.">
+<meta property="og:description" content="Install the static binary and run it on a laptop, a bucket, or Kubernetes. Configuration, tenant limits, and metrics.">
+<meta property="og:image" content="https://durable-db.neuralcolumn.com/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deployment · durable-db">
+<meta name="twitter:description" content="Install the static binary and run it on a laptop, a bucket, or Kubernetes. Configuration, tenant limits, and metrics.">
+<meta name="twitter:image" content="https://durable-db.neuralcolumn.com/og.jpg">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&amp;display=swap">
 <link rel="stylesheet" href="style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+document.documentElement.classList.add('js');
+try {
+  const saved = localStorage.getItem('ddb-theme');
+  if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+} catch {}
+</script>
 <script src="site.js" defer></script>
 </head>
-<body>
+<body class="page-docs">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
 <div class="wrap">
+<div class="brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="28" height="28">durable-db</a>
 <a class="release" href="deployment.html#install" aria-label="Release v2.1.12: install">v2.1.12</a>
-<nav aria-label="Main">
-<a href="index.html#docs">Docs</a>
+</div>
+<nav class="main-nav" aria-label="Main">
+<a href="index.html#watch">Explainer</a>
+<a href="architecture.html">Architecture</a>
 <a href="api.html">API</a>
 <a href="clients.html">SDK</a>
+<a href="performance.html">Performance</a>
+<a href="verification.html">Verification</a>
+<a href="index.html#docs">Docs</a>
+</nav>
+<div class="header-actions">
+<a class="icon-btn" href="https://github.com/ericflo/durable-db" aria-label="Source on GitHub" title="Source on GitHub">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.16 1.18a10.9 10.9 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+</a>
+<button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Switch color theme" title="Switch color theme" hidden>
+<svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+<svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg>
+</button>
+<a class="button button-small" href="index.html#quickstart">Quick start</a>
+<details class="mobile-menu">
+<summary class="icon-btn" aria-label="Open navigation menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+<nav aria-label="Mobile">
+<a href="index.html#watch">Explainer film</a>
+<a href="index.html#quickstart">Quick start</a>
+<a href="deployment.html" aria-current="page">Deployment</a>
+<a href="api.html">HTTP API</a>
+<a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
+<a href="development.html">Development</a>
+<a href="https://github.com/ericflo/durable-db">Source on GitHub ↗</a>
 </nav>
-<a class="button button-small" href="index.html#quickstart">Quick start</a>
+</details>
+</div>
 </div>
 </header>
 
 <div class="docs wrap">
 <details class="docs-nav" open><summary>Documentation</summary><nav aria-label="Documentation"><ul><li><a href="deployment.html" aria-current="page">Deployment</a></li><li><a href="api.html">HTTP API</a></li><li><a href="clients.html">TypeScript SDK</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="performance.html">Performance</a></li><li><a href="verification.html">Verification</a></li><li><a href="development.html">Development</a></li></ul></nav></details>
-<main id="main"><article><h1>Deployment</h1>
+<main id="main"><article><p class="doc-kicker">Operations · v2.1.12</p><h1>Deployment</h1>
 <p>durable-db is one static binary. The same binary serves a laptop from a directory and a Kubernetes cluster from a bucket.</p>
 <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
 <pre><code class="language-sh">curl -fsSL https://ericflo.github.io/durable-db-site/install.sh | sh
@@ -97,9 +138,9 @@ kubectl -n durable-db apply -k .
 </code></pre>
 <p>Applications connect to <code>http://durable-db.durable-db.svc:7654</code>. Put TLS and any public exposure in front of it at your ingress. Servers talk to each other in plain HTTP inside the cluster: a relayed request carries its caller's token, which the receiving server verifies again, so the network between them must be private.</p>
 <p><strong>Scaling.</strong> Any number of replicas from one up is correct. When a pod becomes ready, the others hand it the databases that hash to it. When a pod is told to stop, it reports not-ready, hands every database over, relays stray requests to its peers for <code>--drain-seconds</code>, and exits. A pod that is killed outright loses nothing: the next request for one of its databases makes another pod take it over. Scaling to zero stops service and loses nothing; starting one pod restores it.</p>
-<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so. Every release from 2.0.0 to 2.1.8 shares one, and <code>scripts/test-upgrade.sh</code> checks the upgrade between two binaries under a ledger (<a href="verification.html#tests-of-the-implementation">verification</a>). While 2.0.0 serves beside a later version, the later server does not take the 2.0.0 server's word that a request was relayed and may relay it once more, and the 2.0.0 server does not know the mark that a later server puts on a database it is deleting, so it could take that database over and serve it until the deletion completes. Delete databases before or after an upgrade from 2.0.0, not during it. Between 2.1.0 and 2.1.1 neither applies.</p>
+<p><strong>Upgrades</strong> are ordinary rolling updates. Servers of different versions can run side by side as long as they share a storage format; a release that changes the format will say so. Every release from 2.0.0 to 2.1.12 shares one, and <code>scripts/test-upgrade.sh</code> checks the upgrade between two binaries under a ledger (<a href="verification.html#tests-of-the-implementation">verification</a>). While 2.0.0 serves beside a later version, the later server does not take the 2.0.0 server's word that a request was relayed and may relay it once more, and the 2.0.0 server does not know the mark that a later server puts on a database it is deleting, so it could take that database over and serve it until the deletion completes. Delete databases before or after an upgrade from 2.0.0, not during it. Between releases from 2.1.0 on, neither applies.</p>
 <p><strong>Resources.</strong> What a server holds in memory is limited by its flags, not by the size or the number of its databases:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>What</th>
@@ -153,11 +194,11 @@ kubectl -n durable-db apply -k .
 </tr>
 </tbody>
 </table>
-<p>The manifest sets 192 MiB of cache, 96 MiB of unflushed writes, 128 MiB each for bodies and results, and 1,024 connections. With every line at its limit at once that is about 1,000 MiB, under a memory limit of 1 GiB; if the two merges and the two fetches were also writing tables of their largest size to the disk cache at the same moment, about 190 MiB more. Change the limit and the flags together. These are the limits the code enforces; a budget can be passed by one request's worth before it is enforced, and a few kilobytes for each open database are not counted. Measured: a server with these flags, held to 1 GiB and four CPUs and loaded for three minutes on a local directory, used 621 MiB at most, and between 618 and 659 MiB in runs of the release before (<a href="performance.html#memory-under-load">performance</a>). When flushes fall behind, a database answers <code>503</code> to writes until they have caught up, instead of holding more. Longer loads, and the same loads on a bucket, have not been measured. The cache volume is an <code>emptyDir</code>; losing it costs bucket requests, not data. The manifest gives it 1 GiB (<code>--cache-dir-bytes</code>) in a volume of 2 GiB. That suits databases that are together smaller than it. A server that reads databases larger than its disk cache keeps the tables it has there for as long as they are in use, and reads the others from the bucket a block at a time: one request for each run of tables a read looks in, where a table on the disk costs none (<a href="performance.html#a-large-database">performance</a>). So raise <code>--cache-dir-bytes</code> and the volume with the quotas you give out, until the cache holds what a server reads. It costs disk and next to no memory. Releases before 2.1.8 need that more: they fetch whole tables over and over in each other's place when the cache is the smaller (<a href="verification.html#what-these-checks-found">verification</a>, finding 43).</p>
+</div><p>The manifest sets 192 MiB of cache, 96 MiB of unflushed writes, 128 MiB each for bodies and results, and 1,024 connections. With every line at its limit at once that is about 1,000 MiB, under a memory limit of 1 GiB; if the two merges and the two fetches were also writing tables of their largest size to the disk cache at the same moment, about 190 MiB more. Change the limit and the flags together. These are the limits the code enforces; a budget can be passed by one request's worth before it is enforced, and a few kilobytes for each open database are not counted. Measured: a server with these flags, held to 1 GiB and four CPUs, used 575 to 599 MiB at most across 1- and 10-minute loads on a local directory (2.1.5 to 2.1.7), and 517 to 587 MiB over 20-minute and 1-hour runs of 256 databases on MinIO (2.1.6 to 2.1.12) (<a href="performance.html#memory-under-load">performance</a>). When flushes fall behind, a database answers <code>503</code> to writes until they have caught up, instead of holding more. Multi-hour runs, and sustained runs on a cloud bucket, have not been measured. The cache volume is an <code>emptyDir</code>; losing it costs bucket requests, not data. The manifest gives it 1 GiB (<code>--cache-dir-bytes</code>) in a volume of 2 GiB. That suits databases that are together smaller than it. A server that reads databases larger than its disk cache keeps the tables it has there for as long as they are in use, and reads the others from the bucket a block at a time: one request for each run of tables a read looks in, where a table on the disk costs none (<a href="performance.html#a-large-database">performance</a>). So raise <code>--cache-dir-bytes</code> and the volume with the quotas you give out, until the cache holds what a server reads. It costs disk and next to no memory. Releases before 2.1.8 need that more: they fetch whole tables over and over in each other's place when the cache is the smaller (<a href="verification.html#what-these-checks-found">verification</a>, finding 43).</p>
 <p><strong>Disk cache.</strong> On a bucket, <code>--cache-dir-bytes</code> decides what a server asks the bucket for, in requests and in download. A pod serves the databases that hash to it, about all of them divided by the replicas, and more when another stops. With reads spread evenly over their keys, a read misses the disk cache about as often as the share of those databases the cache does not hold, and each miss is a request for a block of 32 KiB. Merges read whole what they merge, and read back from the bucket what the cache does not hold. A cache of twice the databases a server serves let a merge of everything read nothing back; one of their size let reads ask for nothing once it was warm (<a href="performance.html#sizing-the-disk-cache">performance</a>). The manifest sets 1 GiB, in an <code>emptyDir</code> of 2 GiB on the pod's own disk, lost with the pod: change both together, and a new pod fetches what it reads again.</p>
 <h2 id="configuration">Configuration<a class="anchor" href="#configuration" aria-label="Link to this section">#</a></h2>
 <p>Every option is a flag and an environment variable.</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Flag</th>
@@ -319,7 +360,7 @@ kubectl -n durable-db apply -k .
 </tr>
 </tbody>
 </table>
-<p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it. So is one that says a round of housekeeping <code>has not ended</code>. A warning that begins <code>the store refuses</code> says that the server has stopped sending one kind of request (reads, listings, changes, or on Backblaze uploads or calls of its API) because the store refused eight in a row, and carries the store's status, its error code and the wait it asked for; <code>the store takes</code> that kind <code>again</code> ends it.</p>
+</div><p>Credentials come from <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code>. <code>RUST_LOG</code> sets the log level (<code>info</code> by default). A line that contains <code>panicked</code> is a defect in durable-db, whatever else the server goes on doing: please report it. So is one that says a round of housekeeping <code>has not ended</code>. A warning that begins <code>the store refuses</code> says that the server has stopped sending one kind of request (reads, listings, changes, or on Backblaze uploads or calls of its API) because the store refused eight in a row, and carries the store's status, its error code and the wait it asked for; <code>the store takes</code> that kind <code>again</code> ends it.</p>
 <h2 id="tokens-and-tenants">Tokens and tenants<a class="anchor" href="#tokens-and-tenants" aria-label="Link to this section">#</a></h2>
 <p>One deployment serves many databases. Give each tenant, site or application its own database and its own token:</p>
 <pre><code class="language-sh">durable-db create tenant-42 --max-bytes 268435456        # prints a write token
@@ -341,7 +382,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 <p>What it does not do: per-tenant CPU accounting, or billing. A tenant inside its limits can still use its full request rate around the clock.</p>
 <h2 id="operations">Operations<a class="anchor" href="#operations" aria-label="Link to this section">#</a></h2>
 <p><code>GET /metrics</code> exposes, in Prometheus text format:</p>
-<table>
+<div class="table-wrap"><table>
 <thead>
 <tr>
 <th>Metric</th>
@@ -403,7 +444,7 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 </tr>
 </tbody>
 </table>
-<p>Watch storage latency and failures first: every commit is one upload and one HEAD, so they are the service's latency floor.</p>
+</div><p>Watch storage latency and failures first: every commit is one upload and one HEAD, so they are the service's latency floor.</p>
 <p><code>durable-db bench</code> measures a running deployment, and <code>durable-db bench --workload ledger</code> checks it: it moves money between accounts while you add, remove or kill servers, then verifies that no transfer was lost or applied twice. See <a href="performance.html">performance</a>.</p>
 <p><strong>Backups.</strong> The bucket is the database, so protect the bucket: restrict its keys, and use your provider's replication to a second bucket or region if you need protection against losing it. durable-db keeps only the current state; it has no point-in-time restore, and deletions it performs are permanent.</p>
 </article><nav class="pager" aria-label="Previous and next page"><a class="next" href="api.html"><span>Next</span>HTTP API</a></nav></main>
@@ -411,22 +452,33 @@ curl -X POST $URL/v1/databases/tenant-42/tokens \
 </div>
 <footer class="site-footer">
 <div class="wrap">
-<div>
+<div class="footer-brand">
 <a class="wordmark" href="index.html"><img src="icon.svg" alt="" width="24" height="24">durable-db</a>
-<p>A transactional, ordered key-value database in one static Rust binary. v2.1.12, <a href="LICENSE">Apache-2.0</a>.</p>
+<p>A transactional, ordered key-value database whose only state is an object-storage bucket. One static Rust binary · v2.1.12 · <a href="LICENSE">Apache-2.0</a>.</p>
 </div>
-<nav aria-label="Footer">
+<div class="footer-cols">
+<nav aria-label="Product">
+<p>Start</p>
+<a href="index.html#watch">Explainer film</a>
 <a href="index.html#quickstart">Quick start</a>
+<a href="index.html#limits">Limits</a>
+<a href="install.sh">install.sh</a>
+</nav>
+<nav aria-label="Documentation">
+<p>Docs</p>
 <a href="deployment.html" aria-current="page">Deployment</a>
 <a href="api.html">HTTP API</a>
 <a href="clients.html">TypeScript SDK</a>
 <a href="architecture.html">Architecture</a>
+</nav>
+<nav aria-label="Engineering">
+<p>Engineering</p>
 <a href="performance.html">Performance</a>
 <a href="verification.html">Verification</a>
 <a href="development.html">Development</a>
-<a href="install.sh">install.sh</a>
-<a href="https://github.com/ericflo/durable-db">Source on GitHub</a>
+<a href="https://github.com/ericflo/durable-db">GitHub ↗</a>
 </nav>
+</div>
 </div>
 </footer>
 </body>
