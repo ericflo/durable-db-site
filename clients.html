@@ -315,7 +315,7 @@ await server.stop(); // stops the server and deletes its data
 </code></pre>
 <p>The <a href="https://github.com/ericflo/durable-db/blob/main/examples/web-app/README.md">task board example</a> uses it.</p>
 <h2 id="pi-durable-storage">pi-durable storage<a class="anchor" href="#pi-durable-storage" aria-label="Link to this section">#</a></h2>
-<p><code>@durable-db/client/pi</code> implements the <code>Storage</code> interface of <a href="https://www.npmjs.com/package/@earendil-works/pi-durable"><code>@earendil-works/pi-durable</code></a> 1.5.2 on one database, so a pi-durable Session or Harness keeps its conversations, tasks and documents in durable-db. Install pi-durable 1.5.2 in the application; this package lists it as an optional peer dependency.</p>
+<p><code>@durable-db/client/pi</code> implements the <code>Storage</code> interface of <a href="https://www.npmjs.com/package/@earendil-works/pi-durable"><code>@earendil-works/pi-durable</code></a> 1.6.1 on one database, so a pi-durable Session or Harness keeps its conversations, tasks and documents in durable-db. Install pi-durable 1.6.1 in the application; this package lists it as an optional peer dependency.</p>
 <pre><code class="language-ts">import { Database } from '@durable-db/client';
 import { openPiStorage } from '@durable-db/client/pi';
 import { Harness } from '@earendil-works/pi-durable';
